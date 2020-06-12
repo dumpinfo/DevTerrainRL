@@ -1,0 +1,150 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/sim/PDController.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/sim</a> - PDController.h<span style="font-size: 80%;"> (source / <a href="PDController.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryLo">50.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntryLo">33.3 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #pragma once</a>
+<span class="lineNum">       2 </span>            : 
+<span class="lineNum">       3 </span>            : #include &lt;json/json.h&gt;
+<span class="lineNum">       4 </span>            : #include &quot;sim/Controller.h&quot;
+<a name="5"><span class="lineNum">       5 </span>            : #include &quot;sim/Joint.h&quot;</a>
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span><span class="lineCov">         42 : class cPDController : public cController</span>
+<a name="8"><span class="lineNum">       8 </span>            : {</a>
+<span class="lineNum">       9 </span>            : public:
+<span class="lineNum">      10 </span><span class="lineNoCov">          0 :         EIGEN_MAKE_ALIGNED_OPERATOR_NEW</span>
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            :         enum eParam
+<span class="lineNum">      13 </span>            :         {
+<span class="lineNum">      14 </span>            :                 eParamJointID,
+<span class="lineNum">      15 </span>            :                 eParamKp,
+<span class="lineNum">      16 </span>            :                 eParamKd,
+<span class="lineNum">      17 </span>            :                 eParamTorqueLim,
+<span class="lineNum">      18 </span>            :                 eParamTargetTheta,
+<span class="lineNum">      19 </span>            :                 eParamTargetVel,
+<span class="lineNum">      20 </span>            :                 eParamUseWorldCoord,
+<span class="lineNum">      21 </span>            :                 eParamMax
+<span class="lineNum">      22 </span>            :         };
+<span class="lineNum">      23 </span>            :         typedef Eigen::Matrix&lt;double, eParamMax, 1&gt; tParams;
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span>            :         static bool LoadParams(const std::string&amp; file, Eigen::MatrixXd&amp; out_buffer);
+<span class="lineNum">      26 </span>            :         static bool ParsePDParams(const Json::Value&amp; root, tParams&amp; out_params);
+<span class="lineNum">      27 </span>            : 
+<span class="lineNum">      28 </span>            :         cPDController();
+<span class="lineNum">      29 </span>            :         virtual ~cPDController();
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span>            :         virtual void Init(cSimCharacter* character, const tParams&amp; params);
+<span class="lineNum">      32 </span>            :         virtual void Clear();
+<span class="lineNum">      33 </span>            :         virtual void Update(double time_step);
+<span class="lineNum">      34 </span>            : 
+<span class="lineNum">      35 </span>            :         virtual cJoint&amp; GetJoint();
+<span class="lineNum">      36 </span>            :         virtual const cJoint&amp; GetJoint() const;
+<span class="lineNum">      37 </span>            : 
+<span class="lineNum">      38 </span>            :         virtual double GetKp() const;
+<span class="lineNum">      39 </span>            :         virtual void SetKp(double kp);
+<span class="lineNum">      40 </span>            :         virtual void SetKd(double kd);
+<span class="lineNum">      41 </span>            :         virtual double GetKd() const;
+<span class="lineNum">      42 </span>            :         virtual double GetTorqueLimit() const;
+<span class="lineNum">      43 </span>            :         virtual void SetTargetTheta(double theta);
+<span class="lineNum">      44 </span>            :         virtual void SetTargetVel(double vel);
+<span class="lineNum">      45 </span>            :         virtual void SetUseWorldCoord(bool use);
+<span class="lineNum">      46 </span>            :         virtual bool UseWorldCoord() const;
+<span class="lineNum">      47 </span>            : 
+<span class="lineNum">      48 </span>            :         virtual double CalcTheta() const;
+<span class="lineNum">      49 </span>            :         virtual double CalcVel() const;
+<span class="lineNum">      50 </span>            :         virtual double CalcThetaErr() const;
+<span class="lineNum">      51 </span>            :         virtual double CalcVelErr() const;
+<span class="lineNum">      52 </span>            :         virtual double CalcTargetTheta(double torque) const;
+<span class="lineNum">      53 </span>            :         virtual double CalcTargetVel(double torque) const;
+<span class="lineNum">      54 </span>            : 
+<span class="lineNum">      55 </span>            :         virtual double GetTargetTheta() const;
+<span class="lineNum">      56 </span>            :         virtual double GetTargetVel() const;
+<span class="lineNum">      57 </span>            : 
+<span class="lineNum">      58 </span>            :         virtual bool IsActive() const;
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span>            : protected:
+<span class="lineNum">      61 </span>            :         tParams mParams;
+<span class="lineNum">      62 </span>            : 
+<span class="lineNum">      63 </span>            :         virtual tVector CalcTorque() const;
+<span class="lineNum">      64 </span>            :         virtual int GetJointID() const;
+<span class="lineNum">      65 </span>            :         
+<span class="lineNum">      66 </span>            : };
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

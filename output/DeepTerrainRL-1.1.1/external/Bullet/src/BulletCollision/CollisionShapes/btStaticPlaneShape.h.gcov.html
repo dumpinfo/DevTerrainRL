@@ -1,0 +1,189 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/external/Bullet/src/BulletCollision/CollisionShapes/btStaticPlaneShape.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/external/Bullet/src/BulletCollision/CollisionShapes</a> - btStaticPlaneShape.h<span style="font-size: 80%;"> (source / <a href="btStaticPlaneShape.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">5</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            : Bullet Continuous Collision Detection and Physics Library
+<span class="lineNum">       3 </span>            : Copyright (c) 2003-2009 Erwin Coumans  http://bulletphysics.org
+<span class="lineNum">       4 </span>            : 
+<span class="lineNum">       5 </span>            : This software is provided 'as-is', without any express or implied warranty.
+<span class="lineNum">       6 </span>            : In no event will the authors be held liable for any damages arising from the use of this software.
+<span class="lineNum">       7 </span>            : Permission is granted to anyone to use this software for any purpose, 
+<span class="lineNum">       8 </span>            : including commercial applications, and to alter it and redistribute it freely, 
+<span class="lineNum">       9 </span>            : subject to the following restrictions:
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
+<span class="lineNum">      12 </span>            : 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
+<span class="lineNum">      13 </span>            : 3. This notice may not be removed or altered from any source distribution.
+<span class="lineNum">      14 </span>            : */
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : #ifndef BT_STATIC_PLANE_SHAPE_H
+<span class="lineNum">      17 </span>            : #define BT_STATIC_PLANE_SHAPE_H
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            : #include &quot;btConcaveShape.h&quot;
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            : ///The btStaticPlaneShape simulates an infinite non-moving (static) collision plane.
+<span class="lineNum">      23 </span>            : ATTRIBUTE_ALIGNED16(class) btStaticPlaneShape : public btConcaveShape
+<span class="lineNum">      24 </span>            : {
+<span class="lineNum">      25 </span>            : protected:
+<span class="lineNum">      26 </span>            :         btVector3       m_localAabbMin;
+<span class="lineNum">      27 </span>            :         btVector3       m_localAabbMax;
+<span class="lineNum">      28 </span>            :         
+<span class="lineNum">      29 </span>            :         btVector3       m_planeNormal;
+<span class="lineNum">      30 </span>            :         btScalar      m_planeConstant;
+<span class="lineNum">      31 </span>            :         btVector3       m_localScaling;
+<a name="32"><span class="lineNum">      32 </span>            : </a>
+<span class="lineNum">      33 </span>            : public:
+<span class="lineNum">      34 </span><span class="lineNoCov">          0 :         BT_DECLARE_ALIGNED_ALLOCATOR();</span>
+<span class="lineNum">      35 </span>            : 
+<span class="lineNum">      36 </span>            :         btStaticPlaneShape(const btVector3&amp; planeNormal,btScalar planeConstant);
+<span class="lineNum">      37 </span>            : 
+<span class="lineNum">      38 </span>            :         virtual ~btStaticPlaneShape();
+<span class="lineNum">      39 </span>            : 
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span>            :         virtual void getAabb(const btTransform&amp; t,btVector3&amp; aabbMin,btVector3&amp; aabbMax) const;
+<span class="lineNum">      42 </span>            : 
+<span class="lineNum">      43 </span>            :         virtual void    processAllTriangles(btTriangleCallback* callback,const btVector3&amp; aabbMin,const btVector3&amp; aabbMax) const;
+<span class="lineNum">      44 </span>            : 
+<span class="lineNum">      45 </span>            :         virtual void    calculateLocalInertia(btScalar mass,btVector3&amp; inertia) const;
+<span class="lineNum">      46 </span>            : 
+<span class="lineNum">      47 </span>            :         virtual void    setLocalScaling(const btVector3&amp; scaling);
+<a name="48"><span class="lineNum">      48 </span>            :         virtual const btVector3&amp; getLocalScaling() const;</a>
+<span class="lineNum">      49 </span>            :         
+<span class="lineNum">      50 </span><span class="lineNoCov">          0 :         const btVector3&amp;    getPlaneNormal() const</span>
+<span class="lineNum">      51 </span>            :         {
+<span class="lineNum">      52 </span><span class="lineNoCov">          0 :                 return  m_planeNormal;</span>
+<a name="53"><span class="lineNum">      53 </span>            :         }</a>
+<span class="lineNum">      54 </span>            : 
+<span class="lineNum">      55 </span><span class="lineNoCov">          0 :         const btScalar&amp;     getPlaneConstant() const</span>
+<span class="lineNum">      56 </span>            :         {
+<span class="lineNum">      57 </span><span class="lineNoCov">          0 :                 return  m_planeConstant;</span>
+<span class="lineNum">      58 </span>            :         }
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span>            :         //debugging
+<span class="lineNum">      61 </span>            :         virtual const char*     getName()const {return &quot;STATICPLANE&quot;;}
+<span class="lineNum">      62 </span>            : 
+<span class="lineNum">      63 </span>            :         virtual int     calculateSerializeBufferSize() const;
+<span class="lineNum">      64 </span>            : 
+<span class="lineNum">      65 </span>            :         ///fills the dataBuffer and returns the struct name (and 0 on failure)
+<span class="lineNum">      66 </span>            :         virtual const char*     serialize(void* dataBuffer, btSerializer* serializer) const;
+<span class="lineNum">      67 </span>            : 
+<span class="lineNum">      68 </span>            : 
+<span class="lineNum">      69 </span>            : };
+<span class="lineNum">      70 </span>            : 
+<span class="lineNum">      71 </span>            : ///do not change those serialization structures, it requires an updated sBulletDNAstr/sBulletDNAstr64
+<span class="lineNum">      72 </span>            : struct  btStaticPlaneShapeData
+<span class="lineNum">      73 </span>            : {
+<span class="lineNum">      74 </span>            :         btCollisionShapeData    m_collisionShapeData;
+<span class="lineNum">      75 </span>            : 
+<span class="lineNum">      76 </span>            :         btVector3FloatData      m_localScaling;
+<span class="lineNum">      77 </span>            :         btVector3FloatData      m_planeNormal;
+<span class="lineNum">      78 </span>            :         float                   m_planeConstant;
+<span class="lineNum">      79 </span>            :         char    m_pad[4];
+<span class="lineNum">      80 </span>            : };
+<span class="lineNum">      81 </span>            : 
+<span class="lineNum">      82 </span>            : 
+<span class="lineNum">      83 </span>            : SIMD_FORCE_INLINE       int     btStaticPlaneShape::calculateSerializeBufferSize() const
+<span class="lineNum">      84 </span>            : {
+<span class="lineNum">      85 </span>            :         return sizeof(btStaticPlaneShapeData);
+<span class="lineNum">      86 </span>            : }
+<span class="lineNum">      87 </span>            : 
+<span class="lineNum">      88 </span>            : ///fills the dataBuffer and returns the struct name (and 0 on failure)
+<span class="lineNum">      89 </span>            : SIMD_FORCE_INLINE       const char*     btStaticPlaneShape::serialize(void* dataBuffer, btSerializer* serializer) const
+<span class="lineNum">      90 </span>            : {
+<span class="lineNum">      91 </span>            :         btStaticPlaneShapeData* planeData = (btStaticPlaneShapeData*) dataBuffer;
+<span class="lineNum">      92 </span>            :         btCollisionShape::serialize(&amp;planeData-&gt;m_collisionShapeData,serializer);
+<span class="lineNum">      93 </span>            : 
+<span class="lineNum">      94 </span>            :         m_localScaling.serializeFloat(planeData-&gt;m_localScaling);
+<span class="lineNum">      95 </span>            :         m_planeNormal.serializeFloat(planeData-&gt;m_planeNormal);
+<span class="lineNum">      96 </span>            :         planeData-&gt;m_planeConstant = float(m_planeConstant);
+<span class="lineNum">      97 </span>            :                 
+<span class="lineNum">      98 </span>            :         return &quot;btStaticPlaneShapeData&quot;;
+<span class="lineNum">      99 </span>            : }
+<span class="lineNum">     100 </span>            : 
+<span class="lineNum">     101 </span>            : 
+<span class="lineNum">     102 </span>            : #endif //BT_STATIC_PLANE_SHAPE_H
+<span class="lineNum">     103 </span>            : 
+<span class="lineNum">     104 </span>            : 
+<span class="lineNum">     105 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

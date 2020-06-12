@@ -1,0 +1,325 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/external/Bullet/src/BulletCollision/CollisionShapes/btTriangleInfoMap.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/external/Bullet/src/BulletCollision/CollisionShapes</a> - btTriangleInfoMap.h<span style="font-size: 80%;"> (source / <a href="btTriangleInfoMap.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">54</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            : Bullet Continuous Collision Detection and Physics Library
+<span class="lineNum">       3 </span>            : Copyright (c) 2010 Erwin Coumans  http://bulletphysics.org
+<span class="lineNum">       4 </span>            : 
+<span class="lineNum">       5 </span>            : This software is provided 'as-is', without any express or implied warranty.
+<span class="lineNum">       6 </span>            : In no event will the authors be held liable for any damages arising from the use of this software.
+<span class="lineNum">       7 </span>            : Permission is granted to anyone to use this software for any purpose, 
+<span class="lineNum">       8 </span>            : including commercial applications, and to alter it and redistribute it freely, 
+<span class="lineNum">       9 </span>            : subject to the following restrictions:
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
+<span class="lineNum">      12 </span>            : 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
+<span class="lineNum">      13 </span>            : 3. This notice may not be removed or altered from any source distribution.
+<span class="lineNum">      14 </span>            : */
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : #ifndef _BT_TRIANGLE_INFO_MAP_H
+<span class="lineNum">      17 </span>            : #define _BT_TRIANGLE_INFO_MAP_H
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            : #include &quot;LinearMath/btHashMap.h&quot;
+<span class="lineNum">      21 </span>            : #include &quot;LinearMath/btSerializer.h&quot;
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : ///for btTriangleInfo m_flags
+<span class="lineNum">      25 </span>            : #define TRI_INFO_V0V1_CONVEX 1
+<span class="lineNum">      26 </span>            : #define TRI_INFO_V1V2_CONVEX 2
+<span class="lineNum">      27 </span>            : #define TRI_INFO_V2V0_CONVEX 4
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span>            : #define TRI_INFO_V0V1_SWAP_NORMALB 8
+<span class="lineNum">      30 </span>            : #define TRI_INFO_V1V2_SWAP_NORMALB 16
+<span class="lineNum">      31 </span>            : #define TRI_INFO_V2V0_SWAP_NORMALB 32
+<span class="lineNum">      32 </span>            : 
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span>            : ///The btTriangleInfo structure stores information to adjust collision normals to avoid collisions against internal edges
+<span class="lineNum">      35 </span>            : ///it can be generated using 
+<span class="lineNum">      36 </span>            : struct  btTriangleInfo
+<span class="lineNum">      37 </span>            : {
+<span class="lineNum">      38 </span>            :         btTriangleInfo()
+<span class="lineNum">      39 </span>            :         {
+<span class="lineNum">      40 </span>            :                 m_edgeV0V1Angle = SIMD_2_PI;
+<span class="lineNum">      41 </span>            :                 m_edgeV1V2Angle = SIMD_2_PI;
+<span class="lineNum">      42 </span>            :                 m_edgeV2V0Angle = SIMD_2_PI;
+<span class="lineNum">      43 </span>            :                 m_flags=0;
+<span class="lineNum">      44 </span>            :         }
+<span class="lineNum">      45 </span>            : 
+<span class="lineNum">      46 </span>            :         int                     m_flags;
+<span class="lineNum">      47 </span>            : 
+<span class="lineNum">      48 </span>            :         btScalar        m_edgeV0V1Angle;
+<span class="lineNum">      49 </span>            :         btScalar        m_edgeV1V2Angle;
+<span class="lineNum">      50 </span>            :         btScalar        m_edgeV2V0Angle;
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span>            : };
+<span class="lineNum">      53 </span>            : 
+<span class="lineNum">      54 </span>            : typedef btHashMap&lt;btHashInt,btTriangleInfo&gt; btInternalTriangleInfoMap;
+<span class="lineNum">      55 </span>            : 
+<span class="lineNum">      56 </span>            : 
+<span class="lineNum">      57 </span>            : ///The btTriangleInfoMap stores edge angle information for some triangles. You can compute this information yourself or using btGenerateInternalEdgeInfo.
+<span class="lineNum">      58 </span>            : struct  btTriangleInfoMap : public btInternalTriangleInfoMap
+<span class="lineNum">      59 </span>            : {
+<span class="lineNum">      60 </span>            :         btScalar        m_convexEpsilon;///used to determine if an edge or contact normal is convex, using the dot product
+<span class="lineNum">      61 </span>            :         btScalar        m_planarEpsilon; ///used to determine if a triangle edge is planar with zero angle
+<span class="lineNum">      62 </span>            :         btScalar        m_equalVertexThreshold; ///used to compute connectivity: if the distance between two vertices is smaller than m_equalVertexThreshold, they are considered to be 'shared'
+<span class="lineNum">      63 </span>            :         btScalar        m_edgeDistanceThreshold; ///used to determine edge contacts: if the closest distance between a contact point and an edge is smaller than this distance threshold it is considered to &quot;hit the edge&quot;
+<span class="lineNum">      64 </span>            :         btScalar        m_maxEdgeAngleThreshold; //ignore edges that connect triangles at an angle larger than this m_maxEdgeAngleThreshold
+<span class="lineNum">      65 </span>            :         btScalar        m_zeroAreaThreshold; ///used to determine if a triangle is degenerate (length squared of cross product of 2 triangle edges &lt; threshold)
+<span class="lineNum">      66 </span>            :         
+<span class="lineNum">      67 </span>            :         
+<span class="lineNum">      68 </span>            :         btTriangleInfoMap()
+<span class="lineNum">      69 </span>            :         {
+<span class="lineNum">      70 </span>            :                 m_convexEpsilon = 0.00f;
+<span class="lineNum">      71 </span>            :                 m_planarEpsilon = 0.0001f;
+<span class="lineNum">      72 </span>            :                 m_equalVertexThreshold = btScalar(0.0001)*btScalar(0.0001);
+<span class="lineNum">      73 </span>            :                 m_edgeDistanceThreshold = btScalar(0.1);
+<span class="lineNum">      74 </span>            :                 m_zeroAreaThreshold = btScalar(0.0001)*btScalar(0.0001);
+<a name="75"><span class="lineNum">      75 </span>            :                 m_maxEdgeAngleThreshold = SIMD_2_PI;</a>
+<span class="lineNum">      76 </span>            :         }
+<span class="lineNum">      77 </span><span class="lineNoCov">          0 :         virtual ~btTriangleInfoMap() {}</span>
+<span class="lineNum">      78 </span>            : 
+<span class="lineNum">      79 </span>            :         virtual int     calculateSerializeBufferSize() const;
+<span class="lineNum">      80 </span>            : 
+<span class="lineNum">      81 </span>            :         ///fills the dataBuffer and returns the struct name (and 0 on failure)
+<span class="lineNum">      82 </span>            :         virtual const char*     serialize(void* dataBuffer, btSerializer* serializer) const;
+<span class="lineNum">      83 </span>            : 
+<span class="lineNum">      84 </span>            :         void    deSerialize(struct btTriangleInfoMapData&amp; data);
+<span class="lineNum">      85 </span>            : 
+<span class="lineNum">      86 </span>            : };
+<span class="lineNum">      87 </span>            : 
+<span class="lineNum">      88 </span>            : ///those fields have to be float and not btScalar for the serialization to work properly
+<span class="lineNum">      89 </span>            : struct  btTriangleInfoData
+<span class="lineNum">      90 </span>            : {
+<span class="lineNum">      91 </span>            :         int                     m_flags;
+<span class="lineNum">      92 </span>            :         float   m_edgeV0V1Angle;
+<span class="lineNum">      93 </span>            :         float   m_edgeV1V2Angle;
+<span class="lineNum">      94 </span>            :         float   m_edgeV2V0Angle;
+<span class="lineNum">      95 </span>            : };
+<span class="lineNum">      96 </span>            : 
+<span class="lineNum">      97 </span>            : struct  btTriangleInfoMapData
+<span class="lineNum">      98 </span>            : {
+<span class="lineNum">      99 </span>            :         int                                     *m_hashTablePtr;
+<span class="lineNum">     100 </span>            :         int                                     *m_nextPtr;
+<span class="lineNum">     101 </span>            :         btTriangleInfoData      *m_valueArrayPtr;
+<span class="lineNum">     102 </span>            :         int                                     *m_keyArrayPtr;
+<span class="lineNum">     103 </span>            : 
+<span class="lineNum">     104 </span>            :         float   m_convexEpsilon;
+<span class="lineNum">     105 </span>            :         float   m_planarEpsilon;
+<span class="lineNum">     106 </span>            :         float   m_equalVertexThreshold; 
+<span class="lineNum">     107 </span>            :         float   m_edgeDistanceThreshold;
+<span class="lineNum">     108 </span>            :         float   m_zeroAreaThreshold;
+<span class="lineNum">     109 </span>            : 
+<span class="lineNum">     110 </span>            :         int             m_nextSize;
+<span class="lineNum">     111 </span>            :         int             m_hashTableSize;
+<span class="lineNum">     112 </span>            :         int             m_numValues;
+<span class="lineNum">     113 </span>            :         int             m_numKeys;
+<span class="lineNum">     114 </span>            :         char    m_padding[4];
+<a name="115"><span class="lineNum">     115 </span>            : };</a>
+<span class="lineNum">     116 </span>            : 
+<span class="lineNum">     117 </span><span class="lineNoCov">          0 : SIMD_FORCE_INLINE       int     btTriangleInfoMap::calculateSerializeBufferSize() const</span>
+<span class="lineNum">     118 </span>            : {
+<span class="lineNum">     119 </span><span class="lineNoCov">          0 :         return sizeof(btTriangleInfoMapData);</span>
+<span class="lineNum">     120 </span>            : }
+<a name="121"><span class="lineNum">     121 </span>            : </a>
+<span class="lineNum">     122 </span>            : ///fills the dataBuffer and returns the struct name (and 0 on failure)
+<span class="lineNum">     123 </span><span class="lineNoCov">          0 : SIMD_FORCE_INLINE       const char*     btTriangleInfoMap::serialize(void* dataBuffer, btSerializer* serializer) const</span>
+<span class="lineNum">     124 </span>            : {
+<span class="lineNum">     125 </span><span class="lineNoCov">          0 :         btTriangleInfoMapData* tmapData = (btTriangleInfoMapData*) dataBuffer;</span>
+<span class="lineNum">     126 </span><span class="lineNoCov">          0 :         tmapData-&gt;m_convexEpsilon = (float)m_convexEpsilon;</span>
+<span class="lineNum">     127 </span><span class="lineNoCov">          0 :         tmapData-&gt;m_planarEpsilon = (float)m_planarEpsilon;</span>
+<span class="lineNum">     128 </span><span class="lineNoCov">          0 :         tmapData-&gt;m_equalVertexThreshold =(float) m_equalVertexThreshold;</span>
+<span class="lineNum">     129 </span><span class="lineNoCov">          0 :         tmapData-&gt;m_edgeDistanceThreshold = (float)m_edgeDistanceThreshold;</span>
+<span class="lineNum">     130 </span><span class="lineNoCov">          0 :         tmapData-&gt;m_zeroAreaThreshold = (float)m_zeroAreaThreshold;</span>
+<span class="lineNum">     131 </span>            :         
+<span class="lineNum">     132 </span><span class="lineNoCov">          0 :         tmapData-&gt;m_hashTableSize = m_hashTable.size();</span>
+<span class="lineNum">     133 </span>            : 
+<span class="lineNum">     134 </span><span class="lineNoCov">          0 :         tmapData-&gt;m_hashTablePtr = tmapData-&gt;m_hashTableSize ? (int*)serializer-&gt;getUniquePointer((void*)&amp;m_hashTable[0]) : 0;</span>
+<span class="lineNum">     135 </span><span class="lineNoCov">          0 :         if (tmapData-&gt;m_hashTablePtr)</span>
+<span class="lineNum">     136 </span>            :         { 
+<span class="lineNum">     137 </span>            :                 //serialize an int buffer
+<span class="lineNum">     138 </span><span class="lineNoCov">          0 :                 int sz = sizeof(int);</span>
+<span class="lineNum">     139 </span><span class="lineNoCov">          0 :                 int numElem = tmapData-&gt;m_hashTableSize;</span>
+<span class="lineNum">     140 </span><span class="lineNoCov">          0 :                 btChunk* chunk = serializer-&gt;allocate(sz,numElem);</span>
+<span class="lineNum">     141 </span><span class="lineNoCov">          0 :                 int* memPtr = (int*)chunk-&gt;m_oldPtr;</span>
+<span class="lineNum">     142 </span><span class="lineNoCov">          0 :                 for (int i=0;i&lt;numElem;i++,memPtr++)</span>
+<span class="lineNum">     143 </span>            :                 {
+<span class="lineNum">     144 </span><span class="lineNoCov">          0 :                         *memPtr = m_hashTable[i];</span>
+<span class="lineNum">     145 </span>            :                 }
+<span class="lineNum">     146 </span><span class="lineNoCov">          0 :                 serializer-&gt;finalizeChunk(chunk,&quot;int&quot;,BT_ARRAY_CODE,(void*)&amp;m_hashTable[0]);</span>
+<span class="lineNum">     147 </span>            : 
+<span class="lineNum">     148 </span>            :         }
+<span class="lineNum">     149 </span>            : 
+<span class="lineNum">     150 </span><span class="lineNoCov">          0 :         tmapData-&gt;m_nextSize = m_next.size();</span>
+<span class="lineNum">     151 </span><span class="lineNoCov">          0 :         tmapData-&gt;m_nextPtr = tmapData-&gt;m_nextSize? (int*)serializer-&gt;getUniquePointer((void*)&amp;m_next[0]): 0;</span>
+<span class="lineNum">     152 </span><span class="lineNoCov">          0 :         if (tmapData-&gt;m_nextPtr)</span>
+<span class="lineNum">     153 </span>            :         {
+<span class="lineNum">     154 </span><span class="lineNoCov">          0 :                 int sz = sizeof(int);</span>
+<span class="lineNum">     155 </span><span class="lineNoCov">          0 :                 int numElem = tmapData-&gt;m_nextSize;</span>
+<span class="lineNum">     156 </span><span class="lineNoCov">          0 :                 btChunk* chunk = serializer-&gt;allocate(sz,numElem);</span>
+<span class="lineNum">     157 </span><span class="lineNoCov">          0 :                 int* memPtr = (int*)chunk-&gt;m_oldPtr;</span>
+<span class="lineNum">     158 </span><span class="lineNoCov">          0 :                 for (int i=0;i&lt;numElem;i++,memPtr++)</span>
+<span class="lineNum">     159 </span>            :                 {
+<span class="lineNum">     160 </span><span class="lineNoCov">          0 :                         *memPtr = m_next[i];</span>
+<span class="lineNum">     161 </span>            :                 }
+<span class="lineNum">     162 </span><span class="lineNoCov">          0 :                 serializer-&gt;finalizeChunk(chunk,&quot;int&quot;,BT_ARRAY_CODE,(void*)&amp;m_next[0]);</span>
+<span class="lineNum">     163 </span>            :         }
+<span class="lineNum">     164 </span>            :         
+<span class="lineNum">     165 </span><span class="lineNoCov">          0 :         tmapData-&gt;m_numValues = m_valueArray.size();</span>
+<span class="lineNum">     166 </span><span class="lineNoCov">          0 :         tmapData-&gt;m_valueArrayPtr = tmapData-&gt;m_numValues ? (btTriangleInfoData*)serializer-&gt;getUniquePointer((void*)&amp;m_valueArray[0]): 0;</span>
+<span class="lineNum">     167 </span><span class="lineNoCov">          0 :         if (tmapData-&gt;m_valueArrayPtr)</span>
+<span class="lineNum">     168 </span>            :         {
+<span class="lineNum">     169 </span><span class="lineNoCov">          0 :                 int sz = sizeof(btTriangleInfoData);</span>
+<span class="lineNum">     170 </span><span class="lineNoCov">          0 :                 int numElem = tmapData-&gt;m_numValues;</span>
+<span class="lineNum">     171 </span><span class="lineNoCov">          0 :                 btChunk* chunk = serializer-&gt;allocate(sz,numElem);</span>
+<span class="lineNum">     172 </span><span class="lineNoCov">          0 :                 btTriangleInfoData* memPtr = (btTriangleInfoData*)chunk-&gt;m_oldPtr;</span>
+<span class="lineNum">     173 </span><span class="lineNoCov">          0 :                 for (int i=0;i&lt;numElem;i++,memPtr++)</span>
+<span class="lineNum">     174 </span>            :                 {
+<span class="lineNum">     175 </span><span class="lineNoCov">          0 :                         memPtr-&gt;m_edgeV0V1Angle = (float)m_valueArray[i].m_edgeV0V1Angle;</span>
+<span class="lineNum">     176 </span><span class="lineNoCov">          0 :                         memPtr-&gt;m_edgeV1V2Angle = (float)m_valueArray[i].m_edgeV1V2Angle;</span>
+<span class="lineNum">     177 </span><span class="lineNoCov">          0 :                         memPtr-&gt;m_edgeV2V0Angle = (float)m_valueArray[i].m_edgeV2V0Angle;</span>
+<span class="lineNum">     178 </span><span class="lineNoCov">          0 :                         memPtr-&gt;m_flags = m_valueArray[i].m_flags;</span>
+<span class="lineNum">     179 </span>            :                 }
+<span class="lineNum">     180 </span><span class="lineNoCov">          0 :                 serializer-&gt;finalizeChunk(chunk,&quot;btTriangleInfoData&quot;,BT_ARRAY_CODE,(void*) &amp;m_valueArray[0]);</span>
+<span class="lineNum">     181 </span>            :         }
+<span class="lineNum">     182 </span>            :         
+<span class="lineNum">     183 </span><span class="lineNoCov">          0 :         tmapData-&gt;m_numKeys = m_keyArray.size();</span>
+<span class="lineNum">     184 </span><span class="lineNoCov">          0 :         tmapData-&gt;m_keyArrayPtr = tmapData-&gt;m_numKeys ? (int*)serializer-&gt;getUniquePointer((void*)&amp;m_keyArray[0]) : 0;</span>
+<span class="lineNum">     185 </span><span class="lineNoCov">          0 :         if (tmapData-&gt;m_keyArrayPtr)</span>
+<span class="lineNum">     186 </span>            :         {
+<span class="lineNum">     187 </span><span class="lineNoCov">          0 :                 int sz = sizeof(int);</span>
+<span class="lineNum">     188 </span><span class="lineNoCov">          0 :                 int numElem = tmapData-&gt;m_numValues;</span>
+<span class="lineNum">     189 </span><span class="lineNoCov">          0 :                 btChunk* chunk = serializer-&gt;allocate(sz,numElem);</span>
+<span class="lineNum">     190 </span><span class="lineNoCov">          0 :                 int* memPtr = (int*)chunk-&gt;m_oldPtr;</span>
+<span class="lineNum">     191 </span><span class="lineNoCov">          0 :                 for (int i=0;i&lt;numElem;i++,memPtr++)</span>
+<span class="lineNum">     192 </span>            :                 {
+<span class="lineNum">     193 </span><span class="lineNoCov">          0 :                         *memPtr = m_keyArray[i].getUid1();</span>
+<span class="lineNum">     194 </span>            :                 }
+<span class="lineNum">     195 </span><span class="lineNoCov">          0 :                 serializer-&gt;finalizeChunk(chunk,&quot;int&quot;,BT_ARRAY_CODE,(void*) &amp;m_keyArray[0]);</span>
+<span class="lineNum">     196 </span>            : 
+<span class="lineNum">     197 </span>            :         }
+<span class="lineNum">     198 </span><span class="lineNoCov">          0 :         return &quot;btTriangleInfoMapData&quot;;</span>
+<span class="lineNum">     199 </span>            : }
+<span class="lineNum">     200 </span>            : 
+<span class="lineNum">     201 </span>            : 
+<span class="lineNum">     202 </span>            : 
+<span class="lineNum">     203 </span>            : ///fills the dataBuffer and returns the struct name (and 0 on failure)
+<span class="lineNum">     204 </span>            : SIMD_FORCE_INLINE       void    btTriangleInfoMap::deSerialize(btTriangleInfoMapData&amp; tmapData )
+<span class="lineNum">     205 </span>            : {
+<span class="lineNum">     206 </span>            : 
+<span class="lineNum">     207 </span>            : 
+<span class="lineNum">     208 </span>            :         m_convexEpsilon = tmapData.m_convexEpsilon;
+<span class="lineNum">     209 </span>            :         m_planarEpsilon = tmapData.m_planarEpsilon;
+<span class="lineNum">     210 </span>            :         m_equalVertexThreshold = tmapData.m_equalVertexThreshold;
+<span class="lineNum">     211 </span>            :         m_edgeDistanceThreshold = tmapData.m_edgeDistanceThreshold;
+<span class="lineNum">     212 </span>            :         m_zeroAreaThreshold = tmapData.m_zeroAreaThreshold;
+<span class="lineNum">     213 </span>            :         m_hashTable.resize(tmapData.m_hashTableSize);
+<span class="lineNum">     214 </span>            :         int i =0;
+<span class="lineNum">     215 </span>            :         for (i=0;i&lt;tmapData.m_hashTableSize;i++)
+<span class="lineNum">     216 </span>            :         {
+<span class="lineNum">     217 </span>            :                 m_hashTable[i] = tmapData.m_hashTablePtr[i];
+<span class="lineNum">     218 </span>            :         }
+<span class="lineNum">     219 </span>            :         m_next.resize(tmapData.m_nextSize);
+<span class="lineNum">     220 </span>            :         for (i=0;i&lt;tmapData.m_nextSize;i++)
+<span class="lineNum">     221 </span>            :         {
+<span class="lineNum">     222 </span>            :                 m_next[i] = tmapData.m_nextPtr[i];
+<span class="lineNum">     223 </span>            :         }
+<span class="lineNum">     224 </span>            :         m_valueArray.resize(tmapData.m_numValues);
+<span class="lineNum">     225 </span>            :         for (i=0;i&lt;tmapData.m_numValues;i++)
+<span class="lineNum">     226 </span>            :         {
+<span class="lineNum">     227 </span>            :                 m_valueArray[i].m_edgeV0V1Angle = tmapData.m_valueArrayPtr[i].m_edgeV0V1Angle;
+<span class="lineNum">     228 </span>            :                 m_valueArray[i].m_edgeV1V2Angle = tmapData.m_valueArrayPtr[i].m_edgeV1V2Angle;
+<span class="lineNum">     229 </span>            :                 m_valueArray[i].m_edgeV2V0Angle = tmapData.m_valueArrayPtr[i].m_edgeV2V0Angle;
+<span class="lineNum">     230 </span>            :                 m_valueArray[i].m_flags = tmapData.m_valueArrayPtr[i].m_flags;
+<span class="lineNum">     231 </span>            :         }
+<span class="lineNum">     232 </span>            :         
+<span class="lineNum">     233 </span>            :         m_keyArray.resize(tmapData.m_numKeys,btHashInt(0));
+<span class="lineNum">     234 </span>            :         for (i=0;i&lt;tmapData.m_numKeys;i++)
+<span class="lineNum">     235 </span>            :         {
+<span class="lineNum">     236 </span>            :                 m_keyArray[i].setUid1(tmapData.m_keyArrayPtr[i]);
+<span class="lineNum">     237 </span>            :         }
+<span class="lineNum">     238 </span>            : }
+<span class="lineNum">     239 </span>            : 
+<span class="lineNum">     240 </span>            : 
+<span class="lineNum">     241 </span>            : #endif //_BT_TRIANGLE_INFO_MAP_H
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,271 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/external/caffe/include/caffe/common.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/external/caffe/include/caffe</a> - common.hpp<span style="font-size: 80%;"> (source / <a href="common.hpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #ifndef CAFFE_COMMON_HPP_</a>
+<span class="lineNum">       2 </span>            : #define CAFFE_COMMON_HPP_
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &lt;boost/shared_ptr.hpp&gt;
+<span class="lineNum">       5 </span>            : #include &lt;gflags/gflags.h&gt;
+<span class="lineNum">       6 </span>            : #include &lt;glog/logging.h&gt;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : #include &lt;climits&gt;
+<span class="lineNum">       9 </span>            : #include &lt;cmath&gt;
+<span class="lineNum">      10 </span>            : #include &lt;fstream&gt;  // NOLINT(readability/streams)
+<span class="lineNum">      11 </span>            : #include &lt;iostream&gt;  // NOLINT(readability/streams)
+<span class="lineNum">      12 </span>            : #include &lt;map&gt;
+<span class="lineNum">      13 </span>            : #include &lt;set&gt;
+<span class="lineNum">      14 </span>            : #include &lt;sstream&gt;
+<span class="lineNum">      15 </span>            : #include &lt;string&gt;
+<span class="lineNum">      16 </span>            : #include &lt;utility&gt;  // pair
+<span class="lineNum">      17 </span>            : #include &lt;vector&gt;
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            : #include &quot;caffe/util/device_alternate.hpp&quot;
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span>            : // Convert macro to string
+<span class="lineNum">      22 </span>            : #define STRINGIFY(m) #m
+<span class="lineNum">      23 </span>            : #define AS_STRING(m) STRINGIFY(m)
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span>            : // gflags 2.1 issue: namespace google was changed to gflags without warning.
+<span class="lineNum">      26 </span>            : // Luckily we will be able to use GFLAGS_GFLAGS_H_ to detect if it is version
+<span class="lineNum">      27 </span>            : // 2.1. If yes, we will add a temporary solution to redirect the namespace.
+<span class="lineNum">      28 </span>            : // TODO(Yangqing): Once gflags solves the problem in a more elegant way, let's
+<span class="lineNum">      29 </span>            : // remove the following hack.
+<span class="lineNum">      30 </span>            : #ifndef GFLAGS_GFLAGS_H_
+<span class="lineNum">      31 </span>            : namespace gflags = google;
+<span class="lineNum">      32 </span>            : #endif  // GFLAGS_GFLAGS_H_
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span>            : // Disable the copy and assignment operator for a class.
+<span class="lineNum">      35 </span>            : #define DISABLE_COPY_AND_ASSIGN(classname) \
+<span class="lineNum">      36 </span>            : private:\
+<span class="lineNum">      37 </span>            :   classname(const classname&amp;);\
+<span class="lineNum">      38 </span>            :   classname&amp; operator=(const classname&amp;)
+<span class="lineNum">      39 </span>            : 
+<span class="lineNum">      40 </span>            : // Instantiate a class with float and double specifications.
+<span class="lineNum">      41 </span>            : #define INSTANTIATE_CLASS(classname) \
+<span class="lineNum">      42 </span>            :   char gInstantiationGuard##classname; \
+<span class="lineNum">      43 </span>            :   template class classname&lt;float&gt;; \
+<span class="lineNum">      44 </span>            :   template class classname&lt;double&gt;
+<span class="lineNum">      45 </span>            : 
+<span class="lineNum">      46 </span>            : #define INSTANTIATE_LAYER_GPU_FORWARD(classname) \
+<span class="lineNum">      47 </span>            :   template void classname&lt;float&gt;::Forward_gpu( \
+<span class="lineNum">      48 </span>            :       const std::vector&lt;Blob&lt;float&gt;*&gt;&amp; bottom, \
+<span class="lineNum">      49 </span>            :       const std::vector&lt;Blob&lt;float&gt;*&gt;&amp; top); \
+<span class="lineNum">      50 </span>            :   template void classname&lt;double&gt;::Forward_gpu( \
+<span class="lineNum">      51 </span>            :       const std::vector&lt;Blob&lt;double&gt;*&gt;&amp; bottom, \
+<span class="lineNum">      52 </span>            :       const std::vector&lt;Blob&lt;double&gt;*&gt;&amp; top);
+<span class="lineNum">      53 </span>            : 
+<span class="lineNum">      54 </span>            : #define INSTANTIATE_LAYER_GPU_BACKWARD(classname) \
+<span class="lineNum">      55 </span>            :   template void classname&lt;float&gt;::Backward_gpu( \
+<span class="lineNum">      56 </span>            :       const std::vector&lt;Blob&lt;float&gt;*&gt;&amp; top, \
+<span class="lineNum">      57 </span>            :       const std::vector&lt;bool&gt;&amp; propagate_down, \
+<span class="lineNum">      58 </span>            :       const std::vector&lt;Blob&lt;float&gt;*&gt;&amp; bottom); \
+<span class="lineNum">      59 </span>            :   template void classname&lt;double&gt;::Backward_gpu( \
+<span class="lineNum">      60 </span>            :       const std::vector&lt;Blob&lt;double&gt;*&gt;&amp; top, \
+<span class="lineNum">      61 </span>            :       const std::vector&lt;bool&gt;&amp; propagate_down, \
+<span class="lineNum">      62 </span>            :       const std::vector&lt;Blob&lt;double&gt;*&gt;&amp; bottom)
+<span class="lineNum">      63 </span>            : 
+<span class="lineNum">      64 </span>            : #define INSTANTIATE_LAYER_GPU_FUNCS(classname) \
+<span class="lineNum">      65 </span>            :   INSTANTIATE_LAYER_GPU_FORWARD(classname); \
+<span class="lineNum">      66 </span>            :   INSTANTIATE_LAYER_GPU_BACKWARD(classname)
+<span class="lineNum">      67 </span>            : 
+<span class="lineNum">      68 </span>            : // A simple macro to mark codes that are not implemented, so that when the code
+<span class="lineNum">      69 </span>            : // is executed we will see a fatal log.
+<span class="lineNum">      70 </span>            : #define NOT_IMPLEMENTED LOG(FATAL) &lt;&lt; &quot;Not Implemented Yet&quot;
+<span class="lineNum">      71 </span>            : 
+<span class="lineNum">      72 </span>            : // See PR #1236
+<span class="lineNum">      73 </span>            : namespace cv { class Mat; }
+<span class="lineNum">      74 </span>            : 
+<span class="lineNum">      75 </span>            : namespace caffe {
+<span class="lineNum">      76 </span>            : 
+<span class="lineNum">      77 </span>            : // We will use the boost shared_ptr instead of the new C++11 one mainly
+<span class="lineNum">      78 </span>            : // because cuda does not work (at least now) well with C++11 features.
+<span class="lineNum">      79 </span>            : using boost::shared_ptr;
+<span class="lineNum">      80 </span>            : 
+<span class="lineNum">      81 </span>            : // Common functions and classes from std that caffe often uses.
+<span class="lineNum">      82 </span>            : using std::fstream;
+<span class="lineNum">      83 </span>            : using std::ios;
+<span class="lineNum">      84 </span>            : using std::isnan;
+<span class="lineNum">      85 </span>            : using std::isinf;
+<span class="lineNum">      86 </span>            : using std::iterator;
+<span class="lineNum">      87 </span>            : using std::make_pair;
+<span class="lineNum">      88 </span>            : using std::map;
+<span class="lineNum">      89 </span>            : using std::ostringstream;
+<span class="lineNum">      90 </span>            : using std::pair;
+<span class="lineNum">      91 </span>            : using std::set;
+<span class="lineNum">      92 </span>            : using std::string;
+<span class="lineNum">      93 </span>            : using std::stringstream;
+<span class="lineNum">      94 </span>            : using std::vector;
+<span class="lineNum">      95 </span>            : 
+<span class="lineNum">      96 </span>            : // A global initialization function that you should call in your main function.
+<span class="lineNum">      97 </span>            : // Currently it initializes google flags and google logging.
+<span class="lineNum">      98 </span>            : void GlobalInit(int* pargc, char*** pargv);
+<span class="lineNum">      99 </span>            : 
+<span class="lineNum">     100 </span>            : // A singleton class to hold common caffe stuff, such as the handler that
+<span class="lineNum">     101 </span>            : // caffe is going to use for cublas, curand, etc.
+<span class="lineNum">     102 </span>            : class Caffe {
+<span class="lineNum">     103 </span>            :  public:
+<span class="lineNum">     104 </span>            :   ~Caffe();
+<span class="lineNum">     105 </span>            : 
+<span class="lineNum">     106 </span>            :   // Thread local context for Caffe. Moved to common.cpp instead of
+<span class="lineNum">     107 </span>            :   // including boost/thread.hpp to avoid a boost/NVCC issues (#1009, #1010)
+<span class="lineNum">     108 </span>            :   // on OSX. Also fails on Linux with CUDA 7.0.18.
+<span class="lineNum">     109 </span>            :   static Caffe&amp; Get();
+<span class="lineNum">     110 </span>            : 
+<span class="lineNum">     111 </span>            :   enum Brew { CPU, GPU };
+<span class="lineNum">     112 </span>            : 
+<span class="lineNum">     113 </span>            :   // This random number generator facade hides boost and CUDA rng
+<span class="lineNum">     114 </span>            :   // implementation from one another (for cross-platform compatibility).
+<span class="lineNum">     115 </span>            :   class RNG {
+<span class="lineNum">     116 </span>            :    public:
+<span class="lineNum">     117 </span>            :     RNG();
+<span class="lineNum">     118 </span>            :     explicit RNG(unsigned int seed);
+<span class="lineNum">     119 </span>            :     explicit RNG(const RNG&amp;);
+<span class="lineNum">     120 </span>            :     RNG&amp; operator=(const RNG&amp;);
+<span class="lineNum">     121 </span>            :     void* generator();
+<span class="lineNum">     122 </span>            :    private:
+<span class="lineNum">     123 </span>            :     class Generator;
+<span class="lineNum">     124 </span>            :     shared_ptr&lt;Generator&gt; generator_;
+<span class="lineNum">     125 </span>            :   };
+<span class="lineNum">     126 </span>            : 
+<span class="lineNum">     127 </span>            :   // Getters for boost rng, curand, and cublas handles
+<span class="lineNum">     128 </span>            :   inline static RNG&amp; rng_stream() {
+<span class="lineNum">     129 </span>            :     if (!Get().random_generator_) {
+<span class="lineNum">     130 </span>            :       Get().random_generator_.reset(new RNG());
+<span class="lineNum">     131 </span>            :     }
+<span class="lineNum">     132 </span>            :     return *(Get().random_generator_);
+<span class="lineNum">     133 </span>            :   }
+<span class="lineNum">     134 </span>            : #ifndef CPU_ONLY
+<span class="lineNum">     135 </span>            :   inline static cublasHandle_t cublas_handle() { return Get().cublas_handle_; }
+<span class="lineNum">     136 </span>            :   inline static curandGenerator_t curand_generator() {
+<span class="lineNum">     137 </span>            :     return Get().curand_generator_;
+<span class="lineNum">     138 </span>            :   }
+<span class="lineNum">     139 </span>            : #endif
+<span class="lineNum">     140 </span>            : 
+<span class="lineNum">     141 </span>            :   // Returns the mode: running on CPU or GPU.
+<span class="lineNum">     142 </span>            :   inline static Brew mode() { return Get().mode_; }
+<span class="lineNum">     143 </span>            :   // The setters for the variables
+<span class="lineNum">     144 </span>            :   // Sets the mode. It is recommended that you don't change the mode halfway
+<span class="lineNum">     145 </span>            :   // into the program since that may cause allocation of pinned memory being
+<a name="146"><span class="lineNum">     146 </span>            :   // freed in a non-pinned way, which may cause problems - I haven't verified</a>
+<span class="lineNum">     147 </span>            :   // it personally but better to note it here in the header file.
+<span class="lineNum">     148 </span><span class="lineNoCov">          0 :   inline static void set_mode(Brew mode) { Get().mode_ = mode; }</span>
+<span class="lineNum">     149 </span>            :   // Sets the random seed of both boost and curand
+<span class="lineNum">     150 </span>            :   static void set_random_seed(const unsigned int seed);
+<span class="lineNum">     151 </span>            :   // Sets the device. Since we have cublas and curand stuff, set device also
+<span class="lineNum">     152 </span>            :   // requires us to reset those values.
+<span class="lineNum">     153 </span>            :   static void SetDevice(const int device_id);
+<span class="lineNum">     154 </span>            :   // Prints the current GPU status.
+<span class="lineNum">     155 </span>            :   static void DeviceQuery();
+<span class="lineNum">     156 </span>            :   // Check if specified device is available
+<span class="lineNum">     157 </span>            :   static bool CheckDevice(const int device_id);
+<span class="lineNum">     158 </span>            :   // Search from start_id to the highest possible device ordinal,
+<span class="lineNum">     159 </span>            :   // return the ordinal of the first available device.
+<span class="lineNum">     160 </span>            :   static int FindDevice(const int start_id = 0);
+<span class="lineNum">     161 </span>            :   // Parallel training info
+<a name="162"><span class="lineNum">     162 </span>            :   inline static int solver_count() { return Get().solver_count_; }</a>
+<span class="lineNum">     163 </span>            :   inline static void set_solver_count(int val) { Get().solver_count_ = val; }
+<span class="lineNum">     164 </span><span class="lineNoCov">          0 :   inline static bool root_solver() { return Get().root_solver_; }</span>
+<span class="lineNum">     165 </span>            :   inline static void set_root_solver(bool val) { Get().root_solver_ = val; }
+<span class="lineNum">     166 </span>            : 
+<span class="lineNum">     167 </span>            :  protected:
+<span class="lineNum">     168 </span>            : #ifndef CPU_ONLY
+<span class="lineNum">     169 </span>            :   cublasHandle_t cublas_handle_;
+<span class="lineNum">     170 </span>            :   curandGenerator_t curand_generator_;
+<span class="lineNum">     171 </span>            : #endif
+<span class="lineNum">     172 </span>            :   shared_ptr&lt;RNG&gt; random_generator_;
+<span class="lineNum">     173 </span>            : 
+<span class="lineNum">     174 </span>            :   Brew mode_;
+<span class="lineNum">     175 </span>            :   int solver_count_;
+<span class="lineNum">     176 </span>            :   bool root_solver_;
+<span class="lineNum">     177 </span>            : 
+<span class="lineNum">     178 </span>            :  private:
+<span class="lineNum">     179 </span>            :   // The private constructor to avoid duplicate instantiation.
+<span class="lineNum">     180 </span>            :   Caffe();
+<span class="lineNum">     181 </span>            : 
+<span class="lineNum">     182 </span>            :   DISABLE_COPY_AND_ASSIGN(Caffe);
+<span class="lineNum">     183 </span>            : };
+<span class="lineNum">     184 </span>            : 
+<span class="lineNum">     185 </span>            : }  // namespace caffe
+<span class="lineNum">     186 </span>            : 
+<span class="lineNum">     187 </span>            : #endif  // CAFFE_COMMON_HPP_
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

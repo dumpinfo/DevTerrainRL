@@ -1,0 +1,142 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/sim/ContactManager.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/sim</a> - ContactManager.h<span style="font-size: 80%;"> (source / <a href="ContactManager.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntryLo">33.3 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #pragma once</a>
+<span class="lineNum">       2 </span>            : 
+<span class="lineNum">       3 </span>            : #include &lt;memory&gt;
+<span class="lineNum">       4 </span>            : #include &quot;util/MathUtil.h&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : class cWorld;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : class cContactManager
+<span class="lineNum">       9 </span>            : {
+<span class="lineNum">      10 </span>            : public:
+<span class="lineNum">      11 </span>            :         const static int gInvalidID;
+<span class="lineNum">      12 </span>            :         const static short gFlagAll = -1;
+<span class="lineNum">      13 </span>            :         const static short gFlagNone = 0;
+<span class="lineNum">      14 </span>            :         const static short gFlagRayTest = 1;
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            :         struct tContactHandle
+<span class="lineNum">      17 </span>            :         {
+<span class="lineNum">      18 </span>            :                 int mID;
+<span class="lineNum">      19 </span>            :                 int mFlags;
+<span class="lineNum">      20 </span>            :                 int mFilterFlags;
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            :                 tContactHandle();
+<span class="lineNum">      23 </span>            :                 bool IsValid() const;
+<span class="lineNum">      24 </span>            :         };
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span>            :         cContactManager(cWorld&amp; world);
+<span class="lineNum">      27 </span>            :         virtual ~cContactManager();
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span>            :         virtual void Init();
+<span class="lineNum">      30 </span>            :         virtual void Reset();
+<span class="lineNum">      31 </span>            :         virtual void Clear();
+<span class="lineNum">      32 </span>            :         virtual void Update();
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span>            :         virtual tContactHandle RegisterContact(int contact_flags, int filter_flags);
+<span class="lineNum">      35 </span>            :         virtual void UpdateContact(const cContactManager::tContactHandle&amp; handle);
+<span class="lineNum">      36 </span>            :         virtual int GetNumEntries() const;
+<span class="lineNum">      37 </span>            :         virtual bool IsInContact(const tContactHandle&amp; handle) const;
+<span class="lineNum">      38 </span>            :         virtual tVector GetContactPt(const tContactHandle&amp; handle) const;
+<a name="39"><span class="lineNum">      39 </span>            : </a>
+<span class="lineNum">      40 </span>            : protected:
+<span class="lineNum">      41 </span><span class="lineCov">        134 :         struct tContactEntry</span>
+<span class="lineNum">      42 </span>            :         {
+<span class="lineNum">      43 </span>            :                 EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+<span class="lineNum">      44 </span>            :                 tContactEntry();
+<span class="lineNum">      45 </span>            : 
+<span class="lineNum">      46 </span>            :                 int mFlags;
+<span class="lineNum">      47 </span>            :                 int mFilterFlags;
+<span class="lineNum">      48 </span>            :                 bool mInContact;
+<span class="lineNum">      49 </span>            :                 tVector mContactPt;
+<span class="lineNum">      50 </span>            :         };
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span>            :         cWorld&amp; mWorld;
+<span class="lineNum">      53 </span>            :         std::vector&lt;tContactEntry, Eigen::aligned_allocator&lt;tContactEntry&gt;&gt; mContactEntries;
+<span class="lineNum">      54 </span>            : 
+<span class="lineNum">      55 </span>            :         virtual int RegisterNewID();
+<span class="lineNum">      56 </span>            :         virtual void ClearContacts();
+<span class="lineNum">      57 </span>            :         virtual bool IsValidContact(const tContactHandle&amp; h0, const tContactHandle&amp; h1) const;
+<span class="lineNum">      58 </span>            : };
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

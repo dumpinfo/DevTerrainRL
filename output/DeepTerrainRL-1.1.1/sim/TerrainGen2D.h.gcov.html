@@ -1,0 +1,212 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/sim/TerrainGen2D.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/sim</a> - TerrainGen2D.h<span style="font-size: 80%;"> (source / <a href="TerrainGen2D.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #pragma once</a>
+<span class="lineNum">       2 </span>            : 
+<span class="lineNum">       3 </span>            : #include &lt;vector&gt;
+<span class="lineNum">       4 </span>            : #include &quot;util/Rand.h&quot;
+<span class="lineNum">       5 </span>            : #include &quot;util/ArgParser.h&quot;
+<span class="lineNum">       6 </span>            : #include &quot;util/MathUtil.h&quot;
+<span class="lineNum">       7 </span>            : #include &quot;util/JsonUtil.h&quot;
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : class cTerrainGen2D
+<span class="lineNum">      10 </span>            : {
+<span class="lineNum">      11 </span>            : public:
+<span class="lineNum">      12 </span>            :         enum eType
+<span class="lineNum">      13 </span>            :         {
+<span class="lineNum">      14 </span>            :                 eTypeFlat,
+<span class="lineNum">      15 </span>            :                 eTypeGaps,
+<span class="lineNum">      16 </span>            :                 eTypeSteps,
+<span class="lineNum">      17 </span>            :                 eTypeWalls,
+<span class="lineNum">      18 </span>            :                 eTypeBumps,
+<span class="lineNum">      19 </span>            :                 eTypeMixed,
+<span class="lineNum">      20 </span>            :                 eTypeNarrowGaps,
+<span class="lineNum">      21 </span>            :                 eTypeSlopes,
+<span class="lineNum">      22 </span>            :                 eTypeSlopesGaps,
+<span class="lineNum">      23 </span>            :                 eTypeSlopesWalls,
+<span class="lineNum">      24 </span>            :                 eTypeSlopesSteps,
+<span class="lineNum">      25 </span>            :                 eTypeSlopesMixed,
+<span class="lineNum">      26 </span>            :                 eTypeSlopesNarrowGaps,
+<span class="lineNum">      27 </span>            :                 eTypeCliffs,
+<span class="lineNum">      28 </span>            :                 eTypeMax
+<span class="lineNum">      29 </span>            :         };
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span>            :         enum eParams
+<span class="lineNum">      32 </span>            :         {
+<span class="lineNum">      33 </span>            :                 eParamsGapSpacingMin,
+<span class="lineNum">      34 </span>            :                 eParamsGapSpacingMax,
+<span class="lineNum">      35 </span>            :                 eParamsGapWidthMin,
+<span class="lineNum">      36 </span>            :                 eParamsGapWidthMax,
+<span class="lineNum">      37 </span>            :                 eParamsGapDepthMin,
+<span class="lineNum">      38 </span>            :                 eParamsGapDepthMax,
+<span class="lineNum">      39 </span>            : 
+<span class="lineNum">      40 </span>            :                 eParamsWallSpacingMin,
+<span class="lineNum">      41 </span>            :                 eParamsWallSpacingMax,
+<span class="lineNum">      42 </span>            :                 eParamsWallWidthMin,
+<span class="lineNum">      43 </span>            :                 eParamsWallWidthMax,
+<span class="lineNum">      44 </span>            :                 eParamsWallHeightMin,
+<span class="lineNum">      45 </span>            :                 eParamsWallHeightMax,
+<span class="lineNum">      46 </span>            : 
+<span class="lineNum">      47 </span>            :                 eParamsStepSpacingMin,
+<span class="lineNum">      48 </span>            :                 eParamsStepSpacingMax,
+<span class="lineNum">      49 </span>            :                 eParamsStepHeight0Min,
+<span class="lineNum">      50 </span>            :                 eParamsStepHeight0Max,
+<span class="lineNum">      51 </span>            :                 eParamsStepHeight1Min,
+<span class="lineNum">      52 </span>            :                 eParamsStepHeight1Max,
+<span class="lineNum">      53 </span>            : 
+<span class="lineNum">      54 </span>            :                 eParamsBumpHeightMin,
+<span class="lineNum">      55 </span>            :                 eParamsBumpHeightMax,
+<span class="lineNum">      56 </span>            : 
+<span class="lineNum">      57 </span>            :                 eParamsNarrowGapSpacingMin,
+<span class="lineNum">      58 </span>            :                 eParamsNarrowGapSpacingMax,
+<span class="lineNum">      59 </span>            :                 eParamsNarrowGapDistMin,
+<span class="lineNum">      60 </span>            :                 eParamsNarrowGapDistMax,
+<span class="lineNum">      61 </span>            :                 eParamsNarrowGapWidthMin,
+<span class="lineNum">      62 </span>            :                 eParamsNarrowGapWidthMax,
+<span class="lineNum">      63 </span>            :                 eParamsNarrowGapDepthMin,
+<span class="lineNum">      64 </span>            :                 eParamsNarrowGapDepthMax,
+<span class="lineNum">      65 </span>            :                 eParamsNarrowGapCountMin,
+<span class="lineNum">      66 </span>            :                 eParamsNarrowGapCountMax,
+<span class="lineNum">      67 </span>            : 
+<span class="lineNum">      68 </span>            :                 eParamsCliffSpacingMin,
+<span class="lineNum">      69 </span>            :                 eParamsCliffSpacingMax,
+<span class="lineNum">      70 </span>            :                 eParamsCliffHeight0Min,
+<span class="lineNum">      71 </span>            :                 eParamsCliffHeight0Max,
+<span class="lineNum">      72 </span>            :                 eParamsCliffHeight1Min,
+<span class="lineNum">      73 </span>            :                 eParamsCliffHeight1Max,
+<span class="lineNum">      74 </span>            :                 eParamsCliffMiniCountMax,
+<span class="lineNum">      75 </span>            : 
+<span class="lineNum">      76 </span>            :                 eParamsSlopeDeltaRange,
+<span class="lineNum">      77 </span>            :                 eParamsSlopeDeltaMin,
+<span class="lineNum">      78 </span>            :                 eParamsSlopeDeltaMax,
+<span class="lineNum">      79 </span>            : 
+<span class="lineNum">      80 </span>            :                 eParamsMax
+<span class="lineNum">      81 </span>            :         };
+<a name="82"><span class="lineNum">      82 </span>            :         typedef Eigen::Matrix&lt;double, eParamsMax, 1&gt; tParams;</a>
+<span class="lineNum">      83 </span>            : 
+<span class="lineNum">      84 </span><span class="lineCov">         40 :         struct tParamDef</span>
+<span class="lineNum">      85 </span>            :         {
+<span class="lineNum">      86 </span>            :                 std::string mName;
+<span class="lineNum">      87 </span>            :                 double mDefaultVal;
+<span class="lineNum">      88 </span>            :         };
+<span class="lineNum">      89 </span>            : 
+<span class="lineNum">      90 </span>            :         static const std::string gTypeKey;
+<span class="lineNum">      91 </span>            :         static const std::string gParamsKey;
+<span class="lineNum">      92 </span>            :         static const tParamDef gParamDefs[];
+<span class="lineNum">      93 </span>            :         static tParams GetDefaultParams();
+<span class="lineNum">      94 </span>            :         static void LoadParams(const Json::Value&amp; root, Eigen::VectorXd&amp; out_params);
+<span class="lineNum">      95 </span>            :         static void ParseType(const std::string&amp; str, eType&amp; out_type);
+<span class="lineNum">      96 </span>            : 
+<span class="lineNum">      97 </span>            :         typedef double (*tTerrainFunc)(double width, const tParams&amp; params, cRand&amp; rand, std::vector&lt;float&gt;&amp; out_data);
+<span class="lineNum">      98 </span>            :         static tTerrainFunc GetTerrainFunc(eType terrain_type);
+<span class="lineNum">      99 </span>            :         static const float gVertSpacing;
+<span class="lineNum">     100 </span>            : 
+<span class="lineNum">     101 </span>            :         static double BuildFlat(double width, const tParams&amp; params, cRand&amp; rand, std::vector&lt;float&gt;&amp; out_data);
+<span class="lineNum">     102 </span>            :         static double BuildGaps(double width, const tParams&amp; params, cRand&amp; rand, std::vector&lt;float&gt;&amp; out_data);
+<span class="lineNum">     103 </span>            :         static double BuildSteps(double width, const tParams&amp; params, cRand&amp; rand, std::vector&lt;float&gt;&amp; out_data);
+<span class="lineNum">     104 </span>            :         static double BuildWalls(double width, const tParams&amp; params, cRand&amp; rand, std::vector&lt;float&gt;&amp; out_data);
+<span class="lineNum">     105 </span>            :         static double BuildBumps(double width, const tParams&amp; params, cRand&amp; rand, std::vector&lt;float&gt;&amp; out_data);
+<span class="lineNum">     106 </span>            :         static double BuildMixed(double width, const tParams&amp; params, cRand&amp; rand, std::vector&lt;float&gt;&amp; out_data);
+<span class="lineNum">     107 </span>            :         static double BuildNarrowGaps(double width, const tParams&amp; params, cRand&amp; rand, std::vector&lt;float&gt;&amp; out_data);
+<span class="lineNum">     108 </span>            :         
+<span class="lineNum">     109 </span>            :         static double BuildSlopes(double width, const tParams&amp; params, cRand&amp; rand, std::vector&lt;float&gt;&amp; out_data);
+<span class="lineNum">     110 </span>            :         static double BuildSlopesGaps(double width, const tParams&amp; params, cRand&amp; rand, std::vector&lt;float&gt;&amp; out_data);
+<span class="lineNum">     111 </span>            :         static double BuildSlopesSteps(double width, const tParams&amp; params, cRand&amp; rand, std::vector&lt;float&gt;&amp; out_data);
+<span class="lineNum">     112 </span>            :         static double BuildSlopesWalls(double width, const tParams&amp; params, cRand&amp; rand, std::vector&lt;float&gt;&amp; out_data);
+<span class="lineNum">     113 </span>            :         static double BuildSlopesMixed(double width, const tParams&amp; params, cRand&amp; rand, std::vector&lt;float&gt;&amp; out_data);
+<span class="lineNum">     114 </span>            :         static double BuildSlopesNarrowGaps(double width, const tParams&amp; params, cRand&amp; rand, std::vector&lt;float&gt;&amp; out_data);
+<span class="lineNum">     115 </span>            :         
+<span class="lineNum">     116 </span>            :         static double BuildCliffs(double width, const tParams&amp; params, cRand&amp; rand, std::vector&lt;float&gt;&amp; out_data);
+<span class="lineNum">     117 </span>            : 
+<span class="lineNum">     118 </span>            :         static double AddFlat(double width, std::vector&lt;float&gt;&amp; out_data);
+<span class="lineNum">     119 </span>            :         static double AddStep(double width, double height, std::vector&lt;float&gt;&amp; out_data);
+<span class="lineNum">     120 </span>            :         static double AddBox(double spacing, double width, double depth, std::vector&lt;float&gt;&amp; out_data);
+<span class="lineNum">     121 </span>            :         static double AddSlope(double width, double slope, std::vector&lt;float&gt;&amp; out_data);
+<span class="lineNum">     122 </span>            :         
+<span class="lineNum">     123 </span>            :         static void OverlaySlopes(double delta_range, double delta_min, double delta_max, double init_slope, int beg_idx, int end_idx, cRand&amp; rand, std::vector&lt;float&gt;&amp; out_data);
+<span class="lineNum">     124 </span>            :         static void OverlayBumps(double min_delta_h, double max_delta_h, int beg_idx, int end_idx, cRand&amp; rand, std::vector&lt;float&gt;&amp; out_data);
+<span class="lineNum">     125 </span>            : 
+<span class="lineNum">     126 </span>            : protected:
+<span class="lineNum">     127 </span>            :         static int CalcNumVerts(double w);
+<span class="lineNum">     128 </span>            : };
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

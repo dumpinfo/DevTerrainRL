@@ -1,0 +1,945 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/learning/MACETrainer.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/learning</a> - MACETrainer.cpp<span style="font-size: 80%;"> (source / <a href="MACETrainer.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">449</td>
+            <td class="headerCovTableEntryLo">0.2 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">68</td>
+            <td class="headerCovTableEntryLo">2.9 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;MACETrainer.h&quot;</a>
+<span class="lineNum">       2 </span>            : #include &quot;util/FileUtil.h&quot;
+<span class="lineNum">       3 </span>            : #include &quot;util/Util.h&quot;
+<span class="lineNum">       4 </span>            : #include &quot;QNetTrainer.h&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : //#define DISABLE_CRITIC_BUFFER
+<a name="7"><span class="lineNum">       7 </span>            : //#define DISABLE_ACTOR_BUFFER</a>
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span><span class="lineNoCov">          0 : int cMACETrainer::GetMaxFragIdx(const Eigen::VectorXd&amp; params, int num_frags)</span>
+<span class="lineNum">      10 </span>            : {
+<span class="lineNum">      11 </span><span class="lineNoCov">          0 :         int a = 0;</span>
+<span class="lineNum">      12 </span><span class="lineNoCov">          0 :         params.segment(0, num_frags).maxCoeff(&amp;a);</span>
+<span class="lineNum">      13 </span><span class="lineNoCov">          0 :         return a;</span>
+<a name="14"><span class="lineNum">      14 </span>            : }</a>
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span><span class="lineNoCov">          0 : double cMACETrainer::GetMaxFragVal(const Eigen::VectorXd&amp; params, int num_frags)</span>
+<span class="lineNum">      17 </span>            : {
+<span class="lineNum">      18 </span><span class="lineNoCov">          0 :         return params.segment(0, num_frags).maxCoeff();</span>
+<a name="19"><span class="lineNum">      19 </span>            : }</a>
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span><span class="lineNoCov">          0 : void cMACETrainer::GetFrag(const Eigen::VectorXd&amp; params, int num_frags, int frag_size, int a_idx, Eigen::VectorXd&amp; out_params)</span>
+<span class="lineNum">      22 </span>            : {
+<span class="lineNum">      23 </span><span class="lineNoCov">          0 :         out_params = params.segment(num_frags + a_idx * frag_size, frag_size);</span>
+<a name="24"><span class="lineNum">      24 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span><span class="lineNoCov">          0 : void cMACETrainer::SetFrag(const Eigen::VectorXd&amp; frag, int a_idx, int num_frags, int frag_size, Eigen::VectorXd&amp; out_params)</span>
+<span class="lineNum">      27 </span>            : {
+<span class="lineNum">      28 </span><span class="lineNoCov">          0 :         out_params.segment(num_frags + a_idx * frag_size, frag_size) = frag;</span>
+<a name="29"><span class="lineNum">      29 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span><span class="lineNoCov">          0 : double cMACETrainer::GetVal(const Eigen::VectorXd&amp; params, int a_idx)</span>
+<span class="lineNum">      32 </span>            : {
+<span class="lineNum">      33 </span><span class="lineNoCov">          0 :         return params[a_idx];</span>
+<a name="34"><span class="lineNum">      34 </span>            : }</a>
+<span class="lineNum">      35 </span>            : 
+<span class="lineNum">      36 </span><span class="lineNoCov">          0 : void cMACETrainer::SetVal(double val, int a_idx, Eigen::VectorXd&amp; out_params)</span>
+<span class="lineNum">      37 </span>            : {
+<span class="lineNum">      38 </span><span class="lineNoCov">          0 :         out_params[a_idx] = val;</span>
+<a name="39"><span class="lineNum">      39 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span><span class="lineNoCov">          0 : int cMACETrainer::CalcNumFrags(int param_size, int frag_size)</span>
+<span class="lineNum">      42 </span>            : {
+<span class="lineNum">      43 </span><span class="lineNoCov">          0 :         return param_size / (frag_size + 1);</span>
+<a name="44"><span class="lineNum">      44 </span>            : }</a>
+<span class="lineNum">      45 </span>            : 
+<span class="lineNum">      46 </span><span class="lineNoCov">          0 : int cMACETrainer::GetActionFragIdx(const Eigen::VectorXd&amp; action_params)</span>
+<span class="lineNum">      47 </span>            : {
+<span class="lineNum">      48 </span><span class="lineNoCov">          0 :         int a_idx = static_cast&lt;int&gt;(action_params[0]);</span>
+<span class="lineNum">      49 </span><span class="lineNoCov">          0 :         return a_idx;</span>
+<a name="50"><span class="lineNum">      50 </span>            : }</a>
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span><span class="lineNoCov">          0 : void cMACETrainer::SetActionFragIdx(int a_idx, Eigen::VectorXd&amp; out_action_params)</span>
+<span class="lineNum">      53 </span>            : {
+<span class="lineNum">      54 </span><span class="lineNoCov">          0 :         out_action_params[0] = a_idx;</span>
+<a name="55"><span class="lineNum">      55 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">      56 </span>            : 
+<span class="lineNum">      57 </span><span class="lineNoCov">          0 : void cMACETrainer::GetActionFrag(const Eigen::VectorXd&amp; action_params, Eigen::VectorXd&amp; out_frag_params)</span>
+<span class="lineNum">      58 </span>            : {
+<span class="lineNum">      59 </span><span class="lineNoCov">          0 :         out_frag_params = action_params.segment(1, action_params.size() - 1);</span>
+<a name="60"><span class="lineNum">      60 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">      61 </span>            : 
+<span class="lineNum">      62 </span><span class="lineNoCov">          0 : void cMACETrainer::SetActionFrag(const Eigen::VectorXd&amp; frag_params, Eigen::VectorXd&amp; out_action_params)</span>
+<span class="lineNum">      63 </span>            : {
+<span class="lineNum">      64 </span><span class="lineNoCov">          0 :         out_action_params.segment(1, out_action_params.size() - 1) = frag_params;</span>
+<span class="lineNum">      65 </span><span class="lineNoCov">          0 : }</span>
+<a name="66"><span class="lineNum">      66 </span>            : </a>
+<span class="lineNum">      67 </span>            : 
+<span class="lineNum">      68 </span><span class="lineNoCov">          0 : cMACETrainer::cMACETrainer()</span>
+<span class="lineNum">      69 </span>            : {
+<span class="lineNum">      70 </span><span class="lineNoCov">          0 :         mNumActionFrags = 1;</span>
+<span class="lineNum">      71 </span><span class="lineNoCov">          0 :         mActionFragSize = 1;</span>
+<a name="72"><span class="lineNum">      72 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">      73 </span>            : 
+<span class="lineNum">      74 </span><span class="lineNoCov">          0 : cMACETrainer::~cMACETrainer()</span>
+<span class="lineNum">      75 </span>            : {
+<a name="76"><span class="lineNum">      76 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">      77 </span>            : 
+<span class="lineNum">      78 </span><span class="lineNoCov">          0 : void cMACETrainer::Init(const tParams&amp; params)</span>
+<span class="lineNum">      79 </span>            : {
+<span class="lineNum">      80 </span><span class="lineNoCov">          0 :         assert(params.mPoolSize == 1); // different pool sizes not yet supported</span>
+<span class="lineNum">      81 </span>            : 
+<span class="lineNum">      82 </span><span class="lineNoCov">          0 :         mActorIter = 0;</span>
+<span class="lineNum">      83 </span><span class="lineNoCov">          0 :         mActorBuffer.clear();</span>
+<span class="lineNum">      84 </span><span class="lineNoCov">          0 :         mCriticBuffer.clear();</span>
+<span class="lineNum">      85 </span><span class="lineNoCov">          0 :         mActorBatchBuffer.clear();</span>
+<span class="lineNum">      86 </span>            : 
+<span class="lineNum">      87 </span><span class="lineNoCov">          0 :         cNeuralNetTrainer::Init(params);</span>
+<span class="lineNum">      88 </span><span class="lineNoCov">          0 :         InitBatchBuffers();</span>
+<span class="lineNum">      89 </span><span class="lineNoCov">          0 :         InitActorProblem(mActorProb);</span>
+<a name="90"><span class="lineNum">      90 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">      91 </span>            : 
+<span class="lineNum">      92 </span><span class="lineNoCov">          0 : void cMACETrainer::Reset()</span>
+<span class="lineNum">      93 </span>            : {
+<span class="lineNum">      94 </span><span class="lineNoCov">          0 :         mActorIter = 0;</span>
+<span class="lineNum">      95 </span><span class="lineNoCov">          0 :         mActorBuffer.clear();</span>
+<span class="lineNum">      96 </span><span class="lineNoCov">          0 :         mCriticBuffer.clear();</span>
+<span class="lineNum">      97 </span><span class="lineNoCov">          0 :         mActorBatchBuffer.clear();</span>
+<span class="lineNum">      98 </span>            : 
+<span class="lineNum">      99 </span><span class="lineNoCov">          0 :         cNeuralNetTrainer::Reset();</span>
+<a name="100"><span class="lineNum">     100 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     101 </span>            : 
+<span class="lineNum">     102 </span><span class="lineNoCov">          0 : int cMACETrainer::AddTuple(const tExpTuple&amp; tuple)</span>
+<span class="lineNum">     103 </span>            : {
+<span class="lineNum">     104 </span><span class="lineNoCov">          0 :         int state_size = GetStateSize();</span>
+<span class="lineNum">     105 </span><span class="lineNoCov">          0 :         assert(tuple.mStateEnd.size() == state_size);</span>
+<span class="lineNum">     106 </span><span class="lineNoCov">          0 :         int t = cNeuralNetTrainer::AddTuple(tuple);</span>
+<span class="lineNum">     107 </span><span class="lineNoCov">          0 :         UpdateBuffers(t);</span>
+<span class="lineNum">     108 </span>            : 
+<span class="lineNum">     109 </span><span class="lineNoCov">          0 :         return t;</span>
+<a name="110"><span class="lineNum">     110 </span>            : }</a>
+<span class="lineNum">     111 </span>            : 
+<span class="lineNum">     112 </span><span class="lineNoCov">          0 : void cMACETrainer::SetNumActionFrags(int num)</span>
+<span class="lineNum">     113 </span>            : {
+<span class="lineNum">     114 </span><span class="lineNoCov">          0 :         mNumActionFrags = num;</span>
+<a name="115"><span class="lineNum">     115 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     116 </span>            : 
+<span class="lineNum">     117 </span><span class="lineNoCov">          0 : void cMACETrainer::SetActionFragSize(int size)</span>
+<span class="lineNum">     118 </span>            : {
+<span class="lineNum">     119 </span><span class="lineNoCov">          0 :         mActionFragSize = size;</span>
+<a name="120"><span class="lineNum">     120 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     121 </span>            : 
+<span class="lineNum">     122 </span><span class="lineNoCov">          0 : int cMACETrainer::GetNumActionFrags() const</span>
+<span class="lineNum">     123 </span>            : {
+<span class="lineNum">     124 </span><span class="lineNoCov">          0 :         return mNumActionFrags;</span>
+<a name="125"><span class="lineNum">     125 </span>            : }</a>
+<span class="lineNum">     126 </span>            : 
+<span class="lineNum">     127 </span><span class="lineNoCov">          0 : int cMACETrainer::GetActionFragSize() const</span>
+<span class="lineNum">     128 </span>            : {
+<span class="lineNum">     129 </span><span class="lineNoCov">          0 :         return mActionFragSize;</span>
+<a name="130"><span class="lineNum">     130 </span>            : }</a>
+<span class="lineNum">     131 </span>            : 
+<span class="lineNum">     132 </span><span class="lineNoCov">          0 : const std::unique_ptr&lt;cNeuralNet&gt;&amp; cMACETrainer::GetActor() const</span>
+<span class="lineNum">     133 </span>            : {
+<span class="lineNum">     134 </span><span class="lineNoCov">          0 :         return GetCurrNet();</span>
+<a name="135"><span class="lineNum">     135 </span>            : }</a>
+<span class="lineNum">     136 </span>            : 
+<span class="lineNum">     137 </span><span class="lineNoCov">          0 : void cMACETrainer::InitBatchBuffers()</span>
+<span class="lineNum">     138 </span>            : {
+<span class="lineNum">     139 </span><span class="lineNoCov">          0 :         int batch_size = GetBatchSize();</span>
+<span class="lineNum">     140 </span><span class="lineNoCov">          0 :         if (batch_size &gt; 0)</span>
+<span class="lineNum">     141 </span>            :         {
+<span class="lineNum">     142 </span><span class="lineNoCov">          0 :                 int input_size = GetInputSize();</span>
+<span class="lineNum">     143 </span><span class="lineNoCov">          0 :                 int output_size = GetOutputSize();</span>
+<span class="lineNum">     144 </span><span class="lineNoCov">          0 :                 mBatchXBuffer.resize(batch_size, input_size);</span>
+<span class="lineNum">     145 </span><span class="lineNoCov">          0 :                 mBatchYBuffer.resize(batch_size, output_size);</span>
+<span class="lineNum">     146 </span><span class="lineNoCov">          0 :                 mBatchValBuffer0.resize(batch_size);</span>
+<span class="lineNum">     147 </span><span class="lineNoCov">          0 :                 mBatchValBuffer1.resize(batch_size);</span>
+<span class="lineNum">     148 </span>            :         }
+<a name="149"><span class="lineNum">     149 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     150 </span>            : 
+<span class="lineNum">     151 </span><span class="lineNoCov">          0 : void cMACETrainer::InitActorProblem(cNeuralNet::tProblem&amp; out_prob) const</span>
+<span class="lineNum">     152 </span>            : {
+<span class="lineNum">     153 </span><span class="lineNoCov">          0 :         const auto&amp; net = GetActor();</span>
+<span class="lineNum">     154 </span><span class="lineNoCov">          0 :         const int x_size = net-&gt;GetInputSize();</span>
+<span class="lineNum">     155 </span><span class="lineNoCov">          0 :         const int y_size = net-&gt;GetOutputSize();</span>
+<span class="lineNum">     156 </span><span class="lineNoCov">          0 :         int num_data = GetActorBatchSize();</span>
+<span class="lineNum">     157 </span>            : 
+<span class="lineNum">     158 </span><span class="lineNoCov">          0 :         out_prob.mX.resize(num_data, x_size);</span>
+<span class="lineNum">     159 </span><span class="lineNoCov">          0 :         out_prob.mY.resize(num_data, y_size);</span>
+<span class="lineNum">     160 </span><span class="lineNoCov">          0 :         out_prob.mPassesPerStep = 1;</span>
+<a name="161"><span class="lineNum">     161 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     162 </span>            : 
+<span class="lineNum">     163 </span><span class="lineNoCov">          0 : void cMACETrainer::FetchMinibatch(int size, std::vector&lt;int&gt;&amp; out_batch)</span>
+<span class="lineNum">     164 </span>            : {
+<span class="lineNum">     165 </span>            : #if defined(DISABLE_CRITIC_BUFFER)
+<span class="lineNum">     166 </span>            :         cNeuralNetTrainer::FetchMinibatch(size, out_batch);
+<span class="lineNum">     167 </span>            : #else
+<span class="lineNum">     168 </span><span class="lineNoCov">          0 :         int critic_buffer_size = static_cast&lt;int&gt;(mCriticBuffer.size());</span>
+<span class="lineNum">     169 </span><span class="lineNoCov">          0 :         if (critic_buffer_size &gt;= size)</span>
+<span class="lineNum">     170 </span>            :         {
+<span class="lineNum">     171 </span><span class="lineNoCov">          0 :                 out_batch.resize(size);</span>
+<span class="lineNum">     172 </span><span class="lineNoCov">          0 :                 for (int i = 0; i &lt; size; ++i)</span>
+<span class="lineNum">     173 </span>            :                 {
+<span class="lineNum">     174 </span><span class="lineNoCov">          0 :                         int idx = cMathUtil::RandInt(0, critic_buffer_size);</span>
+<span class="lineNum">     175 </span><span class="lineNoCov">          0 :                         int t = mCriticBuffer[idx];</span>
+<span class="lineNum">     176 </span><span class="lineNoCov">          0 :                         assert(!IsExpActor(t));</span>
+<span class="lineNum">     177 </span>            : 
+<span class="lineNum">     178 </span><span class="lineNoCov">          0 :                         out_batch[i] = t;</span>
+<span class="lineNum">     179 </span>            :                 }
+<span class="lineNum">     180 </span>            :         }
+<span class="lineNum">     181 </span>            :         else
+<span class="lineNum">     182 </span>            :         {
+<span class="lineNum">     183 </span><span class="lineNoCov">          0 :                 out_batch.clear();</span>
+<span class="lineNum">     184 </span>            :         }
+<span class="lineNum">     185 </span>            : #endif
+<a name="186"><span class="lineNum">     186 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     187 </span>            : 
+<span class="lineNum">     188 </span><span class="lineNoCov">          0 : void cMACETrainer::FetchActorMinibatch(int batch_size, std::vector&lt;int&gt;&amp; out_batch)</span>
+<span class="lineNum">     189 </span>            : {
+<span class="lineNum">     190 </span><span class="lineNoCov">          0 :         int num_exp_actor = static_cast&lt;int&gt;(mActorBuffer.size());</span>
+<span class="lineNum">     191 </span><span class="lineNoCov">          0 :         int num_samples = std::min(batch_size, num_exp_actor);</span>
+<span class="lineNum">     192 </span><span class="lineNoCov">          0 :         out_batch.clear();</span>
+<span class="lineNum">     193 </span><span class="lineNoCov">          0 :         out_batch.reserve(num_samples);</span>
+<span class="lineNum">     194 </span>            : 
+<span class="lineNum">     195 </span><span class="lineNoCov">          0 :         for (int i = 0; i &lt; num_samples; ++i)</span>
+<span class="lineNum">     196 </span>            :         {
+<span class="lineNum">     197 </span><span class="lineNoCov">          0 :                 int rand_idx = cMathUtil::RandInt(0, num_exp_actor);</span>
+<span class="lineNum">     198 </span><span class="lineNoCov">          0 :                 int t = mActorBuffer[rand_idx];</span>
+<span class="lineNum">     199 </span>            : 
+<span class="lineNum">     200 </span>            : #if defined(DISABLE_ACTOR_BUFFER)
+<span class="lineNum">     201 </span>            :                 t = cMathUtil::RandInt(0, mNumTuples);
+<span class="lineNum">     202 </span>            : #endif
+<span class="lineNum">     203 </span><span class="lineNoCov">          0 :                 bool contains = (std::find(mActorBatchBuffer.begin(), mActorBatchBuffer.end(), t) != mActorBatchBuffer.end())</span>
+<span class="lineNum">     204 </span><span class="lineNoCov">          0 :                                                 || (std::find(out_batch.begin(), out_batch.end(), t) != out_batch.end());</span>
+<span class="lineNum">     205 </span><span class="lineNoCov">          0 :                 if (!contains)</span>
+<span class="lineNum">     206 </span>            :                 {
+<span class="lineNum">     207 </span><span class="lineNoCov">          0 :                         out_batch.push_back(t);</span>
+<span class="lineNum">     208 </span>            :                 }
+<span class="lineNum">     209 </span>            :         }
+<a name="210"><span class="lineNum">     210 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     211 </span>            : 
+<span class="lineNum">     212 </span><span class="lineNoCov">          0 : void cMACETrainer::BuildNetPool(const std::string&amp; net_file, const std::string&amp; solver_file, int pool_size)</span>
+<span class="lineNum">     213 </span>            : {
+<span class="lineNum">     214 </span><span class="lineNoCov">          0 :         cNeuralNetTrainer::BuildNetPool(net_file, solver_file, pool_size);</span>
+<span class="lineNum">     215 </span><span class="lineNoCov">          0 :         UpdateTargetNet();</span>
+<a name="216"><span class="lineNum">     216 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     217 </span>            : 
+<span class="lineNum">     218 </span><span class="lineNoCov">          0 : void cMACETrainer::BuildProblemY(int net_id, const std::vector&lt;int&gt;&amp; tuple_ids,</span>
+<span class="lineNum">     219 </span>            :                                                                 const Eigen::MatrixXd&amp; X, cNeuralNet::tProblem&amp; out_prob)
+<span class="lineNum">     220 </span>            : {
+<span class="lineNum">     221 </span><span class="lineNoCov">          0 :         int num_data = static_cast&lt;int&gt;(tuple_ids.size());</span>
+<span class="lineNum">     222 </span><span class="lineNoCov">          0 :         assert(num_data == GetBatchSize());</span>
+<span class="lineNum">     223 </span><span class="lineNoCov">          0 :         assert(out_prob.mY.rows() == num_data);</span>
+<span class="lineNum">     224 </span>            : 
+<span class="lineNum">     225 </span><span class="lineNoCov">          0 :         CalcNewCumulativeRewardBatch(net_id, tuple_ids, mBatchValBuffer0);</span>
+<span class="lineNum">     226 </span><span class="lineNoCov">          0 :         const auto&amp; curr_net = mNetPool[net_id];</span>
+<span class="lineNum">     227 </span><span class="lineNoCov">          0 :         curr_net-&gt;EvalBatch(X, out_prob.mY);</span>
+<span class="lineNum">     228 </span>            : 
+<span class="lineNum">     229 </span><span class="lineNoCov">          0 :         for (int i = 0; i &lt; num_data; ++i)</span>
+<span class="lineNum">     230 </span>            :         {
+<span class="lineNum">     231 </span><span class="lineNoCov">          0 :                 int t = tuple_ids[i];</span>
+<span class="lineNum">     232 </span><span class="lineNoCov">          0 :                 tExpTuple tuple = GetTuple(t);</span>
+<span class="lineNum">     233 </span>            : 
+<span class="lineNum">     234 </span><span class="lineNoCov">          0 :                 double new_q = mBatchValBuffer0(i);</span>
+<span class="lineNum">     235 </span>            : 
+<span class="lineNum">     236 </span><span class="lineNoCov">          0 :                 int a = GetActionFragIdx(tuple.mAction);</span>
+<span class="lineNum">     237 </span><span class="lineNoCov">          0 :                 Eigen::VectorXd curr_y = out_prob.mY.row(i);</span>
+<span class="lineNum">     238 </span><span class="lineNoCov">          0 :                 SetValAux(new_q, a, curr_y);</span>
+<span class="lineNum">     239 </span><span class="lineNoCov">          0 :                 out_prob.mY.row(i) = curr_y;</span>
+<span class="lineNum">     240 </span>            :         }
+<a name="241"><span class="lineNum">     241 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     242 </span>            : 
+<span class="lineNum">     243 </span><span class="lineNoCov">          0 : void cMACETrainer::BuildTupleActorY(const tExpTuple&amp; tuple, Eigen::VectorXd&amp; out_y)</span>
+<span class="lineNum">     244 </span>            : {
+<span class="lineNum">     245 </span><span class="lineNoCov">          0 :         const auto&amp; actor = GetActor();</span>
+<span class="lineNum">     246 </span>            : 
+<span class="lineNum">     247 </span><span class="lineNoCov">          0 :         Eigen::VectorXd x;</span>
+<span class="lineNum">     248 </span><span class="lineNoCov">          0 :         BuildTupleX(tuple, x);</span>
+<span class="lineNum">     249 </span>            : 
+<span class="lineNum">     250 </span><span class="lineNoCov">          0 :         actor-&gt;Eval(x, out_y);</span>
+<span class="lineNum">     251 </span>            : 
+<span class="lineNum">     252 </span><span class="lineNoCov">          0 :         int a = GetActionFragIdx(tuple.mAction);</span>
+<span class="lineNum">     253 </span><span class="lineNoCov">          0 :         Eigen::VectorXd frag;</span>
+<span class="lineNum">     254 </span><span class="lineNoCov">          0 :         GetActionFrag(tuple.mAction, frag);</span>
+<span class="lineNum">     255 </span><span class="lineNoCov">          0 :         SetFragAux(frag, a, out_y);</span>
+<a name="256"><span class="lineNum">     256 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     257 </span>            : 
+<span class="lineNum">     258 </span><span class="lineNoCov">          0 : void cMACETrainer::BuildActorProblemX(int num_data, const std::vector&lt;int&gt;&amp; tuple_ids, cNeuralNet::tProblem&amp; out_prob)</span>
+<span class="lineNum">     259 </span>            : {
+<span class="lineNum">     260 </span><span class="lineNoCov">          0 :         assert(num_data &lt;= GetBatchSize());</span>
+<span class="lineNum">     261 </span><span class="lineNoCov">          0 :         assert(num_data &lt;= out_prob.mX.rows());</span>
+<span class="lineNum">     262 </span>            : 
+<span class="lineNum">     263 </span><span class="lineNoCov">          0 :         for (int i = 0; i &lt; num_data; ++i)</span>
+<span class="lineNum">     264 </span>            :         {
+<span class="lineNum">     265 </span><span class="lineNoCov">          0 :                 int t = tuple_ids[i];</span>
+<span class="lineNum">     266 </span><span class="lineNoCov">          0 :                 tExpTuple tuple = GetTuple(t);</span>
+<span class="lineNum">     267 </span>            : 
+<span class="lineNum">     268 </span><span class="lineNoCov">          0 :                 Eigen::VectorXd x;</span>
+<span class="lineNum">     269 </span><span class="lineNoCov">          0 :                 BuildTupleX(tuple, x);</span>
+<span class="lineNum">     270 </span><span class="lineNoCov">          0 :                 out_prob.mX.row(i) = x;</span>
+<span class="lineNum">     271 </span>            :         }
+<a name="272"><span class="lineNum">     272 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     273 </span>            : 
+<span class="lineNum">     274 </span><span class="lineNoCov">          0 : void cMACETrainer::BuildActorProblemY(int num_data, const std::vector&lt;int&gt;&amp; tuple_ids, const Eigen::MatrixXd&amp; X, cNeuralNet::tProblem&amp; out_prob)</span>
+<span class="lineNum">     275 </span>            : {
+<span class="lineNum">     276 </span><span class="lineNoCov">          0 :         const auto&amp; net = GetActor();</span>
+<span class="lineNum">     277 </span><span class="lineNoCov">          0 :         net-&gt;EvalBatch(X, out_prob.mY);</span>
+<span class="lineNum">     278 </span>            : 
+<span class="lineNum">     279 </span><span class="lineNoCov">          0 :         for (int i = 0; i &lt; num_data; ++i)</span>
+<span class="lineNum">     280 </span>            :         {
+<span class="lineNum">     281 </span><span class="lineNoCov">          0 :                 int t = tuple_ids[i];</span>
+<span class="lineNum">     282 </span><span class="lineNoCov">          0 :                 tExpTuple tuple = GetTuple(t);</span>
+<span class="lineNum">     283 </span>            : 
+<span class="lineNum">     284 </span><span class="lineNoCov">          0 :                 Eigen::VectorXd frag;</span>
+<span class="lineNum">     285 </span><span class="lineNoCov">          0 :                 GetActionFrag(tuple.mAction, frag);</span>
+<span class="lineNum">     286 </span>            : 
+<span class="lineNum">     287 </span><span class="lineNoCov">          0 :                 int a = GetActionFragIdx(tuple.mAction);</span>
+<span class="lineNum">     288 </span><span class="lineNoCov">          0 :                 Eigen::VectorXd curr_y = out_prob.mY.row(i);</span>
+<span class="lineNum">     289 </span><span class="lineNoCov">          0 :                 SetFragAux(frag, a, curr_y);</span>
+<span class="lineNum">     290 </span>            : 
+<span class="lineNum">     291 </span><span class="lineNoCov">          0 :                 out_prob.mY.row(i) = curr_y;</span>
+<span class="lineNum">     292 </span>            :         }
+<a name="293"><span class="lineNum">     293 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     294 </span>            : 
+<span class="lineNum">     295 </span><span class="lineNoCov">          0 : int cMACETrainer::GetActorBatchSize() const</span>
+<span class="lineNum">     296 </span>            : {
+<span class="lineNum">     297 </span><span class="lineNoCov">          0 :         const auto&amp; actor = GetActor();</span>
+<span class="lineNum">     298 </span><span class="lineNoCov">          0 :         return actor-&gt;GetBatchSize();</span>
+<a name="299"><span class="lineNum">     299 </span>            : }</a>
+<span class="lineNum">     300 </span>            : 
+<span class="lineNum">     301 </span><span class="lineNoCov">          0 : void cMACETrainer::BuildTupleY(int net_id, const tExpTuple&amp; tuple, Eigen::VectorXd&amp; out_y)</span>
+<span class="lineNum">     302 </span>            : {
+<span class="lineNum">     303 </span><span class="lineNoCov">          0 :         const auto&amp; net = mNetPool[net_id];</span>
+<span class="lineNum">     304 </span><span class="lineNoCov">          0 :         double new_q = CalcNewCumulativeReward(net_id, tuple);</span>
+<span class="lineNum">     305 </span>            : 
+<span class="lineNum">     306 </span><span class="lineNoCov">          0 :         Eigen::VectorXd x;</span>
+<span class="lineNum">     307 </span><span class="lineNoCov">          0 :         BuildTupleX(tuple, x);</span>
+<span class="lineNum">     308 </span>            : 
+<span class="lineNum">     309 </span><span class="lineNoCov">          0 :         net-&gt;Eval(x, out_y);</span>
+<span class="lineNum">     310 </span>            : 
+<span class="lineNum">     311 </span><span class="lineNoCov">          0 :         int a = GetActionFragIdx(tuple.mAction);</span>
+<span class="lineNum">     312 </span><span class="lineNoCov">          0 :         SetValAux(new_q, a, out_y);</span>
+<a name="313"><span class="lineNum">     313 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     314 </span>            : 
+<span class="lineNum">     315 </span><span class="lineNoCov">          0 : void cMACETrainer::ApplySteps(int num_steps)</span>
+<span class="lineNum">     316 </span>            : {
+<span class="lineNum">     317 </span><span class="lineNoCov">          0 :         int critic_buffer_count = static_cast&lt;int&gt;(mCriticBuffer.size());</span>
+<span class="lineNum">     318 </span><span class="lineNoCov">          0 :         int actor_buffer_count = static_cast&lt;int&gt;(mActorBuffer.size());</span>
+<span class="lineNum">     319 </span>            : 
+<span class="lineNum">     320 </span><span class="lineNoCov">          0 :         printf(&quot;Critic Buffer Count %i\n&quot;, critic_buffer_count);</span>
+<span class="lineNum">     321 </span><span class="lineNoCov">          0 :         printf(&quot;Actor Buffer Count %i\n&quot;, actor_buffer_count);</span>
+<span class="lineNum">     322 </span><span class="lineNoCov">          0 :         printf(&quot;Actor Iter %i\n&quot;, mActorIter);</span>
+<span class="lineNum">     323 </span><span class="lineNoCov">          0 :         cNeuralNetTrainer::ApplySteps(num_steps);</span>
+<a name="324"><span class="lineNum">     324 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     325 </span>            : 
+<span class="lineNum">     326 </span><span class="lineNoCov">          0 : int cMACETrainer::GetPoolSize() const</span>
+<span class="lineNum">     327 </span>            : {
+<span class="lineNum">     328 </span><span class="lineNoCov">          0 :         int pool_size = GetNetPoolSize();</span>
+<span class="lineNum">     329 </span><span class="lineNoCov">          0 :         if (EnableTargetNet())</span>
+<span class="lineNum">     330 </span>            :         {
+<span class="lineNum">     331 </span><span class="lineNoCov">          0 :                 pool_size *= 2;</span>
+<span class="lineNum">     332 </span>            :         }
+<span class="lineNum">     333 </span><span class="lineNoCov">          0 :         return pool_size;</span>
+<a name="334"><span class="lineNum">     334 </span>            : }</a>
+<span class="lineNum">     335 </span>            : 
+<span class="lineNum">     336 </span><span class="lineNoCov">          0 : bool cMACETrainer::Step()</span>
+<span class="lineNum">     337 </span>            : {
+<span class="lineNum">     338 </span><span class="lineNoCov">          0 :         bool succ = false;</span>
+<span class="lineNum">     339 </span><span class="lineNoCov">          0 :         for (int i = 0; i &lt; GetNetPoolSize(); ++i)</span>
+<span class="lineNum">     340 </span>            :         {
+<span class="lineNum">     341 </span><span class="lineNoCov">          0 :                 printf(&quot;Update Net %i:\n&quot;, i);</span>
+<span class="lineNum">     342 </span><span class="lineNoCov">          0 :                 succ = BuildProblem(i, mProb);</span>
+<span class="lineNum">     343 </span><span class="lineNoCov">          0 :                 if (succ)</span>
+<span class="lineNum">     344 </span>            :                 {
+<span class="lineNum">     345 </span><span class="lineNoCov">          0 :                         UpdateNet(i, mProb);</span>
+<span class="lineNum">     346 </span>            :                 }
+<span class="lineNum">     347 </span>            :         }
+<span class="lineNum">     348 </span>            : 
+<span class="lineNum">     349 </span><span class="lineNoCov">          0 :         UpdateActor();</span>
+<span class="lineNum">     350 </span>            : 
+<span class="lineNum">     351 </span><span class="lineNoCov">          0 :         if (EnableTargetNet())</span>
+<span class="lineNum">     352 </span>            :         {
+<span class="lineNum">     353 </span><span class="lineNoCov">          0 :                 int iters = GetIter();</span>
+<span class="lineNum">     354 </span><span class="lineNoCov">          0 :                 if ((iters &gt; 0) &amp;&amp; (iters % mParams.mFreezeTargetIters == 0))</span>
+<span class="lineNum">     355 </span>            :                 {
+<span class="lineNum">     356 </span><span class="lineNoCov">          0 :                         UpdateTargetNet();</span>
+<span class="lineNum">     357 </span>            :                 }
+<span class="lineNum">     358 </span>            :         }
+<span class="lineNum">     359 </span>            : 
+<span class="lineNum">     360 </span><span class="lineNoCov">          0 :         return succ;</span>
+<a name="361"><span class="lineNum">     361 </span>            : }</a>
+<span class="lineNum">     362 </span>            : 
+<span class="lineNum">     363 </span><span class="lineNoCov">          0 : int cMACETrainer::GetTargetNetID(int net_id) const</span>
+<span class="lineNum">     364 </span>            : {
+<span class="lineNum">     365 </span><span class="lineNoCov">          0 :         int target_id = net_id;</span>
+<span class="lineNum">     366 </span><span class="lineNoCov">          0 :         if (EnableTargetNet())</span>
+<span class="lineNum">     367 </span>            :         {
+<span class="lineNum">     368 </span><span class="lineNoCov">          0 :                 target_id = mParams.mPoolSize + net_id;</span>
+<span class="lineNum">     369 </span>            :         }
+<span class="lineNum">     370 </span><span class="lineNoCov">          0 :         return target_id;</span>
+<a name="371"><span class="lineNum">     371 </span>            : }</a>
+<span class="lineNum">     372 </span>            : 
+<span class="lineNum">     373 </span><span class="lineNoCov">          0 : int cMACETrainer::CalcBufferSize() const</span>
+<span class="lineNum">     374 </span>            : {
+<span class="lineNum">     375 </span><span class="lineNoCov">          0 :         return 1 + GetStateSize() * 2 + GetActionSize();</span>
+<a name="376"><span class="lineNum">     376 </span>            : }</a>
+<span class="lineNum">     377 </span>            : 
+<span class="lineNum">     378 </span><span class="lineNoCov">          0 : int cMACETrainer::GetRewardIdx() const</span>
+<span class="lineNum">     379 </span>            : {
+<span class="lineNum">     380 </span><span class="lineNoCov">          0 :         return 0;</span>
+<a name="381"><span class="lineNum">     381 </span>            : }</a>
+<span class="lineNum">     382 </span>            : 
+<span class="lineNum">     383 </span><span class="lineNoCov">          0 : int cMACETrainer::GetStateBegIdx() const</span>
+<span class="lineNum">     384 </span>            : {
+<span class="lineNum">     385 </span><span class="lineNoCov">          0 :         return 1;</span>
+<a name="386"><span class="lineNum">     386 </span>            : }</a>
+<span class="lineNum">     387 </span>            : 
+<span class="lineNum">     388 </span><span class="lineNoCov">          0 : int cMACETrainer::GetStateEndIdx() const</span>
+<span class="lineNum">     389 </span>            : {
+<span class="lineNum">     390 </span><span class="lineNoCov">          0 :         return 1 + GetStateSize() + GetActionSize();</span>
+<a name="391"><span class="lineNum">     391 </span>            : }</a>
+<span class="lineNum">     392 </span>            : 
+<span class="lineNum">     393 </span><span class="lineNoCov">          0 : int cMACETrainer::GetActionIdx() const</span>
+<span class="lineNum">     394 </span>            : {
+<span class="lineNum">     395 </span><span class="lineNoCov">          0 :         return 1 + GetStateSize();</span>
+<a name="396"><span class="lineNum">     396 </span>            : }</a>
+<span class="lineNum">     397 </span>            : 
+<span class="lineNum">     398 </span><span class="lineNoCov">          0 : int cMACETrainer::GetActionSize() const</span>
+<span class="lineNum">     399 </span>            : {
+<span class="lineNum">     400 </span><span class="lineNoCov">          0 :         int size = 1 + mActionFragSize;</span>
+<span class="lineNum">     401 </span><span class="lineNoCov">          0 :         return size;</span>
+<a name="402"><span class="lineNum">     402 </span>            : }</a>
+<span class="lineNum">     403 </span>            : 
+<span class="lineNum">     404 </span><span class="lineNoCov">          0 : double cMACETrainer::CalcCurrCumulativeReward(int net_id, const tExpTuple&amp; tuple)</span>
+<span class="lineNum">     405 </span>            : {
+<span class="lineNum">     406 </span><span class="lineNoCov">          0 :         const auto&amp; tar_net = GetTargetNet(net_id);</span>
+<span class="lineNum">     407 </span>            : 
+<span class="lineNum">     408 </span><span class="lineNoCov">          0 :         Eigen::VectorXd x;</span>
+<span class="lineNum">     409 </span><span class="lineNoCov">          0 :         BuildTupleX(tuple, x);</span>
+<span class="lineNum">     410 </span>            : 
+<span class="lineNum">     411 </span><span class="lineNoCov">          0 :         Eigen::VectorXd y;</span>
+<span class="lineNum">     412 </span><span class="lineNoCov">          0 :         tar_net-&gt;Eval(x, y);</span>
+<span class="lineNum">     413 </span><span class="lineNoCov">          0 :         double val = GetMaxFragValAux(y);</span>
+<span class="lineNum">     414 </span>            : 
+<span class="lineNum">     415 </span><span class="lineNoCov">          0 :         return val;</span>
+<a name="416"><span class="lineNum">     416 </span>            : }</a>
+<span class="lineNum">     417 </span>            : 
+<span class="lineNum">     418 </span><span class="lineNoCov">          0 : double cMACETrainer::CalcNewCumulativeReward(int net_id, const tExpTuple&amp; tuple)</span>
+<span class="lineNum">     419 </span>            : {
+<span class="lineNum">     420 </span><span class="lineNoCov">          0 :         double new_q = 0;</span>
+<span class="lineNum">     421 </span><span class="lineNoCov">          0 :         double r = tuple.mReward;</span>
+<span class="lineNum">     422 </span>            : 
+<span class="lineNum">     423 </span><span class="lineNoCov">          0 :         double discount = GetDiscount();</span>
+<span class="lineNum">     424 </span><span class="lineNoCov">          0 :         double norm = CalcDiscountNorm(discount);</span>
+<span class="lineNum">     425 </span><span class="lineNoCov">          0 :         r *= norm;</span>
+<span class="lineNum">     426 </span>            : 
+<span class="lineNum">     427 </span><span class="lineNoCov">          0 :         const auto&amp; tar_net = GetTargetNet(net_id);</span>
+<span class="lineNum">     428 </span>            : 
+<span class="lineNum">     429 </span><span class="lineNoCov">          0 :         bool fail = tuple.GetFlag(cMACETrainer::eFlagFail);</span>
+<span class="lineNum">     430 </span><span class="lineNoCov">          0 :         if (fail)</span>
+<span class="lineNum">     431 </span>            :         {
+<span class="lineNum">     432 </span><span class="lineNoCov">          0 :                 new_q = r;</span>
+<span class="lineNum">     433 </span>            :         }
+<span class="lineNum">     434 </span>            :         else
+<span class="lineNum">     435 </span>            :         {
+<span class="lineNum">     436 </span><span class="lineNoCov">          0 :                 Eigen::VectorXd y_next;</span>
+<span class="lineNum">     437 </span><span class="lineNoCov">          0 :                 tar_net-&gt;Eval(tuple.mStateEnd, y_next);</span>
+<span class="lineNum">     438 </span><span class="lineNoCov">          0 :                 double q_end = GetMaxFragValAux(y_next);</span>
+<span class="lineNum">     439 </span>            : 
+<span class="lineNum">     440 </span><span class="lineNoCov">          0 :                 new_q = r + discount * q_end;</span>
+<span class="lineNum">     441 </span>            :         }
+<span class="lineNum">     442 </span>            : 
+<span class="lineNum">     443 </span><span class="lineNoCov">          0 :         return new_q;</span>
+<a name="444"><span class="lineNum">     444 </span>            : }</a>
+<span class="lineNum">     445 </span>            : 
+<span class="lineNum">     446 </span><span class="lineNoCov">          0 : void cMACETrainer::CalcCurrCumulativeRewardBatch(int net_id, const std::vector&lt;int&gt;&amp; tuple_ids,</span>
+<span class="lineNum">     447 </span>            :                                                                                                 Eigen::VectorXd&amp; out_vals)
+<span class="lineNum">     448 </span>            : {
+<span class="lineNum">     449 </span><span class="lineNoCov">          0 :         const int num_data = static_cast&lt;int&gt;(tuple_ids.size());</span>
+<span class="lineNum">     450 </span><span class="lineNoCov">          0 :         assert(num_data &lt;= GetBatchSize());</span>
+<span class="lineNum">     451 </span><span class="lineNoCov">          0 :         const auto&amp; tar_net = GetTargetNet(net_id);</span>
+<span class="lineNum">     452 </span>            : 
+<span class="lineNum">     453 </span><span class="lineNoCov">          0 :         for (int i = 0; i &lt; num_data; ++i)</span>
+<span class="lineNum">     454 </span>            :         {
+<span class="lineNum">     455 </span><span class="lineNoCov">          0 :                 int t = tuple_ids[i];</span>
+<span class="lineNum">     456 </span><span class="lineNoCov">          0 :                 tExpTuple tuple = GetTuple(t);</span>
+<span class="lineNum">     457 </span><span class="lineNoCov">          0 :                 Eigen::VectorXd x;</span>
+<span class="lineNum">     458 </span><span class="lineNoCov">          0 :                 BuildTupleX(tuple, x);</span>
+<span class="lineNum">     459 </span><span class="lineNoCov">          0 :                 mBatchXBuffer.row(i) = x;</span>
+<span class="lineNum">     460 </span>            :         }
+<span class="lineNum">     461 </span>            : 
+<span class="lineNum">     462 </span><span class="lineNoCov">          0 :         tar_net-&gt;EvalBatch(mBatchXBuffer, mBatchYBuffer);</span>
+<span class="lineNum">     463 </span>            : 
+<span class="lineNum">     464 </span><span class="lineNoCov">          0 :         for (int i = 0; i &lt; num_data; ++i)</span>
+<span class="lineNum">     465 </span>            :         {
+<span class="lineNum">     466 </span><span class="lineNoCov">          0 :                 auto curr_y = mBatchYBuffer.row(i);</span>
+<span class="lineNum">     467 </span><span class="lineNoCov">          0 :                 double val = GetMaxFragValAux(curr_y);</span>
+<span class="lineNum">     468 </span><span class="lineNoCov">          0 :                 out_vals(i) = val;</span>
+<span class="lineNum">     469 </span>            :         }
+<a name="470"><span class="lineNum">     470 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     471 </span>            : 
+<span class="lineNum">     472 </span><span class="lineNoCov">          0 : void cMACETrainer::CalcNewCumulativeRewardBatch(int net_id, const std::vector&lt;int&gt;&amp; tuple_ids,</span>
+<span class="lineNum">     473 </span>            :                                                                                                 Eigen::VectorXd&amp; out_vals)
+<span class="lineNum">     474 </span>            : {
+<span class="lineNum">     475 </span><span class="lineNoCov">          0 :         const int num_data = static_cast&lt;int&gt;(tuple_ids.size());</span>
+<span class="lineNum">     476 </span><span class="lineNoCov">          0 :         assert(num_data &lt;= GetBatchSize());</span>
+<span class="lineNum">     477 </span><span class="lineNoCov">          0 :         const auto&amp; tar_net = GetTargetNet(net_id);</span>
+<span class="lineNum">     478 </span>            : 
+<span class="lineNum">     479 </span><span class="lineNoCov">          0 :         for (int i = 0; i &lt; num_data; ++i)</span>
+<span class="lineNum">     480 </span>            :         {
+<span class="lineNum">     481 </span><span class="lineNoCov">          0 :                 int t = tuple_ids[i];</span>
+<span class="lineNum">     482 </span><span class="lineNoCov">          0 :                 tExpTuple tuple = GetTuple(t);</span>
+<span class="lineNum">     483 </span><span class="lineNoCov">          0 :                 mBatchXBuffer.row(i) = tuple.mStateEnd;</span>
+<span class="lineNum">     484 </span>            :         }
+<span class="lineNum">     485 </span>            : 
+<span class="lineNum">     486 </span><span class="lineNoCov">          0 :         tar_net-&gt;EvalBatch(mBatchXBuffer, mBatchYBuffer);</span>
+<span class="lineNum">     487 </span>            : 
+<span class="lineNum">     488 </span><span class="lineNoCov">          0 :         double discount = GetDiscount();</span>
+<span class="lineNum">     489 </span><span class="lineNoCov">          0 :         double norm = CalcDiscountNorm(discount);</span>
+<span class="lineNum">     490 </span>            : 
+<span class="lineNum">     491 </span><span class="lineNoCov">          0 :         for (int i = 0; i &lt; num_data; ++i)</span>
+<span class="lineNum">     492 </span>            :         {
+<span class="lineNum">     493 </span><span class="lineNoCov">          0 :                 int t = tuple_ids[i];</span>
+<span class="lineNum">     494 </span><span class="lineNoCov">          0 :                 tExpTuple tuple = GetTuple(t);</span>
+<span class="lineNum">     495 </span>            : 
+<span class="lineNum">     496 </span><span class="lineNoCov">          0 :                 double new_q = 0;</span>
+<span class="lineNum">     497 </span><span class="lineNoCov">          0 :                 double r = tuple.mReward;</span>
+<span class="lineNum">     498 </span><span class="lineNoCov">          0 :                 r *= norm;</span>
+<span class="lineNum">     499 </span>            : 
+<span class="lineNum">     500 </span><span class="lineNoCov">          0 :                 bool fail = tuple.GetFlag(eFlagFail);</span>
+<span class="lineNum">     501 </span><span class="lineNoCov">          0 :                 if (fail)</span>
+<span class="lineNum">     502 </span>            :                 {
+<span class="lineNum">     503 </span><span class="lineNoCov">          0 :                         new_q = r;</span>
+<span class="lineNum">     504 </span>            :                 }
+<span class="lineNum">     505 </span>            :                 else
+<span class="lineNum">     506 </span>            :                 {
+<span class="lineNum">     507 </span><span class="lineNoCov">          0 :                         auto y_next = mBatchYBuffer.row(i);</span>
+<span class="lineNum">     508 </span><span class="lineNoCov">          0 :                         double q_end = GetMaxFragValAux(y_next);</span>
+<span class="lineNum">     509 </span><span class="lineNoCov">          0 :                         new_q = r + discount * q_end;</span>
+<span class="lineNum">     510 </span>            :                 }
+<span class="lineNum">     511 </span><span class="lineNoCov">          0 :                 out_vals(i) = new_q;</span>
+<span class="lineNum">     512 </span>            :         }
+<a name="513"><span class="lineNum">     513 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     514 </span>            : 
+<span class="lineNum">     515 </span><span class="lineNoCov">          0 : void cMACETrainer::SetTuple(int t, const tExpTuple&amp; tuple)</span>
+<span class="lineNum">     516 </span>            : {
+<span class="lineNum">     517 </span><span class="lineNoCov">          0 :         auto curr_row = mPlaybackMem.row(t);</span>
+<span class="lineNum">     518 </span>            : 
+<span class="lineNum">     519 </span><span class="lineNoCov">          0 :         curr_row(GetRewardIdx()) = static_cast&lt;float&gt;(tuple.mReward);</span>
+<span class="lineNum">     520 </span>            : 
+<span class="lineNum">     521 </span><span class="lineNoCov">          0 :         int state_size = GetStateSize();</span>
+<span class="lineNum">     522 </span><span class="lineNoCov">          0 :         int state_beg_idx = GetStateBegIdx();</span>
+<span class="lineNum">     523 </span><span class="lineNoCov">          0 :         int state_end_idx = GetStateEndIdx();</span>
+<span class="lineNum">     524 </span><span class="lineNoCov">          0 :         int action_idx = GetActionIdx();</span>
+<span class="lineNum">     525 </span><span class="lineNoCov">          0 :         int action_size = GetActionSize();</span>
+<span class="lineNum">     526 </span>            : 
+<span class="lineNum">     527 </span><span class="lineNoCov">          0 :         for (int j = 0; j &lt; state_size; ++j)</span>
+<span class="lineNum">     528 </span>            :         {
+<span class="lineNum">     529 </span><span class="lineNoCov">          0 :                 curr_row(state_beg_idx + j) = static_cast&lt;float&gt;(tuple.mStateBeg(j));</span>
+<span class="lineNum">     530 </span><span class="lineNoCov">          0 :                 curr_row(state_end_idx + j) = static_cast&lt;float&gt;(tuple.mStateEnd(j));</span>
+<span class="lineNum">     531 </span>            :         }
+<span class="lineNum">     532 </span>            : 
+<span class="lineNum">     533 </span><span class="lineNoCov">          0 :         for (int j = 0; j &lt; action_size; ++j)</span>
+<span class="lineNum">     534 </span>            :         {
+<span class="lineNum">     535 </span><span class="lineNoCov">          0 :                 curr_row(action_idx + j) = static_cast&lt;float&gt;(tuple.mAction(j));</span>
+<span class="lineNum">     536 </span>            :         }
+<span class="lineNum">     537 </span>            : 
+<span class="lineNum">     538 </span><span class="lineNoCov">          0 :         mFlagBuffer[t] = tuple.mFlags;</span>
+<a name="539"><span class="lineNum">     539 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     540 </span>            : 
+<span class="lineNum">     541 </span><span class="lineNoCov">          0 : tExpTuple cMACETrainer::GetTuple(int t) const</span>
+<span class="lineNum">     542 </span>            : {
+<span class="lineNum">     543 </span><span class="lineNoCov">          0 :         tExpTuple tuple;</span>
+<span class="lineNum">     544 </span><span class="lineNoCov">          0 :         auto curr_row = mPlaybackMem.row(t);</span>
+<span class="lineNum">     545 </span>            : 
+<span class="lineNum">     546 </span><span class="lineNoCov">          0 :         tuple.mID = t;</span>
+<span class="lineNum">     547 </span><span class="lineNoCov">          0 :         tuple.mReward = curr_row[GetRewardIdx()];</span>
+<span class="lineNum">     548 </span>            : 
+<span class="lineNum">     549 </span><span class="lineNoCov">          0 :         int state_size = GetStateSize();</span>
+<span class="lineNum">     550 </span><span class="lineNoCov">          0 :         int state_beg_idx = GetStateBegIdx();</span>
+<span class="lineNum">     551 </span><span class="lineNoCov">          0 :         int state_end_idx = GetStateEndIdx();</span>
+<span class="lineNum">     552 </span><span class="lineNoCov">          0 :         int action_idx = GetActionIdx();</span>
+<span class="lineNum">     553 </span><span class="lineNoCov">          0 :         int action_size = GetActionSize();</span>
+<span class="lineNum">     554 </span>            : 
+<span class="lineNum">     555 </span><span class="lineNoCov">          0 :         tuple.mStateBeg.resize(state_size);</span>
+<span class="lineNum">     556 </span><span class="lineNoCov">          0 :         tuple.mStateEnd.resize(state_size);</span>
+<span class="lineNum">     557 </span><span class="lineNoCov">          0 :         tuple.mAction.resize(action_size);</span>
+<span class="lineNum">     558 </span>            : 
+<span class="lineNum">     559 </span><span class="lineNoCov">          0 :         for (int j = 0; j &lt; state_size; ++j)</span>
+<span class="lineNum">     560 </span>            :         {
+<span class="lineNum">     561 </span><span class="lineNoCov">          0 :                 tuple.mStateBeg(j) = curr_row(state_beg_idx + j);</span>
+<span class="lineNum">     562 </span><span class="lineNoCov">          0 :                 tuple.mStateEnd(j) = curr_row(state_end_idx + j);</span>
+<span class="lineNum">     563 </span>            :         }
+<span class="lineNum">     564 </span>            : 
+<span class="lineNum">     565 </span><span class="lineNoCov">          0 :         for (int j = 0; j &lt; action_size; ++j)</span>
+<span class="lineNum">     566 </span>            :         {
+<span class="lineNum">     567 </span><span class="lineNoCov">          0 :                 tuple.mAction(j) = curr_row(action_idx + j);</span>
+<span class="lineNum">     568 </span>            :         }
+<span class="lineNum">     569 </span>            : 
+<span class="lineNum">     570 </span><span class="lineNoCov">          0 :         tuple.mFlags = mFlagBuffer[t];</span>
+<span class="lineNum">     571 </span>            : 
+<span class="lineNum">     572 </span><span class="lineNoCov">          0 :         return tuple;</span>
+<a name="573"><span class="lineNum">     573 </span>            : }</a>
+<span class="lineNum">     574 </span>            : 
+<span class="lineNum">     575 </span><span class="lineNoCov">          0 : void cMACETrainer::UpdateActorBatchBuffer()</span>
+<span class="lineNum">     576 </span>            : {
+<span class="lineNum">     577 </span><span class="lineNoCov">          0 :         int batch_size = GetActorBatchSize();</span>
+<span class="lineNum">     578 </span><span class="lineNoCov">          0 :         FetchActorMinibatch(batch_size, mBatchBuffer);</span>
+<span class="lineNum">     579 </span><span class="lineNoCov">          0 :         int num_samples = static_cast&lt;int&gt;(mBatchBuffer.size());</span>
+<span class="lineNum">     580 </span>            : 
+<span class="lineNum">     581 </span><span class="lineNoCov">          0 :         int net_id = mCurrActiveNet;</span>
+<span class="lineNum">     582 </span><span class="lineNoCov">          0 :         CalcCurrCumulativeRewardBatch(net_id, mBatchBuffer, mBatchValBuffer0);</span>
+<span class="lineNum">     583 </span><span class="lineNoCov">          0 :         CalcNewCumulativeRewardBatch(net_id, mBatchBuffer, mBatchValBuffer1);</span>
+<span class="lineNum">     584 </span>            : 
+<span class="lineNum">     585 </span><span class="lineNoCov">          0 :         for (int i = 0; i &lt; num_samples; ++i)</span>
+<span class="lineNum">     586 </span>            :         {
+<span class="lineNum">     587 </span><span class="lineNoCov">          0 :                 double curr_val = mBatchValBuffer0[i];</span>
+<span class="lineNum">     588 </span><span class="lineNoCov">          0 :                 double new_val = mBatchValBuffer1[i];</span>
+<span class="lineNum">     589 </span>            : 
+<span class="lineNum">     590 </span><span class="lineNoCov">          0 :                 if (new_val &gt; curr_val)</span>
+<span class="lineNum">     591 </span>            :                 {
+<span class="lineNum">     592 </span><span class="lineNoCov">          0 :                         int t = mBatchBuffer[i];</span>
+<span class="lineNum">     593 </span><span class="lineNoCov">          0 :                         mActorBatchBuffer.push_back(t);</span>
+<span class="lineNum">     594 </span>            :                 }
+<span class="lineNum">     595 </span>            :         }
+<a name="596"><span class="lineNum">     596 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     597 </span>            : 
+<span class="lineNum">     598 </span><span class="lineNoCov">          0 : void cMACETrainer::UpdateActor()</span>
+<span class="lineNum">     599 </span>            : {
+<span class="lineNum">     600 </span>            : #if defined(ENABLE_ACTOR_MULTI_SAMPLE_UPDATE)
+<span class="lineNum">     601 </span><span class="lineNoCov">          0 :         if (mStage != eStageInit)</span>
+<span class="lineNum">     602 </span>            :         {
+<span class="lineNum">     603 </span><span class="lineNoCov">          0 :                 UpdateActorBatchBuffer();</span>
+<span class="lineNum">     604 </span>            :         }
+<span class="lineNum">     605 </span>            : #endif
+<span class="lineNum">     606 </span>            : 
+<span class="lineNum">     607 </span><span class="lineNoCov">          0 :         int batch_size = GetBatchSize();</span>
+<span class="lineNum">     608 </span><span class="lineNoCov">          0 :         int buffer_size = static_cast&lt;int&gt;(mActorBatchBuffer.size());</span>
+<span class="lineNum">     609 </span><span class="lineNoCov">          0 :         int num_batches = buffer_size / batch_size;</span>
+<span class="lineNum">     610 </span>            : 
+<span class="lineNum">     611 </span><span class="lineNoCov">          0 :         for (int b = 0; b &lt; num_batches; ++b)</span>
+<span class="lineNum">     612 </span>            :         {
+<span class="lineNum">     613 </span><span class="lineNoCov">          0 :                 StepActor();</span>
+<span class="lineNum">     614 </span><span class="lineNoCov">          0 :                 mActorBatchBuffer.erase(mActorBatchBuffer.begin(), mActorBatchBuffer.begin() + batch_size);</span>
+<span class="lineNum">     615 </span>            :         }
+<a name="616"><span class="lineNum">     616 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     617 </span>            : 
+<span class="lineNum">     618 </span><span class="lineNoCov">          0 : void cMACETrainer::StepActor()</span>
+<span class="lineNum">     619 </span>            : {
+<span class="lineNum">     620 </span>            : #if defined(OUTPUT_TRAINER_LOG)
+<span class="lineNum">     621 </span>            :         TIMER_RECORD_BEG(TRAIN_STEP_ACTOR)
+<span class="lineNum">     622 </span>            : #endif
+<span class="lineNum">     623 </span>            : 
+<span class="lineNum">     624 </span><span class="lineNoCov">          0 :         BuildActorProblem(mActorProb);</span>
+<span class="lineNum">     625 </span><span class="lineNoCov">          0 :         UpdateActorNet(mActorProb);</span>
+<span class="lineNum">     626 </span><span class="lineNoCov">          0 :         IncActorIter();</span>
+<span class="lineNum">     627 </span>            : 
+<span class="lineNum">     628 </span>            : #if defined(OUTPUT_TRAINER_LOG)
+<span class="lineNum">     629 </span>            :         {
+<span class="lineNum">     630 </span>            :                 std::lock_guard&lt;std::mutex&gt; lock(mLogLock);
+<span class="lineNum">     631 </span>            :                 TIMER_RECORD_BEG(TRAIN_STEP_ACTOR, mLog.mStepActorTime, mLog.mStepActorSamples)
+<span class="lineNum">     632 </span>            :         }
+<span class="lineNum">     633 </span>            : #endif
+<a name="634"><span class="lineNum">     634 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     635 </span>            : 
+<span class="lineNum">     636 </span><span class="lineNoCov">          0 : void cMACETrainer::BuildActorProblem(cNeuralNet::tProblem&amp; out_prob)</span>
+<span class="lineNum">     637 </span>            : {
+<span class="lineNum">     638 </span><span class="lineNoCov">          0 :         int num_data = GetActorBatchSize();</span>
+<span class="lineNum">     639 </span>            : 
+<span class="lineNum">     640 </span><span class="lineNoCov">          0 :         const auto&amp; actor = GetActor();</span>
+<span class="lineNum">     641 </span><span class="lineNoCov">          0 :         const int x_size = actor-&gt;GetInputSize();</span>
+<span class="lineNum">     642 </span><span class="lineNoCov">          0 :         const int y_size = actor-&gt;GetOutputSize();</span>
+<span class="lineNum">     643 </span>            : 
+<span class="lineNum">     644 </span><span class="lineNoCov">          0 :         int buffer_size = static_cast&lt;int&gt;(mActorBatchBuffer.size());</span>
+<span class="lineNum">     645 </span><span class="lineNoCov">          0 :         assert(buffer_size &gt;= num_data);</span>
+<span class="lineNum">     646 </span>            : 
+<span class="lineNum">     647 </span>            : #if defined(OUTPUT_TRAINER_LOG)
+<span class="lineNum">     648 </span>            :         TIMER_RECORD_BEG(BUILD_ACTOR_TUPLE_X)
+<span class="lineNum">     649 </span>            : #endif
+<span class="lineNum">     650 </span><span class="lineNoCov">          0 :         BuildActorProblemX(num_data, mActorBatchBuffer, out_prob);</span>
+<span class="lineNum">     651 </span>            : #if defined(OUTPUT_TRAINER_LOG)
+<span class="lineNum">     652 </span>            :         {
+<span class="lineNum">     653 </span>            :                 std::lock_guard&lt;std::mutex&gt; lock(mLogLock);
+<span class="lineNum">     654 </span>            :                 TIMER_RECORD_END(BUILD_ACTOR_TUPLE_X, mLog.mBuildActorTupleXTime, mLog.mBuildActorTupleXSamples)
+<span class="lineNum">     655 </span>            :         }
+<span class="lineNum">     656 </span>            : #endif
+<span class="lineNum">     657 </span>            : 
+<span class="lineNum">     658 </span>            : #if defined(OUTPUT_TRAINER_LOG)
+<span class="lineNum">     659 </span>            :         TIMER_RECORD_BEG(BUILD_ACTOR_TUPLE_Y)
+<span class="lineNum">     660 </span>            : #endif
+<span class="lineNum">     661 </span><span class="lineNoCov">          0 :         BuildActorProblemY(num_data, mActorBatchBuffer, out_prob.mX, out_prob);</span>
+<span class="lineNum">     662 </span>            : #if defined(OUTPUT_TRAINER_LOG)
+<span class="lineNum">     663 </span>            :         {
+<span class="lineNum">     664 </span>            :                 std::lock_guard&lt;std::mutex&gt; lock(mLogLock);
+<span class="lineNum">     665 </span>            :                 TIMER_RECORD_END(BUILD_ACTOR_TUPLE_Y, mLog.mBuildActorTupleYTime, mLog.mBuildActorTupleYSamples)
+<span class="lineNum">     666 </span>            :         }
+<span class="lineNum">     667 </span>            : #endif
+<a name="668"><span class="lineNum">     668 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     669 </span>            : 
+<span class="lineNum">     670 </span><span class="lineNoCov">          0 : void cMACETrainer::UpdateActorNet(const cNeuralNet::tProblem&amp; prob)</span>
+<span class="lineNum">     671 </span>            : {
+<span class="lineNum">     672 </span><span class="lineNoCov">          0 :         int net_id = mCurrActiveNet;</span>
+<span class="lineNum">     673 </span>            : 
+<span class="lineNum">     674 </span>            : #if defined(OUTPUT_TRAINER_LOG)
+<span class="lineNum">     675 </span>            :         TIMER_RECORD_BEG(UPDATE_NET)
+<span class="lineNum">     676 </span>            : #endif
+<span class="lineNum">     677 </span>            : 
+<span class="lineNum">     678 </span><span class="lineNoCov">          0 :         auto&amp; curr_net = mNetPool[net_id];</span>
+<span class="lineNum">     679 </span><span class="lineNoCov">          0 :         if (EnableAsyncMode())</span>
+<span class="lineNum">     680 </span>            :         {
+<span class="lineNum">     681 </span>            : #if defined(OUTPUT_TRAINER_LOG)
+<span class="lineNum">     682 </span>            :                 TIMER_RECORD_BEG(ASYNC_FORWARD_BACKWARD)
+<span class="lineNum">     683 </span>            : #endif
+<span class="lineNum">     684 </span><span class="lineNoCov">          0 :                 double loss = curr_net-&gt;ForwardBackward(prob);</span>
+<span class="lineNum">     685 </span><span class="lineNoCov">          0 :                 printf(&quot;Actor Net Loss: %.8f\n&quot;, net_id, loss);</span>
+<span class="lineNum">     686 </span>            : 
+<span class="lineNum">     687 </span>            : #if defined(OUTPUT_TRAINER_LOG)
+<span class="lineNum">     688 </span>            :                 TIMER_RECORD_END(ASYNC_FORWARD_BACKWARD, mLog.mAsyncForwardBackTime, mLog.mAsyncForwardBackSamples)
+<span class="lineNum">     689 </span>            : #endif
+<span class="lineNum">     690 </span>            : 
+<span class="lineNum">     691 </span>            : #if defined(OUTPUT_TRAINER_LOG)
+<span class="lineNum">     692 </span>            :                 TIMER_RECORD_BEG(ASYNC_UPDATE_NET)
+<span class="lineNum">     693 </span>            : #endif
+<span class="lineNum">     694 </span><span class="lineNoCov">          0 :                 cParamServer::tInputInfo server_input;</span>
+<span class="lineNum">     695 </span><span class="lineNoCov">          0 :                 server_input.mID = net_id;</span>
+<span class="lineNum">     696 </span><span class="lineNoCov">          0 :                 server_input.mGradNet = curr_net.get();</span>
+<span class="lineNum">     697 </span><span class="lineNoCov">          0 :                 server_input.mIncIter = false;</span>
+<span class="lineNum">     698 </span>            : 
+<span class="lineNum">     699 </span><span class="lineNoCov">          0 :                 cParamServer::tOutputInfo server_output;</span>
+<span class="lineNum">     700 </span><span class="lineNoCov">          0 :                 server_output.mSyncNet = curr_net.get();</span>
+<span class="lineNum">     701 </span>            : 
+<span class="lineNum">     702 </span><span class="lineNoCov">          0 :                 mParamServer-&gt;UpdateNet(server_input, server_output);</span>
+<span class="lineNum">     703 </span>            :                 
+<span class="lineNum">     704 </span>            : #if defined(OUTPUT_TRAINER_LOG)
+<span class="lineNum">     705 </span>            :                 TIMER_RECORD_END(ASYNC_UPDATE_NET, mLog.mAsyncUpdateNetTime, mLog.mAsyncUpdateNetSamples)
+<span class="lineNum">     706 </span>            : #endif
+<span class="lineNum">     707 </span>            :                 
+<span class="lineNum">     708 </span><span class="lineNoCov">          0 :                 ++mActorIter;</span>
+<span class="lineNum">     709 </span>            :         }
+<span class="lineNum">     710 </span>            :         else
+<span class="lineNum">     711 </span>            :         {
+<span class="lineNum">     712 </span><span class="lineNoCov">          0 :                 curr_net-&gt;Train(prob);</span>
+<span class="lineNum">     713 </span>            :         }
+<span class="lineNum">     714 </span>            : 
+<span class="lineNum">     715 </span>            : #if defined(OUTPUT_TRAINER_LOG)
+<span class="lineNum">     716 </span>            :         {
+<span class="lineNum">     717 </span>            :                 std::lock_guard&lt;std::mutex&gt; lock(mLogLock);
+<span class="lineNum">     718 </span>            :                 TIMER_RECORD_END(UPDATE_NET, mLog.mUpdateActorNetTime, mLog.mUpdateActorNetSamples)
+<span class="lineNum">     719 </span>            :         }
+<span class="lineNum">     720 </span>            : #endif
+<span class="lineNum">     721 </span><span class="lineNoCov">          0 : }</span>
+<a name="722"><span class="lineNum">     722 </span>            : </a>
+<span class="lineNum">     723 </span>            : 
+<span class="lineNum">     724 </span><span class="lineNoCov">          0 : void cMACETrainer::IncActorIter()</span>
+<span class="lineNum">     725 </span>            : {
+<span class="lineNum">     726 </span><span class="lineNoCov">          0 :         ++mActorIter;</span>
+<span class="lineNum">     727 </span><span class="lineNoCov">          0 : }</span>
+<a name="728"><span class="lineNum">     728 </span>            : </a>
+<span class="lineNum">     729 </span>            : 
+<span class="lineNum">     730 </span><span class="lineNoCov">          0 : void cMACETrainer::UpdateBuffers(int t)</span>
+<span class="lineNum">     731 </span>            : {
+<span class="lineNum">     732 </span><span class="lineNoCov">          0 :         if (t != gInvalidIdx)</span>
+<span class="lineNum">     733 </span>            :         {
+<span class="lineNum">     734 </span><span class="lineNoCov">          0 :                 bool exp_actor = IsExpActor(t);</span>
+<span class="lineNum">     735 </span>            : 
+<span class="lineNum">     736 </span>            : #if defined(ENABLE_ACTOR_MULTI_SAMPLE_UPDATE)
+<span class="lineNum">     737 </span>            :                 {
+<span class="lineNum">     738 </span><span class="lineNoCov">          0 :                         auto off_beg = mActorBuffer.begin();</span>
+<span class="lineNum">     739 </span><span class="lineNoCov">          0 :                         auto off_end = mActorBuffer.end();</span>
+<span class="lineNum">     740 </span><span class="lineNoCov">          0 :                         auto off_iter = std::find(off_beg, off_end, t);</span>
+<span class="lineNum">     741 </span>            : 
+<span class="lineNum">     742 </span><span class="lineNoCov">          0 :                         bool off_contains = off_iter != off_end;</span>
+<span class="lineNum">     743 </span><span class="lineNoCov">          0 :                         if (exp_actor)</span>
+<span class="lineNum">     744 </span>            :                         {
+<span class="lineNum">     745 </span><span class="lineNoCov">          0 :                                 if (!off_contains)</span>
+<span class="lineNum">     746 </span>            :                                 {
+<span class="lineNum">     747 </span><span class="lineNoCov">          0 :                                         mActorBuffer.push_back(t);</span>
+<span class="lineNum">     748 </span>            :                                 }
+<span class="lineNum">     749 </span>            :                         }
+<span class="lineNum">     750 </span><span class="lineNoCov">          0 :                         else if (off_contains)</span>
+<span class="lineNum">     751 </span>            :                         {
+<span class="lineNum">     752 </span><span class="lineNoCov">          0 :                                 int idx = static_cast&lt;int&gt;(off_iter - off_beg);</span>
+<span class="lineNum">     753 </span><span class="lineNoCov">          0 :                                 int last_val = mActorBuffer[mActorBuffer.size() - 1];</span>
+<span class="lineNum">     754 </span><span class="lineNoCov">          0 :                                 mActorBuffer[idx] = last_val;</span>
+<span class="lineNum">     755 </span><span class="lineNoCov">          0 :                                 mActorBuffer.pop_back();</span>
+<span class="lineNum">     756 </span>            :                         }
+<span class="lineNum">     757 </span>            :                 }
+<span class="lineNum">     758 </span>            : #endif
+<span class="lineNum">     759 </span>            : 
+<span class="lineNum">     760 </span>            : #if !defined(DISABLE_CRITIC_BUFFER)
+<span class="lineNum">     761 </span>            :                 {
+<span class="lineNum">     762 </span><span class="lineNoCov">          0 :                         auto critic_beg = mCriticBuffer.begin();</span>
+<span class="lineNum">     763 </span><span class="lineNoCov">          0 :                         auto critic_end = mCriticBuffer.end();</span>
+<span class="lineNum">     764 </span><span class="lineNoCov">          0 :                         auto critic_iter = std::find(critic_beg, critic_end, t);</span>
+<span class="lineNum">     765 </span>            : 
+<span class="lineNum">     766 </span><span class="lineNoCov">          0 :                         bool critic_contains = critic_iter != critic_end;</span>
+<span class="lineNum">     767 </span><span class="lineNoCov">          0 :                         if (!exp_actor)</span>
+<span class="lineNum">     768 </span>            :                         {
+<span class="lineNum">     769 </span><span class="lineNoCov">          0 :                                 if (!critic_contains)</span>
+<span class="lineNum">     770 </span>            :                                 {
+<span class="lineNum">     771 </span><span class="lineNoCov">          0 :                                         mCriticBuffer.push_back(t);</span>
+<span class="lineNum">     772 </span>            :                                 }
+<span class="lineNum">     773 </span>            :                         }
+<span class="lineNum">     774 </span><span class="lineNoCov">          0 :                         else if (critic_contains)</span>
+<span class="lineNum">     775 </span>            :                         {
+<span class="lineNum">     776 </span><span class="lineNoCov">          0 :                                 int idx = static_cast&lt;int&gt;(critic_iter - critic_beg);</span>
+<span class="lineNum">     777 </span><span class="lineNoCov">          0 :                                 int last_val = mCriticBuffer[mCriticBuffer.size() - 1];</span>
+<span class="lineNum">     778 </span><span class="lineNoCov">          0 :                                 mCriticBuffer[idx] = last_val;</span>
+<span class="lineNum">     779 </span><span class="lineNoCov">          0 :                                 mCriticBuffer.pop_back();</span>
+<span class="lineNum">     780 </span>            :                         }
+<span class="lineNum">     781 </span>            :                 }
+<span class="lineNum">     782 </span>            : #endif
+<span class="lineNum">     783 </span>            :                 {
+<span class="lineNum">     784 </span><span class="lineNoCov">          0 :                         auto actor_buffer_iter = std::find(mActorBatchBuffer.begin(), mActorBatchBuffer.end(), t);</span>
+<span class="lineNum">     785 </span><span class="lineNoCov">          0 :                         while (actor_buffer_iter != mActorBatchBuffer.end())</span>
+<span class="lineNum">     786 </span>            :                         {
+<span class="lineNum">     787 </span><span class="lineNoCov">          0 :                                 int idx = static_cast&lt;int&gt;(actor_buffer_iter - mActorBatchBuffer.begin());</span>
+<span class="lineNum">     788 </span><span class="lineNoCov">          0 :                                 int last_val = mActorBatchBuffer[mActorBatchBuffer.size() - 1];</span>
+<span class="lineNum">     789 </span><span class="lineNoCov">          0 :                                 mActorBatchBuffer[idx] = last_val;</span>
+<span class="lineNum">     790 </span><span class="lineNoCov">          0 :                                 mActorBatchBuffer.pop_back();</span>
+<span class="lineNum">     791 </span>            : 
+<span class="lineNum">     792 </span><span class="lineNoCov">          0 :                                 actor_buffer_iter = std::find(mActorBatchBuffer.begin(), mActorBatchBuffer.end(), t);</span>
+<span class="lineNum">     793 </span>            :                         }
+<span class="lineNum">     794 </span>            :                 }
+<span class="lineNum">     795 </span>            :         }
+<a name="796"><span class="lineNum">     796 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     797 </span>            : 
+<span class="lineNum">     798 </span><span class="lineNoCov">          0 : bool cMACETrainer::IsExpCritic(int t) const</span>
+<span class="lineNum">     799 </span>            : {
+<span class="lineNum">     800 </span><span class="lineNoCov">          0 :         int flag = mFlagBuffer[t];</span>
+<span class="lineNum">     801 </span><span class="lineNoCov">          0 :         bool off_policy = tExpTuple::TestFlag(flag, cMACETrainer::eFlagExpCritic);</span>
+<span class="lineNum">     802 </span><span class="lineNoCov">          0 :         return off_policy;</span>
+<a name="803"><span class="lineNum">     803 </span>            : }</a>
+<span class="lineNum">     804 </span>            : 
+<span class="lineNum">     805 </span><span class="lineNoCov">          0 : bool cMACETrainer::IsExpActor(int t) const</span>
+<span class="lineNum">     806 </span>            : {
+<span class="lineNum">     807 </span><span class="lineNoCov">          0 :         int flag = mFlagBuffer[t];</span>
+<span class="lineNum">     808 </span><span class="lineNoCov">          0 :         bool explore = tExpTuple::TestFlag(flag, cMACETrainer::eFlagExpActor);</span>
+<span class="lineNum">     809 </span><span class="lineNoCov">          0 :         return explore;</span>
+<span class="lineNum">     810 </span>            : }
+<a name="811"><span class="lineNum">     811 </span>            : </a>
+<span class="lineNum">     812 </span>            : 
+<span class="lineNum">     813 </span><span class="lineNoCov">          0 : bool cMACETrainer::EnableTargetNet() const</span>
+<span class="lineNum">     814 </span>            : {
+<span class="lineNum">     815 </span><span class="lineNoCov">          0 :         bool enable = (mParams.mFreezeTargetIters &gt; 0);</span>
+<span class="lineNum">     816 </span><span class="lineNoCov">          0 :         return enable;</span>
+<a name="817"><span class="lineNum">     817 </span>            : }</a>
+<span class="lineNum">     818 </span>            : 
+<span class="lineNum">     819 </span><span class="lineNoCov">          0 : void cMACETrainer::UpdateTargetNet()</span>
+<span class="lineNum">     820 </span>            : {
+<span class="lineNum">     821 </span><span class="lineNoCov">          0 :         if (EnableTargetNet())</span>
+<span class="lineNum">     822 </span>            :         {
+<span class="lineNum">     823 </span><span class="lineNoCov">          0 :                 for (int i = 0; i &lt; GetNetPoolSize(); ++i)</span>
+<span class="lineNum">     824 </span>            :                 {
+<span class="lineNum">     825 </span><span class="lineNoCov">          0 :                         auto&amp; net = mNetPool[i];</span>
+<span class="lineNum">     826 </span><span class="lineNoCov">          0 :                         auto&amp; target_net = GetTargetNet(i);</span>
+<span class="lineNum">     827 </span><span class="lineNoCov">          0 :                         target_net-&gt;CopyModel(*net.get());</span>
+<span class="lineNum">     828 </span>            :                 }
+<span class="lineNum">     829 </span>            :         }
+<span class="lineNum">     830 </span><span class="lineNoCov">          0 : }</span>
+<a name="831"><span class="lineNum">     831 </span>            : </a>
+<span class="lineNum">     832 </span>            : 
+<span class="lineNum">     833 </span><span class="lineNoCov">          0 : int cMACETrainer::GetMaxFragIdxAux(const Eigen::VectorXd&amp; params)</span>
+<span class="lineNum">     834 </span>            : {
+<span class="lineNum">     835 </span><span class="lineNoCov">          0 :         return cMACETrainer::GetMaxFragIdx(params, mNumActionFrags);</span>
+<a name="836"><span class="lineNum">     836 </span>            : }</a>
+<span class="lineNum">     837 </span>            : 
+<span class="lineNum">     838 </span><span class="lineNoCov">          0 : double cMACETrainer::GetMaxFragValAux(const Eigen::VectorXd&amp; params)</span>
+<span class="lineNum">     839 </span>            : {
+<span class="lineNum">     840 </span><span class="lineNoCov">          0 :         return cMACETrainer::GetMaxFragVal(params, mNumActionFrags);</span>
+<a name="841"><span class="lineNum">     841 </span>            : }</a>
+<span class="lineNum">     842 </span>            : 
+<span class="lineNum">     843 </span><span class="lineNoCov">          0 : void cMACETrainer::GetFragAux(const Eigen::VectorXd&amp; params, int a_idx, Eigen::VectorXd&amp; out_action)</span>
+<span class="lineNum">     844 </span>            : {
+<span class="lineNum">     845 </span><span class="lineNoCov">          0 :         cMACETrainer::GetFrag(params, mNumActionFrags, mActionFragSize, a_idx, out_action);</span>
+<a name="846"><span class="lineNum">     846 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     847 </span>            : 
+<span class="lineNum">     848 </span><span class="lineNoCov">          0 : void cMACETrainer::SetFragAux(const Eigen::VectorXd&amp; frag, int a_idx, Eigen::VectorXd&amp; out_params)</span>
+<span class="lineNum">     849 </span>            : {
+<span class="lineNum">     850 </span><span class="lineNoCov">          0 :         cMACETrainer::SetFrag(frag, a_idx, mNumActionFrags, mActionFragSize, out_params);</span>
+<a name="851"><span class="lineNum">     851 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     852 </span>            : 
+<span class="lineNum">     853 </span><span class="lineNoCov">          0 : double cMACETrainer::GetValAux(const Eigen::VectorXd&amp; params, int a_idx)</span>
+<span class="lineNum">     854 </span>            : {
+<span class="lineNum">     855 </span><span class="lineNoCov">          0 :         return cMACETrainer::GetVal(params, a_idx);</span>
+<a name="856"><span class="lineNum">     856 </span>            : }</a>
+<span class="lineNum">     857 </span>            : 
+<span class="lineNum">     858 </span><span class="lineNoCov">          0 : void cMACETrainer::SetValAux(double val, int a_idx, Eigen::VectorXd&amp; out_params)</span>
+<a name="859"><span class="lineNum">     859 </span>            : {</a>
+<span class="lineNum">     860 </span><span class="lineNoCov">          0 :         cMACETrainer::SetVal(val, a_idx, out_params);</span>
+<span class="lineNum">     861 </span><span class="lineCov">          3 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

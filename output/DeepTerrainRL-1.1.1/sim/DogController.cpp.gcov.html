@@ -1,0 +1,1510 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/sim/DogController.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/sim</a> - DogController.cpp<span style="font-size: 80%;"> (source / <a href="DogController.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">434</td>
+            <td class="headerCovTableEntry">704</td>
+            <td class="headerCovTableEntryLo">61.6 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">58</td>
+            <td class="headerCovTableEntry">96</td>
+            <td class="headerCovTableEntryLo">60.4 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;DogController.h&quot;</a>
+<span class="lineNum">       2 </span>            : #include &lt;iostream&gt;
+<span class="lineNum">       3 </span>            : #include &lt;json/json.h&gt;
+<span class="lineNum">       4 </span>            : 
+<span class="lineNum">       5 </span>            : #include &quot;sim/SimCharacter.h&quot;
+<span class="lineNum">       6 </span>            : #include &quot;sim/RBDUtil.h&quot;
+<span class="lineNum">       7 </span>            : #include &quot;util/FileUtil.h&quot;
+<span class="lineNum">       8 </span>            : #include &quot;util/Util.h&quot;
+<span class="lineNum">       9 </span>            : 
+<a name="10"><span class="lineNum">      10 </span>            : //#define DOG_CTRL_PROFILER</a>
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span><span class="lineCov">          2 : const cDogController::tStateDef gStateDefs[cDogController::eStateMax] =</span>
+<span class="lineNum">      13 </span>            : {
+<span class="lineNum">      14 </span>            :         {
+<span class="lineNum">      15 </span>            :                 &quot;BackStance&quot;,
+<span class="lineNum">      16 </span>            :                 true,                                                           // mTransTime;
+<span class="lineNum">      17 </span>            :                 cSimDog::eJointInvalid,                         // mTransContact;
+<span class="lineNum">      18 </span>            :                 cDogController::eStateExtend            // mNext;
+<span class="lineNum">      19 </span>            :         },
+<span class="lineNum">      20 </span>            :         {
+<span class="lineNum">      21 </span>            :                 &quot;Extend&quot;,
+<span class="lineNum">      22 </span>            :                 false,                                                          // mTransTime;
+<span class="lineNum">      23 </span>            :                 cSimDog::eJointFinger,                          // mTransFootContact;
+<span class="lineNum">      24 </span>            :                 cDogController::eStateFrontStance       // mNext;
+<span class="lineNum">      25 </span>            :         },
+<span class="lineNum">      26 </span>            :         {
+<span class="lineNum">      27 </span>            :                 &quot;FrontStance&quot;,
+<span class="lineNum">      28 </span>            :                 true,                                                           // mTransTime;
+<span class="lineNum">      29 </span>            :                 cSimDog::eJointInvalid,                         // mTransContact;
+<span class="lineNum">      30 </span>            :                 cDogController::eStateGather            // mNext;
+<span class="lineNum">      31 </span>            :         },
+<span class="lineNum">      32 </span>            :         {
+<span class="lineNum">      33 </span>            :                 &quot;Gather&quot;,
+<span class="lineNum">      34 </span>            :                 false,                                                          // mTransTime;
+<span class="lineNum">      35 </span>            :                 cSimDog::eJointToe,                                     // mTransContact;
+<span class="lineNum">      36 </span>            :                 cDogController::eStateInvalid           // mNext;
+<span class="lineNum">      37 </span>            :         },
+<a name="38"><span class="lineNum">      38 </span><span class="lineCov">          1 : };</span></a>
+<span class="lineNum">      39 </span>            : 
+<span class="lineNum">      40 </span><span class="lineCov">          2 : const std::string gMiscParamsNames[cDogController::eMiscParamMax] = {</span>
+<span class="lineNum">      41 </span>            :         &quot;TransTime&quot;,
+<span class="lineNum">      42 </span>            :         &quot;Cv&quot;,
+<span class="lineNum">      43 </span>            :         &quot;BackForceX&quot;,
+<span class="lineNum">      44 </span>            :         &quot;BackForceY&quot;,
+<span class="lineNum">      45 </span>            :         &quot;FrontForceX&quot;,
+<span class="lineNum">      46 </span>            :         &quot;FrontForceY&quot;
+<a name="47"><span class="lineNum">      47 </span><span class="lineCov">          1 : };</span></a>
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span><span class="lineCov">          2 : const std::string gStateParamNames[cDogController::eStateParamMax] = {</span>
+<span class="lineNum">      50 </span>            :         &quot;SpineCurve&quot;,
+<span class="lineNum">      51 </span>            :         &quot;Shoulder&quot;,
+<span class="lineNum">      52 </span>            :         &quot;Elbow&quot;,
+<span class="lineNum">      53 </span>            :         &quot;Hip&quot;,
+<span class="lineNum">      54 </span>            :         &quot;Knee&quot;,
+<span class="lineNum">      55 </span>            :         &quot;Ankle&quot;
+<span class="lineNum">      56 </span><span class="lineCov">          1 : };</span>
+<span class="lineNum">      57 </span>            : 
+<span class="lineNum">      58 </span>            : const cSimDog::eJoint gEndEffectors[] = {
+<span class="lineNum">      59 </span>            :         cSimDog::eJointToe,
+<span class="lineNum">      60 </span>            :         cSimDog::eJointFinger,
+<span class="lineNum">      61 </span>            : };
+<span class="lineNum">      62 </span>            : const int gNumEndEffectors = sizeof(gEndEffectors) / sizeof(gEndEffectors[0]);
+<span class="lineNum">      63 </span>            : 
+<span class="lineNum">      64 </span>            : const cSimDog::eJoint gSpineJoints[] = {
+<span class="lineNum">      65 </span>            :         cSimDog::eJointSpine0,
+<span class="lineNum">      66 </span>            :         cSimDog::eJointSpine1,
+<span class="lineNum">      67 </span>            :         cSimDog::eJointSpine2,
+<span class="lineNum">      68 </span>            :         cSimDog::eJointSpine3,
+<span class="lineNum">      69 </span>            :         cSimDog::eJointTorso
+<span class="lineNum">      70 </span>            : };
+<span class="lineNum">      71 </span>            : const int gNumSpineJoints = sizeof(gSpineJoints) / sizeof(gSpineJoints[0]);
+<span class="lineNum">      72 </span>            : 
+<span class="lineNum">      73 </span>            : 
+<span class="lineNum">      74 </span><span class="lineCov">          1 : const std::string gMiscParamsKey = &quot;MiscParams&quot;;</span>
+<span class="lineNum">      75 </span><span class="lineCov">          1 : const std::string gStateParamsKey = &quot;StateParams&quot;;</span>
+<span class="lineNum">      76 </span><span class="lineCov">          1 : const std::string gControllersKey = &quot;Controllers&quot;;</span>
+<span class="lineNum">      77 </span><span class="lineCov">          1 : const std::string gFilesKey = &quot;Files&quot;;</span>
+<span class="lineNum">      78 </span><span class="lineCov">          1 : const std::string gActionsKey = &quot;Actions&quot;;</span>
+<span class="lineNum">      79 </span>            : 
+<span class="lineNum">      80 </span>            : 
+<span class="lineNum">      81 </span>            : const cDogController::tParamInfo gParamInfo[] =
+<span class="lineNum">      82 </span>            : {
+<span class="lineNum">      83 </span>            : {false, 0, 1},                  //TransTime
+<span class="lineNum">      84 </span>            : {true, -1, 1},                  //Cv
+<span class="lineNum">      85 </span>            : {true, -1000, 1000},    //BackForceX
+<span class="lineNum">      86 </span>            : {true, -1000, 1000 },   //BackForceY
+<span class="lineNum">      87 </span>            : {true, -1000, 1000 },   //FrontForceX
+<span class="lineNum">      88 </span>            : {true, -1000, 1000 },   //FrontForceY
+<span class="lineNum">      89 </span>            : 
+<span class="lineNum">      90 </span>            : //BackStance
+<span class="lineNum">      91 </span>            : {true, -1, 1},                  //SpineCurve
+<span class="lineNum">      92 </span>            : {true, -20, 20},                //Shoulder
+<span class="lineNum">      93 </span>            : {true, -20, 20 },               //Elbow
+<span class="lineNum">      94 </span>            : {true, -20, 20 },               //Hip
+<span class="lineNum">      95 </span>            : {true, -20, 20 },               //Knee
+<span class="lineNum">      96 </span>            : {true, -20, 20 },               //Ankle
+<span class="lineNum">      97 </span>            : 
+<span class="lineNum">      98 </span>            : //Extend
+<span class="lineNum">      99 </span>            : { true, -1, 1 },                //SpineCurve
+<span class="lineNum">     100 </span>            : { true, -20, 20 },              //Shoulder
+<span class="lineNum">     101 </span>            : { true, -20, 20 },              //Elbow
+<span class="lineNum">     102 </span>            : { true, -20, 20 },              //Hip
+<span class="lineNum">     103 </span>            : { true, -20, 20 },              //Knee
+<span class="lineNum">     104 </span>            : { true, -20, 20 },              //Ankle
+<span class="lineNum">     105 </span>            : 
+<span class="lineNum">     106 </span>            : //FrontStance
+<span class="lineNum">     107 </span>            : { true, -1, 1 },                //SpineCurve
+<span class="lineNum">     108 </span>            : { true, -20, 20 },              //Shoulder
+<span class="lineNum">     109 </span>            : { true, -20, 20 },              //Elbow
+<span class="lineNum">     110 </span>            : { true, -20, 20 },              //Hip
+<span class="lineNum">     111 </span>            : { true, -20, 20 },              //Knee
+<span class="lineNum">     112 </span>            : { true, -20, 20 },              //Ankle
+<span class="lineNum">     113 </span>            : 
+<span class="lineNum">     114 </span>            : //Gather
+<span class="lineNum">     115 </span>            : { true, -1, 1 },                //SpineCurve
+<span class="lineNum">     116 </span>            : { true, -20, 20 },              //Shoulder
+<span class="lineNum">     117 </span>            : { true, -20, 20 },              //Elbow
+<span class="lineNum">     118 </span>            : { true, -20, 20 },              //Hip
+<span class="lineNum">     119 </span>            : { true, -20, 20 },              //Knee
+<span class="lineNum">     120 </span>            : { true, -20, 20 }               //Ankle
+<span class="lineNum">     121 </span>            : };
+<span class="lineNum">     122 </span>            : 
+<span class="lineNum">     123 </span>            : /*
+<span class="lineNum">     124 </span>            : const cDogController::tParamInfo gParamInfo[] =
+<span class="lineNum">     125 </span>            : {
+<span class="lineNum">     126 </span>            :         {false, 0, 0.5},                //TransTime
+<span class="lineNum">     127 </span>            :         {true, -1, 1},                  //Cv
+<span class="lineNum">     128 </span>            :         {true, -200, 1000},             //BackForceX
+<span class="lineNum">     129 </span>            :         {true, -200, 1000 },    //BackForceY
+<span class="lineNum">     130 </span>            :         {true, -200, 1000 },    //FrontForceX
+<span class="lineNum">     131 </span>            :         {true, -200, 1000 },    //FrontForceY
+<span class="lineNum">     132 </span>            : 
+<span class="lineNum">     133 </span>            :         //BackStance
+<span class="lineNum">     134 </span>            :         {true, -0.2, 1},                //SpineCurve
+<span class="lineNum">     135 </span>            :         {true, -10, 5},                 //Shoulder
+<span class="lineNum">     136 </span>            :         {true, -1, 10 },                //Elbow
+<span class="lineNum">     137 </span>            :         {true, -5, 2 },                 //Hip
+<span class="lineNum">     138 </span>            :         {true, -5, 5 },                 //Knee
+<span class="lineNum">     139 </span>            :         {true, -2, 2 },                 //Ankle
+<span class="lineNum">     140 </span>            : 
+<span class="lineNum">     141 </span>            :         //Extend
+<span class="lineNum">     142 </span>            :         { true, -0.1, 0.5 },    //SpineCurve
+<span class="lineNum">     143 </span>            :         { true, 0, 1 },                 //Shoulder
+<span class="lineNum">     144 </span>            :         { true, -1, 1 },                //Elbow
+<span class="lineNum">     145 </span>            :         { true, 0, 2 },                 //Hip
+<span class="lineNum">     146 </span>            :         { true, -10, 0 },               //Knee
+<span class="lineNum">     147 </span>            :         { true, 0, 10 },                //Ankle
+<span class="lineNum">     148 </span>            :         
+<span class="lineNum">     149 </span>            :         //FrontStance
+<span class="lineNum">     150 </span>            :         { true, -0.2, 0.1 },    //SpineCurve
+<span class="lineNum">     151 </span>            :         { true, -2, 0 },                //Shoulder
+<span class="lineNum">     152 </span>            :         { true, 0, 2 },                 //Elbow
+<span class="lineNum">     153 </span>            :         { true, -2, 2 },                //Hip
+<span class="lineNum">     154 </span>            :         { true, -3, 0 },                //Knee
+<span class="lineNum">     155 </span>            :         { true, 0, 4 },                 //Ankle
+<span class="lineNum">     156 </span>            :         
+<span class="lineNum">     157 </span>            :         //Gather
+<span class="lineNum">     158 </span>            :         { true, -0.2, 0.1 },    //SpineCurve
+<span class="lineNum">     159 </span>            :         { true, -3, 0 },                //Shoulder
+<span class="lineNum">     160 </span>            :         { true, 0, 5 },                 //Elbow
+<span class="lineNum">     161 </span>            :         { true, -2, 2 },                //Hip
+<span class="lineNum">     162 </span>            :         { true, -5, 0 },                //Knee
+<span class="lineNum">     163 </span>            :         { true, 0, 5 }                  //Ankle
+<span class="lineNum">     164 </span>            : };
+<span class="lineNum">     165 </span>            : */
+<a name="166"><span class="lineNum">     166 </span>            : const int gNumParamInfo = sizeof(gParamInfo) / sizeof(gParamInfo[0]);</a>
+<span class="lineNum">     167 </span>            : 
+<span class="lineNum">     168 </span><span class="lineCov">          2 : cDogController::cDogController() : cTerrainRLCharController()</span>
+<span class="lineNum">     169 </span>            : {
+<span class="lineNum">     170 </span><span class="lineCov">          2 :         mDefaultAction = gInvalidIdx;</span>
+<span class="lineNum">     171 </span><span class="lineCov">          2 :         mState = eStateBackStance;</span>
+<span class="lineNum">     172 </span><span class="lineCov">          2 :         mEnableGravityCompensation = true;</span>
+<a name="173"><span class="lineNum">     173 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">     174 </span>            : 
+<span class="lineNum">     175 </span><span class="lineCov">          2 : cDogController::~cDogController()</span>
+<span class="lineNum">     176 </span>            : {
+<a name="177"><span class="lineNum">     177 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">     178 </span>            : 
+<span class="lineNum">     179 </span><span class="lineCov">          2 : void cDogController::Init(cSimCharacter* character, const tVector&amp; gravity, const std::string&amp; param_file)</span>
+<span class="lineNum">     180 </span>            : {
+<span class="lineNum">     181 </span>            :         // param_file should contain parameters for the pd controllers
+<span class="lineNum">     182 </span><span class="lineCov">          2 :         cTerrainRLCharController::Init(character);</span>
+<span class="lineNum">     183 </span>            : 
+<span class="lineNum">     184 </span><span class="lineCov">          2 :         mGravity = gravity;</span>
+<span class="lineNum">     185 </span><span class="lineCov">          2 :         mCtrlParams.clear();</span>
+<span class="lineNum">     186 </span><span class="lineCov">          2 :         mPrevCOM = character-&gt;CalcCOM();</span>
+<span class="lineNum">     187 </span>            : 
+<span class="lineNum">     188 </span><span class="lineCov">          4 :         Eigen::MatrixXd pd_params;</span>
+<span class="lineNum">     189 </span><span class="lineCov">          2 :         bool succ = cPDController::LoadParams(param_file, pd_params);</span>
+<span class="lineNum">     190 </span>            : 
+<span class="lineNum">     191 </span><span class="lineCov">          2 :         if (succ)</span>
+<span class="lineNum">     192 </span>            :         {
+<span class="lineNum">     193 </span><span class="lineCov">          2 :                 mRBDModel = std::shared_ptr&lt;cRBDModel&gt;(new cRBDModel());</span>
+<span class="lineNum">     194 </span><span class="lineCov">          2 :                 mRBDModel-&gt;Init(mChar-&gt;GetJointMat(), mChar-&gt;GetBodyDefs(), mGravity);</span>
+<span class="lineNum">     195 </span>            : 
+<span class="lineNum">     196 </span><span class="lineCov">          2 :                 mImpPDCtrl.Init(mChar, mRBDModel, pd_params, mGravity);</span>
+<span class="lineNum">     197 </span>            :                 
+<span class="lineNum">     198 </span><span class="lineCov">          2 :                 succ = LoadControllers(param_file);</span>
+<span class="lineNum">     199 </span><span class="lineCov">          2 :                 TransitionState(eStateBackStance);</span>
+<span class="lineNum">     200 </span>            :         }
+<span class="lineNum">     201 </span>            : 
+<span class="lineNum">     202 </span><span class="lineCov">          2 :         mValid = succ;</span>
+<span class="lineNum">     203 </span><span class="lineCov">          2 :         if (!mValid)</span>
+<span class="lineNum">     204 </span>            :         {
+<span class="lineNum">     205 </span><span class="lineNoCov">          0 :                 printf(&quot;Failed to initialize dog controller\n&quot;);</span>
+<span class="lineNum">     206 </span><span class="lineNoCov">          0 :                 mValid = false;</span>
+<span class="lineNum">     207 </span>            :         }
+<a name="208"><span class="lineNum">     208 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">     209 </span>            : 
+<span class="lineNum">     210 </span><span class="lineCov">          1 : void cDogController::Reset()</span>
+<span class="lineNum">     211 </span>            : {
+<span class="lineNum">     212 </span><span class="lineCov">          1 :         cTerrainRLCharController::Reset();</span>
+<span class="lineNum">     213 </span><span class="lineCov">          1 :         ClearCommands();</span>
+<span class="lineNum">     214 </span><span class="lineCov">          1 :         mImpPDCtrl.Reset();</span>
+<span class="lineNum">     215 </span><span class="lineCov">          1 :         mPrevCOM = mChar-&gt;CalcCOM();</span>
+<a name="216"><span class="lineNum">     216 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     217 </span>            : 
+<span class="lineNum">     218 </span><span class="lineCov">          2 : void cDogController::Clear()</span>
+<span class="lineNum">     219 </span>            : {
+<span class="lineNum">     220 </span><span class="lineCov">          2 :         cTerrainRLCharController::Clear();</span>
+<span class="lineNum">     221 </span><span class="lineCov">          2 :         mImpPDCtrl.Clear();</span>
+<span class="lineNum">     222 </span><span class="lineCov">          2 :         mCtrlParams.clear();</span>
+<span class="lineNum">     223 </span><span class="lineCov">          2 :         ClearCommands();</span>
+<span class="lineNum">     224 </span>            : 
+<span class="lineNum">     225 </span><span class="lineCov">          2 :         mRBDModel.reset();</span>
+<span class="lineNum">     226 </span><span class="lineCov">          2 :         mDefaultAction = gInvalidIdx;</span>
+<a name="227"><span class="lineNum">     227 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">     228 </span>            : 
+<span class="lineNum">     229 </span><span class="lineCov">       2180 : void cDogController::Update(double time_step)</span>
+<span class="lineNum">     230 </span>            : {
+<span class="lineNum">     231 </span><span class="lineCov">       2180 :         cTerrainRLCharController::Update(time_step);</span>
+<span class="lineNum">     232 </span>            : 
+<span class="lineNum">     233 </span><span class="lineCov">       2180 :         int num_dof = mChar-&gt;GetNumDof();</span>
+<span class="lineNum">     234 </span><span class="lineCov">       4360 :         Eigen::VectorXd tau = Eigen::VectorXd::Zero(num_dof);</span>
+<span class="lineNum">     235 </span>            : 
+<span class="lineNum">     236 </span><span class="lineCov">       2180 :         if (mMode == eModeActive)</span>
+<span class="lineNum">     237 </span>            :         {
+<span class="lineNum">     238 </span>            : #if defined(DOG_CTRL_PROFILER)
+<span class="lineNum">     239 </span>            :                 TIMER_PRINT_BEG(Dog_Ctrl_Update)
+<span class="lineNum">     240 </span>            : #endif
+<span class="lineNum">     241 </span><span class="lineCov">       2180 :                 mCurrCycleTime += time_step;</span>
+<span class="lineNum">     242 </span><span class="lineCov">       2180 :                 UpdateStumbleCounter(time_step);</span>
+<span class="lineNum">     243 </span>            : 
+<span class="lineNum">     244 </span><span class="lineCov">       2180 :                 UpdateRBDModel();</span>
+<span class="lineNum">     245 </span><span class="lineCov">       2180 :                 UpdateState(time_step);</span>
+<span class="lineNum">     246 </span><span class="lineCov">       2180 :                 ApplyFeedback();</span>
+<span class="lineNum">     247 </span>            : 
+<span class="lineNum">     248 </span><span class="lineCov">       2180 :                 UpdatePDCtrls(time_step, tau);</span>
+<span class="lineNum">     249 </span>            : 
+<span class="lineNum">     250 </span><span class="lineCov">       2180 :                 if (mEnableGravityCompensation)</span>
+<span class="lineNum">     251 </span>            :                 {
+<span class="lineNum">     252 </span><span class="lineCov">       2180 :                         ApplyGravityCompensation(tau);</span>
+<span class="lineNum">     253 </span>            :                 }
+<span class="lineNum">     254 </span>            : 
+<span class="lineNum">     255 </span><span class="lineCov">       2180 :                 ApplyVirtualForces(tau);</span>
+<span class="lineNum">     256 </span>            : 
+<span class="lineNum">     257 </span>            : #if defined(DOG_CTRL_PROFILER)
+<span class="lineNum">     258 </span>            :                 TIMER_PRINT_END(Dog_Ctrl_Update)
+<span class="lineNum">     259 </span>            :                 printf(&quot;\n&quot;);
+<span class="lineNum">     260 </span>            : #endif
+<span class="lineNum">     261 </span>            :         }
+<span class="lineNum">     262 </span><span class="lineNoCov">          0 :         else if (mMode == eModePassive)</span>
+<span class="lineNum">     263 </span>            :         {
+<span class="lineNum">     264 </span><span class="lineNoCov">          0 :                 UpdatePDCtrls(time_step, tau);</span>
+<span class="lineNum">     265 </span>            :         }
+<span class="lineNum">     266 </span>            : 
+<span class="lineNum">     267 </span><span class="lineCov">       2180 :         mChar-&gt;ApplyControlForces(tau);</span>
+<a name="268"><span class="lineNum">     268 </span><span class="lineCov">       2180 : }</span></a>
+<span class="lineNum">     269 </span>            : 
+<span class="lineNum">     270 </span><span class="lineNoCov">          0 : void cDogController::SeCtrlStateParams(eState state, const tStateParams&amp; params)</span>
+<span class="lineNum">     271 </span>            : {
+<span class="lineNum">     272 </span><span class="lineNoCov">          0 :         mCurrAction.mParams.segment(eMiscParamMax + state * eStateParamMax, eStateParamMax) = params;</span>
+<a name="273"><span class="lineNum">     273 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     274 </span>            : 
+<span class="lineNum">     275 </span><span class="lineCov">         38 : void cDogController::TransitionState(int state)</span>
+<span class="lineNum">     276 </span>            : {
+<span class="lineNum">     277 </span><span class="lineCov">         38 :         cTerrainRLCharController::TransitionState(state);</span>
+<a name="278"><span class="lineNum">     278 </span><span class="lineCov">         38 : }</span></a>
+<span class="lineNum">     279 </span>            : 
+<span class="lineNum">     280 </span><span class="lineCov">         39 : void cDogController::TransitionState(int state, double phase)</span>
+<span class="lineNum">     281 </span>            : {
+<span class="lineNum">     282 </span><span class="lineCov">         39 :         assert(state &gt;= 0 &amp;&amp; state &lt; eStateMax);</span>
+<span class="lineNum">     283 </span><span class="lineCov">         39 :         cTerrainRLCharController::TransitionState(state, phase);</span>
+<span class="lineNum">     284 </span><span class="lineCov">         39 :         tStateParams params = GetCurrParams();</span>
+<span class="lineNum">     285 </span><span class="lineCov">         39 :         SetStateParams(params);</span>
+<a name="286"><span class="lineNum">     286 </span><span class="lineCov">         39 : }</span></a>
+<span class="lineNum">     287 </span>            : 
+<span class="lineNum">     288 </span><span class="lineNoCov">          0 : void cDogController::SetTransTime(double time)</span>
+<span class="lineNum">     289 </span>            : {
+<span class="lineNum">     290 </span>            :         // set duration of each state in the walk
+<span class="lineNum">     291 </span><span class="lineNoCov">          0 :         mCurrAction.mParams[eMiscParamTransTime] = time;</span>
+<a name="292"><span class="lineNum">     292 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     293 </span>            : 
+<span class="lineNum">     294 </span><span class="lineNoCov">          0 : int cDogController::GetNumStates() const</span>
+<span class="lineNum">     295 </span>            : {
+<span class="lineNum">     296 </span><span class="lineNoCov">          0 :         return eStateMax;</span>
+<a name="297"><span class="lineNum">     297 </span>            : }</a>
+<span class="lineNum">     298 </span>            : 
+<span class="lineNum">     299 </span><span class="lineCov">          3 : void cDogController::SetMode(eMode mode)</span>
+<span class="lineNum">     300 </span>            : {
+<span class="lineNum">     301 </span><span class="lineCov">          3 :         cTerrainRLCharController::SetMode(mode);</span>
+<span class="lineNum">     302 </span>            : 
+<span class="lineNum">     303 </span><span class="lineCov">          3 :         if (mMode == eModePassive)</span>
+<span class="lineNum">     304 </span>            :         {
+<span class="lineNum">     305 </span><span class="lineNoCov">          0 :                 SetupPassiveMode();</span>
+<span class="lineNum">     306 </span>            :         }
+<a name="307"><span class="lineNum">     307 </span><span class="lineCov">          3 : }</span></a>
+<span class="lineNum">     308 </span>            : 
+<span class="lineNum">     309 </span><span class="lineNoCov">          0 : void cDogController::CommandAction(int action_id)</span>
+<span class="lineNum">     310 </span>            : {
+<span class="lineNum">     311 </span><span class="lineNoCov">          0 :         int num_actions = GetNumActions();</span>
+<span class="lineNum">     312 </span><span class="lineNoCov">          0 :         if (action_id &lt; num_actions)</span>
+<span class="lineNum">     313 </span>            :         {
+<span class="lineNum">     314 </span><span class="lineNoCov">          0 :                 mCommands.push(action_id);</span>
+<span class="lineNum">     315 </span>            :         }
+<span class="lineNum">     316 </span>            :         else
+<span class="lineNum">     317 </span>            :         {
+<span class="lineNum">     318 </span><span class="lineNoCov">          0 :                 assert(false); // invalid action</span>
+<span class="lineNum">     319 </span>            :         }
+<a name="320"><span class="lineNum">     320 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     321 </span>            : 
+<span class="lineNum">     322 </span><span class="lineNoCov">          0 : void cDogController::CommandRandAction()</span>
+<span class="lineNum">     323 </span>            : {
+<span class="lineNum">     324 </span><span class="lineNoCov">          0 :         int num_actions = GetNumActions();</span>
+<span class="lineNum">     325 </span><span class="lineNoCov">          0 :         int a = cMathUtil::RandInt(0, num_actions);</span>
+<span class="lineNum">     326 </span><span class="lineNoCov">          0 :         CommandAction(a);</span>
+<a name="327"><span class="lineNum">     327 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     328 </span>            : 
+<span class="lineNum">     329 </span><span class="lineCov">          1 : int cDogController::GetDefaultAction() const</span>
+<span class="lineNum">     330 </span>            : {
+<span class="lineNum">     331 </span><span class="lineCov">          1 :         return mDefaultAction;</span>
+<a name="332"><span class="lineNum">     332 </span>            : }</a>
+<span class="lineNum">     333 </span>            : 
+<span class="lineNum">     334 </span><span class="lineNoCov">          0 : void cDogController::SetDefaultAction(int action_id)</span>
+<span class="lineNum">     335 </span>            : {
+<span class="lineNum">     336 </span><span class="lineNoCov">          0 :         if (action_id &gt;= 0 &amp;&amp; action_id &lt; GetNumActions())</span>
+<span class="lineNum">     337 </span>            :         {
+<span class="lineNum">     338 </span><span class="lineNoCov">          0 :                 mDefaultAction = action_id;</span>
+<span class="lineNum">     339 </span>            :         }
+<a name="340"><span class="lineNum">     340 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     341 </span>            : 
+<span class="lineNum">     342 </span><span class="lineCov">         38 : int cDogController::GetNumActions() const</span>
+<span class="lineNum">     343 </span>            : {
+<span class="lineNum">     344 </span><span class="lineCov">         38 :         return static_cast&lt;int&gt;(mActions.size());</span>
+<a name="345"><span class="lineNum">     345 </span>            : }</a>
+<span class="lineNum">     346 </span>            : 
+<span class="lineNum">     347 </span><span class="lineNoCov">          0 : void cDogController::BuildCtrlOptParams(int ctrl_params_idx, Eigen::VectorXd&amp; out_params) const</span>
+<span class="lineNum">     348 </span>            : {
+<span class="lineNum">     349 </span><span class="lineNoCov">          0 :         GetOptParams(mCtrlParams[ctrl_params_idx], out_params);</span>
+<a name="350"><span class="lineNum">     350 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     351 </span>            : 
+<span class="lineNum">     352 </span><span class="lineNoCov">          0 : void cDogController::SetCtrlParams(int ctrl_params_id, const Eigen::VectorXd&amp; params)</span>
+<span class="lineNum">     353 </span>            : {
+<span class="lineNum">     354 </span><span class="lineNoCov">          0 :         assert(params.size() == GetNumParams());</span>
+<span class="lineNum">     355 </span><span class="lineNoCov">          0 :         Eigen::VectorXd&amp; ctrl_params = mCtrlParams[ctrl_params_id];</span>
+<span class="lineNum">     356 </span><span class="lineNoCov">          0 :         ctrl_params = params;</span>
+<span class="lineNum">     357 </span><span class="lineNoCov">          0 :         PostProcessParams(ctrl_params);</span>
+<span class="lineNum">     358 </span>            : 
+<span class="lineNum">     359 </span><span class="lineNoCov">          0 :         const tBlendAction&amp; curr_action = mActions[mCurrAction.mID];</span>
+<span class="lineNum">     360 </span><span class="lineNoCov">          0 :         if (curr_action.mParamIdx0 == ctrl_params_id</span>
+<span class="lineNum">     361 </span><span class="lineNoCov">          0 :                 || curr_action.mParamIdx1 == ctrl_params_id)</span>
+<span class="lineNum">     362 </span>            :         {
+<span class="lineNum">     363 </span><span class="lineNoCov">          0 :                 ApplyAction(mCurrAction.mID);</span>
+<span class="lineNum">     364 </span>            :         }
+<a name="365"><span class="lineNum">     365 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     366 </span>            : 
+<span class="lineNum">     367 </span><span class="lineNoCov">          0 : void cDogController::SetCtrlOptParams(int ctrl_params_id, const Eigen::VectorXd&amp; opt_params)</span>
+<span class="lineNum">     368 </span>            : {
+<span class="lineNum">     369 </span><span class="lineNoCov">          0 :         assert(opt_params.size() == GetNumOptParams());</span>
+<span class="lineNum">     370 </span><span class="lineNoCov">          0 :         Eigen::VectorXd&amp; ctrl_params = mCtrlParams[ctrl_params_id];</span>
+<span class="lineNum">     371 </span><span class="lineNoCov">          0 :         SetOptParams(opt_params, ctrl_params);</span>
+<span class="lineNum">     372 </span>            : 
+<span class="lineNum">     373 </span><span class="lineNoCov">          0 :         const tBlendAction&amp; curr_action = mActions[mCurrAction.mID];</span>
+<span class="lineNum">     374 </span><span class="lineNoCov">          0 :         if (curr_action.mParamIdx0 == ctrl_params_id</span>
+<span class="lineNum">     375 </span><span class="lineNoCov">          0 :                 || curr_action.mParamIdx1 == ctrl_params_id)</span>
+<span class="lineNum">     376 </span>            :         {
+<span class="lineNum">     377 </span><span class="lineNoCov">          0 :                 ApplyAction(mCurrAction.mID);</span>
+<span class="lineNum">     378 </span>            :         }
+<a name="379"><span class="lineNum">     379 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     380 </span>            : 
+<span class="lineNum">     381 </span><span class="lineNoCov">          0 : void cDogController::BuildActionOptParams(int action_id, Eigen::VectorXd&amp; out_params) const</span>
+<span class="lineNum">     382 </span>            : {
+<span class="lineNum">     383 </span><span class="lineNoCov">          0 :         assert(action_id &gt;= 0 &amp;&amp; action_id &lt; GetNumActions());</span>
+<span class="lineNum">     384 </span><span class="lineNoCov">          0 :         const tBlendAction&amp; action = mActions[action_id];</span>
+<span class="lineNum">     385 </span><span class="lineNoCov">          0 :         Eigen::VectorXd params;</span>
+<span class="lineNum">     386 </span><span class="lineNoCov">          0 :         BlendCtrlParams(action, params);</span>
+<span class="lineNum">     387 </span><span class="lineNoCov">          0 :         GetOptParams(params, out_params);</span>
+<a name="388"><span class="lineNum">     388 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     389 </span>            : 
+<span class="lineNum">     390 </span><span class="lineCov">         22 : int cDogController::GetNumParams() const</span>
+<span class="lineNum">     391 </span>            : {
+<span class="lineNum">     392 </span><span class="lineCov">         22 :         int num_params = eMiscParamMax + eStateMax * eStateParamMax;</span>
+<span class="lineNum">     393 </span><span class="lineCov">         22 :         return num_params;</span>
+<a name="394"><span class="lineNum">     394 </span>            : }</a>
+<span class="lineNum">     395 </span>            : 
+<span class="lineNum">     396 </span><span class="lineNoCov">          0 : int cDogController::GetNumOptParams() const</span>
+<span class="lineNum">     397 </span>            : {
+<span class="lineNum">     398 </span><span class="lineNoCov">          0 :         int num_params = GetNumParams();</span>
+<span class="lineNum">     399 </span><span class="lineNoCov">          0 :         assert(gNumParamInfo == num_params);</span>
+<span class="lineNum">     400 </span>            : 
+<span class="lineNum">     401 </span><span class="lineNoCov">          0 :         int num_opt_params = 0;</span>
+<span class="lineNum">     402 </span><span class="lineNoCov">          0 :         for (int i = 0; i &lt; num_params; ++i)</span>
+<span class="lineNum">     403 </span>            :         {
+<span class="lineNum">     404 </span><span class="lineNoCov">          0 :                 if (IsOptParam(i))</span>
+<span class="lineNum">     405 </span>            :                 {
+<span class="lineNum">     406 </span><span class="lineNoCov">          0 :                         ++num_opt_params;</span>
+<span class="lineNum">     407 </span>            :                 }
+<span class="lineNum">     408 </span>            :         }
+<span class="lineNum">     409 </span>            : 
+<span class="lineNum">     410 </span><span class="lineNoCov">          0 :         return num_opt_params;</span>
+<a name="411"><span class="lineNum">     411 </span>            : }</a>
+<span class="lineNum">     412 </span>            : 
+<span class="lineNum">     413 </span><span class="lineNoCov">          0 : void cDogController::FetchOptParamScale(Eigen::VectorXd&amp; out_scale) const</span>
+<span class="lineNum">     414 </span>            : {
+<span class="lineNum">     415 </span><span class="lineNoCov">          0 :         int num_opt_params = GetNumOptParams();</span>
+<span class="lineNum">     416 </span><span class="lineNoCov">          0 :         int num_params = GetNumParams();</span>
+<span class="lineNum">     417 </span>            : 
+<span class="lineNum">     418 </span><span class="lineNoCov">          0 :         const double angle_scale = M_PI / 10;</span>
+<span class="lineNum">     419 </span><span class="lineNoCov">          0 :         const double cv_scale = 0.02;</span>
+<span class="lineNum">     420 </span><span class="lineNoCov">          0 :         const double cd_scale = 0.2;</span>
+<span class="lineNum">     421 </span><span class="lineNoCov">          0 :         const double force_scale = 100;</span>
+<span class="lineNum">     422 </span><span class="lineNoCov">          0 :         const double spine_curve_scale = 0.02;</span>
+<span class="lineNum">     423 </span>            : 
+<span class="lineNum">     424 </span><span class="lineNoCov">          0 :         Eigen::VectorXd param_buffer = Eigen::VectorXd::Ones(num_params);</span>
+<span class="lineNum">     425 </span>            : 
+<span class="lineNum">     426 </span><span class="lineNoCov">          0 :         int idx = 0;</span>
+<span class="lineNum">     427 </span><span class="lineNoCov">          0 :         for (int i = 0; i &lt; eMiscParamMax; ++i)</span>
+<span class="lineNum">     428 </span>            :         {
+<span class="lineNum">     429 </span><span class="lineNoCov">          0 :                 if (i == eMiscParamCv)</span>
+<span class="lineNum">     430 </span>            :                 {
+<span class="lineNum">     431 </span><span class="lineNoCov">          0 :                         param_buffer[idx] = cv_scale;</span>
+<span class="lineNum">     432 </span>            :                 }
+<span class="lineNum">     433 </span><span class="lineNoCov">          0 :                 else if (i == eMiscParamBackForceX</span>
+<span class="lineNum">     434 </span><span class="lineNoCov">          0 :                         || i == eMiscParamBackForceY</span>
+<span class="lineNum">     435 </span><span class="lineNoCov">          0 :                         || i == eMiscParamFrontForceX</span>
+<span class="lineNum">     436 </span><span class="lineNoCov">          0 :                         || i == eMiscParamFrontForceY)</span>
+<span class="lineNum">     437 </span>            :                 {
+<span class="lineNum">     438 </span><span class="lineNoCov">          0 :                         param_buffer[idx] = force_scale;</span>
+<span class="lineNum">     439 </span>            :                 }
+<span class="lineNum">     440 </span>            : 
+<span class="lineNum">     441 </span><span class="lineNoCov">          0 :                 ++idx;</span>
+<span class="lineNum">     442 </span>            :         }
+<span class="lineNum">     443 </span>            : 
+<span class="lineNum">     444 </span><span class="lineNoCov">          0 :         for (int i = 0; i &lt; eStateMax; ++i)</span>
+<span class="lineNum">     445 </span>            :         {
+<span class="lineNum">     446 </span><span class="lineNoCov">          0 :                 for (int j = 0; j &lt; eStateParamMax; ++j)</span>
+<span class="lineNum">     447 </span>            :                 {
+<span class="lineNum">     448 </span><span class="lineNoCov">          0 :                         if (j == eStateParamSpineCurve)</span>
+<span class="lineNum">     449 </span>            :                         {
+<span class="lineNum">     450 </span><span class="lineNoCov">          0 :                                 param_buffer[idx] = spine_curve_scale;</span>
+<span class="lineNum">     451 </span>            :                         }
+<span class="lineNum">     452 </span>            :                         else
+<span class="lineNum">     453 </span>            :                         {
+<span class="lineNum">     454 </span><span class="lineNoCov">          0 :                                 param_buffer[idx] = angle_scale;</span>
+<span class="lineNum">     455 </span>            :                         }
+<span class="lineNum">     456 </span><span class="lineNoCov">          0 :                         ++idx;</span>
+<span class="lineNum">     457 </span>            :                 }
+<span class="lineNum">     458 </span>            :         }
+<span class="lineNum">     459 </span>            : 
+<span class="lineNum">     460 </span><span class="lineNoCov">          0 :         assert(idx == num_params);</span>
+<span class="lineNum">     461 </span><span class="lineNoCov">          0 :         GetOptParams(param_buffer, out_scale);</span>
+<a name="462"><span class="lineNum">     462 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     463 </span>            : 
+<span class="lineNum">     464 </span><span class="lineNoCov">          0 : void cDogController::OutputOptParams(const std::string&amp; file, const Eigen::VectorXd&amp; params) const</span>
+<span class="lineNum">     465 </span>            : {
+<span class="lineNum">     466 </span><span class="lineNoCov">          0 :         cController::OutputOptParams(file, params);</span>
+<a name="467"><span class="lineNum">     467 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     468 </span>            : 
+<span class="lineNum">     469 </span><span class="lineNoCov">          0 : void cDogController::OutputOptParams(FILE* f, const Eigen::VectorXd&amp; params) const</span>
+<span class="lineNum">     470 </span>            : {
+<span class="lineNum">     471 </span><span class="lineNoCov">          0 :         std::string opt_param_json = BuildOptParamsJson(params);</span>
+<span class="lineNum">     472 </span><span class="lineNoCov">          0 :         fprintf(f, &quot;%s\n&quot;, opt_param_json.c_str());</span>
+<a name="473"><span class="lineNum">     473 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     474 </span>            : 
+<span class="lineNum">     475 </span><span class="lineCov">          6 : void cDogController::ReadParams(std::ifstream&amp; f_stream)</span>
+<span class="lineNum">     476 </span>            : {
+<span class="lineNum">     477 </span><span class="lineCov">         12 :         Json::Reader reader;</span>
+<span class="lineNum">     478 </span><span class="lineCov">         12 :         Json::Value root;</span>
+<span class="lineNum">     479 </span><span class="lineCov">          6 :         bool succ = reader.parse(f_stream, root);</span>
+<span class="lineNum">     480 </span><span class="lineCov">          6 :         if (succ)</span>
+<span class="lineNum">     481 </span>            :         {
+<span class="lineNum">     482 </span><span class="lineCov">          6 :                 double trans_time = 0;</span>
+<span class="lineNum">     483 </span><span class="lineCov">         12 :                 Eigen::VectorXd param_vec = Eigen::VectorXd::Zero(GetNumParams());</span>
+<span class="lineNum">     484 </span><span class="lineCov">          6 :                 int idx = 0;</span>
+<span class="lineNum">     485 </span>            :                 // grab the transition time first
+<span class="lineNum">     486 </span><span class="lineCov">          6 :                 if (!root[gMiscParamsKey].isNull())</span>
+<span class="lineNum">     487 </span>            :                 {
+<span class="lineNum">     488 </span><span class="lineCov">         12 :                         Json::Value misc_params = root[gMiscParamsKey];</span>
+<span class="lineNum">     489 </span><span class="lineCov">         42 :                         for (int i = 0; i &lt; eMiscParamMax; ++i)</span>
+<span class="lineNum">     490 </span>            :                         {
+<span class="lineNum">     491 </span><span class="lineCov">         36 :                                 param_vec[idx++] = misc_params[gMiscParamsNames[i]].asDouble();</span>
+<span class="lineNum">     492 </span>            :                         }
+<span class="lineNum">     493 </span>            :                 }
+<span class="lineNum">     494 </span>            :                 else
+<span class="lineNum">     495 </span>            :                 {
+<span class="lineNum">     496 </span><span class="lineNoCov">          0 :                         printf(&quot;Failed to find %s\n&quot;, gMiscParamsKey.c_str());</span>
+<span class="lineNum">     497 </span>            :                 }
+<span class="lineNum">     498 </span>            : 
+<span class="lineNum">     499 </span><span class="lineCov">          6 :                 if (!root[gStateParamsKey].isNull())</span>
+<span class="lineNum">     500 </span>            :                 {
+<span class="lineNum">     501 </span><span class="lineCov">         12 :                         Json::Value state_params = root[gStateParamsKey];</span>
+<span class="lineNum">     502 </span>            : 
+<span class="lineNum">     503 </span><span class="lineCov">         30 :                         for (int i = 0; i &lt; eStateMax; ++i)</span>
+<span class="lineNum">     504 </span>            :                         {
+<span class="lineNum">     505 </span><span class="lineCov">         48 :                                 Json::Value curr_params = state_params[gStateDefs[i].mName];</span>
+<span class="lineNum">     506 </span><span class="lineCov">        168 :                                 for (int j = 0; j &lt; eStateParamMax; ++j)</span>
+<span class="lineNum">     507 </span>            :                                 {
+<span class="lineNum">     508 </span><span class="lineCov">        144 :                                         param_vec[idx++] = curr_params[gStateParamNames[j]].asDouble();</span>
+<span class="lineNum">     509 </span>            :                                 }
+<span class="lineNum">     510 </span>            :                         }
+<span class="lineNum">     511 </span>            :                 }
+<span class="lineNum">     512 </span>            :                 else
+<span class="lineNum">     513 </span>            :                 {
+<span class="lineNum">     514 </span><span class="lineNoCov">          0 :                         printf(&quot;Failed to find %s\n&quot;, gStateParamsKey.c_str());</span>
+<span class="lineNum">     515 </span>            :                 }
+<span class="lineNum">     516 </span>            : 
+<span class="lineNum">     517 </span><span class="lineCov">          6 :                 if (!HasCtrlParams())</span>
+<span class="lineNum">     518 </span>            :                 {
+<span class="lineNum">     519 </span><span class="lineCov">          2 :                         SetParams(param_vec);</span>
+<span class="lineNum">     520 </span>            : 
+<span class="lineNum">     521 </span>            :                         // refresh controls params
+<span class="lineNum">     522 </span><span class="lineCov">          2 :                         tStateParams curr_params = GetCurrParams();</span>
+<span class="lineNum">     523 </span><span class="lineCov">          2 :                         SetStateParams(curr_params);</span>
+<span class="lineNum">     524 </span>            :                 }
+<span class="lineNum">     525 </span><span class="lineCov">          6 :                 PostProcessParams(param_vec);</span>
+<span class="lineNum">     526 </span><span class="lineCov">          6 :                 mCtrlParams.push_back(param_vec);</span>
+<span class="lineNum">     527 </span>            :         }
+<a name="528"><span class="lineNum">     528 </span><span class="lineCov">          6 : }</span></a>
+<span class="lineNum">     529 </span>            : 
+<span class="lineNum">     530 </span><span class="lineCov">          6 : void cDogController::ReadParams(const std::string&amp; file)</span>
+<span class="lineNum">     531 </span>            : {
+<span class="lineNum">     532 </span><span class="lineCov">          6 :         cTerrainRLCharController::ReadParams(file);</span>
+<a name="533"><span class="lineNum">     533 </span><span class="lineCov">          6 : }</span></a>
+<span class="lineNum">     534 </span>            : 
+<span class="lineNum">     535 </span><span class="lineCov">         14 : void cDogController::SetParams(const Eigen::VectorXd&amp; params)</span>
+<span class="lineNum">     536 </span>            : {
+<span class="lineNum">     537 </span><span class="lineCov">         14 :         assert(params.size() == GetNumParams());</span>
+<span class="lineNum">     538 </span><span class="lineCov">         14 :         mCurrAction.mParams = params;</span>
+<span class="lineNum">     539 </span><span class="lineCov">         14 :         PostProcessParams(mCurrAction.mParams);</span>
+<a name="540"><span class="lineNum">     540 </span><span class="lineCov">         14 : }</span></a>
+<span class="lineNum">     541 </span>            : 
+<span class="lineNum">     542 </span><span class="lineNoCov">          0 : void cDogController::BuildOptParams(Eigen::VectorXd&amp; out_params) const</span>
+<span class="lineNum">     543 </span>            : {
+<span class="lineNum">     544 </span><span class="lineNoCov">          0 :         GetOptParams(mCurrAction.mParams, out_params);</span>
+<a name="545"><span class="lineNum">     545 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     546 </span>            : 
+<span class="lineNum">     547 </span><span class="lineNoCov">          0 : void cDogController::SetOptParams(const Eigen::VectorXd&amp; opt_params)</span>
+<span class="lineNum">     548 </span>            : {
+<span class="lineNum">     549 </span><span class="lineNoCov">          0 :         SetOptParams(opt_params, mCurrAction.mParams);</span>
+<a name="550"><span class="lineNum">     550 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     551 </span>            : 
+<span class="lineNum">     552 </span><span class="lineNoCov">          0 : void cDogController::SetOptParams(const Eigen::VectorXd&amp; opt_params, Eigen::VectorXd&amp; out_params) const</span>
+<span class="lineNum">     553 </span>            : {
+<span class="lineNum">     554 </span><span class="lineNoCov">          0 :         assert(opt_params.size() == GetNumOptParams());</span>
+<span class="lineNum">     555 </span><span class="lineNoCov">          0 :         assert(gNumParamInfo == GetNumParams());</span>
+<span class="lineNum">     556 </span>            : 
+<span class="lineNum">     557 </span><span class="lineNoCov">          0 :         int num_params = GetNumParams();</span>
+<span class="lineNum">     558 </span><span class="lineNoCov">          0 :         int opt_idx = 0;</span>
+<span class="lineNum">     559 </span><span class="lineNoCov">          0 :         for (int i = 0; i &lt; num_params; ++i)</span>
+<span class="lineNum">     560 </span>            :         {
+<span class="lineNum">     561 </span><span class="lineNoCov">          0 :                 if (IsOptParam(i))</span>
+<span class="lineNum">     562 </span>            :                 {
+<span class="lineNum">     563 </span><span class="lineNoCov">          0 :                         out_params[i] = opt_params[opt_idx];</span>
+<span class="lineNum">     564 </span><span class="lineNoCov">          0 :                         ++opt_idx;</span>
+<span class="lineNum">     565 </span>            :                 }
+<span class="lineNum">     566 </span>            :         }
+<span class="lineNum">     567 </span><span class="lineNoCov">          0 :         assert(opt_idx == GetNumOptParams());</span>
+<span class="lineNum">     568 </span>            : 
+<span class="lineNum">     569 </span><span class="lineNoCov">          0 :         PostProcessParams(out_params);</span>
+<a name="570"><span class="lineNum">     570 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     571 </span>            : 
+<span class="lineNum">     572 </span><span class="lineNoCov">          0 : void cDogController::BuildFromMotion(int ctrl_params_idx, const cMotion&amp; motion)</span>
+<span class="lineNum">     573 </span>            : {
+<span class="lineNum">     574 </span><span class="lineNoCov">          0 :         assert(motion.IsValid());</span>
+<span class="lineNum">     575 </span><span class="lineNoCov">          0 :         double dur = motion.GetDuration();</span>
+<span class="lineNum">     576 </span><span class="lineNoCov">          0 :         int num_states = GetNumStates();</span>
+<span class="lineNum">     577 </span><span class="lineNoCov">          0 :         double trans_time = dur / num_states;</span>
+<span class="lineNum">     578 </span><span class="lineNoCov">          0 :         SetTransTime(trans_time);</span>
+<span class="lineNum">     579 </span>            : 
+<span class="lineNum">     580 </span><span class="lineNoCov">          0 :         Eigen::VectorXd params = mCurrAction.mParams;</span>
+<span class="lineNum">     581 </span><span class="lineNoCov">          0 :         for (int s = 0; s &lt; num_states; ++s)</span>
+<span class="lineNum">     582 </span>            :         {
+<span class="lineNum">     583 </span><span class="lineNoCov">          0 :                 double curr_time = (s + 1) * trans_time;</span>
+<span class="lineNum">     584 </span><span class="lineNoCov">          0 :                 Eigen::VectorXd curr_pose = motion.CalcFrame(curr_time);</span>
+<span class="lineNum">     585 </span>            : 
+<span class="lineNum">     586 </span><span class="lineNoCov">          0 :                 tStateParams state_params = tStateParams::Zero();</span>
+<span class="lineNum">     587 </span><span class="lineNoCov">          0 :                 BuildStateParamsFromPose(curr_pose, state_params);</span>
+<span class="lineNum">     588 </span><span class="lineNoCov">          0 :                 params.segment(eMiscParamMax + s * eStateParamMax, eStateParamMax) = state_params;</span>
+<span class="lineNum">     589 </span>            :         }
+<span class="lineNum">     590 </span>            : 
+<span class="lineNum">     591 </span><span class="lineNoCov">          0 :         SetCtrlParams(ctrl_params_idx, params);</span>
+<a name="592"><span class="lineNum">     592 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     593 </span>            : 
+<span class="lineNum">     594 </span><span class="lineNoCov">          0 : double cDogController::CalcReward() const</span>
+<span class="lineNum">     595 </span>            : {
+<span class="lineNum">     596 </span><span class="lineNoCov">          0 :         tVector target_vel = GetTargetVel();</span>
+<span class="lineNum">     597 </span>            :         
+<span class="lineNum">     598 </span><span class="lineNoCov">          0 :         const double vel_reward_w = 0.8;</span>
+<span class="lineNum">     599 </span><span class="lineNoCov">          0 :         double vel_reward = 0;</span>
+<span class="lineNum">     600 </span><span class="lineNoCov">          0 :         const double stumble_reward_w = 0.2;</span>
+<span class="lineNum">     601 </span><span class="lineNoCov">          0 :         double stumble_reward = 0;</span>
+<span class="lineNum">     602 </span>            : 
+<span class="lineNum">     603 </span><span class="lineNoCov">          0 :         bool fallen = mChar-&gt;HasFallen();</span>
+<span class="lineNum">     604 </span><span class="lineNoCov">          0 :         if (!fallen)</span>
+<span class="lineNum">     605 </span>            :         {
+<span class="lineNum">     606 </span><span class="lineNoCov">          0 :                 double cycle_time = GetPrevCycleTime();</span>
+<span class="lineNum">     607 </span><span class="lineNoCov">          0 :                 double avg_vel = mPrevDistTraveled[0] / cycle_time;</span>
+<span class="lineNum">     608 </span><span class="lineNoCov">          0 :                 double vel_err = target_vel[0] - avg_vel;</span>
+<span class="lineNum">     609 </span><span class="lineNoCov">          0 :                 double vel_gamma = 0.5;</span>
+<span class="lineNum">     610 </span><span class="lineNoCov">          0 :                 vel_reward = std::exp(-vel_gamma * vel_err * vel_err);</span>
+<span class="lineNum">     611 </span>            : 
+<span class="lineNum">     612 </span><span class="lineNoCov">          0 :                 double stumble_count = mPrevStumbleCount;</span>
+<span class="lineNum">     613 </span><span class="lineNoCov">          0 :                 double avg_stumble = stumble_count /= cycle_time;</span>
+<span class="lineNum">     614 </span><span class="lineNoCov">          0 :                 double stumble_gamma = 10;</span>
+<span class="lineNum">     615 </span><span class="lineNoCov">          0 :                 stumble_reward = 1.0 / (1 + stumble_gamma * avg_stumble);</span>
+<span class="lineNum">     616 </span>            :         }
+<span class="lineNum">     617 </span>            :         
+<span class="lineNum">     618 </span><span class="lineNoCov">          0 :         double reward = 0;</span>
+<span class="lineNum">     619 </span><span class="lineNoCov">          0 :         reward += vel_reward_w * vel_reward</span>
+<span class="lineNum">     620 </span><span class="lineNoCov">          0 :                         + stumble_reward_w * stumble_reward;</span>
+<span class="lineNum">     621 </span>            : 
+<span class="lineNum">     622 </span><span class="lineNoCov">          0 :         return reward;</span>
+<a name="623"><span class="lineNum">     623 </span>            : }</a>
+<span class="lineNum">     624 </span>            : 
+<span class="lineNum">     625 </span><span class="lineNoCov">          0 : tVector cDogController::GetTargetVel() const</span>
+<span class="lineNum">     626 </span>            : {
+<span class="lineNum">     627 </span><span class="lineNoCov">          0 :         return tVector(4, 0, 0, 0);</span>
+<a name="628"><span class="lineNum">     628 </span>            : }</a>
+<span class="lineNum">     629 </span>            : 
+<span class="lineNum">     630 </span><span class="lineNoCov">          0 : double cDogController::GetPrevCycleTime() const</span>
+<span class="lineNum">     631 </span>            : {
+<span class="lineNum">     632 </span><span class="lineNoCov">          0 :         return mPrevCycleTime;</span>
+<a name="633"><span class="lineNum">     633 </span>            : }</a>
+<span class="lineNum">     634 </span>            : 
+<span class="lineNum">     635 </span><span class="lineNoCov">          0 : const tVector&amp; cDogController::GetPrevDistTraveled() const</span>
+<span class="lineNum">     636 </span>            : {
+<span class="lineNum">     637 </span><span class="lineNoCov">          0 :         return mPrevDistTraveled;</span>
+<a name="638"><span class="lineNum">     638 </span>            : }</a>
+<span class="lineNum">     639 </span>            : 
+<span class="lineNum">     640 </span><span class="lineCov">          5 : void cDogController::ResetParams()</span>
+<span class="lineNum">     641 </span>            : {
+<span class="lineNum">     642 </span><span class="lineCov">          5 :         cTerrainRLCharController::ResetParams();</span>
+<span class="lineNum">     643 </span><span class="lineCov">          5 :         mState = eStateBackStance;</span>
+<span class="lineNum">     644 </span><span class="lineCov">          5 :         mPrevCycleTime = 0;</span>
+<span class="lineNum">     645 </span><span class="lineCov">          5 :         mPrevDistTraveled.setZero();</span>
+<span class="lineNum">     646 </span><span class="lineCov">          5 :         mCurrCycleTime = 0;</span>
+<span class="lineNum">     647 </span><span class="lineCov">          5 :         mPrevCOM.setZero();</span>
+<span class="lineNum">     648 </span><span class="lineCov">          5 :         mPrevStumbleCount = 0;</span>
+<span class="lineNum">     649 </span><span class="lineCov">          5 :         mCurrStumbleCount = 0;</span>
+<a name="650"><span class="lineNum">     650 </span><span class="lineCov">          5 : }</span></a>
+<span class="lineNum">     651 </span>            : 
+<span class="lineNum">     652 </span><span class="lineCov">          2 : bool cDogController::LoadControllers(const std::string&amp; file)</span>
+<span class="lineNum">     653 </span>            : {
+<span class="lineNum">     654 </span><span class="lineCov">          4 :         std::ifstream f_stream(file);</span>
+<span class="lineNum">     655 </span><span class="lineCov">          4 :         Json::Reader reader;</span>
+<span class="lineNum">     656 </span><span class="lineCov">          4 :         Json::Value root;</span>
+<span class="lineNum">     657 </span><span class="lineCov">          2 :         bool succ = reader.parse(f_stream, root);</span>
+<span class="lineNum">     658 </span><span class="lineCov">          2 :         if (succ)</span>
+<span class="lineNum">     659 </span>            :         {
+<span class="lineNum">     660 </span><span class="lineCov">          2 :                 if (!root[gControllersKey].isNull())</span>
+<span class="lineNum">     661 </span>            :                 {
+<span class="lineNum">     662 </span><span class="lineCov">          4 :                         Json::Value ctrl_root = root[gControllersKey];</span>
+<span class="lineNum">     663 </span><span class="lineCov">          2 :                         succ = ParseControllers(ctrl_root);</span>
+<span class="lineNum">     664 </span>            :                 }
+<span class="lineNum">     665 </span>            :         }
+<span class="lineNum">     666 </span>            : 
+<span class="lineNum">     667 </span><span class="lineCov">          2 :         if (succ)</span>
+<span class="lineNum">     668 </span>            :         {
+<span class="lineNum">     669 </span><span class="lineCov">          2 :                 if (mDefaultAction != gInvalidIdx)</span>
+<span class="lineNum">     670 </span>            :                 {
+<span class="lineNum">     671 </span><span class="lineCov">          2 :                         ApplyAction(mDefaultAction);</span>
+<span class="lineNum">     672 </span>            :                 }
+<span class="lineNum">     673 </span>            :         }
+<span class="lineNum">     674 </span>            :         else
+<span class="lineNum">     675 </span>            :         {
+<span class="lineNum">     676 </span><span class="lineNoCov">          0 :                 printf(&quot;failed to parse controllers from %s\n&quot;, file.c_str());</span>
+<span class="lineNum">     677 </span><span class="lineNoCov">          0 :                 assert(false);</span>
+<span class="lineNum">     678 </span>            :         }
+<span class="lineNum">     679 </span>            : 
+<span class="lineNum">     680 </span><span class="lineCov">          4 :         return succ;</span>
+<a name="681"><span class="lineNum">     681 </span>            : }</a>
+<span class="lineNum">     682 </span>            : 
+<span class="lineNum">     683 </span><span class="lineCov">          2 : bool cDogController::ParseControllers(const Json::Value&amp; root)</span>
+<span class="lineNum">     684 </span>            : {
+<span class="lineNum">     685 </span><span class="lineCov">          2 :         bool succ = true;</span>
+<span class="lineNum">     686 </span>            :         
+<span class="lineNum">     687 </span><span class="lineCov">          2 :         if (!root[gFilesKey].isNull())</span>
+<span class="lineNum">     688 </span>            :         {
+<span class="lineNum">     689 </span><span class="lineCov">          2 :                 succ &amp;= ParseControllerFiles(root[gFilesKey]);</span>
+<span class="lineNum">     690 </span>            :         }
+<span class="lineNum">     691 </span>            : 
+<span class="lineNum">     692 </span><span class="lineCov">          2 :         if (succ &amp;&amp; !root[gActionsKey].isNull())</span>
+<span class="lineNum">     693 </span>            :         {
+<span class="lineNum">     694 </span><span class="lineCov">          2 :                 succ &amp;= ParseActions(root[gActionsKey]);</span>
+<span class="lineNum">     695 </span>            : 
+<span class="lineNum">     696 </span><span class="lineCov">          2 :                 int num_action = GetNumActions();</span>
+<span class="lineNum">     697 </span><span class="lineCov">          2 :                 if (succ &amp;&amp; num_action &gt; 0)</span>
+<span class="lineNum">     698 </span>            :                 {
+<span class="lineNum">     699 </span><span class="lineCov">          2 :                         mDefaultAction = 0;</span>
+<span class="lineNum">     700 </span><span class="lineCov">          2 :                         if (!root[&quot;DefaultAction&quot;].isNull())</span>
+<span class="lineNum">     701 </span>            :                         {
+<span class="lineNum">     702 </span><span class="lineCov">          2 :                                 mDefaultAction = root[&quot;DefaultAction&quot;].asInt();</span>
+<span class="lineNum">     703 </span><span class="lineCov">          2 :                                 assert(mDefaultAction &gt;= 0 &amp;&amp; mDefaultAction &lt; num_action);</span>
+<span class="lineNum">     704 </span>            :                         }
+<span class="lineNum">     705 </span>            :                 }
+<span class="lineNum">     706 </span>            : 
+<span class="lineNum">     707 </span><span class="lineCov">          2 :                 if (!root[&quot;EnableGravityCompensation&quot;].isNull())</span>
+<span class="lineNum">     708 </span>            :                 {
+<span class="lineNum">     709 </span><span class="lineNoCov">          0 :                         mEnableGravityCompensation = root[&quot;EnableGravityCompensation&quot;].asBool();</span>
+<span class="lineNum">     710 </span>            :                 }
+<span class="lineNum">     711 </span>            :         }
+<span class="lineNum">     712 </span>            : 
+<span class="lineNum">     713 </span><span class="lineCov">          2 :         return succ;</span>
+<a name="714"><span class="lineNum">     714 </span>            : }</a>
+<span class="lineNum">     715 </span>            : 
+<span class="lineNum">     716 </span><span class="lineCov">          2 : bool cDogController::ParseControllerFiles(const Json::Value&amp; root)</span>
+<span class="lineNum">     717 </span>            : {
+<span class="lineNum">     718 </span><span class="lineCov">          2 :         bool succ = true;</span>
+<span class="lineNum">     719 </span><span class="lineCov">          4 :         std::vector&lt;std::string&gt; files;</span>
+<span class="lineNum">     720 </span><span class="lineCov">          2 :         assert(root.isArray());</span>
+<span class="lineNum">     721 </span>            : 
+<span class="lineNum">     722 </span><span class="lineCov">          2 :         int num_files = root.size();</span>
+<span class="lineNum">     723 </span><span class="lineCov">          2 :         files.resize(num_files);</span>
+<span class="lineNum">     724 </span><span class="lineCov">          8 :         for (int f = 0; f &lt; num_files; ++f)</span>
+<span class="lineNum">     725 </span>            :         {
+<span class="lineNum">     726 </span><span class="lineCov">         12 :                 std::string curr_file = root.get(f, 0).asString();</span>
+<span class="lineNum">     727 </span><span class="lineCov">          6 :                 ReadParams(curr_file);</span>
+<span class="lineNum">     728 </span>            :         }
+<span class="lineNum">     729 </span><span class="lineCov">          4 :         return succ;</span>
+<a name="730"><span class="lineNum">     730 </span>            : }</a>
+<span class="lineNum">     731 </span>            : 
+<span class="lineNum">     732 </span><span class="lineCov">          2 : bool cDogController::ParseActions(const Json::Value&amp; root)</span>
+<span class="lineNum">     733 </span>            : {
+<span class="lineNum">     734 </span><span class="lineCov">          2 :         bool succ = true;</span>
+<span class="lineNum">     735 </span><span class="lineCov">          2 :         assert(root.isArray());</span>
+<span class="lineNum">     736 </span>            : 
+<span class="lineNum">     737 </span><span class="lineCov">          2 :         int num_actions = root.size();</span>
+<span class="lineNum">     738 </span><span class="lineCov">         18 :         for (int a = 0; a &lt; num_actions; ++a)</span>
+<span class="lineNum">     739 </span>            :         {
+<span class="lineNum">     740 </span><span class="lineCov">         32 :                 const Json::Value&amp; curr_action = root.get(a, 0);</span>
+<span class="lineNum">     741 </span>            :                 tBlendAction action;
+<span class="lineNum">     742 </span><span class="lineCov">         16 :                 succ &amp;= ParseAction(curr_action, action);</span>
+<span class="lineNum">     743 </span><span class="lineCov">         16 :                 if (succ)</span>
+<span class="lineNum">     744 </span>            :                 {
+<span class="lineNum">     745 </span><span class="lineCov">         16 :                         action.mID = static_cast&lt;int&gt;(mActions.size());</span>
+<span class="lineNum">     746 </span><span class="lineCov">         16 :                         mActions.push_back(action);</span>
+<span class="lineNum">     747 </span>            :                 }
+<span class="lineNum">     748 </span>            :                 else
+<span class="lineNum">     749 </span>            :                 {
+<span class="lineNum">     750 </span><span class="lineNoCov">          0 :                         succ = false;</span>
+<span class="lineNum">     751 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     752 </span>            :                 }
+<span class="lineNum">     753 </span>            :         }
+<span class="lineNum">     754 </span>            : 
+<span class="lineNum">     755 </span><span class="lineCov">          2 :         if (!succ)</span>
+<span class="lineNum">     756 </span>            :         {
+<span class="lineNum">     757 </span><span class="lineNoCov">          0 :                 printf(&quot;failed to parse actions\n&quot;);</span>
+<span class="lineNum">     758 </span><span class="lineNoCov">          0 :                 assert(false);</span>
+<span class="lineNum">     759 </span>            :         }
+<span class="lineNum">     760 </span><span class="lineCov">          2 :         return succ;</span>
+<a name="761"><span class="lineNum">     761 </span>            : }</a>
+<span class="lineNum">     762 </span>            : 
+<span class="lineNum">     763 </span><span class="lineCov">         16 : bool cDogController::ParseAction(const Json::Value&amp; root, tBlendAction&amp; out_action) const</span>
+<span class="lineNum">     764 </span>            : {
+<span class="lineNum">     765 </span><span class="lineCov">         16 :         if (!root[&quot;ParamIdx0&quot;].isNull())</span>
+<span class="lineNum">     766 </span>            :         {
+<span class="lineNum">     767 </span><span class="lineCov">         16 :                 out_action.mParamIdx0 = root[&quot;ParamIdx0&quot;].asInt();</span>
+<span class="lineNum">     768 </span>            :         }
+<span class="lineNum">     769 </span>            :         else
+<span class="lineNum">     770 </span>            :         {
+<span class="lineNum">     771 </span><span class="lineNoCov">          0 :                 return false;</span>
+<span class="lineNum">     772 </span>            :         }
+<span class="lineNum">     773 </span><span class="lineCov">         16 :         if (!root[&quot;ParamIdx1&quot;].isNull())</span>
+<span class="lineNum">     774 </span>            :         {
+<span class="lineNum">     775 </span><span class="lineCov">         16 :                 out_action.mParamIdx1 = root[&quot;ParamIdx1&quot;].asInt();</span>
+<span class="lineNum">     776 </span>            :         }
+<span class="lineNum">     777 </span>            :         else
+<span class="lineNum">     778 </span>            :         {
+<span class="lineNum">     779 </span><span class="lineNoCov">          0 :                 return false;</span>
+<span class="lineNum">     780 </span>            :         }
+<span class="lineNum">     781 </span><span class="lineCov">         16 :         if (!root[&quot;Blend&quot;].isNull())</span>
+<span class="lineNum">     782 </span>            :         {
+<span class="lineNum">     783 </span><span class="lineCov">         16 :                 out_action.mBlend = root[&quot;Blend&quot;].asDouble();</span>
+<span class="lineNum">     784 </span>            :         }
+<span class="lineNum">     785 </span>            :         else
+<span class="lineNum">     786 </span>            :         {
+<span class="lineNum">     787 </span><span class="lineNoCov">          0 :                 return false;</span>
+<span class="lineNum">     788 </span>            :         }
+<span class="lineNum">     789 </span><span class="lineCov">         16 :         if (!root[&quot;Cyclic&quot;].isNull())</span>
+<span class="lineNum">     790 </span>            :         {
+<span class="lineNum">     791 </span><span class="lineCov">         16 :                 out_action.mCyclic = root[&quot;Cyclic&quot;].asBool();</span>
+<span class="lineNum">     792 </span>            :         }
+<span class="lineNum">     793 </span>            :         else
+<span class="lineNum">     794 </span>            :         {
+<span class="lineNum">     795 </span><span class="lineNoCov">          0 :                 return false;</span>
+<span class="lineNum">     796 </span>            :         }
+<span class="lineNum">     797 </span><span class="lineCov">         16 :         return true;</span>
+<a name="798"><span class="lineNum">     798 </span>            : }</a>
+<span class="lineNum">     799 </span>            : 
+<span class="lineNum">     800 </span><span class="lineCov">          6 : bool cDogController::HasCtrlParams() const</span>
+<span class="lineNum">     801 </span>            : {
+<span class="lineNum">     802 </span><span class="lineCov">          6 :         return mCtrlParams.size() &gt; 0;</span>
+<a name="803"><span class="lineNum">     803 </span>            : }</a>
+<span class="lineNum">     804 </span>            : 
+<span class="lineNum">     805 </span><span class="lineCov">       2180 : void cDogController::UpdateState(double time_step)</span>
+<span class="lineNum">     806 </span>            : {
+<span class="lineNum">     807 </span><span class="lineCov">       2180 :         const cDogController::tStateDef&amp; state = GetCurrStateDef();</span>
+<span class="lineNum">     808 </span><span class="lineCov">       2180 :         bool advance_state = mFirstCycle;</span>
+<span class="lineNum">     809 </span>            : 
+<span class="lineNum">     810 </span><span class="lineCov">       2180 :         double trans_time = GetTransTime();</span>
+<span class="lineNum">     811 </span><span class="lineCov">       2180 :         mPhase += time_step / trans_time;</span>
+<span class="lineNum">     812 </span>            : 
+<span class="lineNum">     813 </span><span class="lineCov">       2180 :         if (state.mTransTime)</span>
+<span class="lineNum">     814 </span>            :         {
+<span class="lineNum">     815 </span><span class="lineCov">       1190 :                 if (mPhase &gt;= 1)</span>
+<span class="lineNum">     816 </span>            :                 {
+<span class="lineNum">     817 </span><span class="lineCov">         15 :                         advance_state = true;</span>
+<span class="lineNum">     818 </span>            :                 }
+<span class="lineNum">     819 </span>            :         }
+<span class="lineNum">     820 </span>            : 
+<span class="lineNum">     821 </span><span class="lineCov">       2180 :         if (state.mTransContact != cSimDog::eJointInvalid)</span>
+<span class="lineNum">     822 </span>            :         {
+<span class="lineNum">     823 </span><span class="lineCov">        990 :                 bool contact = CheckContact(state.mTransContact);</span>
+<span class="lineNum">     824 </span><span class="lineCov">        990 :                 if (contact)</span>
+<span class="lineNum">     825 </span>            :                 {
+<span class="lineNum">     826 </span><span class="lineCov">         15 :                         advance_state = true;</span>
+<span class="lineNum">     827 </span>            :                 }
+<span class="lineNum">     828 </span>            :         }
+<span class="lineNum">     829 </span>            : 
+<span class="lineNum">     830 </span><span class="lineCov">       2180 :         if (advance_state)</span>
+<span class="lineNum">     831 </span>            :         {
+<span class="lineNum">     832 </span><span class="lineCov">         33 :                 eState next_state = (mFirstCycle) ? eStateBackStance : state.mNext;</span>
+<span class="lineNum">     833 </span><span class="lineCov">         33 :                 bool end_step = (next_state == eStateInvalid) || mFirstCycle;</span>
+<span class="lineNum">     834 </span>            : 
+<span class="lineNum">     835 </span><span class="lineCov">         33 :                 if (end_step)</span>
+<span class="lineNum">     836 </span>            :                 {
+<span class="lineNum">     837 </span><span class="lineCov">          9 :                         UpdateAction();</span>
+<span class="lineNum">     838 </span><span class="lineCov">          9 :                         mFirstCycle = false;</span>
+<span class="lineNum">     839 </span>            :                 }
+<span class="lineNum">     840 </span>            :                 else
+<span class="lineNum">     841 </span>            :                 {
+<span class="lineNum">     842 </span><span class="lineCov">         24 :                         TransitionState(next_state);</span>
+<span class="lineNum">     843 </span>            :                 }
+<span class="lineNum">     844 </span>            :         }
+<a name="845"><span class="lineNum">     845 </span><span class="lineCov">       2180 : }</span></a>
+<span class="lineNum">     846 </span>            : 
+<span class="lineNum">     847 </span><span class="lineCov">          9 : void cDogController::UpdateAction()</span>
+<span class="lineNum">     848 </span>            : {
+<span class="lineNum">     849 </span><span class="lineCov">          9 :         ParseGround();</span>
+<span class="lineNum">     850 </span><span class="lineCov">          9 :         BuildPoliState(mPoliState);</span>
+<span class="lineNum">     851 </span>            : 
+<span class="lineNum">     852 </span><span class="lineCov">          9 :         mIsOffPolicy = true;</span>
+<span class="lineNum">     853 </span>            : 
+<span class="lineNum">     854 </span><span class="lineCov">          9 :         if (HasCommands())</span>
+<span class="lineNum">     855 </span>            :         {
+<span class="lineNum">     856 </span><span class="lineNoCov">          0 :                 ProcessCommand(mCurrAction);</span>
+<span class="lineNum">     857 </span>            :         }
+<span class="lineNum">     858 </span><span class="lineCov">          9 :         else if (HasNet())</span>
+<span class="lineNum">     859 </span>            :         {
+<span class="lineNum">     860 </span><span class="lineNoCov">          0 :                 DecideAction(mCurrAction);</span>
+<span class="lineNum">     861 </span>            :         }
+<span class="lineNum">     862 </span><span class="lineCov">          9 :         else if (!IsCurrActionCyclic())</span>
+<span class="lineNum">     863 </span>            :         {
+<span class="lineNum">     864 </span><span class="lineNoCov">          0 :                 BuildDefaultAction(mCurrAction);</span>
+<span class="lineNum">     865 </span>            :         }
+<span class="lineNum">     866 </span>            : 
+<span class="lineNum">     867 </span><span class="lineCov">          9 :         ApplyAction(mCurrAction);</span>
+<a name="868"><span class="lineNum">     868 </span><span class="lineCov">          9 : }</span></a>
+<span class="lineNum">     869 </span>            : 
+<span class="lineNum">     870 </span><span class="lineCov">       2180 : void cDogController::UpdateRBDModel()</span>
+<span class="lineNum">     871 </span>            : {
+<span class="lineNum">     872 </span><span class="lineCov">       4360 :         Eigen::VectorXd pose;</span>
+<span class="lineNum">     873 </span><span class="lineCov">       4360 :         Eigen::VectorXd vel;</span>
+<span class="lineNum">     874 </span><span class="lineCov">       2180 :         mChar-&gt;BuildPose(pose);</span>
+<span class="lineNum">     875 </span><span class="lineCov">       2180 :         mChar-&gt;BuildVel(vel);</span>
+<span class="lineNum">     876 </span>            : 
+<span class="lineNum">     877 </span>            : #if defined(DOG_CTRL_PROFILER)
+<span class="lineNum">     878 </span>            :         TIMER_PRINT_BEG(Update_RBD_Model)
+<span class="lineNum">     879 </span>            : #endif
+<span class="lineNum">     880 </span>            : 
+<span class="lineNum">     881 </span><span class="lineCov">       2180 :         mRBDModel-&gt;Update(pose, vel);</span>
+<span class="lineNum">     882 </span><span class="lineCov">       2180 :         cRBDUtil::BuildJacobian(*mRBDModel.get(), mJacobian);</span>
+<span class="lineNum">     883 </span>            :         
+<span class="lineNum">     884 </span>            : #if defined(DOG_CTRL_PROFILER)
+<span class="lineNum">     885 </span>            :         TIMER_PRINT_END(Update_RBD_Model)
+<span class="lineNum">     886 </span>            : #endif
+<a name="887"><span class="lineNum">     887 </span><span class="lineCov">       2180 : }</span></a>
+<span class="lineNum">     888 </span>            : 
+<span class="lineNum">     889 </span><span class="lineCov">       2180 : void cDogController::UpdatePDCtrls(double time_step, Eigen::VectorXd&amp; out_tau)</span>
+<span class="lineNum">     890 </span>            : {
+<span class="lineNum">     891 </span><span class="lineCov">       2180 :         mImpPDCtrl.UpdateControlForce(time_step, out_tau);</span>
+<a name="892"><span class="lineNum">     892 </span><span class="lineCov">       2180 : }</span></a>
+<span class="lineNum">     893 </span>            : 
+<span class="lineNum">     894 </span><span class="lineCov">       2180 : void cDogController::UpdateStumbleCounter(double time_step)</span>
+<span class="lineNum">     895 </span>            : {
+<span class="lineNum">     896 </span><span class="lineCov">       2180 :         bool stumbled = mChar-&gt;HasStumbled();</span>
+<span class="lineNum">     897 </span><span class="lineCov">       2180 :         if (stumbled)</span>
+<span class="lineNum">     898 </span>            :         {
+<span class="lineNum">     899 </span><span class="lineNoCov">          0 :                 mCurrStumbleCount += time_step;</span>
+<span class="lineNum">     900 </span>            :         }
+<a name="901"><span class="lineNum">     901 </span><span class="lineCov">       2180 : }</span></a>
+<span class="lineNum">     902 </span>            : 
+<span class="lineNum">     903 </span><span class="lineCov">       2180 : void cDogController::ApplyFeedback()</span>
+<span class="lineNum">     904 </span>            : {
+<span class="lineNum">     905 </span>            :         const cSimDog::eJoint joints[] =
+<span class="lineNum">     906 </span>            :         {
+<span class="lineNum">     907 </span>            :                 cSimDog::eJointHip,
+<span class="lineNum">     908 </span>            :                 cSimDog::eJointShoulder
+<span class="lineNum">     909 </span><span class="lineCov">       2180 :         };</span>
+<span class="lineNum">     910 </span><span class="lineCov">       2180 :         const int num_joints = sizeof(joints) / sizeof(joints[0]);</span>
+<span class="lineNum">     911 </span>            : 
+<span class="lineNum">     912 </span>            :         const cSimDog::eJoint end_effectors[] =
+<span class="lineNum">     913 </span>            :         {
+<span class="lineNum">     914 </span>            :                 cSimDog::eJointToe,
+<span class="lineNum">     915 </span>            :                 cSimDog::eJointFinger
+<span class="lineNum">     916 </span><span class="lineCov">       2180 :         };</span>
+<span class="lineNum">     917 </span>            : 
+<span class="lineNum">     918 </span>            :         const eStateParam params[] = 
+<span class="lineNum">     919 </span>            :         {
+<span class="lineNum">     920 </span>            :                 eStateParamHip,
+<span class="lineNum">     921 </span>            :                 eStateParamShoulder
+<span class="lineNum">     922 </span><span class="lineCov">       2180 :         };</span>
+<span class="lineNum">     923 </span><span class="lineCov">       2180 :         assert(sizeof(end_effectors) / sizeof(end_effectors[0]) == num_joints);</span>
+<span class="lineNum">     924 </span><span class="lineCov">       2180 :         assert(sizeof(params) / sizeof(params[0]) == num_joints);</span>
+<span class="lineNum">     925 </span>            : 
+<span class="lineNum">     926 </span><span class="lineCov">       2180 :         tVector com_vel = mChar-&gt;CalcCOMVel();</span>
+<span class="lineNum">     927 </span><span class="lineCov">       6540 :         for (int j = 0; j &lt; num_joints; ++j)</span>
+<span class="lineNum">     928 </span>            :         {
+<span class="lineNum">     929 </span><span class="lineCov">       4360 :                 cSimDog::eJoint joint_id = joints[j];</span>
+<span class="lineNum">     930 </span><span class="lineCov">       4360 :                 cSimDog::eJoint eff_id = end_effectors[j];</span>
+<span class="lineNum">     931 </span><span class="lineCov">       4360 :                 const auto&amp; body_part = mChar-&gt;GetBodyPart(eff_id);</span>
+<span class="lineNum">     932 </span>            :                 
+<span class="lineNum">     933 </span><span class="lineCov">       4360 :                 bool contact = body_part-&gt;IsInContact();</span>
+<span class="lineNum">     934 </span><span class="lineCov">       4360 :                 if (!contact)</span>
+<span class="lineNum">     935 </span>            :                 {
+<span class="lineNum">     936 </span><span class="lineCov">       3303 :                         double vel_gain = GetCv();</span>
+<span class="lineNum">     937 </span><span class="lineCov">       3303 :                         eStateParam param_id = params[j];</span>
+<span class="lineNum">     938 </span><span class="lineCov">       3303 :                         double delta_theta = com_vel[0] * vel_gain;</span>
+<span class="lineNum">     939 </span>            :                         
+<span class="lineNum">     940 </span><span class="lineCov">       3303 :                         double default_theta = GetCurrParams()[param_id];</span>
+<span class="lineNum">     941 </span><span class="lineCov">       3303 :                         double corrected_theta = default_theta + delta_theta;</span>
+<span class="lineNum">     942 </span><span class="lineCov">       3303 :                         mImpPDCtrl.SetTargetTheta(joint_id, corrected_theta);</span>
+<span class="lineNum">     943 </span>            :                 }
+<span class="lineNum">     944 </span>            :         }
+<a name="945"><span class="lineNum">     945 </span><span class="lineCov">       2180 : }</span></a>
+<span class="lineNum">     946 </span>            : 
+<span class="lineNum">     947 </span><span class="lineCov">       2180 : void cDogController::ApplyGravityCompensation(Eigen::VectorXd&amp; out_tau)</span>
+<span class="lineNum">     948 </span>            : {
+<span class="lineNum">     949 </span>            : #if defined(DOG_CTRL_PROFILER)
+<span class="lineNum">     950 </span>            :         TIMER_PRINT_BEG(Gravity_Comp)
+<span class="lineNum">     951 </span>            : #endif
+<span class="lineNum">     952 </span>            : 
+<span class="lineNum">     953 </span><span class="lineCov">       2180 :         const double lambda = 0.0001;</span>
+<span class="lineNum">     954 </span><span class="lineCov">       2180 :         const Eigen::MatrixXd&amp; joint_mat = mChar-&gt;GetJointMat();</span>
+<span class="lineNum">     955 </span><span class="lineCov">       2180 :         const Eigen::MatrixXd&amp; body_defs = mChar-&gt;GetBodyDefs();</span>
+<span class="lineNum">     956 </span><span class="lineCov">       4360 :         Eigen::VectorXd pose;</span>
+<span class="lineNum">     957 </span><span class="lineCov">       4360 :         Eigen::VectorXd vel;</span>
+<span class="lineNum">     958 </span><span class="lineCov">       2180 :         mChar-&gt;BuildPose(pose);</span>
+<span class="lineNum">     959 </span><span class="lineCov">       2180 :         vel = Eigen::VectorXd::Zero(pose.size());</span>
+<span class="lineNum">     960 </span>            : 
+<span class="lineNum">     961 </span><span class="lineCov">       2180 :         bool has_support = false;</span>
+<span class="lineNum">     962 </span><span class="lineCov">       4360 :         Eigen::MatrixXd contact_basis = BuildContactBasis(pose, has_support);</span>
+<span class="lineNum">     963 </span>            :         
+<span class="lineNum">     964 </span><span class="lineCov">       2180 :         if (has_support)</span>
+<span class="lineNum">     965 </span>            :         {
+<span class="lineNum">     966 </span><span class="lineCov">       2114 :                 Eigen::VectorXd tau_g;</span>
+<span class="lineNum">     967 </span><span class="lineCov">       1057 :                 cRBDUtil::CalcGravityForce(*mRBDModel.get(), tau_g);</span>
+<span class="lineNum">     968 </span><span class="lineCov">       1057 :                 tau_g = -tau_g;</span>
+<span class="lineNum">     969 </span>            : 
+<span class="lineNum">     970 </span><span class="lineCov">       1057 :                 int basis_cols = static_cast&lt;int&gt;(contact_basis.cols());</span>
+<span class="lineNum">     971 </span>            : 
+<span class="lineNum">     972 </span><span class="lineCov">       1057 :                 int root_id = mChar-&gt;GetRootID();</span>
+<span class="lineNum">     973 </span><span class="lineCov">       1057 :                 int root_offset = mChar-&gt;GetParamOffset(root_id);</span>
+<span class="lineNum">     974 </span><span class="lineCov">       1057 :                 int root_size = mChar-&gt;GetParamSize(root_id);</span>
+<span class="lineNum">     975 </span>            : 
+<span class="lineNum">     976 </span><span class="lineCov">       2114 :                 Eigen::VectorXd b = tau_g.segment(root_offset, root_size);</span>
+<span class="lineNum">     977 </span><span class="lineCov">       2114 :                 Eigen::MatrixXd A = contact_basis.block(root_offset, 0, root_size, basis_cols);</span>
+<span class="lineNum">     978 </span>            : 
+<span class="lineNum">     979 </span><span class="lineCov">       2114 :                 Eigen::MatrixXd AtA = A.transpose() * A;</span>
+<span class="lineNum">     980 </span><span class="lineCov">       2114 :                 Eigen::VectorXd Atb = A.transpose() * b;</span>
+<span class="lineNum">     981 </span><span class="lineCov">       1057 :                 AtA.diagonal() += lambda * Eigen::VectorXd::Ones(basis_cols);</span>
+<span class="lineNum">     982 </span>            : 
+<span class="lineNum">     983 </span><span class="lineCov">       2114 :                 Eigen::VectorXd x = (AtA).householderQr().solve(Atb);</span>
+<span class="lineNum">     984 </span><span class="lineCov">       2114 :                 Eigen::VectorXd tau_contact = contact_basis * x;</span>
+<span class="lineNum">     985 </span>            : 
+<span class="lineNum">     986 </span><span class="lineCov">       1057 :                 tau_g -= tau_contact;</span>
+<span class="lineNum">     987 </span><span class="lineCov">       1057 :                 tau_g.segment(root_offset, root_size).setZero();</span>
+<span class="lineNum">     988 </span>            : 
+<span class="lineNum">     989 </span><span class="lineCov">       1057 :                 out_tau += tau_g;</span>
+<span class="lineNum">     990 </span>            : 
+<span class="lineNum">     991 </span>            : #if defined(DOG_CTRL_PROFILER)
+<span class="lineNum">     992 </span>            :                 TIMER_PRINT_END(Gravity_Comp)
+<span class="lineNum">     993 </span>            : #endif
+<span class="lineNum">     994 </span>            :         }
+<a name="995"><span class="lineNum">     995 </span><span class="lineCov">       2180 : }</span></a>
+<span class="lineNum">     996 </span>            : 
+<span class="lineNum">     997 </span><span class="lineCov">       2180 : void cDogController::ApplyVirtualForces(Eigen::VectorXd&amp; out_tau)</span>
+<span class="lineNum">     998 </span>            : {
+<span class="lineNum">     999 </span><span class="lineCov">       6540 :         for (int e = 0; e &lt; gNumEndEffectors; ++e)</span>
+<span class="lineNum">    1000 </span>            :         {
+<span class="lineNum">    1001 </span><span class="lineCov">       4360 :                 cSimDog::eJoint joint_id = gEndEffectors[e];</span>
+<span class="lineNum">    1002 </span><span class="lineCov">       4360 :                 bool active_effector = IsActiveVFEffector(joint_id);</span>
+<span class="lineNum">    1003 </span>            :                 
+<span class="lineNum">    1004 </span><span class="lineCov">       4360 :                 if (active_effector)</span>
+<span class="lineNum">    1005 </span>            :                 {
+<span class="lineNum">    1006 </span><span class="lineCov">       1049 :                         tVector vf = -GetEffectorVF(joint_id);</span>
+<span class="lineNum">    1007 </span>            :                         
+<span class="lineNum">    1008 </span><span class="lineCov">       1049 :                         tVector pos = GetEndEffectorContactPos(joint_id);</span>
+<span class="lineNum">    1009 </span><span class="lineCov">       1049 :                         cSpAlg::tSpTrans joint_world_trans = cSpAlg::BuildTrans(-pos);</span>
+<span class="lineNum">    1010 </span>            : 
+<span class="lineNum">    1011 </span><span class="lineCov">       1049 :                         cSpAlg::tSpVec sp_force = cSpAlg::BuildSV(vf);</span>
+<span class="lineNum">    1012 </span><span class="lineCov">       1049 :                         sp_force = cSpAlg::ApplyTransF(joint_world_trans, sp_force);</span>
+<span class="lineNum">    1013 </span>            : 
+<span class="lineNum">    1014 </span><span class="lineCov">       1049 :                         const Eigen::MatrixXd&amp; joint_mat = mRBDModel-&gt;GetJointMat();</span>
+<span class="lineNum">    1015 </span><span class="lineCov">       1049 :                         int curr_id = joint_id;</span>
+<span class="lineNum">    1016 </span><span class="lineCov">       4196 :                         while (curr_id != cSimDog::eJointRoot</span>
+<span class="lineNum">    1017 </span><span class="lineCov">       5245 :                                 &amp;&amp; curr_id != cSimDog::eJointTorso)</span>
+<span class="lineNum">    1018 </span>            :                         {
+<span class="lineNum">    1019 </span><span class="lineCov">       4196 :                                 assert(curr_id != cKinTree::gInvalidJointID);</span>
+<span class="lineNum">    1020 </span><span class="lineCov">       4196 :                                 int offset = cKinTree::GetParamOffset(joint_mat, curr_id);</span>
+<span class="lineNum">    1021 </span><span class="lineCov">       4196 :                                 int size = cKinTree::GetParamSize(joint_mat, curr_id);</span>
+<span class="lineNum">    1022 </span><span class="lineCov">       4196 :                                 const auto curr_J = mJacobian.block(0, offset, cSpAlg::gSpVecSize, size);</span>
+<span class="lineNum">    1023 </span>            : 
+<span class="lineNum">    1024 </span><span class="lineCov">       4196 :                                 out_tau.segment(offset, size) += curr_J.transpose() * sp_force;</span>
+<span class="lineNum">    1025 </span><span class="lineCov">       4196 :                                 curr_id = mRBDModel-&gt;GetParent(curr_id);</span>
+<span class="lineNum">    1026 </span>            :                         }
+<span class="lineNum">    1027 </span>            :                 }
+<span class="lineNum">    1028 </span>            :         }
+<a name="1029"><span class="lineNum">    1029 </span><span class="lineCov">       2180 : }</span></a>
+<span class="lineNum">    1030 </span>            : 
+<span class="lineNum">    1031 </span><span class="lineCov">       2180 : const cDogController::tStateDef&amp; cDogController::GetCurrStateDef() const</span>
+<span class="lineNum">    1032 </span>            : {
+<span class="lineNum">    1033 </span><span class="lineCov">       2180 :         return gStateDefs[mState];</span>
+<a name="1034"><span class="lineNum">    1034 </span>            : }</a>
+<span class="lineNum">    1035 </span>            : 
+<span class="lineNum">    1036 </span><span class="lineCov">       3344 : cDogController::tStateParams cDogController::GetCurrParams() const</span>
+<span class="lineNum">    1037 </span>            : {
+<span class="lineNum">    1038 </span><span class="lineCov">       3344 :         tStateParams params = mCurrAction.mParams.segment(eMiscParamMax + mState * eStateParamMax, eStateParamMax);</span>
+<span class="lineNum">    1039 </span><span class="lineCov">       3344 :         return params;</span>
+<a name="1040"><span class="lineNum">    1040 </span>            : }</a>
+<span class="lineNum">    1041 </span>            : 
+<span class="lineNum">    1042 </span><span class="lineCov">         41 : void cDogController::SetStateParams(const tStateParams&amp; params)</span>
+<span class="lineNum">    1043 </span>            : {
+<span class="lineNum">    1044 </span><span class="lineCov">        246 :         for (int i = 0; i &lt; gNumSpineJoints; ++i)</span>
+<span class="lineNum">    1045 </span>            :         {
+<span class="lineNum">    1046 </span><span class="lineCov">        205 :                 cSimDog::eJoint joint = gSpineJoints[i];</span>
+<span class="lineNum">    1047 </span><span class="lineCov">        205 :                 mImpPDCtrl.SetTargetTheta(joint, params(eStateParamSpineCurve));</span>
+<span class="lineNum">    1048 </span>            :         }
+<span class="lineNum">    1049 </span><span class="lineCov">         41 :         mImpPDCtrl.SetTargetTheta(cSimDog::eJointShoulder, params(eStateParamShoulder));</span>
+<span class="lineNum">    1050 </span><span class="lineCov">         41 :         mImpPDCtrl.SetTargetTheta(cSimDog::eJointElbow, params(eStateParamElbow));</span>
+<span class="lineNum">    1051 </span><span class="lineCov">         41 :         mImpPDCtrl.SetTargetTheta(cSimDog::eJointHip, params(eStateParamHip));</span>
+<span class="lineNum">    1052 </span><span class="lineCov">         41 :         mImpPDCtrl.SetTargetTheta(cSimDog::eJointKnee, params(eStateParamKnee));</span>
+<span class="lineNum">    1053 </span><span class="lineCov">         41 :         mImpPDCtrl.SetTargetTheta(cSimDog::eJointAnkle, params(eStateParamAnkle));</span>
+<a name="1054"><span class="lineNum">    1054 </span><span class="lineCov">         41 : }</span></a>
+<span class="lineNum">    1055 </span>            : 
+<span class="lineNum">    1056 </span><span class="lineNoCov">          0 : void cDogController::SetupPassiveMode()</span>
+<span class="lineNum">    1057 </span>            : {
+<span class="lineNum">    1058 </span><span class="lineNoCov">          0 :         tStateParams params;</span>
+<span class="lineNum">    1059 </span><span class="lineNoCov">          0 :         params.setZero();</span>
+<span class="lineNum">    1060 </span><span class="lineNoCov">          0 :         SetStateParams(params);</span>
+<a name="1061"><span class="lineNum">    1061 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">    1062 </span>            : 
+<span class="lineNum">    1063 </span><span class="lineCov">       2180 : double cDogController::GetTransTime() const</span>
+<span class="lineNum">    1064 </span>            : {
+<span class="lineNum">    1065 </span><span class="lineCov">       2180 :         return mCurrAction.mParams[eMiscParamTransTime];</span>
+<a name="1066"><span class="lineNum">    1066 </span>            : }</a>
+<span class="lineNum">    1067 </span>            : 
+<span class="lineNum">    1068 </span><span class="lineCov">       3303 : double cDogController::GetCv() const</span>
+<span class="lineNum">    1069 </span>            : {
+<span class="lineNum">    1070 </span><span class="lineCov">       3303 :         return mCurrAction.mParams[eMiscParamCv];</span>
+<a name="1071"><span class="lineNum">    1071 </span>            : }</a>
+<span class="lineNum">    1072 </span>            : 
+<span class="lineNum">    1073 </span><span class="lineCov">        683 : tVector cDogController::GetBackForce() const</span>
+<span class="lineNum">    1074 </span>            : {
+<span class="lineNum">    1075 </span><span class="lineCov">        683 :         return tVector(mCurrAction.mParams[eMiscParamBackForceX], mCurrAction.mParams[eMiscParamBackForceY], 0, 0);</span>
+<a name="1076"><span class="lineNum">    1076 </span>            : }</a>
+<span class="lineNum">    1077 </span>            : 
+<span class="lineNum">    1078 </span><span class="lineCov">        366 : tVector cDogController::GetFrontForce() const</span>
+<span class="lineNum">    1079 </span>            : {
+<span class="lineNum">    1080 </span><span class="lineCov">        366 :         return tVector(mCurrAction.mParams[eMiscParamFrontForceX], mCurrAction.mParams[eMiscParamFrontForceY], 0, 0);</span>
+<a name="1081"><span class="lineNum">    1081 </span>            : }</a>
+<span class="lineNum">    1082 </span>            : 
+<span class="lineNum">    1083 </span><span class="lineCov">       7530 : bool cDogController::CheckContact(cSimDog::eJoint joint_id) const</span>
+<span class="lineNum">    1084 </span>            : {
+<span class="lineNum">    1085 </span><span class="lineCov">       7530 :         assert(joint_id != cSimDog::eJointInvalid);</span>
+<span class="lineNum">    1086 </span><span class="lineCov">       7530 :         const auto&amp; body_part = mChar-&gt;GetBodyPart(joint_id);</span>
+<span class="lineNum">    1087 </span><span class="lineCov">       7530 :         bool contact = body_part-&gt;IsInContact();</span>
+<span class="lineNum">    1088 </span><span class="lineCov">       7530 :         return contact;</span>
+<a name="1089"><span class="lineNum">    1089 </span>            : }</a>
+<span class="lineNum">    1090 </span>            : 
+<span class="lineNum">    1091 </span><span class="lineCov">       4360 : bool cDogController::IsActiveVFEffector(cSimDog::eJoint joint_id) const</span>
+<span class="lineNum">    1092 </span>            : {
+<span class="lineNum">    1093 </span><span class="lineCov">       7352 :         bool valid_effector = ((mState == eStateBackStance || mState == eStateExtend)</span>
+<span class="lineNum">    1094 </span><span class="lineCov">       3334 :                 &amp;&amp; joint_id == cSimDog::eJointToe)</span>
+<span class="lineNum">    1095 </span><span class="lineCov">       9233 :                 || ((mState == eStateFrontStance || mState == eStateGather)</span>
+<span class="lineNum">    1096 </span><span class="lineCov">       5386 :                         &amp;&amp; joint_id == cSimDog::eJointFinger);</span>
+<span class="lineNum">    1097 </span>            : 
+<span class="lineNum">    1098 </span><span class="lineCov">       4360 :         bool active_effector = valid_effector &amp;&amp; CheckContact(joint_id);</span>
+<span class="lineNum">    1099 </span><span class="lineCov">       4360 :         return active_effector;</span>
+<a name="1100"><span class="lineNum">    1100 </span>            : }</a>
+<span class="lineNum">    1101 </span>            : 
+<span class="lineNum">    1102 </span><span class="lineCov">       1049 : tVector cDogController::GetEffectorVF(cSimDog::eJoint joint_id) const</span>
+<span class="lineNum">    1103 </span>            : {
+<span class="lineNum">    1104 </span><span class="lineCov">       1049 :         tVector force = tVector::Zero();</span>
+<span class="lineNum">    1105 </span><span class="lineCov">       1049 :         switch (joint_id)</span>
+<span class="lineNum">    1106 </span>            :         {
+<span class="lineNum">    1107 </span>            :         case cSimDog::eJointToe:
+<span class="lineNum">    1108 </span><span class="lineCov">        683 :                 force = GetBackForce();</span>
+<span class="lineNum">    1109 </span><span class="lineCov">        683 :                 break;</span>
+<span class="lineNum">    1110 </span>            :         case cSimDog::eJointFinger:
+<span class="lineNum">    1111 </span><span class="lineCov">        366 :                 force = GetFrontForce();</span>
+<span class="lineNum">    1112 </span><span class="lineCov">        366 :                 break;</span>
+<span class="lineNum">    1113 </span>            :         default:
+<span class="lineNum">    1114 </span><span class="lineNoCov">          0 :                 assert(false); // unsupported effector</span>
+<span class="lineNum">    1115 </span>            :                 break;
+<span class="lineNum">    1116 </span>            :         }
+<span class="lineNum">    1117 </span><span class="lineCov">       1049 :         return force;</span>
+<a name="1118"><span class="lineNum">    1118 </span>            : }</a>
+<span class="lineNum">    1119 </span>            : 
+<span class="lineNum">    1120 </span><span class="lineCov">       2180 : Eigen::MatrixXd cDogController::BuildContactBasis(const Eigen::VectorXd&amp; pose, bool&amp; out_has_support) const</span>
+<span class="lineNum">    1121 </span>            : {
+<span class="lineNum">    1122 </span><span class="lineCov">       2180 :         const int num_basis = 2;</span>
+<span class="lineNum">    1123 </span><span class="lineCov">       2180 :         int rows = static_cast&lt;int&gt;(pose.size());</span>
+<span class="lineNum">    1124 </span><span class="lineCov">       2180 :         const int cols = gNumEndEffectors * num_basis;</span>
+<span class="lineNum">    1125 </span>            : 
+<span class="lineNum">    1126 </span>            :         const Eigen::Matrix&lt;double, 6, num_basis&gt; force_svs
+<span class="lineNum">    1127 </span><span class="lineCov">       4360 :                 ((Eigen::Matrix&lt;double, 6, num_basis&gt;() &lt;&lt; </span>
+<span class="lineNum">    1128 </span><span class="lineCov">       6540 :                         0, 0,</span>
+<span class="lineNum">    1129 </span><span class="lineCov">       6540 :                         0, 0,</span>
+<span class="lineNum">    1130 </span><span class="lineCov">       6540 :                         0, 0,</span>
+<span class="lineNum">    1131 </span><span class="lineCov">       6540 :                         0, 1,</span>
+<span class="lineNum">    1132 </span><span class="lineCov">       6540 :                         1, 0,</span>
+<span class="lineNum">    1133 </span><span class="lineCov">       6540 :                         0, 0).finished());</span>
+<span class="lineNum">    1134 </span>            : 
+<span class="lineNum">    1135 </span><span class="lineCov">       2180 :         Eigen::MatrixXd contact_basis = Eigen::MatrixXd::Zero(rows, cols);</span>
+<span class="lineNum">    1136 </span>            : 
+<span class="lineNum">    1137 </span><span class="lineCov">       2180 :         const Eigen::MatrixXd&amp; joint_mat = mChar-&gt;GetJointMat();</span>
+<span class="lineNum">    1138 </span><span class="lineCov">       2180 :         tVector root_pos = mChar-&gt;GetRootPos();</span>
+<span class="lineNum">    1139 </span>            : 
+<span class="lineNum">    1140 </span><span class="lineCov">       2180 :         out_has_support = false;</span>
+<span class="lineNum">    1141 </span><span class="lineCov">       6540 :         for (int e = 0; e &lt; gNumEndEffectors; ++e)</span>
+<span class="lineNum">    1142 </span>            :         {
+<span class="lineNum">    1143 </span><span class="lineCov">       4360 :                 cSimDog::eJoint joint_id = gEndEffectors[e];</span>
+<span class="lineNum">    1144 </span><span class="lineCov">       4360 :                 bool valid_support = CheckContact(joint_id);</span>
+<span class="lineNum">    1145 </span>            : 
+<span class="lineNum">    1146 </span><span class="lineCov">       4360 :                 auto curr_block = contact_basis.block(0, e * num_basis, rows, num_basis);</span>
+<span class="lineNum">    1147 </span><span class="lineCov">       4360 :                 if (valid_support)</span>
+<span class="lineNum">    1148 </span>            :                 {
+<span class="lineNum">    1149 </span><span class="lineCov">       1057 :                         out_has_support = true;</span>
+<span class="lineNum">    1150 </span>            : 
+<span class="lineNum">    1151 </span><span class="lineCov">       1057 :                         tVector pos = GetEndEffectorContactPos(joint_id);</span>
+<span class="lineNum">    1152 </span><span class="lineCov">       1057 :                         cSpAlg::tSpTrans joint_world_trans = cSpAlg::BuildTrans(-pos);</span>
+<span class="lineNum">    1153 </span>            : 
+<span class="lineNum">    1154 </span><span class="lineCov">       1057 :                         Eigen::Matrix&lt;double, 6, num_basis&gt; force_basis;</span>
+<span class="lineNum">    1155 </span><span class="lineCov">       3171 :                         for (int i = 0; i &lt; num_basis; ++i)</span>
+<span class="lineNum">    1156 </span>            :                         {
+<span class="lineNum">    1157 </span><span class="lineCov">       2114 :                                 cSpAlg::tSpVec force_sv = force_svs.col(i);</span>
+<span class="lineNum">    1158 </span><span class="lineCov">       2114 :                                 force_basis.col(i) = cSpAlg::ApplyTransF(joint_world_trans, force_sv);</span>
+<span class="lineNum">    1159 </span>            :                         }
+<span class="lineNum">    1160 </span>            : 
+<span class="lineNum">    1161 </span><span class="lineCov">       1057 :                         int curr_id = joint_id;</span>
+<span class="lineNum">    1162 </span><span class="lineCov">      15287 :                         while (curr_id != cKinTree::gInvalidJointID)</span>
+<span class="lineNum">    1163 </span>            :                         {
+<span class="lineNum">    1164 </span><span class="lineCov">       7115 :                                 int offset = cKinTree::GetParamOffset(joint_mat, curr_id);</span>
+<span class="lineNum">    1165 </span><span class="lineCov">       7115 :                                 int size = cKinTree::GetParamSize(joint_mat, curr_id);</span>
+<span class="lineNum">    1166 </span><span class="lineCov">       7115 :                                 const auto curr_J = mJacobian.block(0, offset, cSpAlg::gSpVecSize, size);</span>
+<span class="lineNum">    1167 </span>            : 
+<span class="lineNum">    1168 </span><span class="lineCov">       7115 :                                 curr_block.block(offset, 0, size, curr_block.cols()) = curr_J.transpose() * force_basis;</span>
+<span class="lineNum">    1169 </span><span class="lineCov">       7115 :                                 curr_id = mRBDModel-&gt;GetParent(curr_id);</span>
+<span class="lineNum">    1170 </span>            :                         }
+<span class="lineNum">    1171 </span>            :                 }
+<span class="lineNum">    1172 </span>            :         }
+<span class="lineNum">    1173 </span>            : 
+<span class="lineNum">    1174 </span><span class="lineCov">       2180 :         return contact_basis;</span>
+<a name="1175"><span class="lineNum">    1175 </span>            : }</a>
+<span class="lineNum">    1176 </span>            : 
+<span class="lineNum">    1177 </span><span class="lineNoCov">          0 : const std::string&amp; cDogController::GetStateName(eState state) const</span>
+<span class="lineNum">    1178 </span>            : {
+<span class="lineNum">    1179 </span><span class="lineNoCov">          0 :         return gStateDefs[state].mName;</span>
+<a name="1180"><span class="lineNum">    1180 </span>            : }</a>
+<span class="lineNum">    1181 </span>            : 
+<span class="lineNum">    1182 </span><span class="lineNoCov">          0 : const std::string&amp; cDogController::GetStateParamName(eStateParam param) const</span>
+<span class="lineNum">    1183 </span>            : {
+<span class="lineNum">    1184 </span><span class="lineNoCov">          0 :         return gStateParamNames[param];</span>
+<a name="1185"><span class="lineNum">    1185 </span>            : }</a>
+<span class="lineNum">    1186 </span>            : 
+<span class="lineNum">    1187 </span><span class="lineNoCov">          0 : void cDogController::GetOptParams(const Eigen::VectorXd&amp; ctrl_params, Eigen::VectorXd&amp; out_opt_params) const</span>
+<span class="lineNum">    1188 </span>            : {
+<span class="lineNum">    1189 </span><span class="lineNoCov">          0 :         int num_params = GetNumParams();</span>
+<span class="lineNum">    1190 </span><span class="lineNoCov">          0 :         int num_opt_params = GetNumOptParams();</span>
+<span class="lineNum">    1191 </span><span class="lineNoCov">          0 :         assert(ctrl_params.size() == num_params);</span>
+<span class="lineNum">    1192 </span><span class="lineNoCov">          0 :         assert(gNumParamInfo == num_params);</span>
+<span class="lineNum">    1193 </span>            : 
+<span class="lineNum">    1194 </span><span class="lineNoCov">          0 :         out_opt_params.resize(num_opt_params);</span>
+<span class="lineNum">    1195 </span>            : 
+<span class="lineNum">    1196 </span><span class="lineNoCov">          0 :         int opt_idx = 0;</span>
+<span class="lineNum">    1197 </span><span class="lineNoCov">          0 :         for (int i = 0; i &lt; num_params; ++i)</span>
+<span class="lineNum">    1198 </span>            :         {
+<span class="lineNum">    1199 </span><span class="lineNoCov">          0 :                 if (IsOptParam(i))</span>
+<span class="lineNum">    1200 </span>            :                 {
+<span class="lineNum">    1201 </span><span class="lineNoCov">          0 :                         out_opt_params[opt_idx] = ctrl_params[i];</span>
+<span class="lineNum">    1202 </span><span class="lineNoCov">          0 :                         ++opt_idx;</span>
+<span class="lineNum">    1203 </span>            :                 }
+<span class="lineNum">    1204 </span>            :         }
+<span class="lineNum">    1205 </span><span class="lineNoCov">          0 :         assert(opt_idx == num_opt_params);</span>
+<a name="1206"><span class="lineNum">    1206 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">    1207 </span>            : 
+<span class="lineNum">    1208 </span><span class="lineNoCov">          0 : std::string cDogController::BuildOptParamsJson(const Eigen::VectorXd&amp; opt_params) const</span>
+<span class="lineNum">    1209 </span>            : {
+<span class="lineNum">    1210 </span><span class="lineNoCov">          0 :         assert(opt_params.size() == GetNumOptParams());</span>
+<span class="lineNum">    1211 </span><span class="lineNoCov">          0 :         Eigen::VectorXd param_buffer = mCurrAction.mParams;</span>
+<span class="lineNum">    1212 </span><span class="lineNoCov">          0 :         SetOptParams(opt_params, param_buffer);</span>
+<span class="lineNum">    1213 </span><span class="lineNoCov">          0 :         std::string json = BuildParamsJson(param_buffer);</span>
+<span class="lineNum">    1214 </span><span class="lineNoCov">          0 :         return json;</span>
+<a name="1215"><span class="lineNum">    1215 </span>            : }</a>
+<span class="lineNum">    1216 </span>            : 
+<span class="lineNum">    1217 </span><span class="lineNoCov">          0 : std::string cDogController::BuildParamsJson(const Eigen::VectorXd&amp; params) const</span>
+<span class="lineNum">    1218 </span>            : {
+<span class="lineNum">    1219 </span><span class="lineNoCov">          0 :         std::string json = &quot;&quot;;</span>
+<span class="lineNum">    1220 </span><span class="lineNoCov">          0 :         int idx = 0;</span>
+<span class="lineNum">    1221 </span>            : 
+<span class="lineNum">    1222 </span><span class="lineNoCov">          0 :         json += &quot;\&quot;&quot; + gMiscParamsKey + &quot;\&quot;: \n{\n&quot;;</span>
+<span class="lineNum">    1223 </span><span class="lineNoCov">          0 :         for (int i = 0; i &lt; eMiscParamMax; ++i)</span>
+<span class="lineNum">    1224 </span>            :         {
+<span class="lineNum">    1225 </span><span class="lineNoCov">          0 :                 if (i != 0)</span>
+<span class="lineNum">    1226 </span>            :                 {
+<span class="lineNum">    1227 </span><span class="lineNoCov">          0 :                         json += &quot;,\n&quot;;</span>
+<span class="lineNum">    1228 </span>            :                 }
+<span class="lineNum">    1229 </span><span class="lineNoCov">          0 :                 json += &quot;\&quot;&quot; + gMiscParamsNames[i] + &quot;\&quot;: &quot; + std::to_string(params[idx++]);</span>
+<span class="lineNum">    1230 </span>            :         }
+<span class="lineNum">    1231 </span><span class="lineNoCov">          0 :         json += &quot;\n},\n\n&quot;;</span>
+<span class="lineNum">    1232 </span>            : 
+<span class="lineNum">    1233 </span><span class="lineNoCov">          0 :         json += &quot;\&quot;&quot; + gStateParamsKey + &quot;\&quot;: \n{\n&quot;;</span>
+<span class="lineNum">    1234 </span><span class="lineNoCov">          0 :         for (int i = 0; i &lt; eStateMax; ++i)</span>
+<span class="lineNum">    1235 </span>            :         {
+<span class="lineNum">    1236 </span><span class="lineNoCov">          0 :                 if (i != 0)</span>
+<span class="lineNum">    1237 </span>            :                 {
+<span class="lineNum">    1238 </span><span class="lineNoCov">          0 :                         json += &quot;,\n&quot;;</span>
+<span class="lineNum">    1239 </span>            :                 }
+<span class="lineNum">    1240 </span>            : 
+<span class="lineNum">    1241 </span><span class="lineNoCov">          0 :                 json += &quot;\&quot;&quot; + gStateDefs[i].mName + &quot;\&quot;: \n{\n&quot;;</span>
+<span class="lineNum">    1242 </span><span class="lineNoCov">          0 :                 for (int j = 0; j &lt; eStateParamMax; ++j)</span>
+<span class="lineNum">    1243 </span>            :                 {
+<span class="lineNum">    1244 </span><span class="lineNoCov">          0 :                         if (j != 0)</span>
+<span class="lineNum">    1245 </span>            :                         {
+<span class="lineNum">    1246 </span><span class="lineNoCov">          0 :                                 json += &quot;,\n&quot;;</span>
+<span class="lineNum">    1247 </span>            :                         }
+<span class="lineNum">    1248 </span><span class="lineNoCov">          0 :                         json += &quot;\&quot;&quot; + gStateParamNames[j] + &quot;\&quot;: &quot; + std::to_string(params[idx++]);</span>
+<span class="lineNum">    1249 </span>            :                 }
+<span class="lineNum">    1250 </span><span class="lineNoCov">          0 :                 json += &quot;\n}&quot;;</span>
+<span class="lineNum">    1251 </span>            :         }
+<span class="lineNum">    1252 </span><span class="lineNoCov">          0 :         json += &quot;\n}\n&quot;;</span>
+<span class="lineNum">    1253 </span>            : 
+<span class="lineNum">    1254 </span><span class="lineNoCov">          0 :         json = &quot;{&quot; + json + &quot;}&quot;;</span>
+<span class="lineNum">    1255 </span><span class="lineNoCov">          0 :         return json;</span>
+<a name="1256"><span class="lineNum">    1256 </span>            : }</a>
+<span class="lineNum">    1257 </span>            : 
+<span class="lineNum">    1258 </span><span class="lineNoCov">          0 : void cDogController::BuildStateParamsFromPose(const Eigen::VectorXd&amp; pose, tStateParams&amp; out_params)</span>
+<span class="lineNum">    1259 </span>            : {
+<span class="lineNum">    1260 </span>            :         const cSimDog::eJoint ctrl_joints[] =
+<span class="lineNum">    1261 </span>            :         {
+<span class="lineNum">    1262 </span>            :                 cSimDog::eJointShoulder,
+<span class="lineNum">    1263 </span>            :                 cSimDog::eJointElbow,
+<span class="lineNum">    1264 </span>            :                 cSimDog::eJointHip,
+<span class="lineNum">    1265 </span>            :                 cSimDog::eJointKnee,
+<span class="lineNum">    1266 </span>            :                 cSimDog::eJointAnkle
+<span class="lineNum">    1267 </span><span class="lineNoCov">          0 :         };</span>
+<span class="lineNum">    1268 </span><span class="lineNoCov">          0 :         const int num_ctrl_joints = sizeof(ctrl_joints) / sizeof(ctrl_joints[0]);</span>
+<span class="lineNum">    1269 </span>            : 
+<span class="lineNum">    1270 </span><span class="lineNoCov">          0 :         const Eigen::MatrixXd&amp; joint_mat = mChar-&gt;GetJointMat();</span>
+<span class="lineNum">    1271 </span>            : 
+<span class="lineNum">    1272 </span><span class="lineNoCov">          0 :         out_params(eStateParamSpineCurve) = CalcSpineCurve(pose);</span>
+<span class="lineNum">    1273 </span>            : 
+<span class="lineNum">    1274 </span><span class="lineNoCov">          0 :         for (int i = 0; i &lt; num_ctrl_joints; ++i)</span>
+<span class="lineNum">    1275 </span>            :         {
+<span class="lineNum">    1276 </span><span class="lineNoCov">          0 :                 tVector axis;</span>
+<span class="lineNum">    1277 </span><span class="lineNoCov">          0 :                 double tar_theta = 0;</span>
+<span class="lineNum">    1278 </span><span class="lineNoCov">          0 :                 int joint_id = ctrl_joints[i];</span>
+<span class="lineNum">    1279 </span><span class="lineNoCov">          0 :                 if (mImpPDCtrl.UseWorldCoord(joint_id))</span>
+<span class="lineNum">    1280 </span>            :                 {
+<span class="lineNum">    1281 </span><span class="lineNoCov">          0 :                         cKinTree::CalcJointWorldTheta(joint_mat, pose, joint_id, axis, tar_theta);</span>
+<span class="lineNum">    1282 </span>            :                 }
+<span class="lineNum">    1283 </span>            :                 else
+<span class="lineNum">    1284 </span>            :                 {
+<span class="lineNum">    1285 </span><span class="lineNoCov">          0 :                         tar_theta = cKinTree::GetJointTheta(joint_mat, pose, joint_id);</span>
+<span class="lineNum">    1286 </span>            :                 }
+<span class="lineNum">    1287 </span><span class="lineNoCov">          0 :                 out_params(eStateParamShoulder + i) = tar_theta;</span>
+<span class="lineNum">    1288 </span>            :         }
+<a name="1289"><span class="lineNum">    1289 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">    1290 </span>            : 
+<span class="lineNum">    1291 </span><span class="lineNoCov">          0 : double cDogController::CalcSpineCurve(const Eigen::VectorXd&amp; pose) const</span>
+<span class="lineNum">    1292 </span>            : {
+<span class="lineNum">    1293 </span><span class="lineNoCov">          0 :         const Eigen::MatrixXd&amp; joint_mat = mChar-&gt;GetJointMat();</span>
+<span class="lineNum">    1294 </span>            : 
+<span class="lineNum">    1295 </span><span class="lineNoCov">          0 :         double curve = 0;</span>
+<span class="lineNum">    1296 </span><span class="lineNoCov">          0 :         for (int i = 0; i &lt; gNumSpineJoints; ++i)</span>
+<span class="lineNum">    1297 </span>            :         {
+<span class="lineNum">    1298 </span><span class="lineNoCov">          0 :                 cSimDog::eJoint joint = gSpineJoints[i];</span>
+<span class="lineNum">    1299 </span><span class="lineNoCov">          0 :                 double theta = cKinTree::GetJointTheta(joint_mat, pose, joint);</span>
+<span class="lineNum">    1300 </span><span class="lineNoCov">          0 :                 curve += theta;</span>
+<span class="lineNum">    1301 </span>            :         }
+<span class="lineNum">    1302 </span>            : 
+<span class="lineNum">    1303 </span><span class="lineNoCov">          0 :         curve /= gNumSpineJoints;</span>
+<span class="lineNum">    1304 </span><span class="lineNoCov">          0 :         return curve;</span>
+<a name="1305"><span class="lineNum">    1305 </span>            : }</a>
+<span class="lineNum">    1306 </span>            : 
+<span class="lineNum">    1307 </span><span class="lineCov">          6 : const Eigen::VectorXd&amp; cDogController::GetCtrlParams(int ctrl_id) const</span>
+<span class="lineNum">    1308 </span>            : {
+<span class="lineNum">    1309 </span><span class="lineCov">          6 :         return mCtrlParams[ctrl_id];</span>
+<a name="1310"><span class="lineNum">    1310 </span>            : }</a>
+<span class="lineNum">    1311 </span>            : 
+<span class="lineNum">    1312 </span><span class="lineCov">          9 : bool cDogController::IsCurrActionCyclic() const</span>
+<span class="lineNum">    1313 </span>            : {
+<span class="lineNum">    1314 </span><span class="lineCov">          9 :         const tBlendAction&amp; action = mActions[mCurrAction.mID];</span>
+<span class="lineNum">    1315 </span><span class="lineCov">          9 :         return action.mCyclic;</span>
+<a name="1316"><span class="lineNum">    1316 </span>            : }</a>
+<span class="lineNum">    1317 </span>            : 
+<span class="lineNum">    1318 </span><span class="lineCov">          3 : void cDogController::ApplyAction(int action_id)</span>
+<span class="lineNum">    1319 </span>            : {
+<span class="lineNum">    1320 </span><span class="lineCov">          3 :         cTerrainRLCharController::ApplyAction(action_id);</span>
+<a name="1321"><span class="lineNum">    1321 </span><span class="lineCov">          3 : }</span></a>
+<span class="lineNum">    1322 </span>            : 
+<span class="lineNum">    1323 </span><span class="lineCov">         12 : void cDogController::ApplyAction(const tAction&amp; action)</span>
+<span class="lineNum">    1324 </span>            : {
+<span class="lineNum">    1325 </span><span class="lineCov">         12 :         cTerrainRLCharController::ApplyAction(action);</span>
+<span class="lineNum">    1326 </span><span class="lineCov">         12 :         TransitionState(eStateBackStance);</span>
+<a name="1327"><span class="lineNum">    1327 </span><span class="lineCov">         12 : }</span></a>
+<span class="lineNum">    1328 </span>            : 
+<span class="lineNum">    1329 </span><span class="lineCov">         12 : void cDogController::NewCycleUpdate()</span>
+<span class="lineNum">    1330 </span>            : {
+<span class="lineNum">    1331 </span><span class="lineCov">         12 :         cTerrainRLCharController::NewCycleUpdate();</span>
+<span class="lineNum">    1332 </span><span class="lineCov">         12 :         mPrevCycleTime = mCurrCycleTime;</span>
+<span class="lineNum">    1333 </span><span class="lineCov">         12 :         mCurrCycleTime = 0;</span>
+<span class="lineNum">    1334 </span><span class="lineCov">         12 :         mPrevStumbleCount = mCurrStumbleCount;</span>
+<span class="lineNum">    1335 </span><span class="lineCov">         12 :         mCurrStumbleCount = 0;</span>
+<span class="lineNum">    1336 </span><span class="lineCov">         12 :         RecordDistTraveled();</span>
+<span class="lineNum">    1337 </span><span class="lineCov">         12 :         mPrevCOM = mChar-&gt;CalcCOM();</span>
+<a name="1338"><span class="lineNum">    1338 </span><span class="lineCov">         12 : }</span></a>
+<span class="lineNum">    1339 </span>            : 
+<span class="lineNum">    1340 </span><span class="lineCov">          3 : void cDogController::BlendCtrlParams(const tBlendAction&amp; action, Eigen::VectorXd&amp; out_params) const</span>
+<span class="lineNum">    1341 </span>            : {
+<span class="lineNum">    1342 </span><span class="lineCov">          3 :         const Eigen::VectorXd&amp; param0 = GetCtrlParams(action.mParamIdx0);</span>
+<span class="lineNum">    1343 </span><span class="lineCov">          3 :         const Eigen::VectorXd&amp; param1 = GetCtrlParams(action.mParamIdx1);</span>
+<span class="lineNum">    1344 </span><span class="lineCov">          3 :         double blend = action.mBlend;</span>
+<span class="lineNum">    1345 </span><span class="lineCov">          3 :         out_params = (1 - blend) * param0 + blend * param1;</span>
+<a name="1346"><span class="lineNum">    1346 </span><span class="lineCov">          3 : }</span></a>
+<span class="lineNum">    1347 </span>            : 
+<span class="lineNum">    1348 </span><span class="lineCov">         32 : void cDogController::PostProcessParams(Eigen::VectorXd&amp; out_params) const</span>
+<span class="lineNum">    1349 </span>            : {
+<span class="lineNum">    1350 </span><span class="lineCov">         32 :         out_params[eMiscParamTransTime] = std::abs(out_params[eMiscParamTransTime]);</span>
+<span class="lineNum">    1351 </span><span class="lineCov">         32 :         out_params[eMiscParamCv] = std::abs(out_params[eMiscParamCv]);</span>
+<a name="1352"><span class="lineNum">    1352 </span><span class="lineCov">         32 : }</span></a>
+<span class="lineNum">    1353 </span>            : 
+<span class="lineNum">    1354 </span><span class="lineNoCov">          0 : bool cDogController::IsOptParam(int param_idx) const</span>
+<span class="lineNum">    1355 </span>            : {
+<span class="lineNum">    1356 </span><span class="lineNoCov">          0 :         assert(param_idx &gt;= 0 &amp;&amp; param_idx &lt; gNumParamInfo);</span>
+<span class="lineNum">    1357 </span><span class="lineNoCov">          0 :         return gParamInfo[param_idx].mIsOptParam;</span>
+<a name="1358"><span class="lineNum">    1358 </span>            : }</a>
+<span class="lineNum">    1359 </span>            : 
+<span class="lineNum">    1360 </span><span class="lineNoCov">          0 : double cDogController::GetParamBoundMin(int param_idx) const</span>
+<span class="lineNum">    1361 </span>            : {
+<span class="lineNum">    1362 </span><span class="lineNoCov">          0 :         assert(param_idx &gt;= 0 &amp;&amp; param_idx &lt; gNumParamInfo);</span>
+<span class="lineNum">    1363 </span><span class="lineNoCov">          0 :         return gParamInfo[param_idx].mMin;</span>
+<a name="1364"><span class="lineNum">    1364 </span>            : }</a>
+<span class="lineNum">    1365 </span>            : 
+<span class="lineNum">    1366 </span><span class="lineNoCov">          0 : double cDogController::GetParamBoundMax(int param_idx) const</span>
+<span class="lineNum">    1367 </span>            : {
+<span class="lineNum">    1368 </span><span class="lineNoCov">          0 :         assert(param_idx &gt;= 0 &amp;&amp; param_idx &lt; gNumParamInfo);</span>
+<span class="lineNum">    1369 </span><span class="lineNoCov">          0 :         return gParamInfo[param_idx].mMax;</span>
+<a name="1370"><span class="lineNum">    1370 </span>            : }</a>
+<span class="lineNum">    1371 </span>            : 
+<span class="lineNum">    1372 </span><span class="lineCov">       2106 : tVector cDogController::GetEndEffectorContactPos(int joint_id) const</span>
+<span class="lineNum">    1373 </span>            : {
+<span class="lineNum">    1374 </span><span class="lineCov">       2106 :         tVector pos = tVector::Zero();</span>
+<span class="lineNum">    1375 </span><span class="lineCov">       2106 :         const auto&amp; part = mChar-&gt;GetBodyPart(joint_id);</span>
+<span class="lineNum">    1376 </span><span class="lineCov">       2106 :         if (part != nullptr)</span>
+<span class="lineNum">    1377 </span>            :         {
+<span class="lineNum">    1378 </span><span class="lineCov">       2106 :                 const auto&amp; body_defs = mChar-&gt;GetBodyDefs();</span>
+<span class="lineNum">    1379 </span><span class="lineCov">       2106 :                 tVector size = cKinTree::GetBodySize(body_defs, joint_id);</span>
+<span class="lineNum">    1380 </span><span class="lineCov">       2106 :                 pos = part-&gt;LocalToWorldPos(tVector(0, -0.5 * size[1], 0, 0));</span>
+<span class="lineNum">    1381 </span>            :         }
+<span class="lineNum">    1382 </span>            :         else
+<span class="lineNum">    1383 </span>            :         {
+<span class="lineNum">    1384 </span><span class="lineNoCov">          0 :                 pos = mRBDModel-&gt;CalcJointWorldPos(joint_id);</span>
+<span class="lineNum">    1385 </span>            :         }
+<span class="lineNum">    1386 </span><span class="lineCov">       2106 :         return pos;</span>
+<a name="1387"><span class="lineNum">    1387 </span>            : }</a>
+<span class="lineNum">    1388 </span>            : 
+<span class="lineNum">    1389 </span><span class="lineCov">         12 : void cDogController::RecordDistTraveled()</span>
+<span class="lineNum">    1390 </span>            : {
+<span class="lineNum">    1391 </span><span class="lineCov">         12 :         tVector com = mChar-&gt;CalcCOM();</span>
+<span class="lineNum">    1392 </span><span class="lineCov">         12 :         mPrevDistTraveled = com - mPrevCOM;</span>
+<a name="1393"><span class="lineNum">    1393 </span><span class="lineCov">         12 : }</span></a>
+<span class="lineNum">    1394 </span>            : 
+<span class="lineNum">    1395 </span><span class="lineNoCov">          0 : int cDogController::PopCommand()</span>
+<span class="lineNum">    1396 </span>            : {
+<span class="lineNum">    1397 </span><span class="lineNoCov">          0 :         int cmd = mCommands.top();</span>
+<span class="lineNum">    1398 </span><span class="lineNoCov">          0 :         mCommands.pop();</span>
+<span class="lineNum">    1399 </span><span class="lineNoCov">          0 :         return cmd;</span>
+<a name="1400"><span class="lineNum">    1400 </span>            : }</a>
+<span class="lineNum">    1401 </span>            : 
+<span class="lineNum">    1402 </span><span class="lineCov">          9 : bool cDogController::HasCommands() const</span>
+<span class="lineNum">    1403 </span>            : {
+<span class="lineNum">    1404 </span><span class="lineCov">          9 :         return !mCommands.empty();</span>
+<a name="1405"><span class="lineNum">    1405 </span>            : }</a>
+<span class="lineNum">    1406 </span>            : 
+<span class="lineNum">    1407 </span><span class="lineCov">          3 : void cDogController::ClearCommands()</span>
+<span class="lineNum">    1408 </span>            : {
+<span class="lineNum">    1409 </span><span class="lineCov">          3 :         while (!mCommands.empty())</span>
+<span class="lineNum">    1410 </span>            :         {
+<span class="lineNum">    1411 </span><span class="lineNoCov">          0 :                 mCommands.pop();</span>
+<span class="lineNum">    1412 </span>            :         }
+<a name="1413"><span class="lineNum">    1413 </span><span class="lineCov">          3 : }</span></a>
+<span class="lineNum">    1414 </span>            : 
+<span class="lineNum">    1415 </span><span class="lineNoCov">          0 : void cDogController::ProcessCommand(tAction&amp; out_action)</span>
+<span class="lineNum">    1416 </span>            : {
+<span class="lineNum">    1417 </span><span class="lineNoCov">          0 :         int a_id = PopCommand();</span>
+<span class="lineNum">    1418 </span><span class="lineNoCov">          0 :         BuildBaseAction(a_id, out_action);</span>
+<a name="1419"><span class="lineNum">    1419 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">    1420 </span>            : 
+<span class="lineNum">    1421 </span><span class="lineCov">          3 : void cDogController::BuildBaseAction(int action_id, tAction&amp; out_action) const</span>
+<span class="lineNum">    1422 </span>            : {
+<span class="lineNum">    1423 </span><span class="lineCov">          3 :         const tBlendAction&amp; blend = mActions[action_id];</span>
+<a name="1424"><span class="lineNum">    1424 </span><span class="lineCov">          3 :         out_action.mID = blend.mID;</span></a>
+<span class="lineNum">    1425 </span><span class="lineCov">          3 :         BlendCtrlParams(blend, out_action.mParams);</span>
+<span class="lineNum">    1426 </span><span class="lineCov">          6 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

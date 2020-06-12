@@ -1,0 +1,717 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/sim/GroundVar2D.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/sim</a> - GroundVar2D.cpp<span style="font-size: 80%;"> (source / <a href="GroundVar2D.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">300</td>
+            <td class="headerCovTableEntry">354</td>
+            <td class="headerCovTableEntryMed">84.7 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">48</td>
+            <td class="headerCovTableEntry">57</td>
+            <td class="headerCovTableEntryMed">84.2 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;GroundVar2D.h&quot;</a>
+<span class="lineNum">       2 </span>            : #include &lt;BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h&gt;
+<span class="lineNum">       3 </span>            : #include &lt;time.h&gt;
+<span class="lineNum">       4 </span>            : #include &lt;iostream&gt;
+<span class="lineNum">       5 </span>            : 
+<a name="6"><span class="lineNum">       6 </span>            : const double gInvalidHeight = -std::numeric_limits&lt;double&gt;::infinity();</a>
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span><span class="lineCov">          4 : cGroundVar2D::tParams::tParams()</span>
+<span class="lineNum">       9 </span>            : {
+<span class="lineNum">      10 </span><span class="lineCov">          4 :         mFriction = 0.9;</span>
+<span class="lineNum">      11 </span><span class="lineCov">          4 :         mSegmentWidth = 20;</span>
+<span class="lineNum">      12 </span><span class="lineCov">          4 :         mPadding = ePaddingFlat;</span>
+<a name="13"><span class="lineNum">      13 </span><span class="lineCov">          4 : }</span></a>
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span><span class="lineCov">          2 : cGroundVar2D::cGroundVar2D()</span>
+<span class="lineNum">      16 </span>            : {
+<span class="lineNum">      17 </span><span class="lineCov">          2 :         mRand.Seed(static_cast&lt;unsigned long int&gt;(cMathUtil::RandInt(0, std::numeric_limits&lt;int&gt;::max())));</span>
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span><span class="lineCov">          2 :         ResetParams();</span>
+<span class="lineNum">      20 </span><span class="lineCov">          2 :         mTerrainFunc = cTerrainGen2D::BuildFlat;</span>
+<span class="lineNum">      21 </span><span class="lineCov">          2 :         SetTerrainParams(cTerrainGen2D::GetDefaultParams());</span>
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span><span class="lineCov">          6 :         for (int s = 0; s &lt; gNumSegments; ++s)</span>
+<span class="lineNum">      24 </span>            :         {
+<span class="lineNum">      25 </span><span class="lineCov">          4 :                 mSegments[s] = std::unique_ptr&lt;tSegment&gt;(new tSegment());</span>
+<span class="lineNum">      26 </span>            :         }
+<a name="27"><span class="lineNum">      27 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span><span class="lineCov">          4 : cGroundVar2D::~cGroundVar2D()</span>
+<span class="lineNum">      30 </span>            : {
+<a name="31"><span class="lineNum">      31 </span><span class="lineCov">          4 : }</span></a>
+<span class="lineNum">      32 </span>            : 
+<span class="lineNum">      33 </span><span class="lineCov">          2 : void cGroundVar2D::Init(std::shared_ptr&lt;cWorld&gt; world, const tParams&amp; params,</span>
+<span class="lineNum">      34 </span>            :                                                 const tVector&amp; bound_min, const tVector&amp; bound_max)
+<span class="lineNum">      35 </span>            : {
+<span class="lineNum">      36 </span><span class="lineCov">          2 :         ResetParams();</span>
+<span class="lineNum">      37 </span><span class="lineCov">          2 :         mParams = params;</span>
+<span class="lineNum">      38 </span><span class="lineCov">          2 :         mWorld = world;</span>
+<span class="lineNum">      39 </span>            : 
+<span class="lineNum">      40 </span><span class="lineCov">          2 :         InitSegments(bound_min, bound_max);</span>
+<a name="41"><span class="lineNum">      41 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">      42 </span>            : 
+<span class="lineNum">      43 </span><span class="lineCov">       2181 : void cGroundVar2D::Update(const tVector&amp; bound_min, const tVector&amp; bound_max)</span>
+<span class="lineNum">      44 </span>            : {
+<span class="lineNum">      45 </span><span class="lineCov">       2181 :         double min_x = GetMinX();</span>
+<span class="lineNum">      46 </span><span class="lineCov">       2181 :         double mid_x = GetMidX();</span>
+<span class="lineNum">      47 </span><span class="lineCov">       2181 :         double max_x = GetMaxX();</span>
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span><span class="lineCov">       2181 :         if (bound_max[0] &lt; max_x &amp;&amp; bound_min[0] &gt; min_x)</span>
+<span class="lineNum">      50 </span>            :         {
+<span class="lineNum">      51 </span>            :                 // nothing to do
+<span class="lineNum">      52 </span>            :         }
+<span class="lineNum">      53 </span><span class="lineCov">          1 :         else if (bound_max[0] &lt;= min_x || bound_min[0] &gt;= max_x)</span>
+<span class="lineNum">      54 </span>            :         {
+<span class="lineNum">      55 </span><span class="lineCov">          1 :                 InitSegments(bound_min, bound_max);</span>
+<span class="lineNum">      56 </span>            :         }
+<span class="lineNum">      57 </span>            :         else
+<span class="lineNum">      58 </span>            :         {
+<span class="lineNum">      59 </span><span class="lineNoCov">          0 :                 int seg_id = 0;</span>
+<span class="lineNum">      60 </span><span class="lineNoCov">          0 :                 double seg_min_x = 0;</span>
+<span class="lineNum">      61 </span><span class="lineNoCov">          0 :                 double seg_max_x = 0;</span>
+<span class="lineNum">      62 </span><span class="lineNoCov">          0 :                 eAlignMode align_mode = eAlignMin;</span>
+<span class="lineNum">      63 </span><span class="lineNoCov">          0 :                 tVector fix_point = tVector::Zero();</span>
+<span class="lineNum">      64 </span>            :                 
+<span class="lineNum">      65 </span><span class="lineNoCov">          0 :                 if (bound_max[0] &gt;= max_x)</span>
+<span class="lineNum">      66 </span>            :                 {
+<span class="lineNum">      67 </span><span class="lineNoCov">          0 :                         seg_id = GetSegID(0);</span>
+<span class="lineNum">      68 </span><span class="lineNoCov">          0 :                         seg_min_x = max_x;</span>
+<span class="lineNum">      69 </span><span class="lineNoCov">          0 :                         seg_max_x = seg_min_x + mParams.mSegmentWidth;</span>
+<span class="lineNum">      70 </span>            : 
+<span class="lineNum">      71 </span><span class="lineNoCov">          0 :                         const auto&amp; max_seg = GetMaxSegment();</span>
+<span class="lineNum">      72 </span><span class="lineNoCov">          0 :                         fix_point[0] = max_x;</span>
+<span class="lineNum">      73 </span><span class="lineNoCov">          0 :                         fix_point[1] = max_seg-&gt;GetEndHeight();</span>
+<span class="lineNum">      74 </span><span class="lineNoCov">          0 :                         align_mode = eAlignMin;</span>
+<span class="lineNum">      75 </span>            :                 }
+<span class="lineNum">      76 </span>            :                 else
+<span class="lineNum">      77 </span>            :                 {
+<span class="lineNum">      78 </span><span class="lineNoCov">          0 :                         seg_id = GetSegID(1);</span>
+<span class="lineNum">      79 </span><span class="lineNoCov">          0 :                         seg_max_x = min_x;</span>
+<span class="lineNum">      80 </span><span class="lineNoCov">          0 :                         seg_min_x = seg_max_x - mParams.mSegmentWidth;</span>
+<span class="lineNum">      81 </span>            : 
+<span class="lineNum">      82 </span><span class="lineNoCov">          0 :                         const auto&amp; min_seg = GetMinSegment();</span>
+<span class="lineNum">      83 </span><span class="lineNoCov">          0 :                         fix_point[0] = min_x;</span>
+<span class="lineNum">      84 </span><span class="lineNoCov">          0 :                         fix_point[1] = min_seg-&gt;GetStartHeight();</span>
+<span class="lineNum">      85 </span><span class="lineNoCov">          0 :                         align_mode = eAlignMax;</span>
+<span class="lineNum">      86 </span>            :                 }
+<span class="lineNum">      87 </span>            : 
+<span class="lineNum">      88 </span><span class="lineNoCov">          0 :                 BuildSegment(seg_id, seg_min_x, seg_max_x, align_mode, fix_point);</span>
+<span class="lineNum">      89 </span><span class="lineNoCov">          0 :                 mFlipSeg = GetSegID(0) == 0;</span>
+<span class="lineNum">      90 </span>            :         }
+<a name="91"><span class="lineNum">      91 </span><span class="lineCov">       2181 : }</span></a>
+<span class="lineNum">      92 </span>            : 
+<span class="lineNum">      93 </span><span class="lineCov">          1 : void cGroundVar2D::Clear()</span>
+<span class="lineNum">      94 </span>            : {
+<span class="lineNum">      95 </span><span class="lineCov">          1 :         ClearSegments();</span>
+<a name="96"><span class="lineNum">      96 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">      97 </span>            : 
+<span class="lineNum">      98 </span><span class="lineCov">       1821 : double cGroundVar2D::SampleHeight(const tVector&amp; pos) const</span>
+<span class="lineNum">      99 </span>            : {
+<span class="lineNum">     100 </span><span class="lineCov">       1821 :         return cGround::SampleHeight(pos);</span>
+<a name="101"><span class="lineNum">     101 </span>            : }</a>
+<span class="lineNum">     102 </span>            : 
+<span class="lineNum">     103 </span><span class="lineCov">       4192 : double cGroundVar2D::SampleHeight(const tVector&amp; pos, bool&amp; out_valid_sample) const</span>
+<span class="lineNum">     104 </span>            : {
+<span class="lineNum">     105 </span><span class="lineCov">       4192 :         const auto&amp; min_seg = GetMinSegment();</span>
+<span class="lineNum">     106 </span><span class="lineCov">       4192 :         int seg_idx = 0;</span>
+<span class="lineNum">     107 </span><span class="lineCov">       4192 :         double min_seg_max = min_seg-&gt;GetMaxX();</span>
+<span class="lineNum">     108 </span><span class="lineCov">       4192 :         if (pos[0] &gt;= min_seg_max)</span>
+<span class="lineNum">     109 </span>            :         {
+<span class="lineNum">     110 </span><span class="lineCov">       4125 :                 seg_idx = 1;</span>
+<span class="lineNum">     111 </span>            :         }
+<span class="lineNum">     112 </span><span class="lineCov">       4192 :         const auto&amp; seg = GetSegment(seg_idx);</span>
+<span class="lineNum">     113 </span><span class="lineCov">       4192 :         double h = seg-&gt;SampleHeight(pos, out_valid_sample);</span>
+<span class="lineNum">     114 </span>            : 
+<span class="lineNum">     115 </span><span class="lineCov">       4192 :         return h;</span>
+<a name="116"><span class="lineNum">     116 </span>            : }</a>
+<span class="lineNum">     117 </span>            : 
+<span class="lineNum">     118 </span><span class="lineNoCov">          0 : void cGroundVar2D::SampleHeight(const Eigen::MatrixXd&amp; pos, Eigen::VectorXd&amp; out_h) const</span>
+<span class="lineNum">     119 </span>            : {
+<span class="lineNum">     120 </span><span class="lineNoCov">          0 :         int num_pos = static_cast&lt;int&gt;(pos.rows());</span>
+<span class="lineNum">     121 </span><span class="lineNoCov">          0 :         out_h.resize(num_pos);</span>
+<span class="lineNum">     122 </span><span class="lineNoCov">          0 :         for (int i = 0; i &lt; num_pos; ++i)</span>
+<span class="lineNum">     123 </span>            :         {
+<span class="lineNum">     124 </span><span class="lineNoCov">          0 :                 tVector curr_pos = pos.row(i);</span>
+<span class="lineNum">     125 </span><span class="lineNoCov">          0 :                 double h = SampleHeight(curr_pos);</span>
+<span class="lineNum">     126 </span><span class="lineNoCov">          0 :                 out_h[i] = h;</span>
+<span class="lineNum">     127 </span>            :         }
+<a name="128"><span class="lineNum">     128 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     129 </span>            : 
+<span class="lineNum">     130 </span><span class="lineCov">        168 : cGroundVar2D::eGroundType cGroundVar2D::GetGroundType() const</span>
+<span class="lineNum">     131 </span>            : {
+<span class="lineNum">     132 </span><span class="lineCov">        168 :         return eGroundTypeVar2D;</span>
+<a name="133"><span class="lineNum">     133 </span>            : }</a>
+<span class="lineNum">     134 </span>            : 
+<span class="lineNum">     135 </span><span class="lineCov">       7980 : int cGroundVar2D::GetGridWidth() const</span>
+<span class="lineNum">     136 </span>            : {
+<span class="lineNum">     137 </span><span class="lineCov">       7980 :         int w = 0;</span>
+<span class="lineNum">     138 </span><span class="lineCov">      23940 :         for (int i = 0; i &lt; gNumSegments; ++i)</span>
+<span class="lineNum">     139 </span>            :         {
+<span class="lineNum">     140 </span><span class="lineCov">      15960 :                 w += mSegments[i]-&gt;GetGridWidth();</span>
+<span class="lineNum">     141 </span>            :         }
+<span class="lineNum">     142 </span><span class="lineCov">       7980 :         w -= 1; // minus 1 for overlap vertex between the two segments</span>
+<span class="lineNum">     143 </span><span class="lineCov">       7980 :         return w;</span>
+<a name="144"><span class="lineNum">     144 </span>            : }</a>
+<span class="lineNum">     145 </span>            : 
+<span class="lineNum">     146 </span><span class="lineCov">       7896 : int cGroundVar2D::GetGridLength() const</span>
+<span class="lineNum">     147 </span>            : {
+<span class="lineNum">     148 </span><span class="lineCov">       7896 :         return mSegments[0]-&gt;GetGridLength();</span>
+<a name="149"><span class="lineNum">     149 </span>            : }</a>
+<span class="lineNum">     150 </span>            : 
+<span class="lineNum">     151 </span><span class="lineCov">       7896 : tVector cGroundVar2D::GetVertex(int i, int j) const</span>
+<span class="lineNum">     152 </span>            : {
+<span class="lineNum">     153 </span><span class="lineCov">       7896 :         assert(i &gt;= 0 &amp;&amp; i &lt; GetGridWidth());</span>
+<span class="lineNum">     154 </span><span class="lineCov">       7896 :         assert(j &gt;= 0 &amp;&amp; j &lt; GetGridLength());</span>
+<span class="lineNum">     155 </span>            : 
+<span class="lineNum">     156 </span><span class="lineCov">       7896 :         const auto&amp; min_seg = GetMinSegment();</span>
+<span class="lineNum">     157 </span><span class="lineCov">       7896 :         int seg_idx = 0;</span>
+<span class="lineNum">     158 </span><span class="lineCov">       7896 :         int min_grid_width = min_seg-&gt;GetGridWidth();</span>
+<span class="lineNum">     159 </span><span class="lineCov">       7896 :         if (i &gt;= min_grid_width)</span>
+<span class="lineNum">     160 </span>            :         {
+<span class="lineNum">     161 </span><span class="lineCov">       7627 :                 seg_idx = 1;</span>
+<span class="lineNum">     162 </span><span class="lineCov">       7627 :                 i -= min_grid_width;</span>
+<span class="lineNum">     163 </span><span class="lineCov">       7627 :                 ++i;</span>
+<span class="lineNum">     164 </span>            :         }
+<span class="lineNum">     165 </span>            :         
+<span class="lineNum">     166 </span><span class="lineCov">       7896 :         const auto&amp; seg = GetSegment(seg_idx);</span>
+<span class="lineNum">     167 </span><span class="lineCov">       7896 :         tVector vert = seg-&gt;GetVertex(i, j);</span>
+<span class="lineNum">     168 </span><span class="lineCov">       7896 :         return vert;</span>
+<a name="169"><span class="lineNum">     169 </span>            : }</a>
+<span class="lineNum">     170 </span>            : 
+<span class="lineNum">     171 </span><span class="lineCov">        168 : tVector cGroundVar2D::CalcGridCoord(const tVector&amp; pos) const</span>
+<span class="lineNum">     172 </span>            : {
+<span class="lineNum">     173 </span>            :         // careful, the grid coord might be outside the range of grid cells
+<span class="lineNum">     174 </span><span class="lineCov">        168 :         const auto&amp; min_seg = GetMinSegment();</span>
+<span class="lineNum">     175 </span><span class="lineCov">        168 :         int seg_idx = 0;</span>
+<span class="lineNum">     176 </span><span class="lineCov">        168 :         double min_seg_max = min_seg-&gt;GetMaxX();</span>
+<span class="lineNum">     177 </span><span class="lineCov">        168 :         int i_offset = 0;</span>
+<span class="lineNum">     178 </span>            : 
+<span class="lineNum">     179 </span><span class="lineCov">        168 :         if (pos[0] &gt; min_seg_max)</span>
+<span class="lineNum">     180 </span>            :         {
+<span class="lineNum">     181 </span><span class="lineCov">        146 :                 seg_idx = 1;</span>
+<span class="lineNum">     182 </span><span class="lineCov">        146 :                 i_offset = min_seg-&gt;GetGridWidth() - 1;</span>
+<span class="lineNum">     183 </span>            :         }
+<span class="lineNum">     184 </span>            : 
+<span class="lineNum">     185 </span><span class="lineCov">        168 :         const auto&amp; seg = GetSegment(seg_idx);</span>
+<span class="lineNum">     186 </span><span class="lineCov">        168 :         tVector coord = seg-&gt;CalcGridCoord(pos);</span>
+<span class="lineNum">     187 </span><span class="lineCov">        168 :         coord[0] += i_offset;</span>
+<span class="lineNum">     188 </span>            : 
+<span class="lineNum">     189 </span><span class="lineCov">        168 :         return coord;</span>
+<a name="190"><span class="lineNum">     190 </span>            : }</a>
+<span class="lineNum">     191 </span>            : 
+<span class="lineNum">     192 </span><span class="lineCov">         84 : tVector cGroundVar2D::GetPos() const</span>
+<span class="lineNum">     193 </span>            : {
+<span class="lineNum">     194 </span><span class="lineCov">         84 :         tVector aabb_min = tVector::Ones() * std::numeric_limits&lt;double&gt;::infinity();</span>
+<span class="lineNum">     195 </span><span class="lineCov">         84 :         tVector aabb_max = tVector::Ones() * -std::numeric_limits&lt;double&gt;::infinity();</span>
+<span class="lineNum">     196 </span>            : 
+<span class="lineNum">     197 </span><span class="lineCov">        252 :         for (int i = 0; i &lt; gNumSegments; ++i)</span>
+<span class="lineNum">     198 </span>            :         {
+<span class="lineNum">     199 </span><span class="lineCov">        168 :                 tVector curr_min;</span>
+<span class="lineNum">     200 </span><span class="lineCov">        168 :                 tVector curr_max;</span>
+<span class="lineNum">     201 </span><span class="lineCov">        168 :                 mSegments[i]-&gt;CalcAABB(curr_min, curr_max);</span>
+<span class="lineNum">     202 </span>            : 
+<span class="lineNum">     203 </span><span class="lineCov">        168 :                 aabb_min = aabb_min.cwiseMin(curr_min);</span>
+<span class="lineNum">     204 </span><span class="lineCov">        168 :                 aabb_max = aabb_max.cwiseMax(curr_max);</span>
+<span class="lineNum">     205 </span>            :         }
+<span class="lineNum">     206 </span>            : 
+<span class="lineNum">     207 </span><span class="lineCov">         84 :         tVector pos = 0.5 * (aabb_max + aabb_min);</span>
+<span class="lineNum">     208 </span><span class="lineCov">         84 :         return pos;</span>
+<a name="209"><span class="lineNum">     209 </span>            : }</a>
+<span class="lineNum">     210 </span>            : 
+<span class="lineNum">     211 </span><span class="lineNoCov">          0 : double cGroundVar2D::GetWidth() const</span>
+<span class="lineNum">     212 </span>            : {
+<span class="lineNum">     213 </span><span class="lineNoCov">          0 :         double w = mSegments[0]-&gt;GetLength();</span>
+<span class="lineNum">     214 </span><span class="lineNoCov">          0 :         return w;</span>
+<a name="215"><span class="lineNum">     215 </span>            : }</a>
+<span class="lineNum">     216 </span>            : 
+<span class="lineNum">     217 </span><span class="lineCov">          2 : void cGroundVar2D::SetTerrainFunc(cTerrainGen2D::tTerrainFunc func)</span>
+<span class="lineNum">     218 </span>            : {
+<span class="lineNum">     219 </span><span class="lineCov">          2 :         mTerrainFunc = func;</span>
+<a name="220"><span class="lineNum">     220 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">     221 </span>            : 
+<span class="lineNum">     222 </span><span class="lineNoCov">          0 : void cGroundVar2D::SeedRand(unsigned long seed)</span>
+<span class="lineNum">     223 </span>            : {
+<span class="lineNum">     224 </span><span class="lineNoCov">          0 :         mRand.Seed(seed);</span>
+<a name="225"><span class="lineNum">     225 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     226 </span>            : 
+<span class="lineNum">     227 </span><span class="lineCov">          4 : void cGroundVar2D::ResetParams()</span>
+<span class="lineNum">     228 </span>            : {
+<span class="lineNum">     229 </span><span class="lineCov">          4 :         mFlipSeg = false;</span>
+<span class="lineNum">     230 </span><span class="lineCov">          4 : }</span>
+<a name="231"><span class="lineNum">     231 </span>            : </a>
+<span class="lineNum">     232 </span>            : 
+<span class="lineNum">     233 </span><span class="lineNoCov">          0 : bool cGroundVar2D::OutsideGrid(const tVector&amp; coord) const</span>
+<span class="lineNum">     234 </span>            : {
+<span class="lineNum">     235 </span><span class="lineNoCov">          0 :         return (coord[0] &lt; 0 || coord[0] &gt;= GetGridWidth()</span>
+<span class="lineNum">     236 </span><span class="lineNoCov">          0 :                         || coord[1] &lt; 0 || coord[1] &gt;= GetGridLength());</span>
+<a name="237"><span class="lineNum">     237 </span>            : }</a>
+<span class="lineNum">     238 </span>            : 
+<span class="lineNum">     239 </span><span class="lineCov">          3 : void cGroundVar2D::InitSegments(const tVector&amp; bound_min, const tVector&amp; bound_max)</span>
+<span class="lineNum">     240 </span>            : {
+<span class="lineNum">     241 </span><span class="lineCov">          3 :         ClearSegments();</span>
+<span class="lineNum">     242 </span>            : 
+<span class="lineNum">     243 </span><span class="lineCov">          3 :         int num_verts = static_cast&lt;int&gt;(std::ceil(mParams.mSegmentWidth / tSegment::gGridSpacingX + 1));</span>
+<span class="lineNum">     244 </span><span class="lineCov">          3 :         double mid = 0.5 * (bound_max[0] + bound_min[0]);</span>
+<span class="lineNum">     245 </span><span class="lineCov">          9 :         for (int i = 0; i &lt; gNumSegments; ++i)</span>
+<span class="lineNum">     246 </span>            :         {
+<span class="lineNum">     247 </span><span class="lineCov">          6 :                 int seg_id = GetSegID(i);</span>
+<span class="lineNum">     248 </span>            :                 
+<span class="lineNum">     249 </span><span class="lineCov">          6 :                 tVector fix_point = tVector::Zero();</span>
+<span class="lineNum">     250 </span><span class="lineCov">          6 :                 eAlignMode align_mode = GetSegAlignMode(i);</span>
+<span class="lineNum">     251 </span><span class="lineCov">          6 :                 double w = mParams.mSegmentWidth;</span>
+<span class="lineNum">     252 </span><span class="lineCov">          6 :                 double bound_min = (align_mode == eAlignMax) ? -w : 0;</span>
+<span class="lineNum">     253 </span><span class="lineCov">          6 :                 double bound_max = (align_mode == eAlignMax) ? 0 : w;</span>
+<span class="lineNum">     254 </span><span class="lineCov">          6 :                 bound_min += mid;</span>
+<span class="lineNum">     255 </span><span class="lineCov">          6 :                 bound_max += mid;</span>
+<span class="lineNum">     256 </span>            : 
+<span class="lineNum">     257 </span><span class="lineCov">          6 :                 BuildSegment(seg_id, bound_min, bound_max, align_mode, fix_point);</span>
+<span class="lineNum">     258 </span>            :         }
+<a name="259"><span class="lineNum">     259 </span><span class="lineCov">          3 : }</span></a>
+<span class="lineNum">     260 </span>            : 
+<span class="lineNum">     261 </span><span class="lineCov">          4 : void cGroundVar2D::ClearSegments()</span>
+<span class="lineNum">     262 </span>            : {
+<span class="lineNum">     263 </span><span class="lineCov">         12 :         for (int i = 0; i &lt; gNumSegments; ++i)</span>
+<span class="lineNum">     264 </span>            :         {
+<span class="lineNum">     265 </span><span class="lineCov">          8 :                 mSegments[i]-&gt;Clear();</span>
+<span class="lineNum">     266 </span>            :         }
+<span class="lineNum">     267 </span><span class="lineCov">          4 :         mFlipSeg = false;</span>
+<a name="268"><span class="lineNum">     268 </span><span class="lineCov">          4 : }</span></a>
+<span class="lineNum">     269 </span>            : 
+<span class="lineNum">     270 </span><span class="lineCov">      31061 : int cGroundVar2D::GetSegID(int s) const</span>
+<span class="lineNum">     271 </span>            : {
+<span class="lineNum">     272 </span><span class="lineCov">      31061 :         if (mFlipSeg)</span>
+<span class="lineNum">     273 </span>            :         {
+<span class="lineNum">     274 </span><span class="lineNoCov">          0 :                 return (s == 0) ? 1 : 0;</span>
+<span class="lineNum">     275 </span>            :         }
+<span class="lineNum">     276 </span><span class="lineCov">      31061 :         return s;</span>
+<a name="277"><span class="lineNum">     277 </span>            : }</a>
+<span class="lineNum">     278 </span>            : 
+<span class="lineNum">     279 </span><span class="lineCov">      12256 : const std::unique_ptr&lt;cGroundVar2D::tSegment&gt;&amp; cGroundVar2D::GetSegment(int s) const</span>
+<span class="lineNum">     280 </span>            : {
+<span class="lineNum">     281 </span><span class="lineCov">      12256 :         int seg_id = GetSegID(s);</span>
+<span class="lineNum">     282 </span><span class="lineCov">      12256 :         return mSegments[seg_id];</span>
+<a name="283"><span class="lineNum">     283 </span>            : }</a>
+<span class="lineNum">     284 </span>            : 
+<span class="lineNum">     285 </span><span class="lineNoCov">          0 : std::unique_ptr&lt;cGroundVar2D::tSegment&gt;&amp; cGroundVar2D::GetSegment(int s)</span>
+<span class="lineNum">     286 </span>            : {
+<span class="lineNum">     287 </span><span class="lineNoCov">          0 :         int seg_id = GetSegID(s);</span>
+<span class="lineNum">     288 </span><span class="lineNoCov">          0 :         return mSegments[seg_id];</span>
+<a name="289"><span class="lineNum">     289 </span>            : }</a>
+<span class="lineNum">     290 </span>            : 
+<span class="lineNum">     291 </span><span class="lineCov">      16618 : const std::unique_ptr&lt;cGroundVar2D::tSegment&gt;&amp; cGroundVar2D::GetMinSegment() const</span>
+<span class="lineNum">     292 </span>            : {
+<span class="lineNum">     293 </span><span class="lineCov">      16618 :         int seg_id = GetSegID(0);</span>
+<span class="lineNum">     294 </span><span class="lineCov">      16618 :         return mSegments[seg_id];</span>
+<a name="295"><span class="lineNum">     295 </span>            : }</a>
+<span class="lineNum">     296 </span>            : 
+<span class="lineNum">     297 </span><span class="lineCov">       2181 : const std::unique_ptr&lt;cGroundVar2D::tSegment&gt;&amp; cGroundVar2D::GetMaxSegment() const</span>
+<span class="lineNum">     298 </span>            : {
+<span class="lineNum">     299 </span><span class="lineCov">       2181 :         int seg_id = GetSegID(gNumSegments - 1);</span>
+<span class="lineNum">     300 </span><span class="lineCov">       2181 :         return mSegments[seg_id];</span>
+<a name="301"><span class="lineNum">     301 </span>            : }</a>
+<span class="lineNum">     302 </span>            : 
+<span class="lineNum">     303 </span><span class="lineCov">          6 : cGroundVar2D::eAlignMode cGroundVar2D::GetSegAlignMode(int seg_id) const</span>
+<span class="lineNum">     304 </span>            : {
+<span class="lineNum">     305 </span><span class="lineCov">          6 :         if (mFlipSeg)</span>
+<span class="lineNum">     306 </span>            :         {
+<span class="lineNum">     307 </span><span class="lineNoCov">          0 :                 return (seg_id == 0) ? eAlignMin : eAlignMax;</span>
+<span class="lineNum">     308 </span>            :         }
+<span class="lineNum">     309 </span><span class="lineCov">          6 :         return (seg_id == 0) ? eAlignMax : eAlignMin;</span>
+<a name="310"><span class="lineNum">     310 </span>            : }</a>
+<span class="lineNum">     311 </span>            : 
+<span class="lineNum">     312 </span><span class="lineCov">          6 : void cGroundVar2D::BuildSegment(int seg_id, double bound_min, double bound_max,</span>
+<span class="lineNum">     313 </span>            :                                                                 eAlignMode align_mode, const tVector&amp; fix_point)
+<span class="lineNum">     314 </span>            : {
+<span class="lineNum">     315 </span><span class="lineCov">          6 :         std::unique_ptr&lt;tSegment&gt;&amp; seg = mSegments[seg_id];</span>
+<span class="lineNum">     316 </span><span class="lineCov">          6 :         seg-&gt;Clear();</span>
+<span class="lineNum">     317 </span>            : 
+<span class="lineNum">     318 </span><span class="lineCov">          6 :         bool contains_origin = (bound_min &lt;= 0) &amp;&amp; (bound_max &gt;= 0);</span>
+<span class="lineNum">     319 </span><span class="lineCov">          6 :         if (contains_origin)</span>
+<span class="lineNum">     320 </span>            :         {
+<span class="lineNum">     321 </span><span class="lineCov">          3 :                 AddPadding(seg_id, bound_min, bound_max);</span>
+<span class="lineNum">     322 </span>            :         }
+<span class="lineNum">     323 </span><span class="lineCov">          6 :         (*mTerrainFunc)(bound_max - bound_min, mTerrainParams, mRand, seg-&gt;mData);</span>
+<span class="lineNum">     324 </span>            : 
+<span class="lineNum">     325 </span><span class="lineCov">          6 :         int num_verts = static_cast&lt;int&gt;(seg-&gt;mData.size());</span>
+<span class="lineNum">     326 </span><span class="lineCov">          6 :         float end_h = 0;</span>
+<span class="lineNum">     327 </span><span class="lineCov">          6 :         if (num_verts &gt; 0)</span>
+<span class="lineNum">     328 </span>            :         {
+<span class="lineNum">     329 </span><span class="lineCov">          6 :                 end_h = (align_mode == eAlignMin) ? seg-&gt;mData[0] : seg-&gt;mData[num_verts - 1];</span>
+<span class="lineNum">     330 </span>            :         }
+<span class="lineNum">     331 </span>            :         
+<span class="lineNum">     332 </span><span class="lineCov">          6 :         float h_offset = static_cast&lt;float&gt;(fix_point[1] - end_h);</span>
+<span class="lineNum">     333 </span><span class="lineCov">       4272 :         for (int i = 0; i &lt; num_verts; ++i)</span>
+<span class="lineNum">     334 </span>            :         {
+<span class="lineNum">     335 </span><span class="lineCov">       4266 :                 seg-&gt;mData[i] += h_offset;</span>
+<span class="lineNum">     336 </span>            :         }
+<span class="lineNum">     337 </span>            : 
+<span class="lineNum">     338 </span>            :         double new_bound_min = (align_mode == eAlignMin) ? 
+<span class="lineNum">     339 </span>            :                                                         (bound_min) :
+<span class="lineNum">     340 </span><span class="lineCov">          6 :                                                         (bound_max - (num_verts - 1) * tSegment::gGridSpacingX);</span>
+<span class="lineNum">     341 </span><span class="lineCov">          6 :         seg-&gt;Init(mWorld, new_bound_min, mParams.mFriction);</span>
+<a name="342"><span class="lineNum">     342 </span><span class="lineCov">          6 : }</span></a>
+<span class="lineNum">     343 </span>            : 
+<span class="lineNum">     344 </span><span class="lineCov">          3 : void cGroundVar2D::AddPadding(int seg_id, double bound_min, double bound_max)</span>
+<span class="lineNum">     345 </span>            : {
+<span class="lineNum">     346 </span><span class="lineCov">          3 :         std::unique_ptr&lt;tSegment&gt;&amp; seg = mSegments[seg_id];</span>
+<span class="lineNum">     347 </span><span class="lineCov">          3 :         if (mParams.mPadding != ePaddingNone)</span>
+<span class="lineNum">     348 </span>            :         {
+<span class="lineNum">     349 </span><span class="lineCov">          3 :                 if (mParams.mPadding == ePaddingFlat)</span>
+<span class="lineNum">     350 </span>            :                 {
+<span class="lineNum">     351 </span><span class="lineCov">          3 :                         double flat_w = std::min(bound_max - bound_min, 1 - bound_min);</span>
+<span class="lineNum">     352 </span><span class="lineCov">          3 :                         cTerrainGen2D::BuildFlat(flat_w, mTerrainParams, mRand, seg-&gt;mData);</span>
+<span class="lineNum">     353 </span>            :                 }
+<span class="lineNum">     354 </span>            :         }
+<a name="355"><span class="lineNum">     355 </span><span class="lineCov">          3 : }</span></a>
+<span class="lineNum">     356 </span>            : 
+<span class="lineNum">     357 </span><span class="lineCov">       2181 : double cGroundVar2D::GetMinX() const</span>
+<span class="lineNum">     358 </span>            : {
+<span class="lineNum">     359 </span><span class="lineCov">       2181 :         return GetMinSegment()-&gt;GetMinX();</span>
+<a name="360"><span class="lineNum">     360 </span>            : }</a>
+<span class="lineNum">     361 </span>            : 
+<span class="lineNum">     362 </span><span class="lineCov">       2181 : double cGroundVar2D::GetMidX() const</span>
+<span class="lineNum">     363 </span>            : {
+<span class="lineNum">     364 </span><span class="lineCov">       2181 :         return GetMinSegment()-&gt;GetMaxX();</span>
+<a name="365"><span class="lineNum">     365 </span>            : }</a>
+<span class="lineNum">     366 </span>            : 
+<span class="lineNum">     367 </span><span class="lineCov">       2181 : double cGroundVar2D::GetMaxX() const</span>
+<span class="lineNum">     368 </span>            : {
+<span class="lineNum">     369 </span><span class="lineCov">       2181 :         return GetMaxSegment()-&gt;GetMaxX();</span>
+<span class="lineNum">     370 </span>            : }
+<span class="lineNum">     371 </span>            : 
+<span class="lineNum">     372 </span>            : 
+<span class="lineNum">     373 </span>            : 
+<span class="lineNum">     374 </span>            : //////////////////////////////////////////
+<span class="lineNum">     375 </span>            : // tSegment
+<span class="lineNum">     376 </span>            : //////////////////////////////////////////
+<span class="lineNum">     377 </span>            : 
+<span class="lineNum">     378 </span>            : const int cGroundVar2D::tSegment::gGridLength = 3;
+<span class="lineNum">     379 </span><span class="lineCov">          1 : const double cGroundVar2D::tSegment::gGridSpacingX = cTerrainGen2D::gVertSpacing;</span>
+<a name="380"><span class="lineNum">     380 </span>            : const double cGroundVar2D::tSegment::gGridSpacingZ = 1;</a>
+<span class="lineNum">     381 </span>            : 
+<span class="lineNum">     382 </span><span class="lineCov">          4 : cGroundVar2D::tSegment::tSegment()</span>
+<span class="lineNum">     383 </span>            : {
+<span class="lineNum">     384 </span><span class="lineCov">          4 :         mMinX = 0;</span>
+<a name="385"><span class="lineNum">     385 </span><span class="lineCov">          4 : }</span></a>
+<span class="lineNum">     386 </span>            : 
+<span class="lineNum">     387 </span><span class="lineCov">         12 : cGroundVar2D::tSegment::~tSegment()</span>
+<span class="lineNum">     388 </span>            : {
+<span class="lineNum">     389 </span><span class="lineCov">          4 :         this-&gt;Clear();</span>
+<a name="390"><span class="lineNum">     390 </span><span class="lineCov">          8 : }</span></a>
+<span class="lineNum">     391 </span>            : 
+<span class="lineNum">     392 </span><span class="lineCov">          6 : void cGroundVar2D::tSegment::Init(std::shared_ptr&lt;cWorld&gt; world, double min_x, double friction)</span>
+<span class="lineNum">     393 </span>            : {
+<span class="lineNum">     394 </span><span class="lineCov">          6 :         double world_scale = world-&gt;GetScale();</span>
+<span class="lineNum">     395 </span><span class="lineCov">          6 :         double height_scale = 1;</span>
+<span class="lineNum">     396 </span><span class="lineCov">          6 :         double x_scale = gGridSpacingX * world_scale;</span>
+<span class="lineNum">     397 </span><span class="lineCov">          6 :         double z_scale = gGridSpacingZ * world_scale;</span>
+<span class="lineNum">     398 </span>            : 
+<span class="lineNum">     399 </span><span class="lineCov">          6 :         const int up_axis = 1; // y axis</span>
+<span class="lineNum">     400 </span><span class="lineCov">          6 :         const PHY_ScalarType data_type = PHY_FLOAT;</span>
+<span class="lineNum">     401 </span><span class="lineCov">          6 :         const double h_pad = 0.1; // is this necessary for completely flat terrain?</span>
+<span class="lineNum">     402 </span>            : 
+<span class="lineNum">     403 </span><span class="lineCov">          6 :         int grid_width = static_cast&lt;int&gt;(mData.size());</span>
+<span class="lineNum">     404 </span><span class="lineCov">          6 :         int grid_length = GetGridLength();</span>
+<span class="lineNum">     405 </span>            :         
+<span class="lineNum">     406 </span><span class="lineCov">          6 :         mMinX = min_x;</span>
+<span class="lineNum">     407 </span>            : 
+<span class="lineNum">     408 </span><span class="lineCov">          6 :         tVector aabb_min = tVector::Zero();</span>
+<span class="lineNum">     409 </span><span class="lineCov">          6 :         tVector aabb_max = tVector::Zero();</span>
+<span class="lineNum">     410 </span>            : 
+<span class="lineNum">     411 </span><span class="lineCov">          6 :         aabb_min[0] = mMinX;</span>
+<span class="lineNum">     412 </span><span class="lineCov">          6 :         aabb_max[0] = mMinX + (mData.size() - 1) * gGridSpacingX;</span>
+<span class="lineNum">     413 </span><span class="lineCov">          6 :         aabb_min[1] = std::numeric_limits&lt;double&gt;::infinity();</span>
+<span class="lineNum">     414 </span><span class="lineCov">          6 :         aabb_max[1] = -std::numeric_limits&lt;double&gt;::infinity();</span>
+<span class="lineNum">     415 </span>            : 
+<span class="lineNum">     416 </span><span class="lineCov">       4272 :         for (size_t i = 0; i &lt; mData.size(); ++i)</span>
+<span class="lineNum">     417 </span>            :         {
+<span class="lineNum">     418 </span><span class="lineCov">       4266 :                 double h = mData[i];</span>
+<span class="lineNum">     419 </span><span class="lineCov">       4266 :                 aabb_min[1] = std::min(aabb_min[1], h);</span>
+<span class="lineNum">     420 </span><span class="lineCov">       4266 :                 aabb_max[1] = std::max(aabb_max[1], h);</span>
+<span class="lineNum">     421 </span>            : 
+<span class="lineNum">     422 </span><span class="lineCov">       4266 :                 mData[i] *= static_cast&lt;float&gt;(world_scale);</span>
+<span class="lineNum">     423 </span>            :         }
+<span class="lineNum">     424 </span>            : 
+<span class="lineNum">     425 </span><span class="lineCov">          6 :         mData.resize(grid_width * grid_length);</span>
+<span class="lineNum">     426 </span><span class="lineCov">         18 :         for (int i = 1; i &lt; grid_length; ++i)</span>
+<span class="lineNum">     427 </span>            :         {
+<span class="lineNum">     428 </span><span class="lineCov">         12 :                 int k=0;</span>
+<span class="lineNum">     429 </span><span class="lineCov">       8544 :                 for ( int j = i * grid_width; j &lt; (i * grid_width + grid_width); j++ )</span>
+<span class="lineNum">     430 </span>            :                 {
+<span class="lineNum">     431 </span><span class="lineCov">       8532 :                         mData[j] = mData[k];</span>
+<span class="lineNum">     432 </span><span class="lineCov">       8532 :                         ++k;</span>
+<span class="lineNum">     433 </span>            :                 }
+<span class="lineNum">     434 </span>            :         }
+<span class="lineNum">     435 </span>            : 
+<span class="lineNum">     436 </span><span class="lineCov">          6 :         double min_height = world_scale * (aabb_min[1] - h_pad);</span>
+<span class="lineNum">     437 </span><span class="lineCov">          6 :         double max_height = world_scale * (aabb_max[1] + h_pad);</span>
+<span class="lineNum">     438 </span>            : 
+<span class="lineNum">     439 </span><span class="lineCov">          6 :         bool flip_quad_edges = false;</span>
+<span class="lineNum">     440 </span><span class="lineCov">          6 :         btHeightfieldTerrainShape* height_field = new btHeightfieldTerrainShape(grid_width, grid_length, mData.data(), static_cast&lt;btScalar&gt;(height_scale),</span>
+<span class="lineNum">     441 </span><span class="lineCov">          6 :                 static_cast&lt;btScalar&gt;(min_height), static_cast&lt;btScalar&gt;(max_height), up_axis, data_type, flip_quad_edges);</span>
+<span class="lineNum">     442 </span>            :         
+<span class="lineNum">     443 </span><span class="lineCov">          6 :         height_field-&gt;setLocalScaling(btVector3(static_cast&lt;btScalar&gt;(x_scale), 1, static_cast&lt;btScalar&gt;(z_scale)));</span>
+<span class="lineNum">     444 </span><span class="lineCov">          6 :         mShape = std::unique_ptr&lt;btCollisionShape&gt;(height_field);</span>
+<span class="lineNum">     445 </span>            : 
+<span class="lineNum">     446 </span><span class="lineCov">          6 :         btRigidBody::btRigidBodyConstructionInfo cons_info(0, this, mShape.get(), btVector3(0, 0, 0));</span>
+<span class="lineNum">     447 </span><span class="lineCov">          6 :         mBody = std::unique_ptr&lt;btRigidBody&gt;(new btRigidBody(cons_info));</span>
+<span class="lineNum">     448 </span><span class="lineCov">          6 :         mBody-&gt;setFriction(static_cast&lt;btScalar&gt;(friction));</span>
+<span class="lineNum">     449 </span>            :         
+<span class="lineNum">     450 </span><span class="lineCov">          6 :         tVector origin = 0.5 * (aabb_min + aabb_max);</span>
+<span class="lineNum">     451 </span>            : 
+<span class="lineNum">     452 </span><span class="lineCov">          6 :         cSimObj::Init(world);</span>
+<span class="lineNum">     453 </span><span class="lineCov">          6 :         SetPos(origin);</span>
+<span class="lineNum">     454 </span><span class="lineCov">          6 :         UpdateContact(cWorld::eContactFlagEnvironment, cWorld::eContactFlagAll);</span>
+<a name="455"><span class="lineNum">     455 </span><span class="lineCov">          6 : }</span></a>
+<span class="lineNum">     456 </span>            : 
+<span class="lineNum">     457 </span><span class="lineCov">         18 : void cGroundVar2D::tSegment::Clear()</span>
+<span class="lineNum">     458 </span>            : {
+<span class="lineNum">     459 </span>            :         // std::cout &lt;&lt; &quot;Removing tSegment:&quot; &lt;&lt; std::endl;
+<span class="lineNum">     460 </span><span class="lineCov">         18 :         RemoveFromWorld();</span>
+<span class="lineNum">     461 </span>            : 
+<span class="lineNum">     462 </span>            :         // delete mBody-&gt;getMotionState();
+<span class="lineNum">     463 </span>            :         // delete mShape.pointer;
+<span class="lineNum">     464 </span><span class="lineCov">         18 :         delete mShape.release();</span>
+<span class="lineNum">     465 </span><span class="lineCov">         18 :         mShape.reset();</span>
+<span class="lineNum">     466 </span><span class="lineCov">         18 :         delete mBody.release();</span>
+<span class="lineNum">     467 </span><span class="lineCov">         18 :         mBody.reset();</span>
+<span class="lineNum">     468 </span>            :         // delete height_field;
+<span class="lineNum">     469 </span><span class="lineCov">         18 :         mData.clear();</span>
+<span class="lineNum">     470 </span><span class="lineCov">         18 :         mData.shrink_to_fit();</span>
+<a name="471"><span class="lineNum">     471 </span><span class="lineCov">         18 : }</span></a>
+<span class="lineNum">     472 </span>            : 
+<span class="lineNum">     473 </span><span class="lineCov">      10903 : bool cGroundVar2D::tSegment::IsEmpty() const</span>
+<span class="lineNum">     474 </span>            : {
+<span class="lineNum">     475 </span><span class="lineCov">      10903 :         return mData.size() == 0;</span>
+<a name="476"><span class="lineNum">     476 </span>            : }</a>
+<span class="lineNum">     477 </span>            : 
+<span class="lineNum">     478 </span><span class="lineCov">       2181 : const double cGroundVar2D::tSegment::GetMinX() const</span>
+<span class="lineNum">     479 </span>            : {
+<span class="lineNum">     480 </span><span class="lineCov">       2181 :         if (IsEmpty())</span>
+<span class="lineNum">     481 </span>            :         {
+<span class="lineNum">     482 </span><span class="lineCov">          1 :                 return std::numeric_limits&lt;double&gt;::infinity();</span>
+<span class="lineNum">     483 </span>            :         }
+<span class="lineNum">     484 </span>            : 
+<span class="lineNum">     485 </span><span class="lineCov">       2180 :         tVector aabb_min;</span>
+<span class="lineNum">     486 </span><span class="lineCov">       2180 :         tVector aabb_max;</span>
+<span class="lineNum">     487 </span><span class="lineCov">       2180 :         CalcAABB(aabb_min, aabb_max);</span>
+<span class="lineNum">     488 </span><span class="lineCov">       2180 :         return aabb_min[0];</span>
+<a name="489"><span class="lineNum">     489 </span>            : }</a>
+<span class="lineNum">     490 </span>            : 
+<span class="lineNum">     491 </span><span class="lineCov">       8722 : const double cGroundVar2D::tSegment::GetMaxX() const</span>
+<span class="lineNum">     492 </span>            : {
+<span class="lineNum">     493 </span><span class="lineCov">       8722 :         if (IsEmpty())</span>
+<span class="lineNum">     494 </span>            :         {
+<span class="lineNum">     495 </span><span class="lineCov">          2 :                 return -std::numeric_limits&lt;double&gt;::infinity();</span>
+<span class="lineNum">     496 </span>            :         }
+<span class="lineNum">     497 </span>            : 
+<span class="lineNum">     498 </span><span class="lineCov">       8720 :         tVector aabb_min;</span>
+<span class="lineNum">     499 </span><span class="lineCov">       8720 :         tVector aabb_max;</span>
+<span class="lineNum">     500 </span><span class="lineCov">       8720 :         CalcAABB(aabb_min, aabb_max);</span>
+<span class="lineNum">     501 </span><span class="lineCov">       8720 :         return aabb_max[0];</span>
+<a name="502"><span class="lineNum">     502 </span>            : }</a>
+<span class="lineNum">     503 </span>            : 
+<span class="lineNum">     504 </span><span class="lineCov">      94138 : int cGroundVar2D::tSegment::GetGridWidth() const</span>
+<span class="lineNum">     505 </span>            : {
+<span class="lineNum">     506 </span><span class="lineCov">      94138 :         return static_cast&lt;int&gt;(mData.size()) / GetGridLength();</span>
+<a name="507"><span class="lineNum">     507 </span>            : }</a>
+<span class="lineNum">     508 </span>            : 
+<span class="lineNum">     509 </span><span class="lineCov">     151704 : int cGroundVar2D::tSegment::GetGridLength() const</span>
+<span class="lineNum">     510 </span>            : {
+<span class="lineNum">     511 </span><span class="lineCov">     151704 :         return gGridLength;</span>
+<a name="512"><span class="lineNum">     512 </span>            : }</a>
+<span class="lineNum">     513 </span>            : 
+<span class="lineNum">     514 </span><span class="lineNoCov">          0 : double cGroundVar2D::tSegment::GetWidth() const</span>
+<span class="lineNum">     515 </span>            : {
+<span class="lineNum">     516 </span><span class="lineNoCov">          0 :         return (GetGridWidth() - 1) * gGridSpacingX;</span>
+<a name="517"><span class="lineNum">     517 </span>            : }</a>
+<span class="lineNum">     518 </span>            : 
+<span class="lineNum">     519 </span><span class="lineNoCov">          0 : double cGroundVar2D::tSegment::GetLength() const</span>
+<span class="lineNum">     520 </span>            : {
+<span class="lineNum">     521 </span><span class="lineNoCov">          0 :         return (GetGridLength() - 1) * gGridSpacingZ;</span>
+<a name="522"><span class="lineNum">     522 </span>            : }</a>
+<span class="lineNum">     523 </span>            : 
+<span class="lineNum">     524 </span><span class="lineCov">      20640 : tVector cGroundVar2D::tSegment::GetScaling() const</span>
+<span class="lineNum">     525 </span>            : {
+<span class="lineNum">     526 </span><span class="lineCov">      20640 :         double world_scale = mWorld-&gt;GetScale();</span>
+<span class="lineNum">     527 </span><span class="lineCov">      20640 :         btVector3 bt_scale = mShape-&gt;getLocalScaling();</span>
+<span class="lineNum">     528 </span><span class="lineCov">      20640 :         return tVector(bt_scale[0], bt_scale[1], bt_scale[2], 0) / world_scale;</span>
+<a name="529"><span class="lineNum">     529 </span>            : }</a>
+<span class="lineNum">     530 </span>            : 
+<span class="lineNum">     531 </span><span class="lineCov">      16280 : tVector cGroundVar2D::tSegment::GetVertex(int i, int j) const</span>
+<span class="lineNum">     532 </span>            : {
+<span class="lineNum">     533 </span><span class="lineCov">      16280 :         assert(i &gt;= 0 &amp;&amp; i &lt; GetGridWidth());</span>
+<span class="lineNum">     534 </span><span class="lineCov">      16280 :         assert(j &gt;= 0 &amp;&amp; j &lt; GetGridLength());</span>
+<span class="lineNum">     535 </span>            : 
+<span class="lineNum">     536 </span><span class="lineCov">      16280 :         tVector origin = GetPos();</span>
+<span class="lineNum">     537 </span><span class="lineCov">      16280 :         tVector scaling = GetScaling();</span>
+<span class="lineNum">     538 </span>            : 
+<span class="lineNum">     539 </span><span class="lineCov">      16280 :         int w = GetGridWidth();</span>
+<span class="lineNum">     540 </span><span class="lineCov">      16280 :         int l = GetGridLength();</span>
+<span class="lineNum">     541 </span>            : 
+<span class="lineNum">     542 </span><span class="lineCov">      16280 :         tVector pos = origin;</span>
+<span class="lineNum">     543 </span><span class="lineCov">      16280 :         pos[0] += scaling[0] * (i - ((w - 1) * 0.5));</span>
+<span class="lineNum">     544 </span><span class="lineCov">      16280 :         pos[2] += scaling[2] * (j - ((l - 1) * 0.5));</span>
+<span class="lineNum">     545 </span>            : 
+<span class="lineNum">     546 </span><span class="lineCov">      16280 :         int idx = CalcDataIdx(i, j);</span>
+<span class="lineNum">     547 </span><span class="lineCov">      16280 :         double height = mData[idx];</span>
+<span class="lineNum">     548 </span><span class="lineCov">      16280 :         pos[1] = height * scaling[1];</span>
+<span class="lineNum">     549 </span><span class="lineCov">      16280 :         return pos;</span>
+<a name="550"><span class="lineNum">     550 </span>            : }</a>
+<span class="lineNum">     551 </span>            : 
+<span class="lineNum">     552 </span><span class="lineCov">      16280 : int cGroundVar2D::tSegment::CalcDataIdx(int i, int j) const</span>
+<span class="lineNum">     553 </span>            : {
+<span class="lineNum">     554 </span><span class="lineCov">      16280 :         int w = GetGridWidth();</span>
+<span class="lineNum">     555 </span><span class="lineCov">      16280 :         int idx = j * w + i;</span>
+<span class="lineNum">     556 </span><span class="lineCov">      16280 :         return idx;</span>
+<a name="557"><span class="lineNum">     557 </span>            : }</a>
+<span class="lineNum">     558 </span>            : 
+<span class="lineNum">     559 </span><span class="lineCov">       4192 : double cGroundVar2D::tSegment::SampleHeight(const tVector&amp; pos, bool&amp; out_valid_sample) const</span>
+<span class="lineNum">     560 </span>            : {
+<span class="lineNum">     561 </span><span class="lineCov">       4192 :         tVector coord = CalcGridCoord(pos);</span>
+<span class="lineNum">     562 </span>            : 
+<span class="lineNum">     563 </span><span class="lineCov">       4192 :         double h = gInvalidHeight;</span>
+<span class="lineNum">     564 </span><span class="lineCov">       4192 :         out_valid_sample = !OutsideGrid(coord);</span>
+<span class="lineNum">     565 </span><span class="lineCov">       4192 :         coord = ClampCoord(coord);</span>
+<span class="lineNum">     566 </span>            : 
+<span class="lineNum">     567 </span><span class="lineCov">       4192 :         int i = static_cast&lt;int&gt;(coord[0]);</span>
+<span class="lineNum">     568 </span><span class="lineCov">       4192 :         int j = std::min(GetGridWidth() - 1, i + 1);</span>
+<span class="lineNum">     569 </span>            : 
+<span class="lineNum">     570 </span><span class="lineCov">       4192 :         double lerp = coord[0] - i;</span>
+<span class="lineNum">     571 </span><span class="lineCov">       4192 :         tVector a = GetVertex(i, 0);</span>
+<span class="lineNum">     572 </span><span class="lineCov">       4192 :         tVector b = GetVertex(j, 0);</span>
+<span class="lineNum">     573 </span><span class="lineCov">       4192 :         h = (1 - lerp) * a[1] + lerp * b[1];</span>
+<span class="lineNum">     574 </span>            :         
+<span class="lineNum">     575 </span><span class="lineCov">       4192 :         return h;</span>
+<a name="576"><span class="lineNum">     576 </span>            : }</a>
+<span class="lineNum">     577 </span>            : 
+<span class="lineNum">     578 </span><span class="lineNoCov">          0 : double cGroundVar2D::tSegment::GetStartHeight() const</span>
+<span class="lineNum">     579 </span>            : {
+<span class="lineNum">     580 </span><span class="lineNoCov">          0 :         double scale = mWorld-&gt;GetScale();</span>
+<span class="lineNum">     581 </span><span class="lineNoCov">          0 :         return mData[0] / scale;</span>
+<a name="582"><span class="lineNum">     582 </span>            : }</a>
+<span class="lineNum">     583 </span>            : 
+<span class="lineNum">     584 </span><span class="lineNoCov">          0 : double cGroundVar2D::tSegment::GetEndHeight() const</span>
+<span class="lineNum">     585 </span>            : {
+<span class="lineNum">     586 </span><span class="lineNoCov">          0 :         double scale = mWorld-&gt;GetScale();</span>
+<span class="lineNum">     587 </span><span class="lineNoCov">          0 :         return mData[mData.size() - 1] / scale;</span>
+<a name="588"><span class="lineNum">     588 </span>            : }</a>
+<span class="lineNum">     589 </span>            : 
+<span class="lineNum">     590 </span><span class="lineCov">       4360 : tVector cGroundVar2D::tSegment::CalcGridCoord(const tVector&amp; pos) const</span>
+<span class="lineNum">     591 </span>            : {
+<span class="lineNum">     592 </span><span class="lineCov">       4360 :         const double tol = 0.0001;</span>
+<span class="lineNum">     593 </span>            :         // careful, the grid coord might be outside the range of grid cells
+<span class="lineNum">     594 </span><span class="lineCov">       4360 :         int w = GetGridWidth();</span>
+<span class="lineNum">     595 </span><span class="lineCov">       4360 :         int l = GetGridLength();</span>
+<span class="lineNum">     596 </span>            : 
+<span class="lineNum">     597 </span><span class="lineCov">       4360 :         tVector origin = GetPos();</span>
+<span class="lineNum">     598 </span><span class="lineCov">       4360 :         tVector scale = GetScaling();</span>
+<span class="lineNum">     599 </span><span class="lineCov">       4360 :         tVector coord = pos - origin;</span>
+<span class="lineNum">     600 </span><span class="lineCov">       4360 :         coord[1] = coord[2];</span>
+<span class="lineNum">     601 </span>            : 
+<span class="lineNum">     602 </span><span class="lineCov">       4360 :         coord[0] /= scale[0];</span>
+<span class="lineNum">     603 </span><span class="lineCov">       4360 :         coord[1] /= scale[2];</span>
+<span class="lineNum">     604 </span>            : 
+<span class="lineNum">     605 </span><span class="lineCov">       4360 :         coord[0] += ((w - 1) * 0.5);</span>
+<span class="lineNum">     606 </span><span class="lineCov">       4360 :         coord[1] += ((l - 1) * 0.5);</span>
+<span class="lineNum">     607 </span>            : 
+<span class="lineNum">     608 </span><span class="lineCov">       4360 :         coord[2] = 0;</span>
+<span class="lineNum">     609 </span><span class="lineCov">       4360 :         coord[3] = 0;</span>
+<span class="lineNum">     610 </span>            : 
+<span class="lineNum">     611 </span>            :         // if pos is just outside of the grid clamp it to the grid
+<span class="lineNum">     612 </span><span class="lineCov">      13080 :         if (coord[0] &gt; -tol &amp;&amp; coord[0] &lt; w - 1 + tol</span>
+<span class="lineNum">     613 </span><span class="lineCov">       8720 :                 &amp;&amp; coord[1] &gt; -tol &amp;&amp; coord[1] &lt; l - 1 + tol)</span>
+<span class="lineNum">     614 </span>            :         {
+<span class="lineNum">     615 </span><span class="lineCov">       4360 :                 coord = ClampCoord(coord);</span>
+<span class="lineNum">     616 </span>            :         }
+<span class="lineNum">     617 </span>            : 
+<span class="lineNum">     618 </span><span class="lineCov">       4360 :         return coord;</span>
+<a name="619"><span class="lineNum">     619 </span>            : }</a>
+<span class="lineNum">     620 </span>            : 
+<span class="lineNum">     621 </span><span class="lineCov">       4192 : bool cGroundVar2D::tSegment::OutsideGrid(const tVector&amp; coord) const</span>
+<span class="lineNum">     622 </span>            : {
+<span class="lineNum">     623 </span><span class="lineCov">       8384 :         return (coord[0] &lt; 0 || coord[0] &gt; GetGridWidth() - 1</span>
+<span class="lineNum">     624 </span><span class="lineCov">       8384 :                 || coord[1] &lt; 0 || coord[1] &gt; GetGridLength() - 1);</span>
+<a name="625"><span class="lineNum">     625 </span>            : }</a>
+<span class="lineNum">     626 </span>            : 
+<span class="lineNum">     627 </span><span class="lineCov">       8552 : tVector cGroundVar2D::tSegment::ClampCoord(const tVector&amp; coord) const</span>
+<span class="lineNum">     628 </span>            : {
+<span class="lineNum">     629 </span><span class="lineCov">       8552 :         tVector clamped_coord = coord;</span>
+<span class="lineNum">     630 </span><span class="lineCov">       8552 :         clamped_coord[0] = cMathUtil::Clamp(coord[0], 0.0, GetGridWidth() - 1.0);</span>
+<a name="631"><span class="lineNum">     631 </span><span class="lineCov">       8552 :         clamped_coord[1] = cMathUtil::Clamp(coord[1], 0.0, GetGridLength() - 1.0);</span></a>
+<span class="lineNum">     632 </span><span class="lineCov">       8552 :         return clamped_coord;</span>
+<span class="lineNum">     633 </span><span class="lineCov">          3 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

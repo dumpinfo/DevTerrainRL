@@ -1,0 +1,445 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/external/Bullet/src/BulletDynamics/ConstraintSolver/btSliderConstraint.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/external/Bullet/src/BulletDynamics/ConstraintSolver</a> - btSliderConstraint.h<span style="font-size: 80%;"> (source / <a href="btSliderConstraint.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">7</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            : Bullet Continuous Collision Detection and Physics Library
+<span class="lineNum">       3 </span>            : Copyright (c) 2003-2006 Erwin Coumans  http://continuousphysics.com/Bullet/
+<span class="lineNum">       4 </span>            : 
+<span class="lineNum">       5 </span>            : This software is provided 'as-is', without any express or implied warranty.
+<span class="lineNum">       6 </span>            : In no event will the authors be held liable for any damages arising from the use of this software.
+<span class="lineNum">       7 </span>            : Permission is granted to anyone to use this software for any purpose,
+<span class="lineNum">       8 </span>            : including commercial applications, and to alter it and redistribute it freely,
+<span class="lineNum">       9 </span>            : subject to the following restrictions:
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
+<span class="lineNum">      12 </span>            : 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
+<span class="lineNum">      13 </span>            : 3. This notice may not be removed or altered from any source distribution.
+<span class="lineNum">      14 </span>            : */
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : /*
+<span class="lineNum">      17 </span>            : Added by Roman Ponomarev (rponom@gmail.com)
+<span class="lineNum">      18 </span>            : April 04, 2008
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            : TODO:
+<span class="lineNum">      21 </span>            :  - add clamping od accumulated impulse to improve stability
+<span class="lineNum">      22 </span>            :  - add conversion for ODE constraint solver
+<span class="lineNum">      23 </span>            : */
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span>            : #ifndef BT_SLIDER_CONSTRAINT_H
+<span class="lineNum">      26 </span>            : #define BT_SLIDER_CONSTRAINT_H
+<span class="lineNum">      27 </span>            : 
+<span class="lineNum">      28 </span>            : #ifdef BT_USE_DOUBLE_PRECISION
+<span class="lineNum">      29 </span>            : #define btSliderConstraintData2         btSliderConstraintDoubleData
+<span class="lineNum">      30 </span>            : #define btSliderConstraintDataName  &quot;btSliderConstraintDoubleData&quot;
+<span class="lineNum">      31 </span>            : #else
+<span class="lineNum">      32 </span>            : #define btSliderConstraintData2         btSliderConstraintData 
+<span class="lineNum">      33 </span>            : #define btSliderConstraintDataName      &quot;btSliderConstraintData&quot;
+<span class="lineNum">      34 </span>            : #endif //BT_USE_DOUBLE_PRECISION
+<span class="lineNum">      35 </span>            : 
+<span class="lineNum">      36 </span>            : #include &quot;LinearMath/btVector3.h&quot;
+<span class="lineNum">      37 </span>            : #include &quot;btJacobianEntry.h&quot;
+<span class="lineNum">      38 </span>            : #include &quot;btTypedConstraint.h&quot;
+<span class="lineNum">      39 </span>            : 
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span>            : 
+<span class="lineNum">      42 </span>            : class btRigidBody;
+<span class="lineNum">      43 </span>            : 
+<span class="lineNum">      44 </span>            : 
+<span class="lineNum">      45 </span>            : 
+<span class="lineNum">      46 </span>            : #define SLIDER_CONSTRAINT_DEF_SOFTNESS          (btScalar(1.0))
+<span class="lineNum">      47 </span>            : #define SLIDER_CONSTRAINT_DEF_DAMPING           (btScalar(1.0))
+<span class="lineNum">      48 </span>            : #define SLIDER_CONSTRAINT_DEF_RESTITUTION       (btScalar(0.7))
+<span class="lineNum">      49 </span>            : #define SLIDER_CONSTRAINT_DEF_CFM                       (btScalar(0.f))
+<span class="lineNum">      50 </span>            : 
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span>            : enum btSliderFlags
+<span class="lineNum">      53 </span>            : {
+<span class="lineNum">      54 </span>            :         BT_SLIDER_FLAGS_CFM_DIRLIN = (1 &lt;&lt; 0),
+<span class="lineNum">      55 </span>            :         BT_SLIDER_FLAGS_ERP_DIRLIN = (1 &lt;&lt; 1),
+<span class="lineNum">      56 </span>            :         BT_SLIDER_FLAGS_CFM_DIRANG = (1 &lt;&lt; 2),
+<span class="lineNum">      57 </span>            :         BT_SLIDER_FLAGS_ERP_DIRANG = (1 &lt;&lt; 3),
+<span class="lineNum">      58 </span>            :         BT_SLIDER_FLAGS_CFM_ORTLIN = (1 &lt;&lt; 4),
+<span class="lineNum">      59 </span>            :         BT_SLIDER_FLAGS_ERP_ORTLIN = (1 &lt;&lt; 5),
+<span class="lineNum">      60 </span>            :         BT_SLIDER_FLAGS_CFM_ORTANG = (1 &lt;&lt; 6),
+<span class="lineNum">      61 </span>            :         BT_SLIDER_FLAGS_ERP_ORTANG = (1 &lt;&lt; 7),
+<span class="lineNum">      62 </span>            :         BT_SLIDER_FLAGS_CFM_LIMLIN = (1 &lt;&lt; 8),
+<span class="lineNum">      63 </span>            :         BT_SLIDER_FLAGS_ERP_LIMLIN = (1 &lt;&lt; 9),
+<span class="lineNum">      64 </span>            :         BT_SLIDER_FLAGS_CFM_LIMANG = (1 &lt;&lt; 10),
+<span class="lineNum">      65 </span>            :         BT_SLIDER_FLAGS_ERP_LIMANG = (1 &lt;&lt; 11)
+<span class="lineNum">      66 </span>            : };
+<span class="lineNum">      67 </span>            : 
+<span class="lineNum">      68 </span>            : 
+<span class="lineNum">      69 </span>            : ATTRIBUTE_ALIGNED16(class) btSliderConstraint : public btTypedConstraint
+<span class="lineNum">      70 </span>            : {
+<span class="lineNum">      71 </span>            : protected:
+<span class="lineNum">      72 </span>            :         ///for backwards compatibility during the transition to 'getInfo/getInfo2'
+<span class="lineNum">      73 </span>            :         bool            m_useSolveConstraintObsolete;
+<span class="lineNum">      74 </span>            :         bool            m_useOffsetForConstraintFrame;
+<span class="lineNum">      75 </span>            :         btTransform     m_frameInA;
+<span class="lineNum">      76 </span>            :     btTransform m_frameInB;
+<span class="lineNum">      77 </span>            :         // use frameA fo define limits, if true
+<span class="lineNum">      78 </span>            :         bool m_useLinearReferenceFrameA;
+<span class="lineNum">      79 </span>            :         // linear limits
+<span class="lineNum">      80 </span>            :         btScalar m_lowerLinLimit;
+<span class="lineNum">      81 </span>            :         btScalar m_upperLinLimit;
+<span class="lineNum">      82 </span>            :         // angular limits
+<span class="lineNum">      83 </span>            :         btScalar m_lowerAngLimit;
+<span class="lineNum">      84 </span>            :         btScalar m_upperAngLimit;
+<span class="lineNum">      85 </span>            :         // softness, restitution and damping for different cases
+<span class="lineNum">      86 </span>            :         // DirLin - moving inside linear limits
+<span class="lineNum">      87 </span>            :         // LimLin - hitting linear limit
+<span class="lineNum">      88 </span>            :         // DirAng - moving inside angular limits
+<span class="lineNum">      89 </span>            :         // LimAng - hitting angular limit
+<span class="lineNum">      90 </span>            :         // OrthoLin, OrthoAng - against constraint axis
+<span class="lineNum">      91 </span>            :         btScalar m_softnessDirLin;
+<span class="lineNum">      92 </span>            :         btScalar m_restitutionDirLin;
+<span class="lineNum">      93 </span>            :         btScalar m_dampingDirLin;
+<span class="lineNum">      94 </span>            :         btScalar m_cfmDirLin;
+<span class="lineNum">      95 </span>            : 
+<span class="lineNum">      96 </span>            :         btScalar m_softnessDirAng;
+<span class="lineNum">      97 </span>            :         btScalar m_restitutionDirAng;
+<span class="lineNum">      98 </span>            :         btScalar m_dampingDirAng;
+<span class="lineNum">      99 </span>            :         btScalar m_cfmDirAng;
+<span class="lineNum">     100 </span>            : 
+<span class="lineNum">     101 </span>            :         btScalar m_softnessLimLin;
+<span class="lineNum">     102 </span>            :         btScalar m_restitutionLimLin;
+<span class="lineNum">     103 </span>            :         btScalar m_dampingLimLin;
+<span class="lineNum">     104 </span>            :         btScalar m_cfmLimLin;
+<span class="lineNum">     105 </span>            : 
+<span class="lineNum">     106 </span>            :         btScalar m_softnessLimAng;
+<span class="lineNum">     107 </span>            :         btScalar m_restitutionLimAng;
+<span class="lineNum">     108 </span>            :         btScalar m_dampingLimAng;
+<span class="lineNum">     109 </span>            :         btScalar m_cfmLimAng;
+<span class="lineNum">     110 </span>            : 
+<span class="lineNum">     111 </span>            :         btScalar m_softnessOrthoLin;
+<span class="lineNum">     112 </span>            :         btScalar m_restitutionOrthoLin;
+<span class="lineNum">     113 </span>            :         btScalar m_dampingOrthoLin;
+<span class="lineNum">     114 </span>            :         btScalar m_cfmOrthoLin;
+<span class="lineNum">     115 </span>            : 
+<span class="lineNum">     116 </span>            :         btScalar m_softnessOrthoAng;
+<span class="lineNum">     117 </span>            :         btScalar m_restitutionOrthoAng;
+<span class="lineNum">     118 </span>            :         btScalar m_dampingOrthoAng;
+<span class="lineNum">     119 </span>            :         btScalar m_cfmOrthoAng;
+<span class="lineNum">     120 </span>            :         
+<span class="lineNum">     121 </span>            :         // for interlal use
+<span class="lineNum">     122 </span>            :         bool m_solveLinLim;
+<span class="lineNum">     123 </span>            :         bool m_solveAngLim;
+<span class="lineNum">     124 </span>            : 
+<span class="lineNum">     125 </span>            :         int m_flags;
+<span class="lineNum">     126 </span>            : 
+<span class="lineNum">     127 </span>            :         btJacobianEntry m_jacLin[3];
+<span class="lineNum">     128 </span>            :         btScalar                m_jacLinDiagABInv[3];
+<span class="lineNum">     129 </span>            : 
+<span class="lineNum">     130 </span>            :     btJacobianEntry     m_jacAng[3];
+<span class="lineNum">     131 </span>            : 
+<span class="lineNum">     132 </span>            :         btScalar m_timeStep;
+<span class="lineNum">     133 </span>            :     btTransform m_calculatedTransformA;
+<span class="lineNum">     134 </span>            :     btTransform m_calculatedTransformB;
+<span class="lineNum">     135 </span>            : 
+<span class="lineNum">     136 </span>            :         btVector3 m_sliderAxis;
+<span class="lineNum">     137 </span>            :         btVector3 m_realPivotAInW;
+<span class="lineNum">     138 </span>            :         btVector3 m_realPivotBInW;
+<span class="lineNum">     139 </span>            :         btVector3 m_projPivotInW;
+<span class="lineNum">     140 </span>            :         btVector3 m_delta;
+<span class="lineNum">     141 </span>            :         btVector3 m_depth;
+<span class="lineNum">     142 </span>            :         btVector3 m_relPosA;
+<span class="lineNum">     143 </span>            :         btVector3 m_relPosB;
+<span class="lineNum">     144 </span>            : 
+<span class="lineNum">     145 </span>            :         btScalar m_linPos;
+<span class="lineNum">     146 </span>            :         btScalar m_angPos;
+<span class="lineNum">     147 </span>            : 
+<span class="lineNum">     148 </span>            :         btScalar m_angDepth;
+<span class="lineNum">     149 </span>            :         btScalar m_kAngle;
+<span class="lineNum">     150 </span>            : 
+<span class="lineNum">     151 </span>            :         bool     m_poweredLinMotor;
+<span class="lineNum">     152 </span>            :     btScalar m_targetLinMotorVelocity;
+<span class="lineNum">     153 </span>            :     btScalar m_maxLinMotorForce;
+<span class="lineNum">     154 </span>            :     btScalar m_accumulatedLinMotorImpulse;
+<span class="lineNum">     155 </span>            :         
+<span class="lineNum">     156 </span>            :         bool     m_poweredAngMotor;
+<span class="lineNum">     157 </span>            :     btScalar m_targetAngMotorVelocity;
+<span class="lineNum">     158 </span>            :     btScalar m_maxAngMotorForce;
+<span class="lineNum">     159 </span>            :     btScalar m_accumulatedAngMotorImpulse;
+<span class="lineNum">     160 </span>            : 
+<span class="lineNum">     161 </span>            :         //------------------------    
+<a name="162"><span class="lineNum">     162 </span>            :         void initParams();</a>
+<span class="lineNum">     163 </span>            : public:
+<span class="lineNum">     164 </span><span class="lineNoCov">          0 :         BT_DECLARE_ALIGNED_ALLOCATOR();</span>
+<span class="lineNum">     165 </span>            :         
+<span class="lineNum">     166 </span>            :         // constructors
+<span class="lineNum">     167 </span>            :     btSliderConstraint(btRigidBody&amp; rbA, btRigidBody&amp; rbB, const btTransform&amp; frameInA, const btTransform&amp; frameInB ,bool useLinearReferenceFrameA);
+<span class="lineNum">     168 </span>            :     btSliderConstraint(btRigidBody&amp; rbB, const btTransform&amp; frameInB, bool useLinearReferenceFrameA);
+<span class="lineNum">     169 </span>            : 
+<span class="lineNum">     170 </span>            :         // overrides
+<span class="lineNum">     171 </span>            : 
+<span class="lineNum">     172 </span>            :     virtual void getInfo1 (btConstraintInfo1* info);
+<span class="lineNum">     173 </span>            : 
+<span class="lineNum">     174 </span>            :         void getInfo1NonVirtual(btConstraintInfo1* info);
+<span class="lineNum">     175 </span>            :         
+<span class="lineNum">     176 </span>            :         virtual void getInfo2 (btConstraintInfo2* info);
+<span class="lineNum">     177 </span>            : 
+<span class="lineNum">     178 </span>            :         void getInfo2NonVirtual(btConstraintInfo2* info, const btTransform&amp; transA, const btTransform&amp; transB,const btVector3&amp; linVelA,const btVector3&amp; linVelB, btScalar rbAinvMass,btScalar rbBinvMass);
+<span class="lineNum">     179 </span>            : 
+<span class="lineNum">     180 </span>            : 
+<span class="lineNum">     181 </span>            :         // access
+<span class="lineNum">     182 </span>            :     const btRigidBody&amp; getRigidBodyA() const { return m_rbA; }
+<span class="lineNum">     183 </span>            :     const btRigidBody&amp; getRigidBodyB() const { return m_rbB; }
+<span class="lineNum">     184 </span>            :     const btTransform &amp; getCalculatedTransformA() const { return m_calculatedTransformA; }
+<span class="lineNum">     185 </span>            :     const btTransform &amp; getCalculatedTransformB() const { return m_calculatedTransformB; }
+<span class="lineNum">     186 </span>            :     const btTransform &amp; getFrameOffsetA() const { return m_frameInA; }
+<span class="lineNum">     187 </span>            :     const btTransform &amp; getFrameOffsetB() const { return m_frameInB; }
+<span class="lineNum">     188 </span>            :     btTransform &amp; getFrameOffsetA() { return m_frameInA; }
+<a name="189"><span class="lineNum">     189 </span>            :     btTransform &amp; getFrameOffsetB() { return m_frameInB; }</a>
+<span class="lineNum">     190 </span>            :     btScalar getLowerLinLimit() { return m_lowerLinLimit; }
+<a name="191"><span class="lineNum">     191 </span><span class="lineNoCov">          0 :     void setLowerLinLimit(btScalar lowerLimit) { m_lowerLinLimit = lowerLimit; }</span></a>
+<span class="lineNum">     192 </span>            :     btScalar getUpperLinLimit() { return m_upperLinLimit; }
+<a name="193"><span class="lineNum">     193 </span><span class="lineNoCov">          0 :     void setUpperLinLimit(btScalar upperLimit) { m_upperLinLimit = upperLimit; }</span></a>
+<span class="lineNum">     194 </span>            :     btScalar getLowerAngLimit() { return m_lowerAngLimit; }
+<a name="195"><span class="lineNum">     195 </span><span class="lineNoCov">          0 :     void setLowerAngLimit(btScalar lowerLimit) { m_lowerAngLimit = btNormalizeAngle(lowerLimit); }</span></a>
+<span class="lineNum">     196 </span>            :     btScalar getUpperAngLimit() { return m_upperAngLimit; }
+<span class="lineNum">     197 </span><span class="lineNoCov">          0 :     void setUpperAngLimit(btScalar upperLimit) { m_upperAngLimit = btNormalizeAngle(upperLimit); }</span>
+<span class="lineNum">     198 </span>            :         bool getUseLinearReferenceFrameA() { return m_useLinearReferenceFrameA; }
+<span class="lineNum">     199 </span>            :         btScalar getSoftnessDirLin() { return m_softnessDirLin; }
+<span class="lineNum">     200 </span>            :         btScalar getRestitutionDirLin() { return m_restitutionDirLin; }
+<span class="lineNum">     201 </span>            :         btScalar getDampingDirLin() { return m_dampingDirLin ; }
+<span class="lineNum">     202 </span>            :         btScalar getSoftnessDirAng() { return m_softnessDirAng; }
+<span class="lineNum">     203 </span>            :         btScalar getRestitutionDirAng() { return m_restitutionDirAng; }
+<span class="lineNum">     204 </span>            :         btScalar getDampingDirAng() { return m_dampingDirAng; }
+<span class="lineNum">     205 </span>            :         btScalar getSoftnessLimLin() { return m_softnessLimLin; }
+<span class="lineNum">     206 </span>            :         btScalar getRestitutionLimLin() { return m_restitutionLimLin; }
+<span class="lineNum">     207 </span>            :         btScalar getDampingLimLin() { return m_dampingLimLin; }
+<span class="lineNum">     208 </span>            :         btScalar getSoftnessLimAng() { return m_softnessLimAng; }
+<span class="lineNum">     209 </span>            :         btScalar getRestitutionLimAng() { return m_restitutionLimAng; }
+<span class="lineNum">     210 </span>            :         btScalar getDampingLimAng() { return m_dampingLimAng; }
+<span class="lineNum">     211 </span>            :         btScalar getSoftnessOrthoLin() { return m_softnessOrthoLin; }
+<span class="lineNum">     212 </span>            :         btScalar getRestitutionOrthoLin() { return m_restitutionOrthoLin; }
+<span class="lineNum">     213 </span>            :         btScalar getDampingOrthoLin() { return m_dampingOrthoLin; }
+<span class="lineNum">     214 </span>            :         btScalar getSoftnessOrthoAng() { return m_softnessOrthoAng; }
+<span class="lineNum">     215 </span>            :         btScalar getRestitutionOrthoAng() { return m_restitutionOrthoAng; }
+<span class="lineNum">     216 </span>            :         btScalar getDampingOrthoAng() { return m_dampingOrthoAng; }
+<span class="lineNum">     217 </span>            :         void setSoftnessDirLin(btScalar softnessDirLin) { m_softnessDirLin = softnessDirLin; }
+<span class="lineNum">     218 </span>            :         void setRestitutionDirLin(btScalar restitutionDirLin) { m_restitutionDirLin = restitutionDirLin; }
+<span class="lineNum">     219 </span>            :         void setDampingDirLin(btScalar dampingDirLin) { m_dampingDirLin = dampingDirLin; }
+<span class="lineNum">     220 </span>            :         void setSoftnessDirAng(btScalar softnessDirAng) { m_softnessDirAng = softnessDirAng; }
+<span class="lineNum">     221 </span>            :         void setRestitutionDirAng(btScalar restitutionDirAng) { m_restitutionDirAng = restitutionDirAng; }
+<span class="lineNum">     222 </span>            :         void setDampingDirAng(btScalar dampingDirAng) { m_dampingDirAng = dampingDirAng; }
+<span class="lineNum">     223 </span>            :         void setSoftnessLimLin(btScalar softnessLimLin) { m_softnessLimLin = softnessLimLin; }
+<span class="lineNum">     224 </span>            :         void setRestitutionLimLin(btScalar restitutionLimLin) { m_restitutionLimLin = restitutionLimLin; }
+<span class="lineNum">     225 </span>            :         void setDampingLimLin(btScalar dampingLimLin) { m_dampingLimLin = dampingLimLin; }
+<span class="lineNum">     226 </span>            :         void setSoftnessLimAng(btScalar softnessLimAng) { m_softnessLimAng = softnessLimAng; }
+<span class="lineNum">     227 </span>            :         void setRestitutionLimAng(btScalar restitutionLimAng) { m_restitutionLimAng = restitutionLimAng; }
+<span class="lineNum">     228 </span>            :         void setDampingLimAng(btScalar dampingLimAng) { m_dampingLimAng = dampingLimAng; }
+<span class="lineNum">     229 </span>            :         void setSoftnessOrthoLin(btScalar softnessOrthoLin) { m_softnessOrthoLin = softnessOrthoLin; }
+<span class="lineNum">     230 </span>            :         void setRestitutionOrthoLin(btScalar restitutionOrthoLin) { m_restitutionOrthoLin = restitutionOrthoLin; }
+<span class="lineNum">     231 </span>            :         void setDampingOrthoLin(btScalar dampingOrthoLin) { m_dampingOrthoLin = dampingOrthoLin; }
+<span class="lineNum">     232 </span>            :         void setSoftnessOrthoAng(btScalar softnessOrthoAng) { m_softnessOrthoAng = softnessOrthoAng; }
+<span class="lineNum">     233 </span>            :         void setRestitutionOrthoAng(btScalar restitutionOrthoAng) { m_restitutionOrthoAng = restitutionOrthoAng; }
+<span class="lineNum">     234 </span>            :         void setDampingOrthoAng(btScalar dampingOrthoAng) { m_dampingOrthoAng = dampingOrthoAng; }
+<span class="lineNum">     235 </span>            :         void setPoweredLinMotor(bool onOff) { m_poweredLinMotor = onOff; }
+<span class="lineNum">     236 </span>            :         bool getPoweredLinMotor() { return m_poweredLinMotor; }
+<span class="lineNum">     237 </span>            :         void setTargetLinMotorVelocity(btScalar targetLinMotorVelocity) { m_targetLinMotorVelocity = targetLinMotorVelocity; }
+<span class="lineNum">     238 </span>            :         btScalar getTargetLinMotorVelocity() { return m_targetLinMotorVelocity; }
+<span class="lineNum">     239 </span>            :         void setMaxLinMotorForce(btScalar maxLinMotorForce) { m_maxLinMotorForce = maxLinMotorForce; }
+<span class="lineNum">     240 </span>            :         btScalar getMaxLinMotorForce() { return m_maxLinMotorForce; }
+<span class="lineNum">     241 </span>            :         void setPoweredAngMotor(bool onOff) { m_poweredAngMotor = onOff; }
+<span class="lineNum">     242 </span>            :         bool getPoweredAngMotor() { return m_poweredAngMotor; }
+<span class="lineNum">     243 </span>            :         void setTargetAngMotorVelocity(btScalar targetAngMotorVelocity) { m_targetAngMotorVelocity = targetAngMotorVelocity; }
+<span class="lineNum">     244 </span>            :         btScalar getTargetAngMotorVelocity() { return m_targetAngMotorVelocity; }
+<span class="lineNum">     245 </span>            :         void setMaxAngMotorForce(btScalar maxAngMotorForce) { m_maxAngMotorForce = maxAngMotorForce; }
+<a name="246"><span class="lineNum">     246 </span>            :         btScalar getMaxAngMotorForce() { return m_maxAngMotorForce; }</a>
+<span class="lineNum">     247 </span>            : 
+<span class="lineNum">     248 </span><span class="lineNoCov">          0 :         btScalar getLinearPos() const { return m_linPos; }</span>
+<span class="lineNum">     249 </span>            :         btScalar getAngularPos() const { return m_angPos; }
+<span class="lineNum">     250 </span>            :         
+<span class="lineNum">     251 </span>            :         
+<span class="lineNum">     252 </span>            : 
+<span class="lineNum">     253 </span>            :         // access for ODE solver
+<span class="lineNum">     254 </span>            :         bool getSolveLinLimit() { return m_solveLinLim; }
+<span class="lineNum">     255 </span>            :         btScalar getLinDepth() { return m_depth[0]; }
+<span class="lineNum">     256 </span>            :         bool getSolveAngLimit() { return m_solveAngLim; }
+<span class="lineNum">     257 </span>            :         btScalar getAngDepth() { return m_angDepth; }
+<span class="lineNum">     258 </span>            :         // shared code used by ODE solver
+<span class="lineNum">     259 </span>            :         void    calculateTransforms(const btTransform&amp; transA,const btTransform&amp; transB);
+<span class="lineNum">     260 </span>            :         void    testLinLimits();
+<span class="lineNum">     261 </span>            :         void    testAngLimits();
+<span class="lineNum">     262 </span>            :         // access for PE Solver
+<span class="lineNum">     263 </span>            :         btVector3 getAncorInA();
+<span class="lineNum">     264 </span>            :         btVector3 getAncorInB();
+<span class="lineNum">     265 </span>            :         // access for UseFrameOffset
+<span class="lineNum">     266 </span>            :         bool getUseFrameOffset() { return m_useOffsetForConstraintFrame; }
+<span class="lineNum">     267 </span>            :         void setUseFrameOffset(bool frameOffsetOnOff) { m_useOffsetForConstraintFrame = frameOffsetOnOff; }
+<span class="lineNum">     268 </span>            : 
+<span class="lineNum">     269 </span>            :         void setFrames(const btTransform&amp; frameA, const btTransform&amp; frameB) 
+<span class="lineNum">     270 </span>            :         { 
+<span class="lineNum">     271 </span>            :                 m_frameInA=frameA; 
+<span class="lineNum">     272 </span>            :                 m_frameInB=frameB;
+<span class="lineNum">     273 </span>            :                 calculateTransforms(m_rbA.getCenterOfMassTransform(),m_rbB.getCenterOfMassTransform());
+<span class="lineNum">     274 </span>            :                 buildJacobian();
+<span class="lineNum">     275 </span>            :         } 
+<span class="lineNum">     276 </span>            : 
+<span class="lineNum">     277 </span>            : 
+<span class="lineNum">     278 </span>            :         ///override the default global value of a parameter (such as ERP or CFM), optionally provide the axis (0..5). 
+<span class="lineNum">     279 </span>            :         ///If no axis is provided, it uses the default axis for this constraint.
+<span class="lineNum">     280 </span>            :         virtual void    setParam(int num, btScalar value, int axis = -1);
+<span class="lineNum">     281 </span>            :         ///return the local value of parameter
+<span class="lineNum">     282 </span>            :         virtual btScalar getParam(int num, int axis = -1) const;
+<span class="lineNum">     283 </span>            : 
+<span class="lineNum">     284 </span>            :         virtual int     calculateSerializeBufferSize() const;
+<span class="lineNum">     285 </span>            : 
+<span class="lineNum">     286 </span>            :         ///fills the dataBuffer and returns the struct name (and 0 on failure)
+<span class="lineNum">     287 </span>            :         virtual const char*     serialize(void* dataBuffer, btSerializer* serializer) const;
+<span class="lineNum">     288 </span>            : 
+<span class="lineNum">     289 </span>            : 
+<span class="lineNum">     290 </span>            : };
+<span class="lineNum">     291 </span>            : 
+<span class="lineNum">     292 </span>            : 
+<span class="lineNum">     293 </span>            : ///do not change those serialization structures, it requires an updated sBulletDNAstr/sBulletDNAstr64
+<span class="lineNum">     294 </span>            : 
+<span class="lineNum">     295 </span>            : 
+<span class="lineNum">     296 </span>            : struct btSliderConstraintData
+<span class="lineNum">     297 </span>            : {
+<span class="lineNum">     298 </span>            :         btTypedConstraintData   m_typeConstraintData;
+<span class="lineNum">     299 </span>            :         btTransformFloatData m_rbAFrame; // constraint axii. Assumes z is hinge axis.
+<span class="lineNum">     300 </span>            :         btTransformFloatData m_rbBFrame;
+<span class="lineNum">     301 </span>            :         
+<span class="lineNum">     302 </span>            :         float   m_linearUpperLimit;
+<span class="lineNum">     303 </span>            :         float   m_linearLowerLimit;
+<span class="lineNum">     304 </span>            : 
+<span class="lineNum">     305 </span>            :         float   m_angularUpperLimit;
+<span class="lineNum">     306 </span>            :         float   m_angularLowerLimit;
+<span class="lineNum">     307 </span>            : 
+<span class="lineNum">     308 </span>            :         int     m_useLinearReferenceFrameA;
+<span class="lineNum">     309 </span>            :         int m_useOffsetForConstraintFrame;
+<span class="lineNum">     310 </span>            : 
+<span class="lineNum">     311 </span>            : };
+<span class="lineNum">     312 </span>            : 
+<span class="lineNum">     313 </span>            : 
+<span class="lineNum">     314 </span>            : struct btSliderConstraintDoubleData
+<span class="lineNum">     315 </span>            : {
+<span class="lineNum">     316 </span>            :         btTypedConstraintDoubleData     m_typeConstraintData;
+<span class="lineNum">     317 </span>            :         btTransformDoubleData m_rbAFrame; // constraint axii. Assumes z is hinge axis.
+<span class="lineNum">     318 </span>            :         btTransformDoubleData m_rbBFrame;
+<span class="lineNum">     319 </span>            :         
+<span class="lineNum">     320 </span>            :         double  m_linearUpperLimit;
+<span class="lineNum">     321 </span>            :         double  m_linearLowerLimit;
+<span class="lineNum">     322 </span>            : 
+<span class="lineNum">     323 </span>            :         double  m_angularUpperLimit;
+<span class="lineNum">     324 </span>            :         double  m_angularLowerLimit;
+<span class="lineNum">     325 </span>            : 
+<span class="lineNum">     326 </span>            :         int     m_useLinearReferenceFrameA;
+<span class="lineNum">     327 </span>            :         int m_useOffsetForConstraintFrame;
+<span class="lineNum">     328 </span>            : 
+<span class="lineNum">     329 </span>            : };
+<span class="lineNum">     330 </span>            : 
+<span class="lineNum">     331 </span>            : SIMD_FORCE_INLINE               int     btSliderConstraint::calculateSerializeBufferSize() const
+<span class="lineNum">     332 </span>            : {
+<span class="lineNum">     333 </span>            :         return sizeof(btSliderConstraintData2);
+<span class="lineNum">     334 </span>            : }
+<span class="lineNum">     335 </span>            : 
+<span class="lineNum">     336 </span>            :         ///fills the dataBuffer and returns the struct name (and 0 on failure)
+<span class="lineNum">     337 </span>            : SIMD_FORCE_INLINE       const char*     btSliderConstraint::serialize(void* dataBuffer, btSerializer* serializer) const
+<span class="lineNum">     338 </span>            : {
+<span class="lineNum">     339 </span>            : 
+<span class="lineNum">     340 </span>            :         btSliderConstraintData2* sliderData = (btSliderConstraintData2*) dataBuffer;
+<span class="lineNum">     341 </span>            :         btTypedConstraint::serialize(&amp;sliderData-&gt;m_typeConstraintData,serializer);
+<span class="lineNum">     342 </span>            : 
+<span class="lineNum">     343 </span>            :         m_frameInA.serialize(sliderData-&gt;m_rbAFrame);
+<span class="lineNum">     344 </span>            :         m_frameInB.serialize(sliderData-&gt;m_rbBFrame);
+<span class="lineNum">     345 </span>            : 
+<span class="lineNum">     346 </span>            :         sliderData-&gt;m_linearUpperLimit = m_upperLinLimit;
+<span class="lineNum">     347 </span>            :         sliderData-&gt;m_linearLowerLimit = m_lowerLinLimit;
+<span class="lineNum">     348 </span>            : 
+<span class="lineNum">     349 </span>            :         sliderData-&gt;m_angularUpperLimit = m_upperAngLimit;
+<span class="lineNum">     350 </span>            :         sliderData-&gt;m_angularLowerLimit = m_lowerAngLimit;
+<span class="lineNum">     351 </span>            : 
+<span class="lineNum">     352 </span>            :         sliderData-&gt;m_useLinearReferenceFrameA = m_useLinearReferenceFrameA;
+<span class="lineNum">     353 </span>            :         sliderData-&gt;m_useOffsetForConstraintFrame = m_useOffsetForConstraintFrame;
+<span class="lineNum">     354 </span>            : 
+<span class="lineNum">     355 </span>            :         return btSliderConstraintDataName;
+<span class="lineNum">     356 </span>            : }
+<span class="lineNum">     357 </span>            : 
+<span class="lineNum">     358 </span>            : 
+<span class="lineNum">     359 </span>            : 
+<span class="lineNum">     360 </span>            : #endif //BT_SLIDER_CONSTRAINT_H
+<span class="lineNum">     361 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

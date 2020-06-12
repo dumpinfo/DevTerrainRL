@@ -1,0 +1,653 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/Main.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1</a> - Main.cpp<span style="font-size: 80%;"> (source / <a href="Main.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">252</td>
+            <td class="headerCovTableEntry">304</td>
+            <td class="headerCovTableEntryMed">82.9 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">31</td>
+            <td class="headerCovTableEntry">34</td>
+            <td class="headerCovTableEntryHi">91.2 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &lt;iostream&gt;</a>
+<span class="lineNum">       2 </span>            : #include &lt;caffe/caffe.hpp&gt;
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;util/FileUtil.h&quot;
+<span class="lineNum">       5 </span>            : #include &quot;util/ArgParser.h&quot;
+<span class="lineNum">       6 </span>            : #include &quot;scenarios/DrawScenarioSimChar.h&quot;
+<span class="lineNum">       7 </span>            : #include &quot;scenarios/DrawScenarioExp.h&quot;
+<span class="lineNum">       8 </span>            : #include &quot;scenarios/DrawScenarioExpCacla.h&quot;
+<span class="lineNum">       9 </span>            : #include &quot;scenarios/DrawScenarioExpMACE.h&quot;
+<span class="lineNum">      10 </span>            : #include &quot;scenarios/DrawScenarioTrain.h&quot;
+<span class="lineNum">      11 </span>            : #include &quot;scenarios/DrawScenarioTrainCacla.h&quot;
+<span class="lineNum">      12 </span>            : #include &quot;scenarios/DrawScenarioTrainMACE.h&quot;
+<span class="lineNum">      13 </span>            : #include &quot;scenarios/DrawScenarioPoliEval.h&quot;
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            : #include &quot;render/Camera.h&quot;
+<span class="lineNum">      16 </span>            : #include &quot;render/DrawUtil.h&quot;
+<span class="lineNum">      17 </span>            : #include &quot;render/TextureDesc.h&quot;
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            : // Dimensions of the window we are drawing into.
+<span class="lineNum">      20 </span>            : int gWinWidth = 800;
+<span class="lineNum">      21 </span><span class="lineCov">          1 : int gWinHeight = static_cast&lt;int&gt;(gWinWidth * 9.0 / 16.0);</span>
+<span class="lineNum">      22 </span>            : bool gReshaping = false;
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span><span class="lineCov">          1 : const tVector gBKGColor = tVector(0.97, 0.97, 1, 0);</span>
+<span class="lineNum">      25 </span>            : //const tVector gBKGColor = tVector(1, 1, 1, 0);
+<span class="lineNum">      26 </span>            : 
+<span class="lineNum">      27 </span>            : // camera attributes
+<span class="lineNum">      28 </span>            : double gViewWidth = 4.5;
+<span class="lineNum">      29 </span>            : //double gViewWidth = 6.5;
+<span class="lineNum">      30 </span><span class="lineCov">          1 : double gViewHeight = (gViewWidth * gWinHeight) / gWinWidth;</span>
+<span class="lineNum">      31 </span>            : double gViewNearZ = 2;
+<span class="lineNum">      32 </span>            : double gViewFarZ = 50;
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span>            : // intermediate frame buffers
+<span class="lineNum">      35 </span><span class="lineCov">          1 : std::unique_ptr&lt;cTextureDesc&gt; gDefaultFrameBuffer;</span>
+<span class="lineNum">      36 </span><span class="lineCov">          1 : std::shared_ptr&lt;cTextureDesc&gt; gIntermediateFrameBuffer;</span>
+<span class="lineNum">      37 </span>            : 
+<span class="lineNum">      38 </span><span class="lineCov">          1 : tVector gCameraPosition = tVector(0, 0, 30, 0);</span>
+<span class="lineNum">      39 </span><span class="lineCov">          1 : tVector gCameraFocus = tVector(gCameraPosition[0], gCameraPosition[1], 0.0, 0.0);</span>
+<span class="lineNum">      40 </span><span class="lineCov">          1 : tVector gCameraUp = tVector(0, 1, 0, 0);</span>
+<span class="lineNum">      41 </span>            : 
+<span class="lineNum">      42 </span><span class="lineCov">          1 : cCamera gCamera;</span>
+<span class="lineNum">      43 </span>            : 
+<span class="lineNum">      44 </span>            : // anim
+<span class="lineNum">      45 </span>            : const double gFPS = 30.0;
+<span class="lineNum">      46 </span>            : const double gAnimStep = 1.0 / gFPS;
+<span class="lineNum">      47 </span>            : const int gDisplayAnimTime = static_cast&lt;int&gt;(gAnimStep * 1000);
+<span class="lineNum">      48 </span>            : bool gAnimate = true;
+<span class="lineNum">      49 </span>            : 
+<span class="lineNum">      50 </span>            : int gPrevTime = 0;
+<span class="lineNum">      51 </span>            : int gNextTime = 0;
+<span class="lineNum">      52 </span>            : int gDispalyPrevTime = 0;
+<span class="lineNum">      53 </span>            : double gUpdatesPerSec = 0;
+<span class="lineNum">      54 </span>            : 
+<span class="lineNum">      55 </span>            : double gPlaybackSpeed = 1.0;
+<span class="lineNum">      56 </span>            : const double gPlaybackDelta = 0.05;
+<span class="lineNum">      57 </span>            : 
+<span class="lineNum">      58 </span>            : bool gForceClear = false;
+<span class="lineNum">      59 </span>            : bool gRenderFilmStrip = false;
+<span class="lineNum">      60 </span>            : const double gFilmStripPeriod = 0.5;
+<span class="lineNum">      61 </span><span class="lineCov">          1 : tVector gPrevCamPos = tVector::Zero();</span>
+<span class="lineNum">      62 </span>            : 
+<span class="lineNum">      63 </span>            : // arg parser
+<span class="lineNum">      64 </span><span class="lineCov">          1 : cArgParser gArgParser;</span>
+<span class="lineNum">      65 </span><span class="lineCov">          1 : std::shared_ptr&lt;cDrawScenario&gt; gScenario = NULL;</span>
+<span class="lineNum">      66 </span>            : int gArgc = 0;
+<span class="lineNum">      67 </span>            : char** gArgv = NULL;
+<a name="68"><span class="lineNum">      68 </span>            : </a>
+<span class="lineNum">      69 </span>            : 
+<span class="lineNum">      70 </span><span class="lineCov">         86 : void SetupCamProjection()</span>
+<span class="lineNum">      71 </span>            : {
+<span class="lineNum">      72 </span><span class="lineCov">         86 :         gCamera.SetupGLProj();</span>
+<a name="73"><span class="lineNum">      73 </span><span class="lineCov">         86 : }</span></a>
+<span class="lineNum">      74 </span>            : 
+<span class="lineNum">      75 </span><span class="lineCov">          4 : void ResizeCamera()</span>
+<span class="lineNum">      76 </span>            : {
+<span class="lineNum">      77 </span><span class="lineCov">          4 :         gViewWidth = (gViewHeight * gWinWidth) / gWinHeight;</span>
+<span class="lineNum">      78 </span><span class="lineCov">          4 :         gCamera.Resize(gViewWidth, gViewHeight);</span>
+<span class="lineNum">      79 </span><span class="lineCov">          4 :         gForceClear = true;</span>
+<a name="80"><span class="lineNum">      80 </span><span class="lineCov">          4 : }</span></a>
+<span class="lineNum">      81 </span>            : 
+<span class="lineNum">      82 </span><span class="lineCov">          2 : void InitCamera()</span>
+<span class="lineNum">      83 </span>            : {
+<span class="lineNum">      84 </span><span class="lineCov">          4 :         gCamera = cCamera(gCameraPosition, gCameraFocus, gCameraUp,</span>
+<span class="lineNum">      85 </span><span class="lineCov">          2 :                                                 gViewWidth, gViewHeight, gViewNearZ, gViewFarZ);</span>
+<span class="lineNum">      86 </span><span class="lineCov">          2 :         gCamera.SetProj(cCamera::eProjOrtho);</span>
+<span class="lineNum">      87 </span><span class="lineCov">          2 :         ResizeCamera();</span>
+<a name="88"><span class="lineNum">      88 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">      89 </span>            : 
+<span class="lineNum">      90 </span><span class="lineCov">          2 : void ClearScenario()</span>
+<span class="lineNum">      91 </span>            : {
+<span class="lineNum">      92 </span><span class="lineCov">          2 :         gScenario = NULL;</span>
+<a name="93"><span class="lineNum">      93 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">      94 </span>            : 
+<span class="lineNum">      95 </span><span class="lineCov">          2 : void SetupScenario()</span>
+<span class="lineNum">      96 </span>            : {
+<span class="lineNum">      97 </span><span class="lineCov">          2 :         InitCamera();</span>
+<span class="lineNum">      98 </span><span class="lineCov">          2 :         ClearScenario();</span>
+<span class="lineNum">      99 </span>            : 
+<span class="lineNum">     100 </span><span class="lineCov">          4 :         std::string scenario_name = &quot;&quot;;</span>
+<span class="lineNum">     101 </span><span class="lineCov">          2 :         gArgParser.ParseString(&quot;scenario&quot;, scenario_name);</span>
+<span class="lineNum">     102 </span>            : 
+<span class="lineNum">     103 </span><span class="lineCov">          2 :         if (scenario_name == &quot;sim_char&quot;)</span>
+<span class="lineNum">     104 </span>            :         {
+<span class="lineNum">     105 </span><span class="lineCov">          2 :                 gScenario = std::shared_ptr&lt;cDrawScenarioSimChar&gt;(new cDrawScenarioSimChar(gCamera));</span>
+<span class="lineNum">     106 </span>            :         }
+<span class="lineNum">     107 </span><span class="lineNoCov">          0 :         else if (scenario_name == &quot;exp&quot;)</span>
+<span class="lineNum">     108 </span>            :         {
+<span class="lineNum">     109 </span><span class="lineNoCov">          0 :                 gScenario = std::shared_ptr&lt;cDrawScenarioExp&gt;(new cDrawScenarioExp(gCamera));</span>
+<span class="lineNum">     110 </span>            :         }
+<span class="lineNum">     111 </span><span class="lineNoCov">          0 :         else if (scenario_name == &quot;exp_cacla&quot;)</span>
+<span class="lineNum">     112 </span>            :         {
+<span class="lineNum">     113 </span><span class="lineNoCov">          0 :                 gScenario = std::shared_ptr&lt;cDrawScenarioExpCacla&gt;(new cDrawScenarioExpCacla(gCamera));</span>
+<span class="lineNum">     114 </span>            :         }
+<span class="lineNum">     115 </span><span class="lineNoCov">          0 :         else if (scenario_name == &quot;exp_mace&quot;)</span>
+<span class="lineNum">     116 </span>            :         {
+<span class="lineNum">     117 </span><span class="lineNoCov">          0 :                 gScenario = std::shared_ptr&lt;cDrawScenarioExpMACE&gt;(new cDrawScenarioExpMACE(gCamera));</span>
+<span class="lineNum">     118 </span>            :         }
+<span class="lineNum">     119 </span><span class="lineNoCov">          0 :         else if (scenario_name == &quot;train&quot;)</span>
+<span class="lineNum">     120 </span>            :         {
+<span class="lineNum">     121 </span><span class="lineNoCov">          0 :                 gScenario = std::shared_ptr&lt;cDrawScenarioTrain&gt;(new cDrawScenarioTrain(gCamera));</span>
+<span class="lineNum">     122 </span>            :         }
+<span class="lineNum">     123 </span><span class="lineNoCov">          0 :         else if (scenario_name == &quot;train_cacla&quot;)</span>
+<span class="lineNum">     124 </span>            :         {
+<span class="lineNum">     125 </span><span class="lineNoCov">          0 :                 gScenario = std::shared_ptr&lt;cDrawScenarioTrainCacla&gt;(new cDrawScenarioTrainCacla(gCamera));</span>
+<span class="lineNum">     126 </span>            :         }
+<span class="lineNum">     127 </span><span class="lineNoCov">          0 :         else if (scenario_name == &quot;train_mace&quot;)</span>
+<span class="lineNum">     128 </span>            :         {
+<span class="lineNum">     129 </span><span class="lineNoCov">          0 :                 gScenario = std::shared_ptr&lt;cDrawScenarioTrainMACE&gt;(new cDrawScenarioTrainMACE(gCamera));</span>
+<span class="lineNum">     130 </span>            :         }
+<span class="lineNum">     131 </span><span class="lineNoCov">          0 :         else if (scenario_name == &quot;poli_eval&quot;)</span>
+<span class="lineNum">     132 </span>            :         {
+<span class="lineNum">     133 </span><span class="lineNoCov">          0 :                 gScenario = std::shared_ptr&lt;cDrawScenarioPoliEval&gt;(new cDrawScenarioPoliEval(gCamera));</span>
+<span class="lineNum">     134 </span>            :         }
+<span class="lineNum">     135 </span>            : 
+<span class="lineNum">     136 </span><span class="lineCov">          2 :         if (gScenario != NULL)</span>
+<span class="lineNum">     137 </span>            :         {
+<span class="lineNum">     138 </span><span class="lineCov">          2 :                 gScenario-&gt;ParseArgs(gArgParser);</span>
+<span class="lineNum">     139 </span><span class="lineCov">          2 :                 gScenario-&gt;Init();</span>
+<span class="lineNum">     140 </span><span class="lineCov">          2 :                 printf(&quot;Loaded scenario: %s\n&quot;, gScenario-&gt;GetName().c_str());</span>
+<span class="lineNum">     141 </span>            :         }
+<a name="142"><span class="lineNum">     142 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">     143 </span>            : 
+<span class="lineNum">     144 </span><span class="lineCov">         83 : void UpdateScenario(double time_step)</span>
+<span class="lineNum">     145 </span>            : {
+<span class="lineNum">     146 </span><span class="lineCov">         83 :         if (gScenario != NULL)</span>
+<span class="lineNum">     147 </span>            :         {
+<span class="lineNum">     148 </span><span class="lineCov">         83 :                 int num_steps = 1;</span>
+<span class="lineNum">     149 </span><span class="lineCov">         83 :                 if (gRenderFilmStrip)</span>
+<span class="lineNum">     150 </span>            :                 {
+<span class="lineNum">     151 </span><span class="lineCov">          2 :                         num_steps = static_cast&lt;int&gt;(gFilmStripPeriod / time_step);</span>
+<span class="lineNum">     152 </span>            :                 }
+<span class="lineNum">     153 </span>            : 
+<span class="lineNum">     154 </span><span class="lineCov">        194 :                 for (int i = 0; i &lt; num_steps; ++i)</span>
+<span class="lineNum">     155 </span>            :                 {
+<span class="lineNum">     156 </span><span class="lineCov">        111 :                         gScenario-&gt;Update(time_step);</span>
+<span class="lineNum">     157 </span>            :                 }
+<span class="lineNum">     158 </span>            :         }
+<a name="159"><span class="lineNum">     159 </span><span class="lineCov">         83 : }</span></a>
+<span class="lineNum">     160 </span>            : 
+<span class="lineNum">     161 </span><span class="lineCov">         84 : void DrawInfo()</span>
+<span class="lineNum">     162 </span>            : {
+<span class="lineNum">     163 </span><span class="lineCov">         84 :         if (!gRenderFilmStrip)</span>
+<span class="lineNum">     164 </span>            :         {
+<span class="lineNum">     165 </span><span class="lineCov">         82 :                 glMatrixMode(GL_PROJECTION);</span>
+<span class="lineNum">     166 </span><span class="lineCov">         82 :                 glPushMatrix();</span>
+<span class="lineNum">     167 </span><span class="lineCov">         82 :                 glLoadIdentity();</span>
+<span class="lineNum">     168 </span>            : 
+<span class="lineNum">     169 </span><span class="lineCov">         82 :                 glMatrixMode(GL_MODELVIEW);</span>
+<span class="lineNum">     170 </span><span class="lineCov">         82 :                 glPushMatrix();</span>
+<span class="lineNum">     171 </span><span class="lineCov">         82 :                 glLoadIdentity();</span>
+<span class="lineNum">     172 </span>            : 
+<span class="lineNum">     173 </span><span class="lineCov">         82 :                 const double aspect = gCamera.GetAspectRatio();</span>
+<span class="lineNum">     174 </span><span class="lineCov">         82 :                 const double text_size = 0.09;</span>
+<span class="lineNum">     175 </span><span class="lineCov">         82 :                 const tVector scale = tVector(text_size / aspect, text_size, 1, 0);</span>
+<span class="lineNum">     176 </span><span class="lineCov">         82 :                 const double line_offset = text_size;</span>
+<span class="lineNum">     177 </span>            : 
+<span class="lineNum">     178 </span><span class="lineCov">         82 :                 cDrawUtil::SetLineWidth(1.5);</span>
+<span class="lineNum">     179 </span><span class="lineCov">         82 :                 cDrawUtil::SetColor(tVector(0, 0, 0, 0.5));</span>
+<span class="lineNum">     180 </span>            : 
+<span class="lineNum">     181 </span><span class="lineCov">         82 :                 cDrawUtil::Translate(tVector(-0.96, 0.88, -1, 0));</span>
+<span class="lineNum">     182 </span><span class="lineCov">         82 :                 double curr_fps = gUpdatesPerSec;</span>
+<span class="lineNum">     183 </span>            : 
+<span class="lineNum">     184 </span>            :                 char buffer[128];
+<span class="lineNum">     185 </span><span class="lineCov">         82 :                 sprintf(buffer, &quot;FPS: %.2f\nPlayback Speed: %.2fx\n&quot;, curr_fps, gPlaybackSpeed);</span>
+<span class="lineNum">     186 </span>            : 
+<span class="lineNum">     187 </span><span class="lineCov">        164 :                 std::string text_info = std::string(buffer);</span>
+<span class="lineNum">     188 </span><span class="lineCov">         82 :                 if (gScenario != nullptr)</span>
+<span class="lineNum">     189 </span>            :                 {
+<span class="lineNum">     190 </span><span class="lineCov">         82 :                         text_info += gScenario-&gt;BuildTextInfoStr();</span>
+<span class="lineNum">     191 </span>            :                 }
+<span class="lineNum">     192 </span>            : 
+<span class="lineNum">     193 </span><span class="lineCov">         82 :                 cDrawUtil::DrawString(text_info.c_str(), scale);</span>
+<span class="lineNum">     194 </span>            : 
+<span class="lineNum">     195 </span><span class="lineCov">         82 :                 glMatrixMode(GL_PROJECTION);</span>
+<span class="lineNum">     196 </span><span class="lineCov">         82 :                 glPopMatrix();</span>
+<span class="lineNum">     197 </span>            : 
+<span class="lineNum">     198 </span><span class="lineCov">         82 :                 glMatrixMode(GL_MODELVIEW);</span>
+<span class="lineNum">     199 </span><span class="lineCov">         82 :                 glPopMatrix();</span>
+<span class="lineNum">     200 </span>            :         }
+<a name="201"><span class="lineNum">     201 </span><span class="lineCov">         84 : }</span></a>
+<span class="lineNum">     202 </span>            : 
+<span class="lineNum">     203 </span><span class="lineCov">         84 : void ClearFrame()</span>
+<span class="lineNum">     204 </span>            : {
+<span class="lineNum">     205 </span><span class="lineCov">         84 :         bool clear = true;</span>
+<span class="lineNum">     206 </span>            : 
+<span class="lineNum">     207 </span><span class="lineCov">         84 :         if (gRenderFilmStrip &amp;&amp; !gForceClear)</span>
+<span class="lineNum">     208 </span>            :         {
+<span class="lineNum">     209 </span><span class="lineCov">          1 :                 const tVector&amp; cam_pos = gCamera.GetPosition();</span>
+<span class="lineNum">     210 </span><span class="lineCov">          1 :                 if (cam_pos != gPrevCamPos)</span>
+<span class="lineNum">     211 </span>            :                 {
+<span class="lineNum">     212 </span><span class="lineCov">          1 :                         gPrevCamPos = cam_pos;</span>
+<span class="lineNum">     213 </span>            :                 }
+<span class="lineNum">     214 </span>            :                 else
+<span class="lineNum">     215 </span>            :                 {
+<span class="lineNum">     216 </span><span class="lineNoCov">          0 :                         clear = false;</span>
+<span class="lineNum">     217 </span>            :                 }
+<span class="lineNum">     218 </span>            :         }
+<span class="lineNum">     219 </span>            : 
+<span class="lineNum">     220 </span><span class="lineCov">         84 :         if (clear)</span>
+<span class="lineNum">     221 </span>            :         {
+<span class="lineNum">     222 </span><span class="lineCov">         84 :                 cDrawUtil::ClearColor(gBKGColor);</span>
+<span class="lineNum">     223 </span><span class="lineCov">         84 :                 cDrawUtil::ClearDepth(1);</span>
+<span class="lineNum">     224 </span>            :         }
+<span class="lineNum">     225 </span>            : 
+<span class="lineNum">     226 </span><span class="lineCov">         84 :         gForceClear = false;</span>
+<a name="227"><span class="lineNum">     227 </span><span class="lineCov">         84 : }</span></a>
+<span class="lineNum">     228 </span>            : 
+<span class="lineNum">     229 </span><span class="lineCov">         84 : void DrawScene()</span>
+<span class="lineNum">     230 </span>            : {
+<span class="lineNum">     231 </span><span class="lineCov">         84 :         if (gScenario != NULL)</span>
+<span class="lineNum">     232 </span>            :         {
+<span class="lineNum">     233 </span><span class="lineCov">         84 :                 gScenario-&gt;Draw();</span>
+<span class="lineNum">     234 </span>            :         }
+<a name="235"><span class="lineNum">     235 </span><span class="lineCov">         84 : }</span></a>
+<span class="lineNum">     236 </span>            : 
+<span class="lineNum">     237 </span><span class="lineCov">         84 : void CopyFrame()</span>
+<span class="lineNum">     238 </span>            : {
+<span class="lineNum">     239 </span><span class="lineCov">         84 :         cDrawUtil::CopyTexture(*gIntermediateFrameBuffer, *gDefaultFrameBuffer);</span>
+<a name="240"><span class="lineNum">     240 </span><span class="lineCov">         84 : }</span></a>
+<span class="lineNum">     241 </span>            : 
+<span class="lineNum">     242 </span><span class="lineCov">         84 : void UpdateIntermediateBuffer()</span>
+<span class="lineNum">     243 </span>            : {
+<span class="lineNum">     244 </span><span class="lineCov">         84 :         if (!gReshaping)</span>
+<span class="lineNum">     245 </span>            :         {
+<span class="lineNum">     246 </span><span class="lineCov">        166 :                 if (gWinWidth != gIntermediateFrameBuffer-&gt;GetWidth()</span>
+<span class="lineNum">     247 </span><span class="lineCov">         83 :                         || gWinHeight != gIntermediateFrameBuffer-&gt;GetHeight())</span>
+<span class="lineNum">     248 </span>            :                 {
+<span class="lineNum">     249 </span><span class="lineNoCov">          0 :                         gIntermediateFrameBuffer-&gt;Reshape(gWinWidth, gWinHeight);</span>
+<span class="lineNum">     250 </span><span class="lineNoCov">          0 :                         gScenario-&gt;Reshape(gWinWidth, gWinHeight);</span>
+<span class="lineNum">     251 </span>            :                 }
+<span class="lineNum">     252 </span>            :         }
+<a name="253"><span class="lineNum">     253 </span><span class="lineCov">         84 : }</span></a>
+<span class="lineNum">     254 </span>            : 
+<span class="lineNum">     255 </span><span class="lineCov">         84 : void Display(void)</span>
+<span class="lineNum">     256 </span>            : {
+<span class="lineNum">     257 </span><span class="lineCov">         84 :         UpdateIntermediateBuffer();</span>
+<span class="lineNum">     258 </span>            : 
+<span class="lineNum">     259 </span><span class="lineCov">         84 :         glMatrixMode(GL_PROJECTION);</span>
+<span class="lineNum">     260 </span><span class="lineCov">         84 :         SetupCamProjection();</span>
+<span class="lineNum">     261 </span>            : 
+<span class="lineNum">     262 </span><span class="lineCov">         84 :         glMatrixMode(GL_MODELVIEW);</span>
+<span class="lineNum">     263 </span><span class="lineCov">         84 :         glLoadIdentity();</span>
+<span class="lineNum">     264 </span>            : 
+<span class="lineNum">     265 </span><span class="lineCov">         84 :         gIntermediateFrameBuffer-&gt;BindBuffer();</span>
+<span class="lineNum">     266 </span><span class="lineCov">         84 :         ClearFrame();</span>
+<span class="lineNum">     267 </span><span class="lineCov">         84 :         DrawScene();</span>
+<span class="lineNum">     268 </span><span class="lineCov">         84 :         DrawInfo();</span>
+<span class="lineNum">     269 </span><span class="lineCov">         84 :         gIntermediateFrameBuffer-&gt;UnbindBuffer();</span>
+<span class="lineNum">     270 </span>            : 
+<span class="lineNum">     271 </span><span class="lineCov">         84 :         CopyFrame();</span>
+<span class="lineNum">     272 </span>            : 
+<span class="lineNum">     273 </span><span class="lineCov">         84 :         glutSwapBuffers();</span>
+<span class="lineNum">     274 </span><span class="lineCov">         84 :         gDispalyPrevTime = glutGet(GLUT_ELAPSED_TIME);</span>
+<span class="lineNum">     275 </span>            : 
+<span class="lineNum">     276 </span><span class="lineCov">         84 :         gReshaping = false;</span>
+<a name="277"><span class="lineNum">     277 </span><span class="lineCov">         84 : }</span></a>
+<span class="lineNum">     278 </span>            : 
+<span class="lineNum">     279 </span><span class="lineCov">          2 : void Reshape(int w, int h)</span>
+<span class="lineNum">     280 </span>            : {
+<span class="lineNum">     281 </span><span class="lineCov">          2 :         gReshaping = true;</span>
+<span class="lineNum">     282 </span>            : 
+<span class="lineNum">     283 </span><span class="lineCov">          2 :         gWinWidth = w;</span>
+<span class="lineNum">     284 </span><span class="lineCov">          2 :         gWinHeight = h;</span>
+<span class="lineNum">     285 </span>            : 
+<span class="lineNum">     286 </span><span class="lineCov">          2 :         glViewport(0, 0, gWinWidth, gWinHeight);</span>
+<span class="lineNum">     287 </span><span class="lineCov">          2 :         gDefaultFrameBuffer-&gt;Reshape(w, h);</span>
+<span class="lineNum">     288 </span>            : 
+<span class="lineNum">     289 </span><span class="lineCov">          2 :         UpdateScenario(0);</span>
+<span class="lineNum">     290 </span><span class="lineCov">          2 :         ResizeCamera();</span>
+<span class="lineNum">     291 </span>            : 
+<span class="lineNum">     292 </span><span class="lineCov">          2 :         glMatrixMode(GL_PROJECTION);</span>
+<span class="lineNum">     293 </span><span class="lineCov">          2 :         SetupCamProjection();</span>
+<span class="lineNum">     294 </span>            : 
+<span class="lineNum">     295 </span><span class="lineCov">          2 :         glutPostRedisplay();</span>
+<a name="296"><span class="lineNum">     296 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">     297 </span>            : 
+<span class="lineNum">     298 </span><span class="lineNoCov">          0 : void StepAnim(double time_step)</span>
+<span class="lineNum">     299 </span>            : {
+<span class="lineNum">     300 </span><span class="lineNoCov">          0 :         UpdateScenario(time_step);</span>
+<span class="lineNum">     301 </span><span class="lineNoCov">          0 :         gAnimate = false;</span>
+<span class="lineNum">     302 </span><span class="lineNoCov">          0 :         glutPostRedisplay();</span>
+<a name="303"><span class="lineNum">     303 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     304 </span>            : 
+<span class="lineNum">     305 </span><span class="lineCov">          2 : void ParseArgs(int argc, char** argv)</span>
+<span class="lineNum">     306 </span>            : {
+<span class="lineNum">     307 </span><span class="lineCov">          2 :         gArgParser = cArgParser(argv, argc);</span>
+<span class="lineNum">     308 </span>            : 
+<span class="lineNum">     309 </span><span class="lineCov">          4 :         std::string arg_file = &quot;&quot;;</span>
+<span class="lineNum">     310 </span><span class="lineCov">          2 :         gArgParser.ParseString(&quot;arg_file&quot;, arg_file);</span>
+<span class="lineNum">     311 </span><span class="lineCov">          2 :         if (arg_file != &quot;&quot;)</span>
+<span class="lineNum">     312 </span>            :         {
+<span class="lineNum">     313 </span>            :                 // append the args from the file to the ones from the commandline
+<span class="lineNum">     314 </span>            :                 // this allows the cmd args to overwrite the file args
+<span class="lineNum">     315 </span><span class="lineCov">          2 :                 gArgParser.AppendArgs(arg_file);</span>
+<span class="lineNum">     316 </span>            :         }
+<a name="317"><span class="lineNum">     317 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">     318 </span>            : 
+<span class="lineNum">     319 </span><span class="lineCov">          2 : void InitTime()</span>
+<span class="lineNum">     320 </span>            : {
+<span class="lineNum">     321 </span><span class="lineCov">          2 :         gPrevTime = glutGet(GLUT_ELAPSED_TIME);</span>
+<span class="lineNum">     322 </span><span class="lineCov">          2 :         gNextTime = gPrevTime;</span>
+<span class="lineNum">     323 </span><span class="lineCov">          2 :         gDispalyPrevTime = gPrevTime;</span>
+<span class="lineNum">     324 </span><span class="lineCov">          2 :         gUpdatesPerSec = 0.f;</span>
+<a name="325"><span class="lineNum">     325 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">     326 </span>            : 
+<span class="lineNum">     327 </span><span class="lineCov">          1 : void Reload()</span>
+<span class="lineNum">     328 </span>            : {
+<span class="lineNum">     329 </span><span class="lineCov">          1 :         ParseArgs(gArgc, gArgv);</span>
+<span class="lineNum">     330 </span><span class="lineCov">          1 :         SetupScenario();</span>
+<span class="lineNum">     331 </span><span class="lineCov">          1 :         InitTime();</span>
+<span class="lineNum">     332 </span><span class="lineCov">          1 :         gForceClear = true;</span>
+<a name="333"><span class="lineNum">     333 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     334 </span>            : 
+<span class="lineNum">     335 </span><span class="lineCov">          1 : void Reset()</span>
+<span class="lineNum">     336 </span>            : {
+<span class="lineNum">     337 </span><span class="lineCov">          1 :         if (gScenario != NULL)</span>
+<span class="lineNum">     338 </span>            :         {
+<span class="lineNum">     339 </span><span class="lineCov">          1 :                 gScenario-&gt;Reset();</span>
+<span class="lineNum">     340 </span>            :         }
+<span class="lineNum">     341 </span><span class="lineCov">          1 :         gForceClear = true;</span>
+<a name="342"><span class="lineNum">     342 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     343 </span>            : 
+<span class="lineNum">     344 </span><span class="lineCov">         81 : void Update(double time_elapsed)</span>
+<span class="lineNum">     345 </span>            : {
+<span class="lineNum">     346 </span><span class="lineCov">         81 :         UpdateScenario(time_elapsed);</span>
+<a name="347"><span class="lineNum">     347 </span><span class="lineCov">         81 : }</span></a>
+<span class="lineNum">     348 </span>            : 
+<span class="lineNum">     349 </span><span class="lineCov">        162 : int GetNumTimeSteps()</span>
+<span class="lineNum">     350 </span>            : {
+<span class="lineNum">     351 </span><span class="lineCov">        162 :         int num_steps = static_cast&lt;int&gt;(gPlaybackSpeed);</span>
+<span class="lineNum">     352 </span><span class="lineCov">        162 :         if (num_steps == 0)</span>
+<span class="lineNum">     353 </span>            :         {
+<span class="lineNum">     354 </span><span class="lineNoCov">          0 :                 num_steps = 1;</span>
+<span class="lineNum">     355 </span>            :         }
+<span class="lineNum">     356 </span><span class="lineCov">        162 :         num_steps = std::abs(num_steps);</span>
+<span class="lineNum">     357 </span><span class="lineCov">        162 :         return num_steps;</span>
+<a name="358"><span class="lineNum">     358 </span>            : }</a>
+<span class="lineNum">     359 </span>            : 
+<span class="lineNum">     360 </span><span class="lineCov">         81 : int CalcDisplayAnimTime()</span>
+<span class="lineNum">     361 </span>            : {
+<span class="lineNum">     362 </span><span class="lineCov">         81 :         int anim_time = static_cast&lt;int&gt;(gDisplayAnimTime * GetNumTimeSteps() / gPlaybackSpeed);</span>
+<span class="lineNum">     363 </span><span class="lineCov">         81 :         anim_time = std::abs(anim_time);</span>
+<span class="lineNum">     364 </span><span class="lineCov">         81 :         return anim_time;</span>
+<a name="365"><span class="lineNum">     365 </span>            : }</a>
+<span class="lineNum">     366 </span>            : 
+<span class="lineNum">     367 </span><span class="lineCov">          1 : void Shutdown()</span>
+<span class="lineNum">     368 </span>            : {
+<span class="lineNum">     369 </span><span class="lineCov">          1 :         if (gScenario != nullptr)</span>
+<span class="lineNum">     370 </span>            :         {
+<span class="lineNum">     371 </span><span class="lineCov">          1 :                 gScenario-&gt;Shutdown();</span>
+<span class="lineNum">     372 </span>            :         }
+<span class="lineNum">     373 </span><span class="lineCov">          1 :         exit(0);</span>
+<a name="374"><span class="lineNum">     374 </span>            : }</a>
+<span class="lineNum">     375 </span>            : 
+<span class="lineNum">     376 </span><span class="lineCov">         82 : void Animate(int callback_val)</span>
+<span class="lineNum">     377 </span>            : {
+<span class="lineNum">     378 </span><span class="lineCov">         82 :         if (gAnimate)</span>
+<span class="lineNum">     379 </span>            :         {
+<span class="lineNum">     380 </span><span class="lineCov">         81 :                 int num_steps = GetNumTimeSteps();</span>
+<span class="lineNum">     381 </span><span class="lineCov">         81 :                 int timer_step = CalcDisplayAnimTime();</span>
+<span class="lineNum">     382 </span>            :                 
+<span class="lineNum">     383 </span><span class="lineCov">         81 :                 glutTimerFunc(timer_step, Animate, 0);</span>
+<span class="lineNum">     384 </span>            : 
+<span class="lineNum">     385 </span><span class="lineCov">         81 :                 int current_time = glutGet(GLUT_ELAPSED_TIME);</span>
+<span class="lineNum">     386 </span><span class="lineCov">         81 :                 int elapsedTime = current_time - gPrevTime;</span>
+<span class="lineNum">     387 </span><span class="lineCov">         81 :                 gPrevTime = current_time;</span>
+<span class="lineNum">     388 </span>            : 
+<span class="lineNum">     389 </span><span class="lineCov">         81 :                 double timestep = (gPlaybackSpeed &lt; 0) ? -gAnimStep : gAnimStep;</span>
+<span class="lineNum">     390 </span><span class="lineCov">        162 :                 for (int i = 0; i &lt; num_steps; ++i)</span>
+<span class="lineNum">     391 </span>            :                 {
+<span class="lineNum">     392 </span><span class="lineCov">         81 :                         Update(timestep);</span>
+<span class="lineNum">     393 </span>            :                 }
+<span class="lineNum">     394 </span>            :                 
+<span class="lineNum">     395 </span><span class="lineCov">         81 :                 glutPostRedisplay();</span>
+<span class="lineNum">     396 </span><span class="lineCov">         81 :                 gUpdatesPerSec = num_steps / (elapsedTime * 0.001);</span>
+<span class="lineNum">     397 </span>            :         }
+<span class="lineNum">     398 </span>            : 
+<span class="lineNum">     399 </span><span class="lineCov">         82 :         if (gScenario != nullptr)</span>
+<span class="lineNum">     400 </span>            :         {
+<span class="lineNum">     401 </span><span class="lineCov">         82 :                 if (gScenario-&gt;IsDone())</span>
+<span class="lineNum">     402 </span>            :                 {
+<span class="lineNum">     403 </span><span class="lineNoCov">          0 :                         Shutdown();</span>
+<span class="lineNum">     404 </span>            :                 }
+<span class="lineNum">     405 </span>            :         }
+<a name="406"><span class="lineNum">     406 </span><span class="lineCov">         82 : }</span></a>
+<span class="lineNum">     407 </span>            : 
+<span class="lineNum">     408 </span><span class="lineCov">          2 : void ToggleAnimate()</span>
+<span class="lineNum">     409 </span>            : {
+<span class="lineNum">     410 </span><span class="lineCov">          2 :         gAnimate = !gAnimate;</span>
+<span class="lineNum">     411 </span><span class="lineCov">          2 :         if (gAnimate)</span>
+<span class="lineNum">     412 </span>            :         {
+<span class="lineNum">     413 </span><span class="lineCov">          1 :                 glutTimerFunc(gDisplayAnimTime, Animate, 0);</span>
+<span class="lineNum">     414 </span>            :         }
+<a name="415"><span class="lineNum">     415 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">     416 </span>            : 
+<span class="lineNum">     417 </span><span class="lineNoCov">          0 : void ChangePlaybackSpeed(double delta)</span>
+<span class="lineNum">     418 </span>            : {
+<span class="lineNum">     419 </span><span class="lineNoCov">          0 :         double prev_playback = gPlaybackSpeed;</span>
+<span class="lineNum">     420 </span><span class="lineNoCov">          0 :         gPlaybackSpeed += delta;</span>
+<span class="lineNum">     421 </span>            : 
+<span class="lineNum">     422 </span><span class="lineNoCov">          0 :         if (std::abs(prev_playback) &lt; 0.0001 &amp;&amp; std::abs(gPlaybackSpeed) &gt; 0.0001)</span>
+<span class="lineNum">     423 </span>            :         {
+<span class="lineNum">     424 </span><span class="lineNoCov">          0 :                 glutTimerFunc(gDisplayAnimTime, Animate, 0);</span>
+<span class="lineNum">     425 </span>            :         }
+<a name="426"><span class="lineNum">     426 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     427 </span>            : 
+<span class="lineNum">     428 </span><span class="lineCov">          2 : void ToogleFilmStrip()</span>
+<span class="lineNum">     429 </span>            : {
+<span class="lineNum">     430 </span><span class="lineCov">          2 :         gRenderFilmStrip = !gRenderFilmStrip;</span>
+<span class="lineNum">     431 </span><span class="lineCov">          2 :         gForceClear = true;</span>
+<span class="lineNum">     432 </span>            : 
+<span class="lineNum">     433 </span><span class="lineCov">          2 :         if (gRenderFilmStrip)</span>
+<span class="lineNum">     434 </span>            :         {
+<span class="lineNum">     435 </span><span class="lineCov">          1 :                 printf(&quot;Filmstrip mode enabled\n&quot;);</span>
+<span class="lineNum">     436 </span>            :         }
+<span class="lineNum">     437 </span>            :         else
+<span class="lineNum">     438 </span>            :         {
+<span class="lineNum">     439 </span><span class="lineCov">          1 :                 printf(&quot;Filmstrip mode disabled\n&quot;);</span>
+<span class="lineNum">     440 </span>            :         }
+<a name="441"><span class="lineNum">     441 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">     442 </span>            : 
+<span class="lineNum">     443 </span><span class="lineCov">         13 : void Keyboard(unsigned char key, int x, int y) {</span>
+<span class="lineNum">     444 </span>            : 
+<span class="lineNum">     445 </span><span class="lineCov">         13 :         if (gScenario != NULL)</span>
+<span class="lineNum">     446 </span>            :         {
+<span class="lineNum">     447 </span><span class="lineCov">         13 :                 gScenario-&gt;Keyboard(key, x, y);</span>
+<span class="lineNum">     448 </span>            :         }
+<span class="lineNum">     449 </span>            : 
+<span class="lineNum">     450 </span><span class="lineCov">         13 :         bool update = false;</span>
+<span class="lineNum">     451 </span><span class="lineCov">         13 :         switch (key) {</span>
+<span class="lineNum">     452 </span>            :                 // Quit.
+<span class="lineNum">     453 </span>            : #ifndef _LINUX_
+<span class="lineNum">     454 </span>            :         case CTRL_CLOSE_EVENT:
+<span class="lineNum">     455 </span>            :         case CTRL_C_EVENT:
+<span class="lineNum">     456 </span>            : #endif
+<span class="lineNum">     457 </span>            :         case 27: // escape
+<span class="lineNum">     458 </span><span class="lineCov">          1 :                 Shutdown();</span>
+<span class="lineNum">     459 </span><span class="lineNoCov">          0 :                 break;</span>
+<span class="lineNum">     460 </span>            :         case 13: // enter
+<span class="lineNum">     461 </span><span class="lineNoCov">          0 :                 break;</span>
+<span class="lineNum">     462 </span>            :         case ' ':
+<span class="lineNum">     463 </span><span class="lineCov">          2 :                 ToggleAnimate();</span>
+<span class="lineNum">     464 </span><span class="lineCov">          2 :                 break;</span>
+<span class="lineNum">     465 </span>            :         case '&gt;':
+<span class="lineNum">     466 </span><span class="lineNoCov">          0 :                 StepAnim(gAnimStep);</span>
+<span class="lineNum">     467 </span><span class="lineNoCov">          0 :                 break;</span>
+<span class="lineNum">     468 </span>            :         case '&lt;':
+<span class="lineNum">     469 </span><span class="lineNoCov">          0 :                 StepAnim(-gAnimStep);</span>
+<span class="lineNum">     470 </span><span class="lineNoCov">          0 :                 break;</span>
+<span class="lineNum">     471 </span>            :         case ',':
+<span class="lineNum">     472 </span><span class="lineNoCov">          0 :                 ChangePlaybackSpeed(-gPlaybackDelta);</span>
+<span class="lineNum">     473 </span><span class="lineNoCov">          0 :                 break;</span>
+<span class="lineNum">     474 </span>            :         case '.':
+<span class="lineNum">     475 </span><span class="lineNoCov">          0 :                 ChangePlaybackSpeed(gPlaybackDelta);</span>
+<span class="lineNum">     476 </span><span class="lineNoCov">          0 :                 break;</span>
+<span class="lineNum">     477 </span>            :         case '/':
+<span class="lineNum">     478 </span><span class="lineNoCov">          0 :                 ChangePlaybackSpeed(-gPlaybackSpeed + 1);</span>
+<span class="lineNum">     479 </span><span class="lineNoCov">          0 :                 break;</span>
+<span class="lineNum">     480 </span>            :         case 'l':
+<span class="lineNum">     481 </span><span class="lineCov">          1 :                 Reload();</span>
+<span class="lineNum">     482 </span><span class="lineCov">          1 :                 break;</span>
+<span class="lineNum">     483 </span>            :         case 'q':
+<span class="lineNum">     484 </span><span class="lineCov">          2 :                 ToogleFilmStrip();</span>
+<span class="lineNum">     485 </span><span class="lineCov">          2 :                 break;</span>
+<span class="lineNum">     486 </span>            :         case 'r':
+<span class="lineNum">     487 </span><span class="lineCov">          1 :                 Reset();</span>
+<span class="lineNum">     488 </span><span class="lineCov">          1 :                 break;</span>
+<span class="lineNum">     489 </span>            :         default:
+<span class="lineNum">     490 </span><span class="lineCov">          6 :                 break;</span>
+<span class="lineNum">     491 </span>            :         }
+<span class="lineNum">     492 </span><span class="lineCov">         12 :         glutPostRedisplay();</span>
+<a name="493"><span class="lineNum">     493 </span><span class="lineCov">         12 : }</span></a>
+<span class="lineNum">     494 </span>            : 
+<span class="lineNum">     495 </span><span class="lineCov">          8 : void MouseClick(int button, int state, int x, int y)</span>
+<span class="lineNum">     496 </span>            : {
+<span class="lineNum">     497 </span><span class="lineCov">          8 :         double screen_x = static_cast&lt;double&gt;(x) / gWinWidth;</span>
+<span class="lineNum">     498 </span><span class="lineCov">          8 :         double screen_y = static_cast&lt;double&gt;(y) / gWinHeight;</span>
+<span class="lineNum">     499 </span><span class="lineCov">          8 :         screen_x = (screen_x - 0.5f) * 2.f;</span>
+<span class="lineNum">     500 </span><span class="lineCov">          8 :         screen_y = (screen_y - 0.5f) * -2.f;</span>
+<span class="lineNum">     501 </span>            : 
+<span class="lineNum">     502 </span><span class="lineCov">          8 :         if (gScenario != NULL)</span>
+<span class="lineNum">     503 </span>            :         {
+<span class="lineNum">     504 </span><span class="lineCov">          8 :                 gScenario-&gt;MouseClick(button, state, screen_x, screen_y);</span>
+<span class="lineNum">     505 </span>            :         }
+<span class="lineNum">     506 </span><span class="lineCov">          8 :         glutPostRedisplay();</span>
+<span class="lineNum">     507 </span><span class="lineCov">          8 : }</span>
+<a name="508"><span class="lineNum">     508 </span>            : </a>
+<span class="lineNum">     509 </span>            : 
+<span class="lineNum">     510 </span><span class="lineNoCov">          0 : void MouseMove(int x, int y)</span>
+<span class="lineNum">     511 </span>            : {
+<span class="lineNum">     512 </span><span class="lineNoCov">          0 :         double screen_x = static_cast&lt;double&gt;(x) / gWinWidth;</span>
+<span class="lineNum">     513 </span><span class="lineNoCov">          0 :         double screen_y = static_cast&lt;double&gt;(y) / gWinHeight;</span>
+<span class="lineNum">     514 </span><span class="lineNoCov">          0 :         screen_x = (screen_x - 0.5f) * 2.f;</span>
+<span class="lineNum">     515 </span><span class="lineNoCov">          0 :         screen_y = (screen_y - 0.5f) * -2.f;</span>
+<span class="lineNum">     516 </span>            : 
+<span class="lineNum">     517 </span><span class="lineNoCov">          0 :         if (gScenario != NULL)</span>
+<span class="lineNum">     518 </span>            :         {
+<span class="lineNum">     519 </span><span class="lineNoCov">          0 :                 gScenario-&gt;MouseMove(screen_x, screen_y);</span>
+<span class="lineNum">     520 </span>            :         }
+<span class="lineNum">     521 </span><span class="lineNoCov">          0 :         glutPostRedisplay();</span>
+<a name="522"><span class="lineNum">     522 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     523 </span>            : 
+<span class="lineNum">     524 </span><span class="lineCov">          1 : void InitOpenGl(void)</span>
+<span class="lineNum">     525 </span>            : {
+<span class="lineNum">     526 </span><span class="lineCov">          1 :         cDrawUtil::InitDrawUtil();</span>
+<span class="lineNum">     527 </span><span class="lineCov">          1 :         glewInit();</span>
+<span class="lineNum">     528 </span>            : 
+<span class="lineNum">     529 </span><span class="lineCov">          1 :         gDefaultFrameBuffer = std::unique_ptr&lt;cTextureDesc&gt;(new cTextureDesc(0, 0, 0, gWinWidth, gWinHeight, 1, GL_RGBA, GL_RGBA));</span>
+<span class="lineNum">     530 </span><span class="lineCov">          1 :         gIntermediateFrameBuffer = std::shared_ptr&lt;cTextureDesc&gt;(new cTextureDesc(gWinWidth, gWinHeight, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, false));</span>
+<a name="531"><span class="lineNum">     531 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     532 </span>            : 
+<span class="lineNum">     533 </span><span class="lineCov">          1 : void InitCaffe()</span>
+<span class="lineNum">     534 </span>            : {
+<span class="lineNum">     535 </span><span class="lineCov">          1 :         FLAGS_alsologtostderr = 1;</span>
+<span class="lineNum">     536 </span><span class="lineCov">          1 :         int caffe_argc = 1; // hack</span>
+<span class="lineNum">     537 </span><span class="lineCov">          1 :         caffe::GlobalInit(&amp;caffe_argc, &amp;gArgv);</span>
+<a name="538"><span class="lineNum">     538 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     539 </span>            : 
+<span class="lineNum">     540 </span><span class="lineCov">          1 : int main(int argc, char** argv)</span>
+<span class="lineNum">     541 </span>            : {
+<span class="lineNum">     542 </span><span class="lineCov">          1 :         gArgc = argc;</span>
+<span class="lineNum">     543 </span><span class="lineCov">          1 :         gArgv = argv;</span>
+<span class="lineNum">     544 </span><span class="lineCov">          1 :         ParseArgs(gArgc, gArgv);</span>
+<span class="lineNum">     545 </span>            : 
+<span class="lineNum">     546 </span><span class="lineCov">          1 :         InitCaffe();</span>
+<span class="lineNum">     547 </span>            : 
+<span class="lineNum">     548 </span><span class="lineCov">          1 :         glutInit(&amp;gArgc, gArgv);</span>
+<span class="lineNum">     549 </span><span class="lineCov">          1 :         glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);</span>
+<span class="lineNum">     550 </span><span class="lineCov">          1 :         glutInitWindowSize(gWinWidth, gWinHeight);</span>
+<span class="lineNum">     551 </span><span class="lineCov">          1 :         glutCreateWindow(&quot;Terrain RL&quot;);</span>
+<span class="lineNum">     552 </span>            : 
+<span class="lineNum">     553 </span><span class="lineCov">          1 :         InitOpenGl();</span>
+<span class="lineNum">     554 </span><span class="lineCov">          1 :         SetupScenario();</span>
+<span class="lineNum">     555 </span>            : 
+<span class="lineNum">     556 </span><span class="lineCov">          1 :         Reshape(gWinWidth, gWinHeight);</span>
+<span class="lineNum">     557 </span><span class="lineCov">          1 :         glutDisplayFunc(Display);</span>
+<span class="lineNum">     558 </span><span class="lineCov">          1 :         glutReshapeFunc(Reshape);</span>
+<span class="lineNum">     559 </span><span class="lineCov">          1 :         glutKeyboardFunc(Keyboard);</span>
+<span class="lineNum">     560 </span><span class="lineCov">          1 :         glutMouseFunc(MouseClick);</span>
+<span class="lineNum">     561 </span><span class="lineCov">          1 :         glutMotionFunc(MouseMove);</span>
+<span class="lineNum">     562 </span><span class="lineCov">          1 :         glutTimerFunc(gDisplayAnimTime, Animate, 0);</span>
+<span class="lineNum">     563 </span>            : 
+<span class="lineNum">     564 </span><span class="lineCov">          1 :         InitTime();</span>
+<span class="lineNum">     565 </span><span class="lineCov">          1 :         glutMainLoop();</span>
+<a name="566"><span class="lineNum">     566 </span>            : </a>
+<span class="lineNum">     567 </span><span class="lineNoCov">          0 :         return EXIT_SUCCESS;</span>
+<span class="lineNum">     568 </span><span class="lineCov">          3 : }</span>
+<span class="lineNum">     569 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

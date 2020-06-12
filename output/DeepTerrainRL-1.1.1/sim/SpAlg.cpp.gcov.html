@@ -1,0 +1,442 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/sim/SpAlg.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/sim</a> - SpAlg.cpp<span style="font-size: 80%;"> (source / <a href="SpAlg.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">139</td>
+            <td class="headerCovTableEntry">206</td>
+            <td class="headerCovTableEntryLo">67.5 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">27</td>
+            <td class="headerCovTableEntry">40</td>
+            <td class="headerCovTableEntryLo">67.5 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;SpAlg.h&quot;</a>
+<span class="lineNum">       2 </span>            : #include &lt;iostream&gt;
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #ifdef _LINUX_
+<span class="lineNum">       5 </span>            :         // Should initilize variables in cpp
+<span class="lineNum">       6 </span>            :         const int cSpAlg::gSpVecSize;
+<span class="lineNum">       7 </span>            :         const int cSpAlg::gSVTransRows;
+<span class="lineNum">       8 </span>            :         const int cSpAlg::gSVTransCols;
+<a name="9"><span class="lineNum">       9 </span>            : #endif</a>
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span><span class="lineNoCov">          0 : cSpAlg::tSpVec cSpAlg::ConvertCoordM(const tSpVec&amp; m0, const tVector&amp; origin0, const tVector&amp; origin1)</span>
+<span class="lineNum">      12 </span>            : {
+<span class="lineNum">      13 </span><span class="lineNoCov">          0 :         return ConvertCoordM(m0, origin0, origin1, tMatrix::Identity());</span>
+<a name="14"><span class="lineNum">      14 </span>            : }</a>
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span><span class="lineNoCov">          0 : cSpAlg::tSpVec cSpAlg::ConvertCoordM(const tSpVec&amp; m0, const tVector&amp; origin0, const tMatrix&amp; R0,</span>
+<span class="lineNum">      17 </span>            :                                                                                                 const tVector&amp; origin1, const tMatrix&amp; R1)
+<span class="lineNum">      18 </span>            : {
+<span class="lineNum">      19 </span><span class="lineNoCov">          0 :         tMatrix R = R1 * R0.transpose();</span>
+<span class="lineNum">      20 </span><span class="lineNoCov">          0 :         return ConvertCoordM(m0, origin0, origin1, R);</span>
+<span class="lineNum">      21 </span>            : }
+<a name="22"><span class="lineNum">      22 </span>            : </a>
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span><span class="lineNoCov">          0 : cSpAlg::tSpVec cSpAlg::ConvertCoordM(const tSpVec&amp; m0, const tVector&amp; origin0, const tVector&amp; origin1, const tMatrix&amp; R)</span>
+<span class="lineNum">      25 </span>            : {
+<span class="lineNum">      26 </span><span class="lineNoCov">          0 :         tSpTrans X = BuildTrans(R, origin1 - origin0);</span>
+<span class="lineNum">      27 </span><span class="lineNoCov">          0 :         return ApplyTransM(X, m0);</span>
+<a name="28"><span class="lineNum">      28 </span>            : }</a>
+<span class="lineNum">      29 </span>            : 
+<span class="lineNum">      30 </span><span class="lineNoCov">          0 : cSpAlg::tSpVec cSpAlg::ConvertCoordF(const tSpVec&amp; f0, const tVector&amp; origin0, const tVector&amp; origin1)</span>
+<span class="lineNum">      31 </span>            : {
+<span class="lineNum">      32 </span><span class="lineNoCov">          0 :         return ConvertCoordF(f0, origin0, origin1, tMatrix::Identity());</span>
+<a name="33"><span class="lineNum">      33 </span>            : }</a>
+<span class="lineNum">      34 </span>            : 
+<span class="lineNum">      35 </span><span class="lineNoCov">          0 : cSpAlg::tSpVec cSpAlg::ConvertCoordF(const tSpVec&amp; f0, const tVector&amp; origin0, const tMatrix&amp; R0,</span>
+<span class="lineNum">      36 </span>            :         const tVector&amp; origin1, const tMatrix&amp; R1)
+<span class="lineNum">      37 </span>            : {
+<span class="lineNum">      38 </span><span class="lineNoCov">          0 :         tMatrix R = R1 * R0.transpose();</span>
+<span class="lineNum">      39 </span><span class="lineNoCov">          0 :         return ConvertCoordF(f0, origin0, origin1, R);</span>
+<a name="40"><span class="lineNum">      40 </span>            : }</a>
+<span class="lineNum">      41 </span>            : 
+<span class="lineNum">      42 </span><span class="lineNoCov">          0 : cSpAlg::tSpVec cSpAlg::ConvertCoordF(const tSpVec&amp; f0, const tVector&amp; origin0,</span>
+<span class="lineNum">      43 </span>            :         const tVector&amp; origin1, const tMatrix&amp; R)
+<span class="lineNum">      44 </span>            : {
+<span class="lineNum">      45 </span><span class="lineNoCov">          0 :         tSpTrans X = BuildTrans(R, origin1 - origin0);</span>
+<span class="lineNum">      46 </span><span class="lineNoCov">          0 :         return ApplyTransF(X, f0);</span>
+<span class="lineNum">      47 </span>            : }
+<a name="48"><span class="lineNum">      48 </span>            : </a>
+<span class="lineNum">      49 </span>            : 
+<span class="lineNum">      50 </span><span class="lineCov">      45780 : cSpAlg::tSpVec cSpAlg::CrossM(const tSpVec&amp; sv, const tSpVec&amp; m)</span>
+<span class="lineNum">      51 </span>            : {
+<span class="lineNum">      52 </span><span class="lineCov">      45780 :         tVector sv_o = GetOmega(sv);</span>
+<span class="lineNum">      53 </span><span class="lineCov">      45780 :         tVector sv_v = GetV(sv);</span>
+<span class="lineNum">      54 </span><span class="lineCov">      45780 :         tVector m_o = GetOmega(m);</span>
+<span class="lineNum">      55 </span><span class="lineCov">      45780 :         tVector m_v = GetV(m);</span>
+<span class="lineNum">      56 </span>            : 
+<span class="lineNum">      57 </span><span class="lineCov">      45780 :         tVector o = sv_o.cross3(m_o);</span>
+<span class="lineNum">      58 </span><span class="lineCov">      45780 :         tVector v = sv_v.cross3(m_o) + sv_o.cross3(m_v);</span>
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span><span class="lineCov">      45780 :         return BuildSV(o, v);</span>
+<a name="61"><span class="lineNum">      61 </span>            : }</a>
+<span class="lineNum">      62 </span>            : 
+<span class="lineNum">      63 </span><span class="lineNoCov">          0 : Eigen::MatrixXd cSpAlg::CrossMs(const tSpVec&amp; sv, const Eigen::MatrixXd&amp; ms)</span>
+<span class="lineNum">      64 </span>            : {
+<span class="lineNum">      65 </span><span class="lineNoCov">          0 :         assert(ms.rows() == gSpVecSize);</span>
+<span class="lineNum">      66 </span><span class="lineNoCov">          0 :         Eigen::MatrixXd result(gSpVecSize, ms.cols());</span>
+<span class="lineNum">      67 </span><span class="lineNoCov">          0 :         for (int i = 0; i &lt; ms.cols(); ++i)</span>
+<span class="lineNum">      68 </span>            :         {
+<span class="lineNum">      69 </span><span class="lineNoCov">          0 :                 const tSpVec&amp; curr_m = ms.col(i);</span>
+<span class="lineNum">      70 </span><span class="lineNoCov">          0 :                 result.col(i) = CrossM(sv, curr_m);</span>
+<span class="lineNum">      71 </span>            :         }
+<span class="lineNum">      72 </span><span class="lineNoCov">          0 :         return result;</span>
+<a name="73"><span class="lineNum">      73 </span>            : }</a>
+<span class="lineNum">      74 </span>            : 
+<span class="lineNum">      75 </span><span class="lineCov">      45780 : cSpAlg::tSpVec cSpAlg::CrossF(const tSpVec&amp; sv, const tSpVec&amp; f)</span>
+<span class="lineNum">      76 </span>            : {
+<span class="lineNum">      77 </span><span class="lineCov">      45780 :         tVector sv_o = GetOmega(sv);</span>
+<span class="lineNum">      78 </span><span class="lineCov">      45780 :         tVector sv_v = GetV(sv);</span>
+<span class="lineNum">      79 </span><span class="lineCov">      45780 :         tVector f_o = GetOmega(f);</span>
+<span class="lineNum">      80 </span><span class="lineCov">      45780 :         tVector f_v = GetV(f);</span>
+<span class="lineNum">      81 </span>            : 
+<span class="lineNum">      82 </span><span class="lineCov">      45780 :         tVector o = sv_o.cross3(f_o) + sv_v.cross3(f_v);</span>
+<span class="lineNum">      83 </span><span class="lineCov">      45780 :         tVector v = sv_o.cross3(f_v);</span>
+<span class="lineNum">      84 </span>            : 
+<span class="lineNum">      85 </span><span class="lineCov">      45780 :         return BuildSV(o, v);</span>
+<a name="86"><span class="lineNum">      86 </span>            : }</a>
+<span class="lineNum">      87 </span>            : 
+<span class="lineNum">      88 </span><span class="lineNoCov">          0 : Eigen::MatrixXd cSpAlg::CrossFs(const tSpVec&amp; sv, const Eigen::MatrixXd&amp; fs)</span>
+<span class="lineNum">      89 </span>            : {
+<span class="lineNum">      90 </span><span class="lineNoCov">          0 :         assert(fs.rows() == gSpVecSize);</span>
+<span class="lineNum">      91 </span><span class="lineNoCov">          0 :         Eigen::MatrixXd result(gSpVecSize, fs.cols());</span>
+<span class="lineNum">      92 </span><span class="lineNoCov">          0 :         for (int i = 0; i &lt; fs.cols(); ++i)</span>
+<span class="lineNum">      93 </span>            :         {
+<span class="lineNum">      94 </span><span class="lineNoCov">          0 :                 const tSpVec&amp; curr_f = fs.col(i);</span>
+<span class="lineNum">      95 </span><span class="lineNoCov">          0 :                 result.col(i) = CrossF(sv, curr_f);</span>
+<span class="lineNum">      96 </span>            :         }
+<span class="lineNum">      97 </span><span class="lineNoCov">          0 :         return result;</span>
+<a name="98"><span class="lineNum">      98 </span>            : }</a>
+<span class="lineNum">      99 </span>            : 
+<span class="lineNum">     100 </span><span class="lineCov">       1049 : cSpAlg::tSpVec cSpAlg::BuildSV(const tVector&amp; v)</span>
+<span class="lineNum">     101 </span>            : {
+<span class="lineNum">     102 </span><span class="lineCov">       1049 :         return BuildSV(tVector::Zero(), v);</span>
+<a name="103"><span class="lineNum">     103 </span>            : }</a>
+<span class="lineNum">     104 </span>            : 
+<span class="lineNum">     105 </span><span class="lineCov">     327646 : cSpAlg::tSpVec cSpAlg::BuildSV(const tVector&amp; o, const tVector&amp; v)</span>
+<span class="lineNum">     106 </span>            : {
+<span class="lineNum">     107 </span><span class="lineCov">     327646 :         tSpVec sv;</span>
+<span class="lineNum">     108 </span><span class="lineCov">     327646 :         SetOmega(o, sv);</span>
+<span class="lineNum">     109 </span><span class="lineCov">     327646 :         SetV(v, sv);</span>
+<span class="lineNum">     110 </span><span class="lineCov">     327646 :         return sv;</span>
+<a name="111"><span class="lineNum">     111 </span>            : }</a>
+<span class="lineNum">     112 </span>            : 
+<span class="lineNum">     113 </span><span class="lineCov">     414920 : tVector cSpAlg::GetOmega(const tSpVec&amp; sv)</span>
+<span class="lineNum">     114 </span>            : {
+<span class="lineNum">     115 </span><span class="lineCov">     414920 :         tVector o = tVector::Zero();</span>
+<span class="lineNum">     116 </span><span class="lineCov">     414920 :         o.block(0, 0, 3, 1) = sv.block(0, 0, 3, 1);</span>
+<span class="lineNum">     117 </span><span class="lineCov">     414920 :         return o;</span>
+<a name="118"><span class="lineNum">     118 </span>            : }</a>
+<span class="lineNum">     119 </span>            : 
+<span class="lineNum">     120 </span><span class="lineCov">     327646 : void cSpAlg::SetOmega(const tVector&amp; o, tSpVec&amp; out_sv)</span>
+<span class="lineNum">     121 </span>            : {
+<span class="lineNum">     122 </span><span class="lineCov">     327646 :         out_sv.block(0, 0, 3, 1) = o.block(0, 0, 3, 1);</span>
+<a name="123"><span class="lineNum">     123 </span><span class="lineCov">     327646 : }</span></a>
+<span class="lineNum">     124 </span>            : 
+<span class="lineNum">     125 </span><span class="lineCov">     414920 : tVector cSpAlg::GetV(const tSpVec&amp; sv)</span>
+<span class="lineNum">     126 </span>            : {
+<span class="lineNum">     127 </span><span class="lineCov">     414920 :         tVector v = tVector::Zero();</span>
+<span class="lineNum">     128 </span><span class="lineCov">     414920 :         v.block(0, 0, 3, 1) = sv.block(3, 0, 3, 1);</span>
+<span class="lineNum">     129 </span><span class="lineCov">     414920 :         return v;</span>
+<a name="130"><span class="lineNum">     130 </span>            : }</a>
+<span class="lineNum">     131 </span>            : 
+<span class="lineNum">     132 </span><span class="lineCov">     327646 : void cSpAlg::SetV(const tVector&amp; v, tSpVec&amp; out_sv)</span>
+<span class="lineNum">     133 </span>            : {
+<span class="lineNum">     134 </span><span class="lineCov">     327646 :         out_sv.block(3, 0, 3, 1) = v.block(0, 0, 3, 1);</span>
+<a name="135"><span class="lineNum">     135 </span><span class="lineCov">     327646 : }</span></a>
+<span class="lineNum">     136 </span>            : 
+<span class="lineNum">     137 </span><span class="lineCov">      45780 : cSpAlg::tSpTrans cSpAlg::BuildTrans()</span>
+<span class="lineNum">     138 </span>            : {
+<span class="lineNum">     139 </span><span class="lineCov">      45780 :         return BuildTrans(tMatrix::Identity(), tVector::Zero());</span>
+<a name="140"><span class="lineNum">     140 </span>            : }</a>
+<span class="lineNum">     141 </span>            : 
+<span class="lineNum">     142 </span><span class="lineCov">     612640 : cSpAlg::tSpTrans cSpAlg::BuildTrans(const tMatrix&amp; E, const tVector&amp; r)</span>
+<span class="lineNum">     143 </span>            : {
+<span class="lineNum">     144 </span><span class="lineCov">     612640 :         tSpTrans X;</span>
+<span class="lineNum">     145 </span><span class="lineCov">     612640 :         SetRad(r, X);</span>
+<span class="lineNum">     146 </span><span class="lineCov">     612640 :         SetRot(E, X);</span>
+<span class="lineNum">     147 </span><span class="lineCov">     612640 :         return X;</span>
+<a name="148"><span class="lineNum">     148 </span>            : }</a>
+<span class="lineNum">     149 </span>            : 
+<span class="lineNum">     150 </span><span class="lineCov">       2106 : cSpAlg::tSpTrans cSpAlg::BuildTrans(const tVector&amp; r)</span>
+<span class="lineNum">     151 </span>            : {
+<span class="lineNum">     152 </span><span class="lineCov">       2106 :         return BuildTrans(tMatrix::Identity(), r);</span>
+<a name="153"><span class="lineNum">     153 </span>            : }</a>
+<span class="lineNum">     154 </span>            : 
+<span class="lineNum">     155 </span><span class="lineCov">     245680 : cSpAlg::tSpTrans cSpAlg::MatToTrans(const tMatrix&amp; mat)</span>
+<span class="lineNum">     156 </span>            : {
+<span class="lineNum">     157 </span><span class="lineCov">     245680 :         tMatrix E = mat;</span>
+<span class="lineNum">     158 </span><span class="lineCov">     245680 :         tVector r = mat.col(3);</span>
+<span class="lineNum">     159 </span><span class="lineCov">     245680 :         r[3] = 0;</span>
+<span class="lineNum">     160 </span><span class="lineCov">     245680 :         r = -E.transpose() * r;</span>
+<span class="lineNum">     161 </span><span class="lineCov">     245680 :         return BuildTrans(E, r);</span>
+<a name="162"><span class="lineNum">     162 </span>            : }</a>
+<span class="lineNum">     163 </span>            : 
+<span class="lineNum">     164 </span><span class="lineNoCov">          0 : tMatrix cSpAlg::TransToMat(const tSpTrans&amp; X)</span>
+<span class="lineNum">     165 </span>            : {
+<span class="lineNum">     166 </span><span class="lineNoCov">          0 :         tMatrix E = GetRot(X);</span>
+<span class="lineNum">     167 </span><span class="lineNoCov">          0 :         tVector r = GetRad(X);</span>
+<span class="lineNum">     168 </span><span class="lineNoCov">          0 :         tMatrix m = E;</span>
+<span class="lineNum">     169 </span><span class="lineNoCov">          0 :         m.col(3) = -E * r;</span>
+<span class="lineNum">     170 </span><span class="lineNoCov">          0 :         m(3, 3) = 1;</span>
+<span class="lineNum">     171 </span><span class="lineNoCov">          0 :         return m;</span>
+<a name="172"><span class="lineNum">     172 </span>            : }</a>
+<span class="lineNum">     173 </span>            : 
+<span class="lineNum">     174 </span><span class="lineCov">     159537 : cSpAlg::tSpMat cSpAlg::BuildSpatialMatM(const tSpTrans&amp; X)</span>
+<span class="lineNum">     175 </span>            : {
+<span class="lineNum">     176 </span><span class="lineCov">     159537 :         tSpMat m = tSpMat::Zero();</span>
+<span class="lineNum">     177 </span><span class="lineCov">     159537 :         tMatrix E = GetRot(X);</span>
+<span class="lineNum">     178 </span><span class="lineCov">     159537 :         tVector r = GetRad(X);</span>
+<span class="lineNum">     179 </span><span class="lineCov">     159537 :         tMatrix Er = E * cMathUtil::CrossMat(r);</span>
+<span class="lineNum">     180 </span>            : 
+<span class="lineNum">     181 </span><span class="lineCov">     159537 :         m.block(0, 0, 3, 3) = E.block(0, 0, 3, 3);</span>
+<span class="lineNum">     182 </span><span class="lineCov">     159537 :         m.block(3, 3, 3, 3) = E.block(0, 0, 3, 3);</span>
+<span class="lineNum">     183 </span><span class="lineCov">     159537 :         m.block(3, 0, 3, 3) = -Er.block(0, 0, 3, 3);</span>
+<span class="lineNum">     184 </span><span class="lineCov">     159537 :         return m;</span>
+<a name="185"><span class="lineNum">     185 </span>            : }</a>
+<span class="lineNum">     186 </span>            : 
+<span class="lineNum">     187 </span><span class="lineCov">     159537 : cSpAlg::tSpMat cSpAlg::BuildSpatialMatF(const tSpTrans&amp; X)</span>
+<span class="lineNum">     188 </span>            : {
+<span class="lineNum">     189 </span><span class="lineCov">     159537 :         tSpMat m = tSpMat::Zero();</span>
+<span class="lineNum">     190 </span><span class="lineCov">     159537 :         tMatrix E = GetRot(X);</span>
+<span class="lineNum">     191 </span><span class="lineCov">     159537 :         tVector r = GetRad(X);</span>
+<span class="lineNum">     192 </span><span class="lineCov">     159537 :         tMatrix Er = E * cMathUtil::CrossMat(r);</span>
+<span class="lineNum">     193 </span>            : 
+<span class="lineNum">     194 </span><span class="lineCov">     159537 :         m.block(0, 0, 3, 3) = E.block(0, 0, 3, 3);</span>
+<span class="lineNum">     195 </span><span class="lineCov">     159537 :         m.block(3, 3, 3, 3) = E.block(0, 0, 3, 3);</span>
+<span class="lineNum">     196 </span><span class="lineCov">     159537 :         m.block(0, 3, 3, 3) = -Er.block(0, 0, 3, 3);</span>
+<span class="lineNum">     197 </span><span class="lineCov">     159537 :         return m;</span>
+<span class="lineNum">     198 </span>            : }
+<a name="199"><span class="lineNum">     199 </span>            : </a>
+<span class="lineNum">     200 </span>            : 
+<span class="lineNum">     201 </span><span class="lineCov">     159537 : cSpAlg::tSpTrans cSpAlg::InvTrans(const tSpTrans&amp; X)</span>
+<span class="lineNum">     202 </span>            : {
+<span class="lineNum">     203 </span><span class="lineCov">     159537 :         tMatrix E = GetRot(X);</span>
+<span class="lineNum">     204 </span><span class="lineCov">     159537 :         tVector r = GetRad(X);</span>
+<span class="lineNum">     205 </span><span class="lineCov">     159537 :         tSpTrans inv_X = BuildTrans(E.transpose(), -E * r);</span>
+<span class="lineNum">     206 </span><span class="lineCov">     159537 :         return inv_X;</span>
+<a name="207"><span class="lineNum">     207 </span>            : }</a>
+<span class="lineNum">     208 </span>            : 
+<span class="lineNum">     209 </span><span class="lineCov">     801971 : tMatrix cSpAlg::GetRot(const tSpTrans&amp; X)</span>
+<span class="lineNum">     210 </span>            : {
+<span class="lineNum">     211 </span><span class="lineCov">     801971 :         tMatrix E = tMatrix::Zero();</span>
+<span class="lineNum">     212 </span><span class="lineCov">     801971 :         E.block(0, 0, 3, 3) = X.block(0, 0, 3, 3);</span>
+<span class="lineNum">     213 </span><span class="lineCov">     801971 :         return E;</span>
+<a name="214"><span class="lineNum">     214 </span>            : }</a>
+<span class="lineNum">     215 </span>            : 
+<span class="lineNum">     216 </span><span class="lineCov">     612640 : void cSpAlg::SetRot(const tMatrix&amp; E, tSpTrans&amp; out_X)</span>
+<span class="lineNum">     217 </span>            : {
+<span class="lineNum">     218 </span><span class="lineCov">     612640 :         out_X.block(0, 0, 3, 3) = E.block(0, 0, 3, 3);</span>
+<a name="219"><span class="lineNum">     219 </span><span class="lineCov">     612640 : }</span></a>
+<span class="lineNum">     220 </span>            : 
+<span class="lineNum">     221 </span><span class="lineCov">     801971 : tVector cSpAlg::GetRad(const tSpTrans&amp; X)</span>
+<span class="lineNum">     222 </span>            : {
+<span class="lineNum">     223 </span><span class="lineCov">     801971 :         tVector r = tVector::Zero();</span>
+<span class="lineNum">     224 </span><span class="lineCov">     801971 :         r.block(0, 0, 3, 1) = X.block(0, 3, 3, 1);</span>
+<span class="lineNum">     225 </span><span class="lineCov">     801971 :         return r;</span>
+<a name="226"><span class="lineNum">     226 </span>            : }</a>
+<span class="lineNum">     227 </span>            : 
+<span class="lineNum">     228 </span><span class="lineCov">     612640 : void cSpAlg::SetRad(const tVector&amp; r, tSpTrans&amp; out_X)</span>
+<span class="lineNum">     229 </span>            : {
+<span class="lineNum">     230 </span><span class="lineCov">     612640 :         out_X.block(0, 3, 3, 1) = r.block(0, 0, 3, 1);</span>
+<a name="231"><span class="lineNum">     231 </span><span class="lineCov">     612640 : }</span></a>
+<span class="lineNum">     232 </span>            : 
+<span class="lineNum">     233 </span><span class="lineCov">     113757 : cSpAlg::tSpVec cSpAlg::ApplyTransM(const tSpTrans&amp; X, const tSpVec&amp; sv)</span>
+<span class="lineNum">     234 </span>            : {
+<span class="lineNum">     235 </span><span class="lineCov">     113757 :         tMatrix E = GetRot(X);</span>
+<span class="lineNum">     236 </span><span class="lineCov">     113757 :         tVector r = GetRad(X);</span>
+<span class="lineNum">     237 </span><span class="lineCov">     113757 :         tVector o0 = GetOmega(sv);</span>
+<span class="lineNum">     238 </span><span class="lineCov">     113757 :         tVector v0 = GetV(sv);</span>
+<span class="lineNum">     239 </span>            : 
+<span class="lineNum">     240 </span><span class="lineCov">     113757 :         tVector o1 = E * o0;</span>
+<span class="lineNum">     241 </span><span class="lineCov">     113757 :         tVector v1 = E * (v0 - r.cross3(o0));</span>
+<span class="lineNum">     242 </span>            : 
+<span class="lineNum">     243 </span><span class="lineCov">     113757 :         tSpVec new_vec = BuildSV(o1, v1);</span>
+<span class="lineNum">     244 </span><span class="lineCov">     113757 :         return new_vec;</span>
+<a name="245"><span class="lineNum">     245 </span>            : }</a>
+<span class="lineNum">     246 </span>            : 
+<span class="lineNum">     247 </span><span class="lineCov">      67903 : cSpAlg::tSpVec cSpAlg::ApplyTransF(const tSpTrans&amp; X, const tSpVec&amp; sv)</span>
+<span class="lineNum">     248 </span>            : {
+<span class="lineNum">     249 </span><span class="lineCov">      67903 :         tMatrix E = GetRot(X);</span>
+<span class="lineNum">     250 </span><span class="lineCov">      67903 :         tVector r = GetRad(X);</span>
+<span class="lineNum">     251 </span><span class="lineCov">      67903 :         tVector o0 = GetOmega(sv);</span>
+<span class="lineNum">     252 </span><span class="lineCov">      67903 :         tVector v0 = GetV(sv);</span>
+<span class="lineNum">     253 </span>            : 
+<span class="lineNum">     254 </span><span class="lineCov">      67903 :         tVector o1 = E * (o0 -r.cross3(v0));</span>
+<span class="lineNum">     255 </span><span class="lineCov">      67903 :         tVector v1 = E * v0;</span>
+<span class="lineNum">     256 </span>            : 
+<span class="lineNum">     257 </span><span class="lineCov">      67903 :         tSpVec new_vec = BuildSV(o1, v1);</span>
+<span class="lineNum">     258 </span><span class="lineCov">      67903 :         return new_vec;</span>
+<a name="259"><span class="lineNum">     259 </span>            : }</a>
+<span class="lineNum">     260 </span>            : 
+<span class="lineNum">     261 </span><span class="lineNoCov">          0 : Eigen::MatrixXd cSpAlg::ApplyTransM(const tSpTrans&amp; X, const Eigen::MatrixXd&amp; sm)</span>
+<span class="lineNum">     262 </span>            : {
+<span class="lineNum">     263 </span><span class="lineNoCov">          0 :         assert(sm.rows() == gSpVecSize);</span>
+<span class="lineNum">     264 </span><span class="lineNoCov">          0 :         Eigen::MatrixXd result(gSpVecSize, sm.cols());</span>
+<span class="lineNum">     265 </span><span class="lineNoCov">          0 :         for (int i = 0; i &lt; sm.cols(); ++i)</span>
+<span class="lineNum">     266 </span>            :         {
+<span class="lineNum">     267 </span><span class="lineNoCov">          0 :                 const tSpVec&amp; curr_sv = sm.col(i);</span>
+<span class="lineNum">     268 </span><span class="lineNoCov">          0 :                 result.col(i) = ApplyTransM(X, curr_sv);</span>
+<span class="lineNum">     269 </span>            :         }
+<span class="lineNum">     270 </span><span class="lineNoCov">          0 :         return result;</span>
+<a name="271"><span class="lineNum">     271 </span>            : }</a>
+<span class="lineNum">     272 </span>            : 
+<span class="lineNum">     273 </span><span class="lineNoCov">          0 : Eigen::MatrixXd cSpAlg::ApplyTransF(const tSpTrans&amp; X, const Eigen::MatrixXd&amp; sm)</span>
+<span class="lineNum">     274 </span>            : {
+<span class="lineNum">     275 </span><span class="lineNoCov">          0 :         assert(sm.rows() == gSpVecSize);</span>
+<span class="lineNum">     276 </span><span class="lineNoCov">          0 :         Eigen::MatrixXd result(gSpVecSize, sm.cols());</span>
+<span class="lineNum">     277 </span><span class="lineNoCov">          0 :         for (int i = 0; i &lt; sm.cols(); ++i)</span>
+<span class="lineNum">     278 </span>            :         {
+<span class="lineNum">     279 </span><span class="lineNoCov">          0 :                 const tSpVec&amp; curr_sv = sm.col(i);</span>
+<span class="lineNum">     280 </span><span class="lineNoCov">          0 :                 result.col(i) = ApplyTransF(X, curr_sv);</span>
+<span class="lineNum">     281 </span>            :         }
+<span class="lineNum">     282 </span><span class="lineNoCov">          0 :         return result;</span>
+<a name="283"><span class="lineNum">     283 </span>            : }</a>
+<span class="lineNum">     284 </span>            : 
+<span class="lineNum">     285 </span><span class="lineCov">      50140 : cSpAlg::tSpVec cSpAlg::ApplyInvTransM(const tSpTrans&amp; X, const tSpVec&amp; sv)</span>
+<span class="lineNum">     286 </span>            : {
+<span class="lineNum">     287 </span><span class="lineCov">      50140 :         tMatrix E = GetRot(X);</span>
+<span class="lineNum">     288 </span><span class="lineCov">      50140 :         tVector r = GetRad(X);</span>
+<span class="lineNum">     289 </span><span class="lineCov">      50140 :         tVector o0 = GetOmega(sv);</span>
+<span class="lineNum">     290 </span><span class="lineCov">      50140 :         tVector v0 = GetV(sv);</span>
+<span class="lineNum">     291 </span>            : 
+<span class="lineNum">     292 </span><span class="lineCov">      50140 :         tVector o1 = E.transpose() * o0;</span>
+<span class="lineNum">     293 </span><span class="lineCov">      50140 :         tVector v1 = E.transpose() * v0 + r.cross3(E.transpose() * o0);</span>
+<span class="lineNum">     294 </span>            : 
+<span class="lineNum">     295 </span><span class="lineCov">      50140 :         tSpVec new_vec = BuildSV(o1, v1);</span>
+<a name="296"><span class="lineNum">     296 </span><span class="lineCov">      50140 :         return new_vec;</span></a>
+<span class="lineNum">     297 </span>            : }
+<span class="lineNum">     298 </span><span class="lineNoCov">          0 : cSpAlg::tSpVec cSpAlg::ApplyInvTransF(const tSpTrans&amp; X, const tSpVec&amp; sv)</span>
+<span class="lineNum">     299 </span>            : {
+<span class="lineNum">     300 </span><span class="lineNoCov">          0 :         tMatrix E = GetRot(X);</span>
+<span class="lineNum">     301 </span><span class="lineNoCov">          0 :         tVector r = GetRad(X);</span>
+<span class="lineNum">     302 </span><span class="lineNoCov">          0 :         tVector o0 = GetOmega(sv);</span>
+<span class="lineNum">     303 </span><span class="lineNoCov">          0 :         tVector v0 = GetV(sv);</span>
+<span class="lineNum">     304 </span>            : 
+<span class="lineNum">     305 </span><span class="lineNoCov">          0 :         tVector o1 = E.transpose() * o0 + r.cross3(E.transpose() * v0);</span>
+<span class="lineNum">     306 </span><span class="lineNoCov">          0 :         tVector v1 = E.transpose() * v0;</span>
+<span class="lineNum">     307 </span>            : 
+<span class="lineNum">     308 </span><span class="lineNoCov">          0 :         tSpVec new_vec = BuildSV(o1, v1);</span>
+<span class="lineNum">     309 </span><span class="lineNoCov">          0 :         return new_vec;</span>
+<a name="310"><span class="lineNum">     310 </span>            : }</a>
+<span class="lineNum">     311 </span>            : 
+<span class="lineNum">     312 </span><span class="lineCov">      45780 : Eigen::MatrixXd cSpAlg::ApplyInvTransM(const tSpTrans&amp; X, const Eigen::MatrixXd&amp; sm)</span>
+<span class="lineNum">     313 </span>            : {
+<span class="lineNum">     314 </span><span class="lineCov">      45780 :         assert(sm.rows() == gSpVecSize);</span>
+<span class="lineNum">     315 </span><span class="lineCov">      45780 :         Eigen::MatrixXd result(sm.rows(), sm.cols());</span>
+<span class="lineNum">     316 </span><span class="lineCov">      95920 :         for (int i = 0; i &lt; sm.cols(); ++i)</span>
+<span class="lineNum">     317 </span>            :         {
+<span class="lineNum">     318 </span><span class="lineCov">      50140 :                 const tSpVec&amp; curr_sv = sm.col(i);</span>
+<span class="lineNum">     319 </span><span class="lineCov">      50140 :                 result.col(i) = ApplyInvTransM(X, curr_sv);</span>
+<span class="lineNum">     320 </span>            :         }
+<span class="lineNum">     321 </span><span class="lineCov">      45780 :         return result;</span>
+<a name="322"><span class="lineNum">     322 </span>            : }</a>
+<span class="lineNum">     323 </span>            : 
+<span class="lineNum">     324 </span><span class="lineNoCov">          0 : Eigen::MatrixXd cSpAlg::ApplyInvTransF(const tSpTrans&amp; X, const Eigen::MatrixXd&amp; sm)</span>
+<span class="lineNum">     325 </span>            : {
+<span class="lineNum">     326 </span><span class="lineNoCov">          0 :         assert(sm.rows() == gSpVecSize);</span>
+<span class="lineNum">     327 </span><span class="lineNoCov">          0 :         Eigen::MatrixXd result(sm.rows(), sm.cols());</span>
+<span class="lineNum">     328 </span><span class="lineNoCov">          0 :         for (int i = 0; i &lt; sm.cols(); ++i)</span>
+<span class="lineNum">     329 </span>            :         {
+<span class="lineNum">     330 </span><span class="lineNoCov">          0 :                 const tSpVec&amp; curr_sv = sm.col(i);</span>
+<span class="lineNum">     331 </span><span class="lineNoCov">          0 :                 result.col(i) = ApplyInvTransF(X, curr_sv);</span>
+<span class="lineNum">     332 </span>            :         }
+<span class="lineNum">     333 </span><span class="lineNoCov">          0 :         return result;</span>
+<a name="334"><span class="lineNum">     334 </span>            : }</a>
+<span class="lineNum">     335 </span>            : 
+<span class="lineNum">     336 </span><span class="lineCov">      45780 : cSpAlg::tSpTrans cSpAlg::CompTrans(const tSpTrans&amp; X0, const tSpTrans&amp; X1)</span>
+<span class="lineNum">     337 </span>            : {
+<span class="lineNum">     338 </span><span class="lineCov">      45780 :         tMatrix E0 = GetRot(X0);</span>
+<span class="lineNum">     339 </span><span class="lineCov">      45780 :         tMatrix E1 = GetRot(X1);</span>
+<span class="lineNum">     340 </span><span class="lineCov">      45780 :         tVector r0 = GetRad(X0);</span>
+<span class="lineNum">     341 </span><span class="lineCov">      45780 :         tVector r1 = GetRad(X1);</span>
+<span class="lineNum">     342 </span>            : 
+<span class="lineNum">     343 </span><span class="lineCov">      45780 :         tSpTrans X = BuildTrans(E0 * E1, r1 + E1.transpose() * r0);</span>
+<span class="lineNum">     344 </span><span class="lineCov">      45780 :         return X;</span>
+<a name="345"><span class="lineNum">     345 </span>            : }</a>
+<span class="lineNum">     346 </span>            : 
+<span class="lineNum">     347 </span><span class="lineCov">     157357 : cSpAlg::tSpTrans cSpAlg::GetTrans(const Eigen::MatrixXd&amp; trans_arr, int j)</span>
+<span class="lineNum">     348 </span>            : {
+<span class="lineNum">     349 </span><span class="lineCov">     157357 :         assert(trans_arr.rows() &gt;= gSVTransRows);</span>
+<span class="lineNum">     350 </span><span class="lineCov">     157357 :         assert((trans_arr.rows() % gSVTransRows) == 0);</span>
+<span class="lineNum">     351 </span><span class="lineCov">     157357 :         assert(trans_arr.cols() == gSVTransCols);</span>
+<span class="lineNum">     352 </span>            : 
+<span class="lineNum">     353 </span><span class="lineCov">     157357 :         int row_idx = j * gSVTransRows;</span>
+<span class="lineNum">     354 </span><span class="lineCov">     157357 :         assert(row_idx &lt;= trans_arr.rows() - gSVTransRows);</span>
+<span class="lineNum">     355 </span>            : 
+<a name="356"><span class="lineNum">     356 </span><span class="lineCov">     157357 :         tSpTrans X = trans_arr.block(row_idx, 0, gSVTransRows, gSVTransCols);</span></a>
+<span class="lineNum">     357 </span><span class="lineCov">     157357 :         return X;</span>
+<span class="lineNum">     358 </span><span class="lineCov">          3 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

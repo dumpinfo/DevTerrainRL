@@ -1,0 +1,1270 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/anim/KinTree.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/anim</a> - KinTree.cpp<span style="font-size: 80%;"> (source / <a href="KinTree.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">331</td>
+            <td class="headerCovTableEntry">619</td>
+            <td class="headerCovTableEntryLo">53.5 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">52</td>
+            <td class="headerCovTableEntry">80</td>
+            <td class="headerCovTableEntryLo">65.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;KinTree.h&quot;</a>
+<span class="lineNum">       2 </span>            : 
+<span class="lineNum">       3 </span>            : #include &lt;iostream&gt;
+<span class="lineNum">       4 </span>            : 
+<span class="lineNum">       5 </span>            : #include &quot;util/FileUtil.h&quot;
+<span class="lineNum">       6 </span>            : #include &quot;sim/RBDUtil.h&quot;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : const int cKinTree::gPosDims = 2;
+<span class="lineNum">       9 </span>            : const int cKinTree::gInvalidJointID = -1;
+<span class="lineNum">      10 </span>            : 
+<a name="11"><span class="lineNum">      11 </span>            : // Json keys</a>
+<span class="lineNum">      12 </span><span class="lineCov">          1 : const std::string gJointsKey = &quot;Joints&quot;;</span>
+<span class="lineNum">      13 </span><span class="lineCov">          2 : const std::string gJointDescKeys[cKinTree::eJointDescMax] = </span>
+<span class="lineNum">      14 </span>            : {
+<span class="lineNum">      15 </span>            :         &quot;Type&quot;,
+<span class="lineNum">      16 </span>            :         &quot;Parent&quot;,
+<span class="lineNum">      17 </span>            :         &quot;AttachX&quot;,
+<span class="lineNum">      18 </span>            :         &quot;AttachY&quot;,
+<span class="lineNum">      19 </span>            :         &quot;AttachZ&quot;,
+<span class="lineNum">      20 </span>            :         &quot;Scale&quot;,
+<span class="lineNum">      21 </span>            :         &quot;LinkStiffness&quot;,
+<span class="lineNum">      22 </span>            :         &quot;LimLow&quot;,
+<span class="lineNum">      23 </span>            :         &quot;LimHigh&quot;,
+<span class="lineNum">      24 </span>            :         &quot;Offset&quot;
+<a name="25"><span class="lineNum">      25 </span><span class="lineCov">          1 : };</span></a>
+<span class="lineNum">      26 </span><span class="lineCov">          1 : const std::string gBodyDefsKey = &quot;BodyDefs&quot;;</span>
+<span class="lineNum">      27 </span><span class="lineCov">          2 : const std::string gBodyDescKeys[cKinTree::eBodyParamMax] =</span>
+<span class="lineNum">      28 </span>            : {
+<span class="lineNum">      29 </span>            :         &quot;Shape&quot;,
+<span class="lineNum">      30 </span>            :         &quot;Mass&quot;,
+<span class="lineNum">      31 </span>            :         &quot;AttachX&quot;,
+<span class="lineNum">      32 </span>            :         &quot;AttachY&quot;,
+<span class="lineNum">      33 </span>            :         &quot;AttachZ&quot;,
+<span class="lineNum">      34 </span>            :         &quot;Theta&quot;,
+<span class="lineNum">      35 </span>            :         &quot;Param0&quot;,
+<span class="lineNum">      36 </span>            :         &quot;Param1&quot;,
+<span class="lineNum">      37 </span>            :         &quot;Param2&quot;,
+<span class="lineNum">      38 </span>            :         &quot;ColorR&quot;,
+<span class="lineNum">      39 </span>            :         &quot;ColorG&quot;,
+<span class="lineNum">      40 </span>            :         &quot;ColorB&quot;,
+<span class="lineNum">      41 </span>            :         &quot;ColorA&quot;,
+<span class="lineNum">      42 </span><span class="lineCov">          1 : };</span>
+<a name="43"><span class="lineNum">      43 </span>            : </a>
+<span class="lineNum">      44 </span><span class="lineCov">          1 : const std::string gDrawShapeDefsKey = &quot;DrawShapeDefs&quot;;</span>
+<span class="lineNum">      45 </span><span class="lineCov">          2 : const std::string gDrawShapeDescKeys[cKinTree::eDrawShapeParamMax] =</span>
+<span class="lineNum">      46 </span>            : {
+<span class="lineNum">      47 </span>            :         &quot;Shape&quot;,
+<span class="lineNum">      48 </span>            :         &quot;ParentJoint&quot;,
+<span class="lineNum">      49 </span>            :         &quot;AttachX&quot;,
+<span class="lineNum">      50 </span>            :         &quot;AttachY&quot;,
+<span class="lineNum">      51 </span>            :         &quot;AttachZ&quot;,
+<span class="lineNum">      52 </span>            :         &quot;Theta&quot;,
+<span class="lineNum">      53 </span>            :         &quot;Param0&quot;,
+<span class="lineNum">      54 </span>            :         &quot;Param1&quot;,
+<span class="lineNum">      55 </span>            :         &quot;Param2&quot;,
+<span class="lineNum">      56 </span>            :         &quot;ColorR&quot;,
+<span class="lineNum">      57 </span>            :         &quot;ColorG&quot;,
+<span class="lineNum">      58 </span>            :         &quot;ColorB&quot;,
+<span class="lineNum">      59 </span>            :         &quot;ColorA&quot;,
+<a name="60"><span class="lineNum">      60 </span><span class="lineCov">          1 : };</span></a>
+<span class="lineNum">      61 </span>            : 
+<span class="lineNum">      62 </span><span class="lineCov">     206111 : int cKinTree::GetRoot(const Eigen::MatrixXd&amp; joint_desc)</span>
+<span class="lineNum">      63 </span>            : {
+<span class="lineNum">      64 </span>            :         // this should always be true right?
+<span class="lineNum">      65 </span><span class="lineCov">     206111 :         return 0;</span>
+<span class="lineNum">      66 </span>            :         /*
+<span class="lineNum">      67 </span>            :         int num_joints = GetNumJoints(joint_desc);
+<span class="lineNum">      68 </span>            :         for (int i = 0; i &lt; num_joints; ++i)
+<span class="lineNum">      69 </span>            :         {
+<span class="lineNum">      70 </span>            :                 int parent = GetParent(joint_desc, i);
+<span class="lineNum">      71 </span>            :                 if (parent == gInvalidJointID)
+<span class="lineNum">      72 </span>            :                 {
+<span class="lineNum">      73 </span>            :                         return i;
+<span class="lineNum">      74 </span>            :                 }
+<span class="lineNum">      75 </span>            :         }
+<span class="lineNum">      76 </span>            :         assert(false);
+<span class="lineNum">      77 </span>            :         return gInvalidJointID;
+<span class="lineNum">      78 </span>            :         */
+<a name="79"><span class="lineNum">      79 </span>            : }</a>
+<span class="lineNum">      80 </span>            : 
+<span class="lineNum">      81 </span><span class="lineNoCov">          0 : void cKinTree::FindChildren(const Eigen::MatrixXd&amp; joint_desc, int joint_id, Eigen::VectorXi&amp; out_children)</span>
+<span class="lineNum">      82 </span>            : {
+<span class="lineNum">      83 </span><span class="lineNoCov">          0 :         const int max_size = 128;</span>
+<span class="lineNum">      84 </span>            :         int children_buffer[max_size];
+<span class="lineNum">      85 </span><span class="lineNoCov">          0 :         int num_children = 0;</span>
+<span class="lineNum">      86 </span><span class="lineNoCov">          0 :         int num_joints = GetNumJoints(joint_desc);</span>
+<span class="lineNum">      87 </span>            : 
+<span class="lineNum">      88 </span><span class="lineNoCov">          0 :         for (int i = 0; i &lt; num_joints; ++i)</span>
+<span class="lineNum">      89 </span>            :         {
+<span class="lineNum">      90 </span><span class="lineNoCov">          0 :                 int parent = GetParent(joint_desc, i);</span>
+<span class="lineNum">      91 </span><span class="lineNoCov">          0 :                 if (parent == joint_id)</span>
+<span class="lineNum">      92 </span>            :                 {
+<span class="lineNum">      93 </span><span class="lineNoCov">          0 :                         children_buffer[num_children] = i;</span>
+<span class="lineNum">      94 </span><span class="lineNoCov">          0 :                         ++num_children;</span>
+<span class="lineNum">      95 </span>            : 
+<span class="lineNum">      96 </span><span class="lineNoCov">          0 :                         if (num_children &gt;= max_size)</span>
+<span class="lineNum">      97 </span>            :                         {
+<span class="lineNum">      98 </span><span class="lineNoCov">          0 :                                 printf(&quot;Too many children, max = %i&quot;, max_size);</span>
+<span class="lineNum">      99 </span><span class="lineNoCov">          0 :                                 assert(false);</span>
+<span class="lineNum">     100 </span>            :                                 return;
+<span class="lineNum">     101 </span>            :                         }
+<span class="lineNum">     102 </span>            :                 }
+<span class="lineNum">     103 </span>            :         }
+<span class="lineNum">     104 </span>            : 
+<span class="lineNum">     105 </span><span class="lineNoCov">          0 :         out_children.resize(num_children);</span>
+<span class="lineNum">     106 </span><span class="lineNoCov">          0 :         for (int i = 0; i &lt; num_children; ++i)</span>
+<span class="lineNum">     107 </span>            :         {
+<span class="lineNum">     108 </span><span class="lineNoCov">          0 :                 out_children[i] = children_buffer[i];</span>
+<span class="lineNum">     109 </span>            :         }
+<a name="110"><span class="lineNum">     110 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     111 </span>            : 
+<span class="lineNum">     112 </span><span class="lineCov">          2 : bool cKinTree::LoadBodyDefs(const std::string&amp; char_file, Eigen::MatrixXd&amp; out_body_defs)</span>
+<span class="lineNum">     113 </span>            : {
+<span class="lineNum">     114 </span><span class="lineCov">          2 :         bool succ = true;</span>
+<span class="lineNum">     115 </span><span class="lineCov">          4 :         std::string str;</span>
+<span class="lineNum">     116 </span>            :         
+<span class="lineNum">     117 </span><span class="lineCov">          4 :         std::ifstream f_stream(char_file.c_str());</span>
+<span class="lineNum">     118 </span><span class="lineCov">          4 :         Json::Value root;</span>
+<span class="lineNum">     119 </span><span class="lineCov">          4 :         Json::Reader reader;</span>
+<span class="lineNum">     120 </span><span class="lineCov">          2 :         succ = reader.parse(f_stream, root);</span>
+<span class="lineNum">     121 </span><span class="lineCov">          2 :         f_stream.close();</span>
+<span class="lineNum">     122 </span>            : 
+<span class="lineNum">     123 </span><span class="lineCov">          2 :         if (succ)</span>
+<span class="lineNum">     124 </span>            :         {
+<span class="lineNum">     125 </span><span class="lineCov">          2 :                 succ = false;</span>
+<span class="lineNum">     126 </span><span class="lineCov">          2 :                 if (!root[gBodyDefsKey].isNull())</span>
+<span class="lineNum">     127 </span>            :                 {
+<span class="lineNum">     128 </span><span class="lineCov">          4 :                         Json::Value body_defs = root.get(gBodyDefsKey, 0);</span>
+<span class="lineNum">     129 </span><span class="lineCov">          2 :                         int num_bodies = body_defs.size();</span>
+<span class="lineNum">     130 </span>            : 
+<span class="lineNum">     131 </span><span class="lineCov">          2 :                         succ = true;</span>
+<span class="lineNum">     132 </span><span class="lineCov">          2 :                         out_body_defs.resize(num_bodies, eBodyParamMax);</span>
+<span class="lineNum">     133 </span><span class="lineCov">         44 :                         for (int b = 0; b &lt; num_bodies; ++b)</span>
+<span class="lineNum">     134 </span>            :                         {
+<span class="lineNum">     135 </span><span class="lineCov">         42 :                                 cKinTree::tBodyDef curr_def;</span>
+<span class="lineNum">     136 </span><span class="lineCov">         84 :                                 Json::Value body_json = body_defs.get(b, 0);</span>
+<span class="lineNum">     137 </span><span class="lineCov">         42 :                                 bool succ_def = ParseBodyDef(body_json, curr_def);</span>
+<span class="lineNum">     138 </span>            : 
+<span class="lineNum">     139 </span><span class="lineCov">         42 :                                 if (succ)</span>
+<span class="lineNum">     140 </span>            :                                 {
+<span class="lineNum">     141 </span><span class="lineCov">         42 :                                         out_body_defs.row(b) = curr_def;</span>
+<span class="lineNum">     142 </span>            :                                 }
+<span class="lineNum">     143 </span>            :                                 else
+<span class="lineNum">     144 </span>            :                                 {
+<span class="lineNum">     145 </span><span class="lineNoCov">          0 :                                         succ = false;</span>
+<span class="lineNum">     146 </span><span class="lineNoCov">          0 :                                         break;</span>
+<span class="lineNum">     147 </span>            :                                 }
+<span class="lineNum">     148 </span>            :                         }
+<span class="lineNum">     149 </span>            :                 }
+<span class="lineNum">     150 </span>            :         }
+<span class="lineNum">     151 </span>            :         
+<span class="lineNum">     152 </span><span class="lineCov">          2 :         if (!succ)</span>
+<span class="lineNum">     153 </span>            :         {
+<span class="lineNum">     154 </span><span class="lineNoCov">          0 :                 printf(&quot;Failed to load body definition from %s\n&quot;, char_file.c_str());</span>
+<span class="lineNum">     155 </span><span class="lineNoCov">          0 :                 succ = false;</span>
+<span class="lineNum">     156 </span>            :         }
+<span class="lineNum">     157 </span>            : 
+<span class="lineNum">     158 </span><span class="lineCov">          4 :         return succ;</span>
+<a name="159"><span class="lineNum">     159 </span>            : }</a>
+<span class="lineNum">     160 </span>            : 
+<span class="lineNum">     161 </span><span class="lineCov">         42 : bool cKinTree::ParseBodyDef(const Json::Value&amp; root, cKinTree::tBodyDef&amp; out_def)</span>
+<span class="lineNum">     162 </span>            : {
+<span class="lineNum">     163 </span><span class="lineCov">         42 :         out_def.setZero();</span>
+<span class="lineNum">     164 </span>            : 
+<span class="lineNum">     165 </span><span class="lineCov">         84 :         std::string shape_str = root.get(gBodyDescKeys[eBodyParamShape], &quot;&quot;).asString();</span>
+<span class="lineNum">     166 </span>            :         eBodyShape shape;
+<span class="lineNum">     167 </span><span class="lineCov">         42 :         bool succ = ParseBodyShape(shape_str, shape);</span>
+<span class="lineNum">     168 </span><span class="lineCov">         42 :         if (succ)</span>
+<span class="lineNum">     169 </span>            :         {
+<span class="lineNum">     170 </span><span class="lineCov">         42 :                 out_def(eBodyParamShape) = static_cast&lt;double&gt;(static_cast&lt;int&gt;(shape));</span>
+<span class="lineNum">     171 </span>            :         }
+<span class="lineNum">     172 </span>            : 
+<span class="lineNum">     173 </span><span class="lineCov">        588 :         for (int i = 0; i &lt; eBodyParamMax; ++i)</span>
+<span class="lineNum">     174 </span>            :         {
+<span class="lineNum">     175 </span><span class="lineCov">        546 :                 const std::string&amp; curr_key = gBodyDescKeys[i];</span>
+<span class="lineNum">     176 </span><span class="lineCov">       1092 :                 if (!root[curr_key].isNull()</span>
+<span class="lineNum">     177 </span><span class="lineCov">        546 :                         &amp;&amp; root[curr_key].isNumeric())</span>
+<span class="lineNum">     178 </span>            :                 {
+<span class="lineNum">     179 </span><span class="lineCov">       1008 :                         Json::Value json_val = root[curr_key];</span>
+<span class="lineNum">     180 </span><span class="lineCov">        504 :                         double val = json_val.asDouble();</span>
+<span class="lineNum">     181 </span><span class="lineCov">        504 :                         out_def(i) = val;</span>
+<span class="lineNum">     182 </span>            :                 }
+<span class="lineNum">     183 </span>            :         }
+<span class="lineNum">     184 </span>            : 
+<span class="lineNum">     185 </span><span class="lineCov">         84 :         return succ;</span>
+<a name="186"><span class="lineNum">     186 </span>            : }</a>
+<span class="lineNum">     187 </span>            : 
+<span class="lineNum">     188 </span><span class="lineCov">        100 : bool cKinTree::ParseBodyShape(const std::string&amp; str, cKinTree::eBodyShape&amp; out_shape)</span>
+<span class="lineNum">     189 </span>            : {
+<span class="lineNum">     190 </span><span class="lineCov">        100 :         bool succ = true;</span>
+<span class="lineNum">     191 </span><span class="lineCov">        100 :         if (str == &quot;box&quot;)</span>
+<span class="lineNum">     192 </span>            :         {
+<span class="lineNum">     193 </span><span class="lineCov">        100 :                 out_shape = eBodyShapeBox;</span>
+<span class="lineNum">     194 </span>            :         }
+<span class="lineNum">     195 </span><span class="lineNoCov">          0 :         else if (str == &quot;capsule&quot;)</span>
+<span class="lineNum">     196 </span>            :         {
+<span class="lineNum">     197 </span><span class="lineNoCov">          0 :                 out_shape = eBodyShapeCapsule;</span>
+<span class="lineNum">     198 </span>            :         }
+<span class="lineNum">     199 </span><span class="lineNoCov">          0 :         else if (str == &quot;null&quot;)</span>
+<span class="lineNum">     200 </span>            :         {
+<span class="lineNum">     201 </span><span class="lineNoCov">          0 :                 out_shape = eBodyShapeNULL;</span>
+<span class="lineNum">     202 </span>            :         }
+<span class="lineNum">     203 </span>            :         else
+<span class="lineNum">     204 </span>            :         {
+<span class="lineNum">     205 </span><span class="lineNoCov">          0 :                 printf(&quot;Unsupported body shape %s\n&quot;, str.c_str());</span>
+<span class="lineNum">     206 </span><span class="lineNoCov">          0 :                 assert(false);</span>
+<span class="lineNum">     207 </span>            :         }
+<span class="lineNum">     208 </span><span class="lineCov">        100 :         return succ;</span>
+<a name="209"><span class="lineNum">     209 </span>            : }</a>
+<span class="lineNum">     210 </span>            : 
+<span class="lineNum">     211 </span><span class="lineCov">          2 : bool cKinTree::LoadDrawShapeDefs(const std::string&amp; char_file, Eigen::MatrixXd&amp; out_draw_defs)</span>
+<span class="lineNum">     212 </span>            : {
+<span class="lineNum">     213 </span><span class="lineCov">          2 :         bool succ = true;</span>
+<span class="lineNum">     214 </span><span class="lineCov">          4 :         std::string str;</span>
+<span class="lineNum">     215 </span>            : 
+<span class="lineNum">     216 </span><span class="lineCov">          4 :         std::ifstream f_stream(char_file.c_str());</span>
+<span class="lineNum">     217 </span><span class="lineCov">          4 :         Json::Value root;</span>
+<span class="lineNum">     218 </span><span class="lineCov">          4 :         Json::Reader reader;</span>
+<span class="lineNum">     219 </span><span class="lineCov">          2 :         succ = reader.parse(f_stream, root);</span>
+<span class="lineNum">     220 </span><span class="lineCov">          2 :         f_stream.close();</span>
+<span class="lineNum">     221 </span>            : 
+<span class="lineNum">     222 </span><span class="lineCov">          2 :         if (succ)</span>
+<span class="lineNum">     223 </span>            :         {
+<span class="lineNum">     224 </span><span class="lineCov">          2 :                 if (!root[gDrawShapeDefsKey].isNull())</span>
+<span class="lineNum">     225 </span>            :                 {
+<span class="lineNum">     226 </span><span class="lineCov">          4 :                         Json::Value shape_defs = root.get(gDrawShapeDefsKey, 0);</span>
+<span class="lineNum">     227 </span><span class="lineCov">          2 :                         int num_shapes = shape_defs.size();</span>
+<span class="lineNum">     228 </span>            : 
+<span class="lineNum">     229 </span><span class="lineCov">          2 :                         succ = true;</span>
+<span class="lineNum">     230 </span><span class="lineCov">          2 :                         out_draw_defs.resize(num_shapes, eDrawShapeParamMax);</span>
+<span class="lineNum">     231 </span><span class="lineCov">         60 :                         for (int b = 0; b &lt; num_shapes; ++b)</span>
+<span class="lineNum">     232 </span>            :                         {
+<span class="lineNum">     233 </span><span class="lineCov">         58 :                                 cKinTree::tDrawShapeDef curr_def;</span>
+<span class="lineNum">     234 </span><span class="lineCov">        116 :                                 Json::Value shape_json = shape_defs.get(b, 0);</span>
+<span class="lineNum">     235 </span><span class="lineCov">         58 :                                 bool succ_def = ParseDrawShapeDef(shape_json, curr_def);</span>
+<span class="lineNum">     236 </span>            : 
+<span class="lineNum">     237 </span><span class="lineCov">         58 :                                 if (succ)</span>
+<span class="lineNum">     238 </span>            :                                 {
+<span class="lineNum">     239 </span><span class="lineCov">         58 :                                         out_draw_defs.row(b) = curr_def;</span>
+<span class="lineNum">     240 </span>            :                                 }
+<span class="lineNum">     241 </span>            :                                 else
+<span class="lineNum">     242 </span>            :                                 {
+<span class="lineNum">     243 </span><span class="lineNoCov">          0 :                                         succ = false;</span>
+<span class="lineNum">     244 </span><span class="lineNoCov">          0 :                                         break;</span>
+<span class="lineNum">     245 </span>            :                                 }
+<span class="lineNum">     246 </span>            :                         }
+<span class="lineNum">     247 </span>            :                 }
+<span class="lineNum">     248 </span>            :         }
+<span class="lineNum">     249 </span>            : 
+<span class="lineNum">     250 </span><span class="lineCov">          2 :         if (!succ)</span>
+<span class="lineNum">     251 </span>            :         {
+<span class="lineNum">     252 </span><span class="lineNoCov">          0 :                 printf(&quot;Failed to load draw shape definition from %s\n&quot;, char_file.c_str());</span>
+<span class="lineNum">     253 </span><span class="lineNoCov">          0 :                 assert(false);</span>
+<span class="lineNum">     254 </span>            :         }
+<span class="lineNum">     255 </span>            : 
+<span class="lineNum">     256 </span><span class="lineCov">          4 :         return succ;</span>
+<a name="257"><span class="lineNum">     257 </span>            : }</a>
+<span class="lineNum">     258 </span>            : 
+<span class="lineNum">     259 </span><span class="lineCov">         58 : bool cKinTree::ParseDrawShapeDef(const Json::Value&amp; root, tBodyDef&amp; out_def)</span>
+<span class="lineNum">     260 </span>            : {
+<span class="lineNum">     261 </span><span class="lineCov">         58 :         out_def.setZero();</span>
+<span class="lineNum">     262 </span>            : 
+<span class="lineNum">     263 </span><span class="lineCov">        116 :         std::string shape_str = root.get(gDrawShapeDescKeys[eDrawShapeShape], &quot;&quot;).asString();</span>
+<span class="lineNum">     264 </span>            :         eBodyShape shape;
+<span class="lineNum">     265 </span><span class="lineCov">         58 :         bool succ = ParseBodyShape(shape_str, shape);</span>
+<span class="lineNum">     266 </span><span class="lineCov">         58 :         if (succ)</span>
+<span class="lineNum">     267 </span>            :         {
+<span class="lineNum">     268 </span><span class="lineCov">         58 :                 out_def(eDrawShapeShape) = static_cast&lt;double&gt;(static_cast&lt;int&gt;(shape));</span>
+<span class="lineNum">     269 </span>            :         }
+<span class="lineNum">     270 </span>            : 
+<span class="lineNum">     271 </span><span class="lineCov">        812 :         for (int i = 0; i &lt; eDrawShapeParamMax; ++i)</span>
+<span class="lineNum">     272 </span>            :         {
+<span class="lineNum">     273 </span><span class="lineCov">        754 :                 const std::string&amp; curr_key = gDrawShapeDescKeys[i];</span>
+<span class="lineNum">     274 </span><span class="lineCov">       1508 :                 if (!root[curr_key].isNull()</span>
+<span class="lineNum">     275 </span><span class="lineCov">        754 :                         &amp;&amp; root[curr_key].isNumeric())</span>
+<span class="lineNum">     276 </span>            :                 {
+<span class="lineNum">     277 </span><span class="lineCov">       1392 :                         Json::Value json_val = root[curr_key];</span>
+<span class="lineNum">     278 </span><span class="lineCov">        696 :                         double val = json_val.asDouble();</span>
+<span class="lineNum">     279 </span><span class="lineCov">        696 :                         out_def(i) = val;</span>
+<span class="lineNum">     280 </span>            :                 }
+<span class="lineNum">     281 </span>            :         }
+<span class="lineNum">     282 </span>            : 
+<span class="lineNum">     283 </span><span class="lineCov">        116 :         return succ;</span>
+<a name="284"><span class="lineNum">     284 </span>            : }</a>
+<span class="lineNum">     285 </span>            : 
+<span class="lineNum">     286 </span><span class="lineCov">        126 : tVector cKinTree::CalcBodyPartPos(const Eigen::MatrixXd&amp; joint_mat, const Eigen::VectorXd&amp; state, const Eigen::MatrixXd&amp; body_defs, int part_id)</span>
+<span class="lineNum">     287 </span>            : {
+<span class="lineNum">     288 </span><span class="lineCov">        126 :         assert(IsValidBody(body_defs, part_id));</span>
+<span class="lineNum">     289 </span><span class="lineCov">        126 :         tMatrix body_joint_trans = BodyJointTrans(body_defs, part_id);</span>
+<span class="lineNum">     290 </span><span class="lineCov">        126 :         tMatrix joint_to_world_trans = JointWorldTrans(joint_mat, state, part_id);</span>
+<span class="lineNum">     291 </span>            :         
+<span class="lineNum">     292 </span><span class="lineCov">        126 :         tVector attach_pt = tVector(0, 0, 0, 1);</span>
+<span class="lineNum">     293 </span><span class="lineCov">        126 :         attach_pt = joint_to_world_trans * (body_joint_trans * attach_pt);</span>
+<span class="lineNum">     294 </span><span class="lineCov">        126 :         return attach_pt;</span>
+<a name="295"><span class="lineNum">     295 </span>            : }</a>
+<span class="lineNum">     296 </span>            : 
+<span class="lineNum">     297 </span><span class="lineCov">     455572 : cKinTree::eBodyShape cKinTree::GetBodyShape(const Eigen::MatrixXd&amp; body_defs, int part_id)</span>
+<span class="lineNum">     298 </span>            : {
+<span class="lineNum">     299 </span><span class="lineCov">     455572 :         cKinTree::eBodyShape shape = static_cast&lt;cKinTree::eBodyShape&gt;(static_cast&lt;int&gt;(body_defs(part_id, cKinTree::eBodyParamShape)));</span>
+<span class="lineNum">     300 </span><span class="lineCov">     455572 :         return shape;</span>
+<a name="301"><span class="lineNum">     301 </span>            : }</a>
+<span class="lineNum">     302 </span>            : 
+<span class="lineNum">     303 </span><span class="lineCov">     127246 : tVector cKinTree::GetBodyAttachPt(const Eigen::MatrixXd&amp; body_defs, int part_id)</span>
+<span class="lineNum">     304 </span>            : {
+<span class="lineNum">     305 </span><span class="lineCov">     127246 :         const cKinTree::tBodyDef&amp; def = body_defs.row(part_id);</span>
+<span class="lineNum">     306 </span><span class="lineCov">     127246 :         tVector attach_pt = tVector(def(eBodyParamAttachX), def(eBodyParamAttachY), def(eBodyParamAttachZ), 0);</span>
+<span class="lineNum">     307 </span><span class="lineCov">     127246 :         return attach_pt;</span>
+<a name="308"><span class="lineNum">     308 </span>            : }</a>
+<span class="lineNum">     309 </span>            : 
+<span class="lineNum">     310 </span><span class="lineCov">        376 : void cKinTree::GetBodyRotation(const Eigen::MatrixXd&amp; body_defs, int part_id, tVector&amp; out_axis, double&amp; out_theta)</span>
+<span class="lineNum">     311 </span>            : {
+<span class="lineNum">     312 </span><span class="lineCov">        376 :         const cKinTree::tBodyDef&amp; def = body_defs.row(part_id);</span>
+<span class="lineNum">     313 </span><span class="lineCov">        376 :         out_theta = def(eBodyParamTheta);</span>
+<span class="lineNum">     314 </span><span class="lineCov">        376 :         out_axis = tVector(0, 0, 1, 0);</span>
+<a name="315"><span class="lineNum">     315 </span><span class="lineCov">        376 : }</span></a>
+<span class="lineNum">     316 </span>            : 
+<span class="lineNum">     317 </span><span class="lineCov">     113799 : double cKinTree::GetBodyMass(const Eigen::MatrixXd&amp; body_defs, int part_id)</span>
+<span class="lineNum">     318 </span>            : {
+<span class="lineNum">     319 </span><span class="lineCov">     113799 :         double mass = body_defs(part_id, cKinTree::eBodyParamMass);</span>
+<span class="lineNum">     320 </span><span class="lineCov">     113799 :         return mass;</span>
+<a name="321"><span class="lineNum">     321 </span>            : }</a>
+<span class="lineNum">     322 </span>            : 
+<span class="lineNum">     323 </span><span class="lineCov">       2148 : tVector cKinTree::GetBodySize(const Eigen::MatrixXd&amp; body_defs, int part_id)</span>
+<span class="lineNum">     324 </span>            : {
+<span class="lineNum">     325 </span><span class="lineCov">       2148 :         const tBodyDef&amp; def = body_defs.row(part_id);</span>
+<span class="lineNum">     326 </span><span class="lineCov">       2148 :         tVector size = tVector(def(eBodyParam0), def(eBodyParam1), def(eBodyParam2), 0);</span>
+<span class="lineNum">     327 </span><span class="lineCov">       2148 :         return size;</span>
+<a name="328"><span class="lineNum">     328 </span>            : }</a>
+<span class="lineNum">     329 </span>            : 
+<span class="lineNum">     330 </span><span class="lineNoCov">          0 : tVector cKinTree::GetBodyColor(const Eigen::MatrixXd&amp; body_defs, int part_id)</span>
+<span class="lineNum">     331 </span>            : {
+<span class="lineNum">     332 </span><span class="lineNoCov">          0 :         const tBodyDef&amp; def = body_defs.row(part_id);</span>
+<span class="lineNum">     333 </span><span class="lineNoCov">          0 :         tVector col = tVector(def(eBodyColorR), def(eBodyColorG), def(eBodyColorB), def(eBodyColorA));</span>
+<span class="lineNum">     334 </span><span class="lineNoCov">          0 :         return col;</span>
+<a name="335"><span class="lineNum">     335 </span>            : }</a>
+<span class="lineNum">     336 </span>            : 
+<span class="lineNum">     337 </span><span class="lineNoCov">          0 : double cKinTree::CalcTotalMass(const Eigen::MatrixXd&amp; body_defs)</span>
+<span class="lineNum">     338 </span>            : {
+<span class="lineNum">     339 </span><span class="lineNoCov">          0 :         double total_mass = 0;</span>
+<span class="lineNum">     340 </span><span class="lineNoCov">          0 :         for (int i = 0; i &lt; body_defs.rows(); ++i)</span>
+<span class="lineNum">     341 </span>            :         {
+<span class="lineNum">     342 </span><span class="lineNoCov">          0 :                 if (IsValidBody(body_defs, i))</span>
+<span class="lineNum">     343 </span>            :                 {
+<span class="lineNum">     344 </span><span class="lineNoCov">          0 :                         double mass = cKinTree::GetBodyMass(body_defs, i);</span>
+<span class="lineNum">     345 </span><span class="lineNoCov">          0 :                         total_mass += mass;</span>
+<span class="lineNum">     346 </span>            :                 }
+<span class="lineNum">     347 </span>            :         }
+<span class="lineNum">     348 </span><span class="lineNoCov">          0 :         return total_mass;</span>
+<a name="349"><span class="lineNum">     349 </span>            : }</a>
+<span class="lineNum">     350 </span>            : 
+<span class="lineNum">     351 </span><span class="lineCov">     341397 : bool cKinTree::IsValidBody(const Eigen::MatrixXd&amp; body_defs, int part_id)</span>
+<span class="lineNum">     352 </span>            : {
+<span class="lineNum">     353 </span><span class="lineCov">     341397 :         eBodyShape shape = GetBodyShape(body_defs, part_id);</span>
+<span class="lineNum">     354 </span><span class="lineCov">     341397 :         if (shape &lt; eBodyShapeMax)</span>
+<span class="lineNum">     355 </span>            :         {
+<span class="lineNum">     356 </span><span class="lineCov">     341397 :                 return true;</span>
+<span class="lineNum">     357 </span>            :         }
+<span class="lineNum">     358 </span><span class="lineNoCov">          0 :         return false;</span>
+<a name="359"><span class="lineNum">     359 </span>            : }</a>
+<span class="lineNum">     360 </span>            : 
+<span class="lineNum">     361 </span><span class="lineCov">        376 : tVector cKinTree::GetBodyLocalCoM(const Eigen::MatrixXd&amp; body_defs, int part_id)</span>
+<span class="lineNum">     362 </span>            : {
+<span class="lineNum">     363 </span><span class="lineCov">        376 :         eBodyShape shape = GetBodyShape(body_defs, part_id);</span>
+<span class="lineNum">     364 </span><span class="lineCov">        376 :         tVector com = tVector::Zero();</span>
+<span class="lineNum">     365 </span><span class="lineCov">        376 :         switch (shape)</span>
+<span class="lineNum">     366 </span>            :         {
+<span class="lineNum">     367 </span>            :         case eBodyShapeBox:
+<span class="lineNum">     368 </span><span class="lineCov">        376 :                 com.setZero();</span>
+<span class="lineNum">     369 </span><span class="lineCov">        376 :                 break;</span>
+<span class="lineNum">     370 </span>            :         case eBodyShapeCapsule:
+<span class="lineNum">     371 </span><span class="lineNoCov">          0 :                 com.setZero();</span>
+<span class="lineNum">     372 </span><span class="lineNoCov">          0 :                 break;</span>
+<span class="lineNum">     373 </span>            :         default:
+<span class="lineNum">     374 </span><span class="lineNoCov">          0 :                 assert(false); // unsupported</span>
+<span class="lineNum">     375 </span>            :                 break;
+<span class="lineNum">     376 </span>            :         }
+<span class="lineNum">     377 </span>            : 
+<span class="lineNum">     378 </span><span class="lineCov">        376 :         return com;</span>
+<a name="379"><span class="lineNum">     379 </span>            : }</a>
+<span class="lineNum">     380 </span>            : 
+<span class="lineNum">     381 </span><span class="lineCov">       2436 : int cKinTree::GetDrawShapeParentJoint(const tDrawShapeDef&amp; shape)</span>
+<span class="lineNum">     382 </span>            : {
+<span class="lineNum">     383 </span><span class="lineCov">       2436 :         return static_cast&lt;int&gt;(shape[eDrawShapeParentJoint]);</span>
+<a name="384"><span class="lineNum">     384 </span>            : }</a>
+<span class="lineNum">     385 </span>            : 
+<span class="lineNum">     386 </span><span class="lineCov">       2436 : tVector cKinTree::GetDrawShapeAttachPt(const tDrawShapeDef&amp; shape)</span>
+<span class="lineNum">     387 </span>            : {
+<span class="lineNum">     388 </span><span class="lineCov">       2436 :         return tVector(shape[cKinTree::eDrawShapeAttachX], shape[cKinTree::eDrawShapeAttachY], shape[cKinTree::eDrawShapeAttachZ], 0);</span>
+<a name="389"><span class="lineNum">     389 </span>            : }</a>
+<span class="lineNum">     390 </span>            : 
+<span class="lineNum">     391 </span><span class="lineCov">       2436 : void cKinTree::GetDrawShapeRotation(const tDrawShapeDef&amp; shape, tVector&amp; out_axis, double&amp; out_theta)</span>
+<span class="lineNum">     392 </span>            : {
+<span class="lineNum">     393 </span><span class="lineCov">       2436 :         out_theta = shape[cKinTree::eDrawShapeTheta];</span>
+<span class="lineNum">     394 </span><span class="lineCov">       2436 :         out_axis = tVector(0, 0, 1, 0);</span>
+<a name="395"><span class="lineNum">     395 </span><span class="lineCov">       2436 : }</span></a>
+<span class="lineNum">     396 </span>            : 
+<span class="lineNum">     397 </span><span class="lineCov">       2436 : tVector cKinTree::GetDrawShapeColor(const tDrawShapeDef&amp; shape)</span>
+<span class="lineNum">     398 </span>            : {
+<span class="lineNum">     399 </span><span class="lineCov">       2436 :         return tVector(shape[cKinTree::eDrawShapeColorR], shape[cKinTree::eDrawShapeColorG], shape[cKinTree::eDrawShapeColorB], shape[cKinTree::eDrawShapeColorA]);</span>
+<span class="lineNum">     400 </span>            : }
+<a name="401"><span class="lineNum">     401 </span>            : </a>
+<span class="lineNum">     402 </span>            : 
+<span class="lineNum">     403 </span><span class="lineCov">        126 : void cKinTree::CalcBodyPartRotation(const Eigen::MatrixXd&amp; joint_mat, const Eigen::VectorXd&amp; state, const Eigen::MatrixXd&amp; body_defs, int part_id, tVector&amp; out_axis, double&amp; out_theta)</span>
+<span class="lineNum">     404 </span>            : {
+<span class="lineNum">     405 </span><span class="lineCov">        126 :         tMatrix mat = BodyWorldTrans(joint_mat, state, body_defs, part_id);</span>
+<span class="lineNum">     406 </span><span class="lineCov">        126 :         cMathUtil::RotMatToAxisAngle(mat, out_axis, out_theta);</span>
+<a name="407"><span class="lineNum">     407 </span><span class="lineCov">        126 : }</span></a>
+<span class="lineNum">     408 </span>            : 
+<span class="lineNum">     409 </span><span class="lineCov">          2 : bool cKinTree::Load(const Json::Value&amp; root, Eigen::MatrixXd&amp; out_joint_mat)</span>
+<span class="lineNum">     410 </span>            : {
+<span class="lineNum">     411 </span><span class="lineCov">          2 :         bool succ = false;</span>
+<span class="lineNum">     412 </span>            : 
+<span class="lineNum">     413 </span><span class="lineCov">          2 :         if (!root[gJointsKey].isNull())</span>
+<span class="lineNum">     414 </span>            :         {
+<span class="lineNum">     415 </span><span class="lineCov">          4 :                 Json::Value joints = root[gJointsKey];</span>
+<span class="lineNum">     416 </span><span class="lineCov">          2 :                 int num_joints = joints.size();</span>
+<span class="lineNum">     417 </span>            : 
+<span class="lineNum">     418 </span><span class="lineCov">          2 :                 out_joint_mat.resize(num_joints, eJointDescMax);</span>
+<span class="lineNum">     419 </span>            :                 
+<span class="lineNum">     420 </span><span class="lineCov">         44 :                 for (int j = 0; j &lt; num_joints; ++j)</span>
+<span class="lineNum">     421 </span>            :                 {
+<span class="lineNum">     422 </span><span class="lineCov">         42 :                         tJointDesc curr_joint_desc = tJointDesc::Zero();</span>
+<span class="lineNum">     423 </span>            : 
+<span class="lineNum">     424 </span><span class="lineCov">         84 :                         Json::Value joint_json = joints.get(j, 0);</span>
+<span class="lineNum">     425 </span><span class="lineCov">         42 :                         succ = ParseJoint(joint_json, curr_joint_desc);</span>
+<span class="lineNum">     426 </span><span class="lineCov">         42 :                         if (succ)</span>
+<span class="lineNum">     427 </span>            :                         {
+<span class="lineNum">     428 </span><span class="lineCov">         42 :                                 out_joint_mat.row(j) = curr_joint_desc;</span>
+<span class="lineNum">     429 </span>            :                         }
+<span class="lineNum">     430 </span>            :                         else
+<span class="lineNum">     431 </span>            :                         {
+<span class="lineNum">     432 </span><span class="lineNoCov">          0 :                                 printf(&quot;Failed to parse joint %i\n&quot;, j);</span>
+<span class="lineNum">     433 </span><span class="lineNoCov">          0 :                                 return false;</span>
+<span class="lineNum">     434 </span>            :                         }
+<span class="lineNum">     435 </span>            :                 }
+<span class="lineNum">     436 </span>            : 
+<span class="lineNum">     437 </span><span class="lineCov">         44 :                 for (int j = 0; j &lt; num_joints; ++j)</span>
+<span class="lineNum">     438 </span>            :                 {
+<span class="lineNum">     439 </span><span class="lineCov">         42 :                         const auto&amp; curr_desc = out_joint_mat.row(j);</span>
+<span class="lineNum">     440 </span><span class="lineCov">         42 :                         int parent_id = static_cast&lt;int&gt;(curr_desc(eJointDescParent));</span>
+<span class="lineNum">     441 </span><span class="lineCov">         42 :                         if (parent_id &gt;= j)</span>
+<span class="lineNum">     442 </span>            :                         {
+<span class="lineNum">     443 </span><span class="lineNoCov">          0 :                                 printf(&quot;Parent id must be &lt; child id, parent id: %i, child id: %i\n&quot;, parent_id, j);</span>
+<span class="lineNum">     444 </span><span class="lineNoCov">          0 :                                 out_joint_mat.resize(0, 0);</span>
+<span class="lineNum">     445 </span><span class="lineNoCov">          0 :                                 assert(false);</span>
+<span class="lineNum">     446 </span>            : 
+<span class="lineNum">     447 </span>            :                                 return false;
+<span class="lineNum">     448 </span>            :                         }
+<span class="lineNum">     449 </span>            : 
+<span class="lineNum">     450 </span><span class="lineCov">         42 :                         out_joint_mat.row(j) = curr_desc;</span>
+<span class="lineNum">     451 </span>            :                 }
+<span class="lineNum">     452 </span>            : 
+<span class="lineNum">     453 </span><span class="lineCov">          2 :                 PostProcessJointMat(out_joint_mat);</span>
+<span class="lineNum">     454 </span>            :         }
+<span class="lineNum">     455 </span>            : 
+<span class="lineNum">     456 </span><span class="lineCov">          2 :         return succ;</span>
+<a name="457"><span class="lineNum">     457 </span>            : }</a>
+<span class="lineNum">     458 </span>            : 
+<span class="lineNum">     459 </span><span class="lineNoCov">          0 : bool cKinTree::HasValidRoot(const Eigen::MatrixXd&amp; joint_desc)</span>
+<span class="lineNum">     460 </span>            : {
+<span class="lineNum">     461 </span><span class="lineNoCov">          0 :         int root = GetRoot(joint_desc);</span>
+<span class="lineNum">     462 </span><span class="lineNoCov">          0 :         return root != gInvalidJointID;</span>
+<a name="463"><span class="lineNum">     463 </span>            : }</a>
+<span class="lineNum">     464 </span>            : 
+<span class="lineNum">     465 </span><span class="lineNoCov">          0 : tVector cKinTree::GetRootPos(const Eigen::MatrixXd&amp; joint_mat, const Eigen::VectorXd&amp; state)</span>
+<span class="lineNum">     466 </span>            : {
+<span class="lineNum">     467 </span><span class="lineNoCov">          0 :         int root = GetRoot(joint_mat);</span>
+<span class="lineNum">     468 </span><span class="lineNoCov">          0 :         tVector pos = GetJointOffset(joint_mat, state, root);</span>
+<span class="lineNum">     469 </span><span class="lineNoCov">          0 :         return pos;</span>
+<a name="470"><span class="lineNum">     470 </span>            : }</a>
+<span class="lineNum">     471 </span>            : 
+<span class="lineNum">     472 </span><span class="lineCov">          3 : void cKinTree::SetRootPos(const Eigen::MatrixXd&amp; joint_mat, const tVector&amp; pos, Eigen::VectorXd&amp; out_state)</span>
+<span class="lineNum">     473 </span>            : {
+<span class="lineNum">     474 </span><span class="lineCov">          3 :         int root = GetRoot(joint_mat);</span>
+<span class="lineNum">     475 </span><span class="lineCov">          3 :         SetJointOffset(joint_mat, root, pos, out_state);</span>
+<a name="476"><span class="lineNum">     476 </span><span class="lineCov">          3 : }</span></a>
+<span class="lineNum">     477 </span>            : 
+<span class="lineNum">     478 </span><span class="lineNoCov">          0 : void cKinTree::SetRootPosX(const Eigen::MatrixXd&amp; joint_mat,  double x, Eigen::VectorXd&amp; out_state)</span>
+<span class="lineNum">     479 </span>            : {
+<span class="lineNum">     480 </span><span class="lineNoCov">          0 :         tVector pos = GetRootPos(joint_mat, out_state);</span>
+<span class="lineNum">     481 </span><span class="lineNoCov">          0 :         pos[0] = x;</span>
+<span class="lineNum">     482 </span><span class="lineNoCov">          0 :         SetRootPos(joint_mat, pos, out_state);</span>
+<span class="lineNum">     483 </span><span class="lineNoCov">          0 : }</span>
+<a name="484"><span class="lineNum">     484 </span>            : </a>
+<span class="lineNum">     485 </span>            : 
+<span class="lineNum">     486 </span><span class="lineNoCov">          0 : double cKinTree::GetRootTheta(const Eigen::MatrixXd&amp; joint_mat, const Eigen::VectorXd&amp; state)</span>
+<span class="lineNum">     487 </span>            : {
+<span class="lineNum">     488 </span><span class="lineNoCov">          0 :         int root_id = GetRoot(joint_mat);</span>
+<span class="lineNum">     489 </span><span class="lineNoCov">          0 :         double theta = GetJointTheta(joint_mat, state, root_id);</span>
+<span class="lineNum">     490 </span><span class="lineNoCov">          0 :         return theta;</span>
+<a name="491"><span class="lineNum">     491 </span>            : }</a>
+<span class="lineNum">     492 </span>            : 
+<span class="lineNum">     493 </span><span class="lineNoCov">          0 : void cKinTree::SetRootTheta(const Eigen::MatrixXd&amp; joint_mat,  double theta, Eigen::VectorXd&amp; out_state)</span>
+<span class="lineNum">     494 </span>            : {
+<span class="lineNum">     495 </span><span class="lineNoCov">          0 :         int root = GetRoot(joint_mat);</span>
+<span class="lineNum">     496 </span><span class="lineNoCov">          0 :         SetJointTheta(joint_mat, root, theta, out_state);</span>
+<a name="497"><span class="lineNum">     497 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     498 </span>            : 
+<span class="lineNum">     499 </span><span class="lineCov">         42 : tVector cKinTree::CalcJointWorldPos(const Eigen::MatrixXd&amp; joint_mat, const Eigen::VectorXd&amp; state, int joint_id)</span>
+<span class="lineNum">     500 </span>            : {
+<span class="lineNum">     501 </span><span class="lineCov">         42 :         tVector pos = LocalToWorldPos(joint_mat, state, joint_id, tVector::Zero());</span>
+<span class="lineNum">     502 </span><span class="lineCov">         42 :         return pos;</span>
+<a name="503"><span class="lineNum">     503 </span>            : }</a>
+<span class="lineNum">     504 </span>            : 
+<span class="lineNum">     505 </span><span class="lineNoCov">          0 : tVector cKinTree::CalcJointWorldVel(const Eigen::MatrixXd&amp; joint_mat, const Eigen::VectorXd&amp; state, const Eigen::VectorXd&amp; vel, int joint_id)</span>
+<span class="lineNum">     506 </span>            : {
+<span class="lineNum">     507 </span><span class="lineNoCov">          0 :         return CalcWorldVel(joint_mat, state, vel, joint_id, tVector::Zero());</span>
+<a name="508"><span class="lineNum">     508 </span>            : }</a>
+<span class="lineNum">     509 </span>            : 
+<span class="lineNum">     510 </span><span class="lineNoCov">          0 : tVector cKinTree::CalcWorldVel(const Eigen::MatrixXd&amp; joint_mat, const Eigen::VectorXd&amp; state, const Eigen::VectorXd&amp; vel, int parent_id, const tVector&amp; attach_pt)</span>
+<span class="lineNum">     511 </span>            : {
+<span class="lineNum">     512 </span><span class="lineNoCov">          0 :         cSpAlg::tSpVec sv = cRBDUtil::CalcWorldVel(joint_mat, state, vel, parent_id, attach_pt);</span>
+<span class="lineNum">     513 </span><span class="lineNoCov">          0 :         tVector pos = cKinTree::LocalToWorldPos(joint_mat, state, parent_id, attach_pt);</span>
+<span class="lineNum">     514 </span><span class="lineNoCov">          0 :         cSpAlg::tSpTrans world_to_pt = cSpAlg::BuildTrans(pos);</span>
+<span class="lineNum">     515 </span><span class="lineNoCov">          0 :         sv = cSpAlg::ApplyTransM(world_to_pt, sv);</span>
+<span class="lineNum">     516 </span><span class="lineNoCov">          0 :         return cSpAlg::GetV(sv);</span>
+<a name="517"><span class="lineNum">     517 </span>            : }</a>
+<span class="lineNum">     518 </span>            : 
+<span class="lineNum">     519 </span><span class="lineCov">         42 : tVector cKinTree::LocalToWorldPos(const Eigen::MatrixXd&amp; joint_mat, const Eigen::VectorXd&amp; state, int parent_id, const tVector&amp; attach_pt)</span>
+<span class="lineNum">     520 </span>            : {
+<span class="lineNum">     521 </span><span class="lineCov">         42 :         tMatrix local_to_world_trans = JointWorldTrans(joint_mat, state, parent_id);</span>
+<span class="lineNum">     522 </span><span class="lineCov">         42 :         tVector pos = attach_pt;</span>
+<span class="lineNum">     523 </span><span class="lineCov">         42 :         pos[3] = 1;</span>
+<span class="lineNum">     524 </span><span class="lineCov">         42 :         pos = local_to_world_trans * pos;</span>
+<span class="lineNum">     525 </span><span class="lineCov">         42 :         pos[3] = 0;</span>
+<span class="lineNum">     526 </span>            : 
+<span class="lineNum">     527 </span><span class="lineCov">         42 :         return pos;</span>
+<a name="528"><span class="lineNum">     528 </span>            : }</a>
+<span class="lineNum">     529 </span>            : 
+<span class="lineNum">     530 </span><span class="lineNoCov">          0 : void cKinTree::CalcJointWorldTheta(const Eigen::MatrixXd&amp; joint_mat, const Eigen::VectorXd&amp; state, int joint_id,</span>
+<span class="lineNum">     531 </span>            :                                                                         tVector&amp; out_axis, double&amp; out_theta)
+<span class="lineNum">     532 </span>            : {
+<span class="lineNum">     533 </span><span class="lineNoCov">          0 :         int parent_id = GetParent(joint_mat, joint_id);</span>
+<span class="lineNum">     534 </span><span class="lineNoCov">          0 :         double theta = GetJointTheta(joint_mat, state, joint_id);</span>
+<span class="lineNum">     535 </span><span class="lineNoCov">          0 :         out_theta = LocalToWorldTheta(joint_mat, state, parent_id, theta);</span>
+<span class="lineNum">     536 </span><span class="lineNoCov">          0 :         out_axis = tVector(0, 0, 1, 0);</span>
+<a name="537"><span class="lineNum">     537 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     538 </span>            : 
+<span class="lineNum">     539 </span><span class="lineNoCov">          0 : double cKinTree::LocalToWorldTheta(const Eigen::MatrixXd&amp; joint_mat, const Eigen::VectorXd&amp; state, int parent_id, double local_theta)</span>
+<span class="lineNum">     540 </span>            : {
+<span class="lineNum">     541 </span>            :         // assumes 2d and joint axis along z
+<span class="lineNum">     542 </span><span class="lineNoCov">          0 :         int curr_id = parent_id;</span>
+<span class="lineNum">     543 </span><span class="lineNoCov">          0 :         double curr_theta = local_theta;</span>
+<span class="lineNum">     544 </span>            : 
+<span class="lineNum">     545 </span><span class="lineNoCov">          0 :         while (curr_id != gInvalidJointID)</span>
+<span class="lineNum">     546 </span>            :         {
+<span class="lineNum">     547 </span><span class="lineNoCov">          0 :                 double theta = GetJointTheta(joint_mat, state, curr_id);</span>
+<span class="lineNum">     548 </span><span class="lineNoCov">          0 :                 curr_theta += theta;</span>
+<span class="lineNum">     549 </span><span class="lineNoCov">          0 :                 curr_id = GetParent(joint_mat, curr_id);</span>
+<span class="lineNum">     550 </span>            :         }
+<span class="lineNum">     551 </span>            : 
+<span class="lineNum">     552 </span><span class="lineNoCov">          0 :         return curr_theta;</span>
+<a name="553"><span class="lineNum">     553 </span>            : }</a>
+<span class="lineNum">     554 </span>            : 
+<span class="lineNum">     555 </span><span class="lineCov">    1144383 : int cKinTree::GetNumJoints(const Eigen::MatrixXd&amp; joint_mat)</span>
+<span class="lineNum">     556 </span>            : {
+<span class="lineNum">     557 </span><span class="lineCov">    1144383 :         return static_cast&lt;int&gt;(joint_mat.rows());</span>
+<a name="558"><span class="lineNum">     558 </span>            : }</a>
+<span class="lineNum">     559 </span>            : 
+<span class="lineNum">     560 </span><span class="lineCov">      27242 : int cKinTree::GetNumDof(const Eigen::MatrixXd&amp; joint_mat)</span>
+<span class="lineNum">     561 </span>            : {
+<span class="lineNum">     562 </span><span class="lineCov">      27242 :         int num_joints = GetNumJoints(joint_mat);</span>
+<span class="lineNum">     563 </span><span class="lineCov">      27242 :         int num_dof = cKinTree::GetParamOffset(joint_mat, num_joints - 1) + cKinTree::GetParamSize(joint_mat, num_joints - 1);</span>
+<span class="lineNum">     564 </span>            : #if !defined(DISABLE_LINK_SCALE)
+<span class="lineNum">     565 </span>            :         num_dof += num_joints;
+<span class="lineNum">     566 </span>            : #endif
+<span class="lineNum">     567 </span><span class="lineCov">      27242 :         return num_dof;</span>
+<a name="568"><span class="lineNum">     568 </span>            : }</a>
+<span class="lineNum">     569 </span>            : 
+<span class="lineNum">     570 </span><span class="lineNoCov">          0 : void cKinTree::ApplyStep(const Eigen::MatrixXd&amp; joint_mat, const Eigen::VectorXd&amp; step, Eigen::VectorXd&amp; out_pose)</span>
+<span class="lineNum">     571 </span>            : {
+<span class="lineNum">     572 </span><span class="lineNoCov">          0 :         int root_id = GetRoot(joint_mat);</span>
+<span class="lineNum">     573 </span><span class="lineNoCov">          0 :         int num_joints = cKinTree::GetNumJoints(joint_mat);</span>
+<span class="lineNum">     574 </span><span class="lineNoCov">          0 :         out_pose += step;</span>
+<span class="lineNum">     575 </span>            : 
+<span class="lineNum">     576 </span>            : #if !defined(DISABLE_LINK_SCALE)
+<span class="lineNum">     577 </span>            :         int idx_offset = gPosDims + num_joints;
+<span class="lineNum">     578 </span>            :         out_joint_mat.col(eJointDescScale) += step.block(idx_offset, 0, num_joints, 1);
+<span class="lineNum">     579 </span>            :         // no scaling for root
+<span class="lineNum">     580 </span>            :         out_pose(idx_offset + root_id) = 1;
+<span class="lineNum">     581 </span>            : #endif
+<span class="lineNum">     582 </span><span class="lineNoCov">          0 : }</span>
+<a name="583"><span class="lineNum">     583 </span>            : </a>
+<span class="lineNum">     584 </span>            : 
+<span class="lineNum">     585 </span><span class="lineNoCov">          0 : Eigen::VectorXi cKinTree::FindJointChain(const Eigen::MatrixXd&amp; joint_mat, int joint_beg, int joint_end)</span>
+<span class="lineNum">     586 </span>            : {
+<span class="lineNum">     587 </span><span class="lineNoCov">          0 :         Eigen::VectorXi chain;</span>
+<span class="lineNum">     588 </span>            : 
+<span class="lineNum">     589 </span><span class="lineNoCov">          0 :         const int max_length = 128;</span>
+<span class="lineNum">     590 </span>            :         int chain_buffer[max_length];
+<span class="lineNum">     591 </span><span class="lineNoCov">          0 :         int buffer_idx = 0;</span>
+<span class="lineNum">     592 </span>            : 
+<span class="lineNum">     593 </span><span class="lineNoCov">          0 :         if (joint_beg == joint_end)</span>
+<span class="lineNum">     594 </span>            :         {
+<span class="lineNum">     595 </span><span class="lineNoCov">          0 :                 Eigen::VectorXi chain(1);</span>
+<span class="lineNum">     596 </span><span class="lineNoCov">          0 :                 chain[0] = joint_beg;</span>
+<span class="lineNum">     597 </span>            :         }
+<span class="lineNum">     598 </span>            : 
+<span class="lineNum">     599 </span><span class="lineNoCov">          0 :         int common_ancestor = gInvalidJointID;</span>
+<span class="lineNum">     600 </span><span class="lineNoCov">          0 :         int curr_id = joint_beg;</span>
+<span class="lineNum">     601 </span><span class="lineNoCov">          0 :         int end_len = 0;</span>
+<span class="lineNum">     602 </span><span class="lineNoCov">          0 :         while (curr_id != gInvalidJointID)</span>
+<span class="lineNum">     603 </span>            :         {
+<span class="lineNum">     604 </span><span class="lineNoCov">          0 :                 chain_buffer[buffer_idx] = curr_id;</span>
+<span class="lineNum">     605 </span><span class="lineNoCov">          0 :                 ++buffer_idx;</span>
+<span class="lineNum">     606 </span>            : 
+<span class="lineNum">     607 </span><span class="lineNoCov">          0 :                 if (buffer_idx &gt;= max_length)</span>
+<span class="lineNum">     608 </span>            :                 {
+<span class="lineNum">     609 </span><span class="lineNoCov">          0 :                         printf(&quot;Exceeded maximum chain length %i\n&quot;, max_length);</span>
+<span class="lineNum">     610 </span><span class="lineNoCov">          0 :                         assert(false);</span>
+<span class="lineNum">     611 </span>            :                         return chain;
+<span class="lineNum">     612 </span>            :                 }
+<span class="lineNum">     613 </span>            : 
+<span class="lineNum">     614 </span><span class="lineNoCov">          0 :                 bool is_ancestor = IsAncestor(joint_mat, joint_end, curr_id, end_len);</span>
+<span class="lineNum">     615 </span><span class="lineNoCov">          0 :                 if (is_ancestor)</span>
+<span class="lineNum">     616 </span>            :                 {
+<span class="lineNum">     617 </span><span class="lineNoCov">          0 :                         common_ancestor = curr_id;</span>
+<span class="lineNum">     618 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     619 </span>            :                 }
+<span class="lineNum">     620 </span>            :                 else
+<span class="lineNum">     621 </span>            :                 {
+<span class="lineNum">     622 </span><span class="lineNoCov">          0 :                         curr_id = GetParent(joint_mat, curr_id);</span>
+<span class="lineNum">     623 </span>            :                 }
+<span class="lineNum">     624 </span>            :         }
+<span class="lineNum">     625 </span>            : 
+<span class="lineNum">     626 </span><span class="lineNoCov">          0 :         bool found = common_ancestor != gInvalidJointID;</span>
+<span class="lineNum">     627 </span>            :         // tree should always connected?
+<span class="lineNum">     628 </span><span class="lineNoCov">          0 :         assert(found);</span>
+<span class="lineNum">     629 </span>            : 
+<span class="lineNum">     630 </span><span class="lineNoCov">          0 :         if (found)</span>
+<span class="lineNum">     631 </span>            :         {
+<span class="lineNum">     632 </span><span class="lineNoCov">          0 :                 chain.resize(buffer_idx + end_len);</span>
+<span class="lineNum">     633 </span><span class="lineNoCov">          0 :                 for (int i = 0; i &lt; buffer_idx; ++i)</span>
+<span class="lineNum">     634 </span>            :                 {
+<span class="lineNum">     635 </span><span class="lineNoCov">          0 :                         chain[i] = chain_buffer[i];</span>
+<span class="lineNum">     636 </span>            :                 }
+<span class="lineNum">     637 </span>            : 
+<span class="lineNum">     638 </span><span class="lineNoCov">          0 :                 int idx = buffer_idx;</span>
+<span class="lineNum">     639 </span><span class="lineNoCov">          0 :                 curr_id = joint_end;</span>
+<span class="lineNum">     640 </span><span class="lineNoCov">          0 :                 while (curr_id != common_ancestor)</span>
+<span class="lineNum">     641 </span>            :                 {
+<span class="lineNum">     642 </span><span class="lineNoCov">          0 :                         chain[idx] = curr_id;</span>
+<span class="lineNum">     643 </span><span class="lineNoCov">          0 :                         curr_id = GetParent(joint_mat, curr_id);</span>
+<span class="lineNum">     644 </span><span class="lineNoCov">          0 :                         ++idx;</span>
+<span class="lineNum">     645 </span>            :                 }
+<span class="lineNum">     646 </span>            : 
+<span class="lineNum">     647 </span><span class="lineNoCov">          0 :                 int num_flips = static_cast&lt;int&gt;(chain.size()) - buffer_idx;</span>
+<span class="lineNum">     648 </span><span class="lineNoCov">          0 :                 chain.block(buffer_idx, 0, num_flips, 1).reverseInPlace();</span>
+<span class="lineNum">     649 </span>            :         }
+<span class="lineNum">     650 </span>            : 
+<span class="lineNum">     651 </span><span class="lineNoCov">          0 :         return chain;</span>
+<a name="652"><span class="lineNum">     652 </span>            : }</a>
+<span class="lineNum">     653 </span>            : 
+<span class="lineNum">     654 </span><span class="lineNoCov">          0 : bool cKinTree::IsAncestor(const Eigen::MatrixXd&amp; joint_mat, int child_joint, int ancestor_joint, int&amp; out_len)</span>
+<span class="lineNum">     655 </span>            : {
+<span class="lineNum">     656 </span><span class="lineNoCov">          0 :         int curr_id = child_joint;</span>
+<span class="lineNum">     657 </span><span class="lineNoCov">          0 :         out_len = 0;</span>
+<span class="lineNum">     658 </span><span class="lineNoCov">          0 :         while (curr_id != gInvalidJointID)</span>
+<span class="lineNum">     659 </span>            :         {
+<span class="lineNum">     660 </span><span class="lineNoCov">          0 :                 if (curr_id == ancestor_joint)</span>
+<span class="lineNum">     661 </span>            :                 {
+<span class="lineNum">     662 </span><span class="lineNoCov">          0 :                         return true;</span>
+<span class="lineNum">     663 </span>            :                 }
+<span class="lineNum">     664 </span>            :                 else
+<span class="lineNum">     665 </span>            :                 {
+<span class="lineNum">     666 </span><span class="lineNoCov">          0 :                         curr_id = GetParent(joint_mat, curr_id);</span>
+<span class="lineNum">     667 </span><span class="lineNoCov">          0 :                         ++out_len;</span>
+<span class="lineNum">     668 </span>            :                 }
+<span class="lineNum">     669 </span>            :         }
+<span class="lineNum">     670 </span><span class="lineNoCov">          0 :         return false;</span>
+<a name="671"><span class="lineNum">     671 </span>            : }</a>
+<span class="lineNum">     672 </span>            : 
+<span class="lineNum">     673 </span><span class="lineNoCov">          0 : double cKinTree::CalcChainLength(const Eigen::MatrixXd&amp; joint_mat, const Eigen::VectorXi&amp; chain)</span>
+<span class="lineNum">     674 </span>            : {
+<span class="lineNum">     675 </span><span class="lineNoCov">          0 :         double len = 0;</span>
+<span class="lineNum">     676 </span><span class="lineNoCov">          0 :         int num_joints = static_cast&lt;int&gt;(chain.size());</span>
+<span class="lineNum">     677 </span><span class="lineNoCov">          0 :         for (int i = 1; i &lt; num_joints; ++i)</span>
+<span class="lineNum">     678 </span>            :         {
+<span class="lineNum">     679 </span><span class="lineNoCov">          0 :                 int curr_id = chain(i);</span>
+<span class="lineNum">     680 </span><span class="lineNoCov">          0 :                 int prev_id = chain(i - 1);</span>
+<span class="lineNum">     681 </span>            : 
+<span class="lineNum">     682 </span><span class="lineNoCov">          0 :                 if (prev_id != gInvalidJointID)</span>
+<span class="lineNum">     683 </span>            :                 {
+<span class="lineNum">     684 </span><span class="lineNoCov">          0 :                         int prev_parent = GetParent(joint_mat, prev_id);</span>
+<span class="lineNum">     685 </span><span class="lineNoCov">          0 :                         bool is_parent = (prev_parent == curr_id);</span>
+<span class="lineNum">     686 </span><span class="lineNoCov">          0 :                         if (is_parent)</span>
+<span class="lineNum">     687 </span>            :                         {
+<span class="lineNum">     688 </span><span class="lineNoCov">          0 :                                 double curr_len = CalcLinkLength(joint_mat, prev_id);</span>
+<span class="lineNum">     689 </span><span class="lineNoCov">          0 :                                 len += curr_len;</span>
+<span class="lineNum">     690 </span>            :                         }
+<span class="lineNum">     691 </span>            :                 }
+<span class="lineNum">     692 </span>            : 
+<span class="lineNum">     693 </span><span class="lineNoCov">          0 :                 if (curr_id != gInvalidJointID)</span>
+<span class="lineNum">     694 </span>            :                 {
+<span class="lineNum">     695 </span><span class="lineNoCov">          0 :                         int curr_parent = GetParent(joint_mat, curr_id);</span>
+<span class="lineNum">     696 </span><span class="lineNoCov">          0 :                         bool is_child = (curr_parent == prev_id);</span>
+<span class="lineNum">     697 </span><span class="lineNoCov">          0 :                         if (is_child)</span>
+<span class="lineNum">     698 </span>            :                         {
+<span class="lineNum">     699 </span><span class="lineNoCov">          0 :                                 double curr_len = CalcLinkLength(joint_mat, curr_id);</span>
+<span class="lineNum">     700 </span><span class="lineNoCov">          0 :                                 len += curr_len;</span>
+<span class="lineNum">     701 </span>            :                         }
+<span class="lineNum">     702 </span>            :                 }
+<span class="lineNum">     703 </span>            :         }
+<span class="lineNum">     704 </span>            : 
+<span class="lineNum">     705 </span><span class="lineNoCov">          0 :         return len;</span>
+<a name="706"><span class="lineNum">     706 </span>            : }</a>
+<span class="lineNum">     707 </span>            : 
+<span class="lineNum">     708 </span><span class="lineNoCov">          0 : void cKinTree::CalcAABB(const Eigen::MatrixXd&amp; joint_desc, const Eigen::VectorXd&amp; state, tVector&amp; out_min, tVector&amp; out_max)</span>
+<span class="lineNum">     709 </span>            : {
+<span class="lineNum">     710 </span><span class="lineNoCov">          0 :         out_min[0] = std::numeric_limits&lt;double&gt;::infinity();</span>
+<span class="lineNum">     711 </span><span class="lineNoCov">          0 :         out_min[1] = std::numeric_limits&lt;double&gt;::infinity();</span>
+<span class="lineNum">     712 </span><span class="lineNoCov">          0 :         out_min[2] = std::numeric_limits&lt;double&gt;::infinity();</span>
+<span class="lineNum">     713 </span>            : 
+<span class="lineNum">     714 </span><span class="lineNoCov">          0 :         out_max[0] = -std::numeric_limits&lt;double&gt;::infinity();</span>
+<span class="lineNum">     715 </span><span class="lineNoCov">          0 :         out_max[1] = -std::numeric_limits&lt;double&gt;::infinity();</span>
+<span class="lineNum">     716 </span><span class="lineNoCov">          0 :         out_max[2] = -std::numeric_limits&lt;double&gt;::infinity();</span>
+<span class="lineNum">     717 </span>            : 
+<span class="lineNum">     718 </span><span class="lineNoCov">          0 :         for (int i = 0; i &lt; GetNumJoints(joint_desc); ++i)</span>
+<span class="lineNum">     719 </span>            :         {
+<span class="lineNum">     720 </span><span class="lineNoCov">          0 :                 tVector pos = CalcJointWorldPos(joint_desc, state, i);</span>
+<span class="lineNum">     721 </span><span class="lineNoCov">          0 :                 out_min = out_min.cwiseMin(pos);</span>
+<span class="lineNum">     722 </span><span class="lineNoCov">          0 :                 out_max = out_max.cwiseMax(pos);</span>
+<span class="lineNum">     723 </span>            :         }
+<a name="724"><span class="lineNum">     724 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     725 </span>            : 
+<span class="lineNum">     726 </span><span class="lineCov">    1160745 : int cKinTree::GetParamOffset(const Eigen::MatrixXd&amp; joint_mat, int joint_id)</span>
+<span class="lineNum">     727 </span>            : {
+<span class="lineNum">     728 </span><span class="lineCov">    1160745 :         int offset = static_cast&lt;int&gt;(joint_mat(joint_id, eJointDescParamOffset));</span>
+<span class="lineNum">     729 </span><span class="lineCov">    1160745 :         return offset;</span>
+<a name="730"><span class="lineNum">     730 </span>            : }</a>
+<span class="lineNum">     731 </span>            : 
+<span class="lineNum">     732 </span><span class="lineCov">    1104026 : int cKinTree::GetParamSize(const Eigen::MatrixXd&amp; joint_mat, int joint_id)</span>
+<span class="lineNum">     733 </span>            : {
+<span class="lineNum">     734 </span><span class="lineCov">    1104026 :         int size = 0;</span>
+<span class="lineNum">     735 </span><span class="lineCov">    1104026 :         eJointType j_type = cKinTree::GetJointType(joint_mat, joint_id);</span>
+<span class="lineNum">     736 </span><span class="lineCov">    1104026 :         bool is_root = cKinTree::IsRoot(joint_mat, joint_id);</span>
+<span class="lineNum">     737 </span><span class="lineCov">    1104026 :         switch (j_type)</span>
+<span class="lineNum">     738 </span>            :         {
+<span class="lineNum">     739 </span>            :         case eJointTypeRevolute:
+<span class="lineNum">     740 </span><span class="lineCov">     979472 :                 size = 1;</span>
+<span class="lineNum">     741 </span><span class="lineCov">     979472 :                 break;</span>
+<span class="lineNum">     742 </span>            :         case eJointTypePrismatic:
+<span class="lineNum">     743 </span><span class="lineNoCov">          0 :                 size = 1;</span>
+<span class="lineNum">     744 </span><span class="lineNoCov">          0 :                 break;</span>
+<span class="lineNum">     745 </span>            :         case eJointTypePlanar:
+<span class="lineNum">     746 </span><span class="lineCov">     124554 :                 size = 3;</span>
+<span class="lineNum">     747 </span><span class="lineCov">     124554 :                 break;</span>
+<span class="lineNum">     748 </span>            :         case eJointTypeFixed:
+<span class="lineNum">     749 </span><span class="lineNoCov">          0 :                 size = (is_root) ? 3 : 0;</span>
+<span class="lineNum">     750 </span><span class="lineNoCov">          0 :                 break;</span>
+<span class="lineNum">     751 </span>            :         default:
+<span class="lineNum">     752 </span><span class="lineNoCov">          0 :                 break;</span>
+<span class="lineNum">     753 </span>            :         }
+<span class="lineNum">     754 </span>            : 
+<span class="lineNum">     755 </span>            : 
+<span class="lineNum">     756 </span><span class="lineCov">    1104026 :         return size;</span>
+<a name="757"><span class="lineNum">     757 </span>            : }</a>
+<span class="lineNum">     758 </span>            : 
+<span class="lineNum">     759 </span><span class="lineCov">     189318 : Eigen::VectorXd cKinTree::GetJointParams(const Eigen::MatrixXd&amp; joint_mat, const Eigen::VectorXd&amp; state, int j)</span>
+<span class="lineNum">     760 </span>            : {
+<span class="lineNum">     761 </span><span class="lineCov">     189318 :         int offset = cKinTree::GetParamOffset(joint_mat, j);</span>
+<span class="lineNum">     762 </span><span class="lineCov">     189318 :         int dim = cKinTree::GetParamSize(joint_mat, j);</span>
+<span class="lineNum">     763 </span><span class="lineCov">     189318 :         Eigen::VectorXd q;</span>
+<span class="lineNum">     764 </span><span class="lineCov">     189318 :         if (dim &gt; 0)</span>
+<span class="lineNum">     765 </span>            :         {
+<span class="lineNum">     766 </span><span class="lineCov">     189318 :                 q = state.block(offset, 0, dim, 1);</span>
+<span class="lineNum">     767 </span>            :         }
+<span class="lineNum">     768 </span>            :         else
+<span class="lineNum">     769 </span>            :         {
+<span class="lineNum">     770 </span><span class="lineNoCov">          0 :                 q = Eigen::VectorXd::Zero(1);</span>
+<span class="lineNum">     771 </span>            :         }
+<span class="lineNum">     772 </span><span class="lineCov">     189318 :         return q;</span>
+<a name="773"><span class="lineNum">     773 </span>            : }</a>
+<span class="lineNum">     774 </span>            : 
+<span class="lineNum">     775 </span><span class="lineCov">      67977 : void cKinTree::SetJointParams(const Eigen::MatrixXd&amp; joint_mat, int j, const Eigen::VectorXd&amp; params, Eigen::VectorXd&amp; out_state)</span>
+<span class="lineNum">     776 </span>            : {
+<span class="lineNum">     777 </span><span class="lineCov">      67977 :         int offset = cKinTree::GetParamOffset(joint_mat, j);</span>
+<span class="lineNum">     778 </span><span class="lineCov">      67977 :         int dim = cKinTree::GetParamSize(joint_mat, j);</span>
+<span class="lineNum">     779 </span><span class="lineCov">      67977 :         assert(dim == params.size());</span>
+<span class="lineNum">     780 </span><span class="lineCov">      67977 :         out_state.block(offset, 0, dim, 1) = params;</span>
+<a name="781"><span class="lineNum">     781 </span><span class="lineCov">      67977 : }</span></a>
+<span class="lineNum">     782 </span>            : 
+<span class="lineNum">     783 </span><span class="lineCov">    1302227 : cKinTree::eJointType cKinTree::GetJointType(const Eigen::MatrixXd&amp; joint_mat, int joint_id)</span>
+<span class="lineNum">     784 </span>            : {
+<span class="lineNum">     785 </span><span class="lineCov">    1302227 :         eJointType type = static_cast&lt;eJointType&gt;(static_cast&lt;int&gt;(joint_mat(joint_id, cKinTree::eJointDescType)));</span>
+<span class="lineNum">     786 </span><span class="lineCov">    1302227 :         return type;</span>
+<a name="787"><span class="lineNum">     787 </span>            : }</a>
+<span class="lineNum">     788 </span>            : 
+<span class="lineNum">     789 </span><span class="lineCov">    2006957 : int cKinTree::GetParent(const Eigen::MatrixXd&amp; joint_mat, int joint_id)</span>
+<span class="lineNum">     790 </span>            : {
+<span class="lineNum">     791 </span><span class="lineCov">    2006957 :         int parent = static_cast&lt;int&gt;(joint_mat(joint_id, cKinTree::eJointDescParent));</span>
+<span class="lineNum">     792 </span><span class="lineCov">    2006957 :         assert(parent &lt; joint_id); // joints should always be ordered as such</span>
+<span class="lineNum">     793 </span>            :                                                                 // since some algorithms will assume this ordering
+<span class="lineNum">     794 </span><span class="lineCov">    2006957 :         return parent;</span>
+<a name="795"><span class="lineNum">     795 </span>            : }</a>
+<span class="lineNum">     796 </span>            : 
+<span class="lineNum">     797 </span><span class="lineCov">    1606365 : bool cKinTree::HasParent(const Eigen::MatrixXd&amp; joint_mat, int joint_id)</span>
+<span class="lineNum">     798 </span>            : {
+<span class="lineNum">     799 </span><span class="lineCov">    1606365 :         int parent = GetParent(joint_mat, joint_id);</span>
+<span class="lineNum">     800 </span><span class="lineCov">    1606365 :         return parent != gInvalidJointID;</span>
+<a name="801"><span class="lineNum">     801 </span>            : }</a>
+<span class="lineNum">     802 </span>            : 
+<span class="lineNum">     803 </span><span class="lineCov">    1213568 : bool cKinTree::IsRoot(const Eigen::MatrixXd&amp; joint_mat, int joint_id)</span>
+<span class="lineNum">     804 </span>            : {
+<span class="lineNum">     805 </span><span class="lineCov">    1213568 :         return !HasParent(joint_mat, joint_id);</span>
+<a name="806"><span class="lineNum">     806 </span>            : }</a>
+<span class="lineNum">     807 </span>            : 
+<span class="lineNum">     808 </span><span class="lineNoCov">          0 : bool cKinTree::IsJointActuated(const Eigen::MatrixXd&amp; joint_mat, int joint_id)</span>
+<span class="lineNum">     809 </span>            : {
+<span class="lineNum">     810 </span><span class="lineNoCov">          0 :         return !IsRoot(joint_mat, joint_id);</span>
+<a name="811"><span class="lineNum">     811 </span>            : }</a>
+<span class="lineNum">     812 </span>            : 
+<span class="lineNum">     813 </span><span class="lineCov">       4780 : tVector cKinTree::GetJointOffset(const Eigen::MatrixXd&amp; joint_mat, const Eigen::VectorXd&amp; state, int joint_id)</span>
+<span class="lineNum">     814 </span>            : {
+<span class="lineNum">     815 </span><span class="lineCov">       4780 :         tVector offset = tVector::Zero();</span>
+<span class="lineNum">     816 </span><span class="lineCov">       4780 :         eJointType j_type = GetJointType(joint_mat, joint_id);</span>
+<span class="lineNum">     817 </span><span class="lineCov">       4780 :         bool is_root = cKinTree::IsRoot(joint_mat, joint_id);</span>
+<span class="lineNum">     818 </span>            : 
+<span class="lineNum">     819 </span><span class="lineCov">       4780 :         int param_offset = GetParamOffset(joint_mat, joint_id);</span>
+<span class="lineNum">     820 </span><span class="lineCov">       4780 :         switch (j_type)</span>
+<span class="lineNum">     821 </span>            :         {
+<span class="lineNum">     822 </span>            :         case eJointTypeRevolute:
+<span class="lineNum">     823 </span><span class="lineNoCov">          0 :                 offset.setZero();</span>
+<span class="lineNum">     824 </span><span class="lineNoCov">          0 :                 break;</span>
+<span class="lineNum">     825 </span>            :         case eJointTypePlanar:
+<span class="lineNum">     826 </span><span class="lineCov">       4780 :                 offset.segment(0, 2) = state.segment(param_offset, 2);</span>
+<span class="lineNum">     827 </span><span class="lineCov">       4780 :                 break;</span>
+<span class="lineNum">     828 </span>            :         case eJointTypePrismatic:
+<span class="lineNum">     829 </span><span class="lineNoCov">          0 :                 offset.segment(0, 1) = state.segment(param_offset, 0);</span>
+<span class="lineNum">     830 </span><span class="lineNoCov">          0 :                 break;</span>
+<span class="lineNum">     831 </span>            :         case eJointTypeFixed:
+<span class="lineNum">     832 </span><span class="lineNoCov">          0 :                 offset.segment(0, 2) = (is_root) ? state.segment(param_offset, 2) : Eigen::Vector2d(0, 0);</span>
+<span class="lineNum">     833 </span><span class="lineNoCov">          0 :                 break;</span>
+<span class="lineNum">     834 </span>            :         default:
+<span class="lineNum">     835 </span><span class="lineNoCov">          0 :                 assert(false); // unsupported joint</span>
+<span class="lineNum">     836 </span>            :                 break;
+<span class="lineNum">     837 </span>            :         }
+<span class="lineNum">     838 </span>            :         
+<span class="lineNum">     839 </span><span class="lineCov">       4780 :         return offset;</span>
+<a name="840"><span class="lineNum">     840 </span>            : }</a>
+<span class="lineNum">     841 </span>            : 
+<span class="lineNum">     842 </span><span class="lineCov">          3 : void cKinTree::SetJointOffset(const Eigen::MatrixXd&amp; joint_mat, int joint_id, const tVector&amp; offset, Eigen::VectorXd&amp; out_state)</span>
+<span class="lineNum">     843 </span>            : {
+<span class="lineNum">     844 </span><span class="lineCov">          3 :         eJointType j_type = GetJointType(joint_mat, joint_id);</span>
+<span class="lineNum">     845 </span><span class="lineCov">          3 :         int param_offset = GetParamOffset(joint_mat, joint_id);</span>
+<span class="lineNum">     846 </span><span class="lineCov">          3 :         switch (j_type)</span>
+<span class="lineNum">     847 </span>            :         {
+<span class="lineNum">     848 </span>            :         case eJointTypePrismatic:
+<span class="lineNum">     849 </span><span class="lineNoCov">          0 :                 out_state.segment(param_offset, 1) = offset.segment(0, 1);</span>
+<span class="lineNum">     850 </span><span class="lineNoCov">          0 :                 break;</span>
+<span class="lineNum">     851 </span>            :         case eJointTypePlanar:
+<span class="lineNum">     852 </span><span class="lineCov">          3 :                 out_state.segment(param_offset, 2) = offset.segment(0, 2);</span>
+<span class="lineNum">     853 </span><span class="lineCov">          3 :                 break;</span>
+<span class="lineNum">     854 </span>            :         case eJointTypeFixed:
+<span class="lineNum">     855 </span>            :                 // TODO not the best fix
+<span class="lineNum">     856 </span><span class="lineNoCov">          0 :                 out_state.segment(param_offset, 2) = offset.segment(0, 2);</span>
+<span class="lineNum">     857 </span><span class="lineNoCov">          0 :                 break;</span>
+<span class="lineNum">     858 </span>            :         default:
+<span class="lineNum">     859 </span><span class="lineNoCov">          0 :                 assert(false &amp;&amp; &quot;No offset for this joint type&quot;); // no offset for joint type</span>
+<span class="lineNum">     860 </span>            :                 break;
+<span class="lineNum">     861 </span>            :         }
+<span class="lineNum">     862 </span><span class="lineCov">          3 : }</span>
+<a name="863"><span class="lineNum">     863 </span>            : </a>
+<span class="lineNum">     864 </span>            : 
+<span class="lineNum">     865 </span><span class="lineCov">      51978 : double cKinTree::GetJointTheta(const Eigen::MatrixXd&amp; joint_mat, const Eigen::VectorXd&amp; state, int joint_id)</span>
+<span class="lineNum">     866 </span>            : {
+<span class="lineNum">     867 </span><span class="lineCov">      51978 :         double theta = 0;</span>
+<span class="lineNum">     868 </span><span class="lineCov">      51978 :         eJointType j_type = GetJointType(joint_mat, joint_id);</span>
+<span class="lineNum">     869 </span><span class="lineCov">      51978 :         int param_offset = GetParamOffset(joint_mat, joint_id);</span>
+<span class="lineNum">     870 </span><span class="lineCov">     103956 :         Eigen::VectorXd params = GetJointParams(joint_mat, state, joint_id);</span>
+<span class="lineNum">     871 </span><span class="lineCov">      51978 :         bool is_root = cKinTree::IsRoot(joint_mat, joint_id);</span>
+<span class="lineNum">     872 </span>            : 
+<span class="lineNum">     873 </span><span class="lineCov">      51978 :         switch (j_type)</span>
+<span class="lineNum">     874 </span>            :         {
+<span class="lineNum">     875 </span>            :         case eJointTypeRevolute:
+<span class="lineNum">     876 </span><span class="lineCov">      45016 :                 theta = state(param_offset);</span>
+<span class="lineNum">     877 </span><span class="lineCov">      45016 :                 break;</span>
+<span class="lineNum">     878 </span>            :         case eJointTypePrismatic:
+<span class="lineNum">     879 </span><span class="lineNoCov">          0 :                 theta = state(param_offset);</span>
+<span class="lineNum">     880 </span><span class="lineNoCov">          0 :                 break;</span>
+<span class="lineNum">     881 </span>            :         case eJointTypePlanar:
+<span class="lineNum">     882 </span><span class="lineCov">       6962 :                 theta = state(param_offset + 2);</span>
+<span class="lineNum">     883 </span><span class="lineCov">       6962 :                 break;</span>
+<span class="lineNum">     884 </span>            :         case eJointTypeFixed:
+<span class="lineNum">     885 </span><span class="lineNoCov">          0 :                 theta = (is_root) ? state(param_offset + 2) : 0;</span>
+<span class="lineNum">     886 </span><span class="lineNoCov">          0 :                 break;</span>
+<span class="lineNum">     887 </span>            :         default:
+<span class="lineNum">     888 </span><span class="lineNoCov">          0 :                 assert(false); // unsupported joint</span>
+<span class="lineNum">     889 </span>            :                 break;
+<span class="lineNum">     890 </span>            :         }
+<span class="lineNum">     891 </span><span class="lineCov">     103956 :         return theta;</span>
+<a name="892"><span class="lineNum">     892 </span>            : }</a>
+<span class="lineNum">     893 </span>            : 
+<span class="lineNum">     894 </span><span class="lineNoCov">          0 : void cKinTree::SetJointTheta(const Eigen::MatrixXd&amp; joint_mat, int joint_id, double theta, Eigen::VectorXd&amp; out_state)</span>
+<span class="lineNum">     895 </span>            : {
+<span class="lineNum">     896 </span><span class="lineNoCov">          0 :         eJointType j_type = GetJointType(joint_mat, joint_id);</span>
+<span class="lineNum">     897 </span><span class="lineNoCov">          0 :         int param_offset = GetParamOffset(joint_mat, joint_id);</span>
+<span class="lineNum">     898 </span><span class="lineNoCov">          0 :         switch (j_type)</span>
+<span class="lineNum">     899 </span>            :         {
+<span class="lineNum">     900 </span>            :         case eJointTypeRevolute:
+<span class="lineNum">     901 </span><span class="lineNoCov">          0 :                 out_state(param_offset) = theta;</span>
+<span class="lineNum">     902 </span><span class="lineNoCov">          0 :                 break;</span>
+<span class="lineNum">     903 </span>            :         case eJointTypePrismatic:
+<span class="lineNum">     904 </span><span class="lineNoCov">          0 :                 out_state(param_offset) = theta;</span>
+<span class="lineNum">     905 </span><span class="lineNoCov">          0 :                 break;</span>
+<span class="lineNum">     906 </span>            :         case eJointTypePlanar:
+<span class="lineNum">     907 </span><span class="lineNoCov">          0 :                 out_state(param_offset + 2) = theta;</span>
+<span class="lineNum">     908 </span><span class="lineNoCov">          0 :                 break;</span>
+<span class="lineNum">     909 </span>            :         default:
+<span class="lineNum">     910 </span><span class="lineNoCov">          0 :                 assert(false); // no offset for joint type</span>
+<span class="lineNum">     911 </span>            :                 break;
+<span class="lineNum">     912 </span>            :         }
+<a name="913"><span class="lineNum">     913 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     914 </span>            : 
+<span class="lineNum">     915 </span><span class="lineNoCov">          0 : double cKinTree::GetJointLimLow(const Eigen::MatrixXd&amp; joint_mat, int joint_id)</span>
+<span class="lineNum">     916 </span>            : {
+<span class="lineNum">     917 </span><span class="lineNoCov">          0 :         return joint_mat(joint_id, cKinTree::eJointDescLimLow);</span>
+<a name="918"><span class="lineNum">     918 </span>            : }</a>
+<span class="lineNum">     919 </span>            : 
+<span class="lineNum">     920 </span><span class="lineNoCov">          0 : double cKinTree::GetJointLimHigh(const Eigen::MatrixXd&amp; joint_mat, int joint_id)</span>
+<span class="lineNum">     921 </span>            : {
+<span class="lineNum">     922 </span><span class="lineNoCov">          0 :         return joint_mat(joint_id, cKinTree::eJointDescLimHigh);</span>
+<a name="923"><span class="lineNum">     923 </span>            : }</a>
+<span class="lineNum">     924 </span>            : 
+<span class="lineNum">     925 </span><span class="lineNoCov">          0 : double cKinTree::CalcLinkLength(const Eigen::MatrixXd&amp; joint_mat, int joint_id)</span>
+<span class="lineNum">     926 </span>            : {
+<span class="lineNum">     927 </span><span class="lineNoCov">          0 :         tVector attach_pt = GetScaledAttachPt(joint_mat, joint_id);</span>
+<span class="lineNum">     928 </span><span class="lineNoCov">          0 :         bool is_root = IsRoot(joint_mat, joint_id);</span>
+<span class="lineNum">     929 </span><span class="lineNoCov">          0 :         double len = (is_root) ? 0 : attach_pt.norm();</span>
+<span class="lineNum">     930 </span><span class="lineNoCov">          0 :         return len;</span>
+<a name="931"><span class="lineNum">     931 </span>            : }</a>
+<span class="lineNum">     932 </span>            : 
+<span class="lineNum">     933 </span><span class="lineCov">      47616 : tVector cKinTree::GetScaledAttachPt(const Eigen::MatrixXd&amp; joint_mat, int joint_id)</span>
+<span class="lineNum">     934 </span>            : {
+<span class="lineNum">     935 </span><span class="lineCov">      47616 :         tVector attach_pt = tVector(joint_mat(joint_id, cKinTree::eJointDescAttachX),</span>
+<span class="lineNum">     936 </span><span class="lineCov">      47616 :                 joint_mat(joint_id, cKinTree::eJointDescAttachY),</span>
+<span class="lineNum">     937 </span><span class="lineCov">      95232 :                 joint_mat(joint_id, cKinTree::eJointDescAttachZ), 0);</span>
+<span class="lineNum">     938 </span><span class="lineCov">      47616 :         double link_scale = GetLinkScale(joint_mat, joint_id);</span>
+<span class="lineNum">     939 </span><span class="lineCov">      47616 :         return attach_pt * link_scale;</span>
+<a name="940"><span class="lineNum">     940 </span>            : }</a>
+<span class="lineNum">     941 </span>            : 
+<span class="lineNum">     942 </span><span class="lineCov">      47616 : double cKinTree::GetLinkScale(const Eigen::MatrixXd&amp; joint_mat, int joint_id)</span>
+<span class="lineNum">     943 </span>            : {
+<span class="lineNum">     944 </span><span class="lineCov">      47616 :         double scale = joint_mat(joint_id, eJointDescScale);</span>
+<span class="lineNum">     945 </span><span class="lineCov">      47616 :         return scale;</span>
+<a name="946"><span class="lineNum">     946 </span>            : }</a>
+<span class="lineNum">     947 </span>            : 
+<span class="lineNum">     948 </span><span class="lineNoCov">          0 : void cKinTree::CalcMaxSubChainLengths(const Eigen::MatrixXd&amp; joint_mat, Eigen::VectorXd&amp; out_lengths)</span>
+<span class="lineNum">     949 </span>            : {
+<span class="lineNum">     950 </span><span class="lineNoCov">          0 :         int num_joints = static_cast&lt;int&gt;(joint_mat.rows());</span>
+<span class="lineNum">     951 </span><span class="lineNoCov">          0 :         out_lengths = Eigen::VectorXd::Zero(num_joints);</span>
+<span class="lineNum">     952 </span>            : 
+<span class="lineNum">     953 </span><span class="lineNoCov">          0 :         for (int j = num_joints - 1; j &gt;= 0; --j)</span>
+<span class="lineNum">     954 </span>            :         {
+<span class="lineNum">     955 </span><span class="lineNoCov">          0 :                 int parent_id = GetParent(joint_mat, j);</span>
+<span class="lineNum">     956 </span><span class="lineNoCov">          0 :                 if (parent_id != gInvalidJointID)</span>
+<span class="lineNum">     957 </span>            :                 {
+<span class="lineNum">     958 </span><span class="lineNoCov">          0 :                         double curr_val = out_lengths(j);</span>
+<span class="lineNum">     959 </span><span class="lineNoCov">          0 :                         double len = CalcLinkLength(joint_mat, j);</span>
+<span class="lineNum">     960 </span><span class="lineNoCov">          0 :                         double&amp; parent_val = out_lengths(parent_id);</span>
+<span class="lineNum">     961 </span>            : 
+<span class="lineNum">     962 </span><span class="lineNoCov">          0 :                         if (parent_val &lt; len + curr_val)</span>
+<span class="lineNum">     963 </span>            :                         {
+<span class="lineNum">     964 </span><span class="lineNoCov">          0 :                                 parent_val = len + curr_val;</span>
+<span class="lineNum">     965 </span>            :                         }
+<span class="lineNum">     966 </span>            :                 }
+<span class="lineNum">     967 </span>            :         }
+<a name="968"><span class="lineNum">     968 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     969 </span>            : 
+<span class="lineNum">     970 </span><span class="lineNoCov">          0 : void cKinTree::CalcSubTreeMasses(const Eigen::MatrixXd&amp; joint_mat, const Eigen::MatrixXd&amp; body_defs, Eigen::VectorXd&amp; out_masses)</span>
+<span class="lineNum">     971 </span>            : {
+<span class="lineNum">     972 </span><span class="lineNoCov">          0 :         int num_joints = static_cast&lt;int&gt;(joint_mat.rows());</span>
+<span class="lineNum">     973 </span><span class="lineNoCov">          0 :         out_masses = Eigen::VectorXd::Zero(num_joints);</span>
+<span class="lineNum">     974 </span>            : 
+<span class="lineNum">     975 </span><span class="lineNoCov">          0 :         for (int j = num_joints - 1; j &gt;= 0; --j)</span>
+<span class="lineNum">     976 </span>            :         {
+<span class="lineNum">     977 </span><span class="lineNoCov">          0 :                 double&amp; curr_val = out_masses(j);</span>
+<span class="lineNum">     978 </span><span class="lineNoCov">          0 :                 double mass = GetBodyMass(body_defs, j);</span>
+<span class="lineNum">     979 </span><span class="lineNoCov">          0 :                 curr_val += mass;</span>
+<span class="lineNum">     980 </span>            : 
+<span class="lineNum">     981 </span><span class="lineNoCov">          0 :                 int parent_id = GetParent(joint_mat, j);</span>
+<span class="lineNum">     982 </span><span class="lineNoCov">          0 :                 if (parent_id != gInvalidJointID)</span>
+<span class="lineNum">     983 </span>            :                 {
+<span class="lineNum">     984 </span><span class="lineNoCov">          0 :                         double&amp; parent_val = out_masses(parent_id);</span>
+<span class="lineNum">     985 </span><span class="lineNoCov">          0 :                         parent_val += curr_val;</span>
+<span class="lineNum">     986 </span>            :                 }
+<span class="lineNum">     987 </span>            :         }
+<a name="988"><span class="lineNum">     988 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     989 </span>            : 
+<span class="lineNum">     990 </span><span class="lineCov">         42 : bool cKinTree::ParseJoint(const Json::Value&amp; root, tJointDesc&amp; out_joint_desc)</span>
+<span class="lineNum">     991 </span>            : {
+<span class="lineNum">     992 </span><span class="lineCov">         42 :         out_joint_desc(eJointDescParent) = -1;</span>
+<span class="lineNum">     993 </span><span class="lineCov">         42 :         out_joint_desc(eJointDescScale) = 1;</span>
+<span class="lineNum">     994 </span><span class="lineCov">         42 :         out_joint_desc(eJointDescLimLow) = 1;</span>
+<span class="lineNum">     995 </span><span class="lineCov">         42 :         out_joint_desc(eJointDescLimHigh) = 0;</span>
+<span class="lineNum">     996 </span>            :         
+<span class="lineNum">     997 </span><span class="lineCov">        462 :         for (int i = 0; i &lt; eJointDescMax; ++i)</span>
+<span class="lineNum">     998 </span>            :         {
+<span class="lineNum">     999 </span><span class="lineCov">        420 :                 const std::string&amp; key = gJointDescKeys[i];</span>
+<span class="lineNum">    1000 </span><span class="lineCov">        420 :                 if (!root[key].isNull())</span>
+<span class="lineNum">    1001 </span>            :                 {
+<span class="lineNum">    1002 </span><span class="lineCov">        336 :                         out_joint_desc[i] = root[key].asDouble();</span>
+<span class="lineNum">    1003 </span>            :                 }
+<span class="lineNum">    1004 </span>            :         }
+<span class="lineNum">    1005 </span><span class="lineCov">         42 :         return true;</span>
+<a name="1006"><span class="lineNum">    1006 </span>            : }</a>
+<span class="lineNum">    1007 </span>            : 
+<span class="lineNum">    1008 </span><span class="lineCov">          2 : void cKinTree::PostProcessJointMat(Eigen::MatrixXd&amp; out_joint_mat)</span>
+<span class="lineNum">    1009 </span>            : {
+<span class="lineNum">    1010 </span><span class="lineCov">          2 :         int num_joints = GetNumJoints(out_joint_mat);</span>
+<span class="lineNum">    1011 </span><span class="lineCov">          2 :         int offset = 0;</span>
+<span class="lineNum">    1012 </span><span class="lineCov">         44 :         for (int j = 0; j &lt; num_joints; ++j)</span>
+<span class="lineNum">    1013 </span>            :         {
+<span class="lineNum">    1014 </span><span class="lineCov">         42 :                 int curr_size = GetParamSize(out_joint_mat, j);</span>
+<span class="lineNum">    1015 </span><span class="lineCov">         42 :                 out_joint_mat(j, eJointDescParamOffset) = offset;</span>
+<span class="lineNum">    1016 </span><span class="lineCov">         42 :                 offset += curr_size;</span>
+<span class="lineNum">    1017 </span>            :         }
+<span class="lineNum">    1018 </span><span class="lineCov">          2 :         int root_id = GetRoot(out_joint_mat);</span>
+<span class="lineNum">    1019 </span>            : 
+<span class="lineNum">    1020 </span><span class="lineCov">          2 :         out_joint_mat(root_id, eJointDescAttachX) = 0;</span>
+<span class="lineNum">    1021 </span><span class="lineCov">          2 :         out_joint_mat(root_id, eJointDescAttachY) = 0;</span>
+<span class="lineNum">    1022 </span><span class="lineCov">          2 :         out_joint_mat(root_id, eJointDescAttachZ) = 0;</span>
+<a name="1023"><span class="lineNum">    1023 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">    1024 </span>            : 
+<span class="lineNum">    1025 </span><span class="lineCov">      47616 : tMatrix cKinTree::ChildParentTrans(const Eigen::MatrixXd&amp; joint_mat, const Eigen::VectorXd&amp; state, int joint_id)</span>
+<span class="lineNum">    1026 </span>            : {
+<span class="lineNum">    1027 </span><span class="lineCov">      47616 :         tMatrix mat;</span>
+<span class="lineNum">    1028 </span><span class="lineCov">      47616 :         eJointType j_type = cKinTree::GetJointType(joint_mat, joint_id);</span>
+<span class="lineNum">    1029 </span><span class="lineCov">      47616 :         switch (j_type)</span>
+<span class="lineNum">    1030 </span>            :         {
+<span class="lineNum">    1031 </span>            :         case eJointTypeRevolute:
+<span class="lineNum">    1032 </span><span class="lineCov">      45016 :                 mat = ChildParentTransRevolute(joint_mat, state, joint_id);</span>
+<span class="lineNum">    1033 </span><span class="lineCov">      45016 :                 break;</span>
+<span class="lineNum">    1034 </span>            :         case eJointTypePrismatic:
+<span class="lineNum">    1035 </span><span class="lineNoCov">          0 :                 mat = ChildParentTransPrismatic(joint_mat, state, joint_id);</span>
+<span class="lineNum">    1036 </span><span class="lineNoCov">          0 :                 break;</span>
+<span class="lineNum">    1037 </span>            :         case eJointTypePlanar:
+<span class="lineNum">    1038 </span><span class="lineCov">       2600 :                 mat = ChildParentTransPlanar(joint_mat, state, joint_id);</span>
+<span class="lineNum">    1039 </span><span class="lineCov">       2600 :                 break;</span>
+<span class="lineNum">    1040 </span>            :         case eJointTypeFixed:
+<span class="lineNum">    1041 </span><span class="lineNoCov">          0 :                 mat = ChildParentTransFixed(joint_mat, state, joint_id);</span>
+<span class="lineNum">    1042 </span><span class="lineNoCov">          0 :                 break;</span>
+<span class="lineNum">    1043 </span>            :         default:
+<span class="lineNum">    1044 </span><span class="lineNoCov">          0 :                 break;</span>
+<span class="lineNum">    1045 </span>            :         }
+<span class="lineNum">    1046 </span>            :         
+<span class="lineNum">    1047 </span><span class="lineCov">      47616 :         return mat;</span>
+<a name="1048"><span class="lineNum">    1048 </span>            : }</a>
+<span class="lineNum">    1049 </span>            : 
+<span class="lineNum">    1050 </span><span class="lineCov">         40 : tMatrix cKinTree::ParentChildTrans(const Eigen::MatrixXd&amp; joint_mat, const Eigen::VectorXd&amp; state, int joint_id)</span>
+<span class="lineNum">    1051 </span>            : {
+<span class="lineNum">    1052 </span><span class="lineCov">         40 :         tMatrix mat = ChildParentTrans(joint_mat, state, joint_id);</span>
+<span class="lineNum">    1053 </span><span class="lineCov">         40 :         mat = cMathUtil::InvRigidMat(mat);</span>
+<span class="lineNum">    1054 </span><span class="lineCov">         40 :         return mat;</span>
+<a name="1055"><span class="lineNum">    1055 </span>            : }</a>
+<span class="lineNum">    1056 </span>            : 
+<span class="lineNum">    1057 </span><span class="lineCov">        420 : tMatrix cKinTree::JointWorldTrans(const Eigen::MatrixXd&amp; joint_mat, const Eigen::VectorXd&amp; state, int joint_id)</span>
+<span class="lineNum">    1058 </span>            : {
+<span class="lineNum">    1059 </span><span class="lineCov">        420 :         tMatrix m = tMatrix::Identity();</span>
+<span class="lineNum">    1060 </span><span class="lineCov">        420 :         int curr_id = joint_id;</span>
+<span class="lineNum">    1061 </span><span class="lineCov">       4012 :         while (curr_id != gInvalidJointID)</span>
+<span class="lineNum">    1062 </span>            :         {
+<span class="lineNum">    1063 </span><span class="lineCov">       1796 :                 tMatrix child_parent_mat = ChildParentTrans(joint_mat, state, curr_id);</span>
+<span class="lineNum">    1064 </span><span class="lineCov">       1796 :                 m = child_parent_mat * m;</span>
+<span class="lineNum">    1065 </span><span class="lineCov">       1796 :                 curr_id = GetParent(joint_mat, curr_id);</span>
+<span class="lineNum">    1066 </span>            :         }
+<span class="lineNum">    1067 </span>            : 
+<span class="lineNum">    1068 </span><span class="lineCov">        420 :         return m;</span>
+<a name="1069"><span class="lineNum">    1069 </span>            : }</a>
+<span class="lineNum">    1070 </span>            : 
+<span class="lineNum">    1071 </span><span class="lineNoCov">          0 : tMatrix cKinTree::WorldJointTrans(const Eigen::MatrixXd&amp; joint_mat, const Eigen::VectorXd&amp; state, int joint_id)</span>
+<span class="lineNum">    1072 </span>            : {
+<span class="lineNum">    1073 </span><span class="lineNoCov">          0 :         tMatrix m = JointWorldTrans(joint_mat, state, joint_id);</span>
+<span class="lineNum">    1074 </span><span class="lineNoCov">          0 :         m = cMathUtil::InvRigidMat(m);</span>
+<span class="lineNum">    1075 </span><span class="lineNoCov">          0 :         return m;</span>
+<a name="1076"><span class="lineNum">    1076 </span>            : }</a>
+<span class="lineNum">    1077 </span>            : 
+<span class="lineNum">    1078 </span><span class="lineCov">        168 : tMatrix cKinTree::BodyWorldTrans(const Eigen::MatrixXd&amp; joint_mat, const Eigen::VectorXd&amp; state, const Eigen::MatrixXd&amp; body_defs, int part_id)</span>
+<span class="lineNum">    1079 </span>            : {
+<span class="lineNum">    1080 </span><span class="lineCov">        168 :         tMatrix body_trans = BodyJointTrans(body_defs, part_id);</span>
+<span class="lineNum">    1081 </span><span class="lineCov">        168 :         tMatrix joint_trans = JointWorldTrans(joint_mat, state, part_id);</span>
+<span class="lineNum">    1082 </span><span class="lineCov">        168 :         body_trans = joint_trans * body_trans;</span>
+<span class="lineNum">    1083 </span><span class="lineCov">        168 :         return body_trans;</span>
+<a name="1084"><span class="lineNum">    1084 </span>            : }</a>
+<span class="lineNum">    1085 </span>            : 
+<span class="lineNum">    1086 </span><span class="lineCov">        376 : tMatrix cKinTree::BodyJointTrans(const Eigen::MatrixXd&amp; body_defs, int part_id)</span>
+<span class="lineNum">    1087 </span>            : {
+<span class="lineNum">    1088 </span><span class="lineCov">        376 :         tVector attach_pt = GetBodyAttachPt(body_defs, part_id);</span>
+<span class="lineNum">    1089 </span>            :         double theta;
+<span class="lineNum">    1090 </span><span class="lineCov">        376 :         tVector axis;</span>
+<span class="lineNum">    1091 </span><span class="lineCov">        376 :         GetBodyRotation(body_defs, part_id, axis, theta);</span>
+<span class="lineNum">    1092 </span><span class="lineCov">        376 :         tVector com = GetBodyLocalCoM(body_defs, part_id);</span>
+<span class="lineNum">    1093 </span>            : 
+<span class="lineNum">    1094 </span><span class="lineCov">        376 :         tMatrix rot = cMathUtil::RotateMat(axis, theta);</span>
+<span class="lineNum">    1095 </span><span class="lineCov">        376 :         tMatrix trans = cMathUtil::TranslateMat(attach_pt + com);</span>
+<span class="lineNum">    1096 </span><span class="lineCov">        376 :         tMatrix m = trans * rot;</span>
+<span class="lineNum">    1097 </span><span class="lineCov">        376 :         return m;</span>
+<a name="1098"><span class="lineNum">    1098 </span>            : }</a>
+<span class="lineNum">    1099 </span>            : 
+<span class="lineNum">    1100 </span><span class="lineNoCov">          0 : cKinTree::tJointDesc cKinTree::BuildJointDesc(eJointType joint_type, int parent_id, const tVector&amp; attach_pt)</span>
+<span class="lineNum">    1101 </span>            : {
+<span class="lineNum">    1102 </span><span class="lineNoCov">          0 :         tJointDesc desc;</span>
+<span class="lineNum">    1103 </span><span class="lineNoCov">          0 :         desc(eJointDescType) = static_cast&lt;double&gt;(joint_type);</span>
+<span class="lineNum">    1104 </span><span class="lineNoCov">          0 :         desc(eJointDescParent) = parent_id;</span>
+<span class="lineNum">    1105 </span><span class="lineNoCov">          0 :         desc(eJointDescAttachX) = attach_pt[0];</span>
+<span class="lineNum">    1106 </span><span class="lineNoCov">          0 :         desc(eJointDescAttachY) = attach_pt[1];</span>
+<span class="lineNum">    1107 </span><span class="lineNoCov">          0 :         desc(eJointDescAttachZ) = attach_pt[2];</span>
+<span class="lineNum">    1108 </span><span class="lineNoCov">          0 :         desc(eJointDescScale) = 1;</span>
+<span class="lineNum">    1109 </span><span class="lineNoCov">          0 :         desc(eJointDescLinkStiffness) = 1;</span>
+<span class="lineNum">    1110 </span><span class="lineNoCov">          0 :         desc(eJointDescLimLow) = 1;</span>
+<span class="lineNum">    1111 </span><span class="lineNoCov">          0 :         desc(eJointDescLimHigh) = 0;</span>
+<span class="lineNum">    1112 </span><span class="lineNoCov">          0 :         desc(eJointDescParamOffset) = 0;</span>
+<span class="lineNum">    1113 </span>            : 
+<span class="lineNum">    1114 </span><span class="lineNoCov">          0 :         return desc;</span>
+<a name="1115"><span class="lineNum">    1115 </span>            : }</a>
+<span class="lineNum">    1116 </span>            : 
+<span class="lineNum">    1117 </span><span class="lineCov">      45016 : tMatrix cKinTree::ChildParentTransRevolute(const Eigen::MatrixXd&amp; joint_mat, const Eigen::VectorXd&amp; state, int joint_id)</span>
+<span class="lineNum">    1118 </span>            : {
+<span class="lineNum">    1119 </span><span class="lineCov">      45016 :         tVector attach_pt = GetScaledAttachPt(joint_mat, joint_id);</span>
+<span class="lineNum">    1120 </span><span class="lineCov">      45016 :         double theta = GetJointTheta(joint_mat, state, joint_id);</span>
+<span class="lineNum">    1121 </span>            :         
+<span class="lineNum">    1122 </span><span class="lineCov">      45016 :         tMatrix R = cMathUtil::RotateMat(tVector(0, 0, 1, 0), theta);</span>
+<span class="lineNum">    1123 </span><span class="lineCov">      45016 :         tMatrix T = cMathUtil::TranslateMat(attach_pt);</span>
+<span class="lineNum">    1124 </span><span class="lineCov">      45016 :         tMatrix mat = T * R;</span>
+<span class="lineNum">    1125 </span><span class="lineCov">      45016 :         return mat;</span>
+<a name="1126"><span class="lineNum">    1126 </span>            : }</a>
+<span class="lineNum">    1127 </span>            : 
+<span class="lineNum">    1128 </span><span class="lineCov">       2600 : tMatrix cKinTree::ChildParentTransPlanar(const Eigen::MatrixXd&amp; joint_mat, const Eigen::VectorXd&amp; state, int joint_id)</span>
+<span class="lineNum">    1129 </span>            : {
+<span class="lineNum">    1130 </span><span class="lineCov">       2600 :         bool is_root = cKinTree::IsRoot(joint_mat, joint_id);</span>
+<span class="lineNum">    1131 </span><span class="lineCov">       2600 :         tVector attach_pt = GetScaledAttachPt(joint_mat, joint_id);</span>
+<span class="lineNum">    1132 </span><span class="lineCov">       2600 :         double theta = GetJointTheta(joint_mat, state, joint_id);</span>
+<span class="lineNum">    1133 </span><span class="lineCov">       2600 :         tVector offset = GetJointOffset(joint_mat, state, joint_id);</span>
+<span class="lineNum">    1134 </span>            : 
+<span class="lineNum">    1135 </span><span class="lineCov">       2600 :         tMatrix R = cMathUtil::RotateMat(tVector(0, 0, 1, 0), theta);</span>
+<span class="lineNum">    1136 </span><span class="lineCov">       2600 :         tMatrix T0 = cMathUtil::TranslateMat(attach_pt);</span>
+<span class="lineNum">    1137 </span><span class="lineCov">       2600 :         tMatrix T1 = cMathUtil::TranslateMat(offset);</span>
+<span class="lineNum">    1138 </span>            : 
+<span class="lineNum">    1139 </span><span class="lineCov">       2600 :         tMatrix mat; </span>
+<span class="lineNum">    1140 </span><span class="lineCov">       2600 :         if (is_root)</span>
+<span class="lineNum">    1141 </span>            :         {
+<span class="lineNum">    1142 </span><span class="lineCov">       2600 :                 mat = T0 * T1 * R;</span>
+<span class="lineNum">    1143 </span>            :         }
+<span class="lineNum">    1144 </span>            :         else
+<span class="lineNum">    1145 </span>            :         {
+<span class="lineNum">    1146 </span><span class="lineNoCov">          0 :                 mat = T0 * R * T1;</span>
+<span class="lineNum">    1147 </span>            :         }
+<span class="lineNum">    1148 </span><span class="lineCov">       2600 :         return mat;</span>
+<a name="1149"><span class="lineNum">    1149 </span>            : }</a>
+<span class="lineNum">    1150 </span>            : 
+<span class="lineNum">    1151 </span><span class="lineNoCov">          0 : tMatrix cKinTree::ChildParentTransFixed(const Eigen::MatrixXd&amp; joint_mat, const Eigen::VectorXd&amp; state, int joint_id)</span>
+<span class="lineNum">    1152 </span>            : {
+<span class="lineNum">    1153 </span><span class="lineNoCov">          0 :         bool is_root = cKinTree::IsRoot(joint_mat, joint_id);</span>
+<span class="lineNum">    1154 </span><span class="lineNoCov">          0 :         tVector attach_pt = GetScaledAttachPt(joint_mat, joint_id);</span>
+<span class="lineNum">    1155 </span><span class="lineNoCov">          0 :         double theta = GetJointTheta(joint_mat, state, joint_id);</span>
+<span class="lineNum">    1156 </span><span class="lineNoCov">          0 :         tVector offset = GetJointOffset(joint_mat, state, joint_id);</span>
+<span class="lineNum">    1157 </span>            : 
+<span class="lineNum">    1158 </span><span class="lineNoCov">          0 :         tMatrix R = cMathUtil::RotateMat(tVector(0, 0, 1, 0), theta);</span>
+<span class="lineNum">    1159 </span><span class="lineNoCov">          0 :         tMatrix T0 = cMathUtil::TranslateMat(attach_pt);</span>
+<span class="lineNum">    1160 </span><span class="lineNoCov">          0 :         tMatrix T1 = cMathUtil::TranslateMat(offset);</span>
+<span class="lineNum">    1161 </span>            : 
+<span class="lineNum">    1162 </span><span class="lineNoCov">          0 :         tMatrix mat;</span>
+<span class="lineNum">    1163 </span><span class="lineNoCov">          0 :         if (is_root)</span>
+<span class="lineNum">    1164 </span>            :         {
+<span class="lineNum">    1165 </span><span class="lineNoCov">          0 :                 mat = T0 * T1 * R;</span>
+<span class="lineNum">    1166 </span>            :         }
+<span class="lineNum">    1167 </span>            :         else
+<span class="lineNum">    1168 </span>            :         {
+<span class="lineNum">    1169 </span><span class="lineNoCov">          0 :                 mat = T0;</span>
+<span class="lineNum">    1170 </span>            :         }
+<span class="lineNum">    1171 </span><span class="lineNoCov">          0 :         return mat;</span>
+<a name="1172"><span class="lineNum">    1172 </span>            : }</a>
+<span class="lineNum">    1173 </span>            : 
+<span class="lineNum">    1174 </span><span class="lineNoCov">          0 : tMatrix cKinTree::ChildParentTransPrismatic(const Eigen::MatrixXd&amp; joint_mat, const Eigen::VectorXd&amp; state, int joint_id)</span>
+<span class="lineNum">    1175 </span>            : {
+<span class="lineNum">    1176 </span><span class="lineNoCov">          0 :         tVector attach_pt = GetScaledAttachPt(joint_mat, joint_id);</span>
+<span class="lineNum">    1177 </span><span class="lineNoCov">          0 :         double theta = GetJointTheta(joint_mat, state, joint_id);</span>
+<span class="lineNum">    1178 </span><span class="lineNoCov">          0 :         tVector offset = tVector(0, theta, 0, 0);</span>
+<span class="lineNum">    1179 </span>            : 
+<span class="lineNum">    1180 </span><span class="lineNoCov">          0 :         tMatrix R = cMathUtil::RotateMat(tVector(0, 0, 1, 0), 0);</span>
+<span class="lineNum">    1181 </span><span class="lineNoCov">          0 :         tMatrix T0 = cMathUtil::TranslateMat(attach_pt);</span>
+<span class="lineNum">    1182 </span><span class="lineNoCov">          0 :         tMatrix T1 = cMathUtil::TranslateMat(offset);</span>
+<span class="lineNum">    1183 </span>            : 
+<a name="1184"><span class="lineNum">    1184 </span><span class="lineNoCov">          0 :         tMatrix mat = T0 * R * T1;</span></a>
+<span class="lineNum">    1185 </span><span class="lineNoCov">          0 :         return mat;</span>
+<span class="lineNum">    1186 </span><span class="lineCov">          3 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

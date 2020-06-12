@@ -1,0 +1,398 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/external/Bullet/src/BulletCollision/CollisionShapes/btBoxShape.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/external/Bullet/src/BulletCollision/CollisionShapes</a> - btBoxShape.h<span style="font-size: 80%;"> (source / <a href="btBoxShape.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">8</td>
+            <td class="headerCovTableEntry">8</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            : Bullet Continuous Collision Detection and Physics Library
+<span class="lineNum">       3 </span>            : Copyright (c) 2003-2009 Erwin Coumans  http://bulletphysics.org
+<span class="lineNum">       4 </span>            : 
+<span class="lineNum">       5 </span>            : This software is provided 'as-is', without any express or implied warranty.
+<span class="lineNum">       6 </span>            : In no event will the authors be held liable for any damages arising from the use of this software.
+<span class="lineNum">       7 </span>            : Permission is granted to anyone to use this software for any purpose, 
+<span class="lineNum">       8 </span>            : including commercial applications, and to alter it and redistribute it freely, 
+<span class="lineNum">       9 </span>            : subject to the following restrictions:
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
+<span class="lineNum">      12 </span>            : 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
+<span class="lineNum">      13 </span>            : 3. This notice may not be removed or altered from any source distribution.
+<span class="lineNum">      14 </span>            : */
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : #ifndef BT_OBB_BOX_MINKOWSKI_H
+<span class="lineNum">      17 </span>            : #define BT_OBB_BOX_MINKOWSKI_H
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            : #include &quot;btPolyhedralConvexShape.h&quot;
+<span class="lineNum">      20 </span>            : #include &quot;btCollisionMargin.h&quot;
+<span class="lineNum">      21 </span>            : #include &quot;BulletCollision/BroadphaseCollision/btBroadphaseProxy.h&quot;
+<span class="lineNum">      22 </span>            : #include &quot;LinearMath/btVector3.h&quot;
+<span class="lineNum">      23 </span>            : #include &quot;LinearMath/btMinMax.h&quot;
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span>            : ///The btBoxShape is a box primitive around the origin, its sides axis aligned with length specified by half extents, in local shape coordinates. When used as part of a btCollisionObject or btRigidBody it will be an oriented box in world space.
+<span class="lineNum">      26 </span>            : ATTRIBUTE_ALIGNED16(class) btBoxShape: public btPolyhedralConvexShape
+<span class="lineNum">      27 </span>            : {
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span>            :         //btVector3     m_boxHalfExtents1; //use m_implicitShapeDimensions instead
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span>            : 
+<a name="32"><span class="lineNum">      32 </span>            : public:</a>
+<span class="lineNum">      33 </span>            : 
+<a name="34"><span class="lineNum">      34 </span><span class="lineCov">         84 : BT_DECLARE_ALIGNED_ALLOCATOR();</span></a>
+<span class="lineNum">      35 </span>            : 
+<span class="lineNum">      36 </span><span class="lineCov">     133524 :         btVector3 getHalfExtentsWithMargin() const</span>
+<span class="lineNum">      37 </span>            :         {
+<span class="lineNum">      38 </span><span class="lineCov">     133524 :                 btVector3 halfExtents = getHalfExtentsWithoutMargin();</span>
+<span class="lineNum">      39 </span><span class="lineCov">     133524 :                 btVector3 margin(getMargin(),getMargin(),getMargin());</span>
+<span class="lineNum">      40 </span><span class="lineCov">     133524 :                 halfExtents += margin;</span>
+<span class="lineNum">      41 </span><span class="lineCov">     133524 :                 return halfExtents;</span>
+<a name="42"><span class="lineNum">      42 </span>            :         }</a>
+<span class="lineNum">      43 </span>            :         
+<span class="lineNum">      44 </span><span class="lineCov">     618673 :         const btVector3&amp; getHalfExtentsWithoutMargin() const</span>
+<span class="lineNum">      45 </span>            :         {
+<span class="lineNum">      46 </span><span class="lineCov">     618673 :                 return m_implicitShapeDimensions;//scaling is included, margin is not</span>
+<span class="lineNum">      47 </span>            :         }
+<span class="lineNum">      48 </span>            :         
+<span class="lineNum">      49 </span>            : 
+<span class="lineNum">      50 </span>            :         virtual btVector3       localGetSupportingVertex(const btVector3&amp; vec) const
+<span class="lineNum">      51 </span>            :         {
+<span class="lineNum">      52 </span>            :                 btVector3 halfExtents = getHalfExtentsWithoutMargin();
+<span class="lineNum">      53 </span>            :                 btVector3 margin(getMargin(),getMargin(),getMargin());
+<span class="lineNum">      54 </span>            :                 halfExtents += margin;
+<span class="lineNum">      55 </span>            :                 
+<span class="lineNum">      56 </span>            :                 return btVector3(btFsels(vec.x(), halfExtents.x(), -halfExtents.x()),
+<span class="lineNum">      57 </span>            :                         btFsels(vec.y(), halfExtents.y(), -halfExtents.y()),
+<span class="lineNum">      58 </span>            :                         btFsels(vec.z(), halfExtents.z(), -halfExtents.z()));
+<span class="lineNum">      59 </span>            :         }
+<span class="lineNum">      60 </span>            : 
+<span class="lineNum">      61 </span>            :         SIMD_FORCE_INLINE  btVector3    localGetSupportingVertexWithoutMargin(const btVector3&amp; vec)const
+<span class="lineNum">      62 </span>            :         {
+<span class="lineNum">      63 </span>            :                 const btVector3&amp; halfExtents = getHalfExtentsWithoutMargin();
+<span class="lineNum">      64 </span>            :                 
+<span class="lineNum">      65 </span>            :                 return btVector3(btFsels(vec.x(), halfExtents.x(), -halfExtents.x()),
+<span class="lineNum">      66 </span>            :                         btFsels(vec.y(), halfExtents.y(), -halfExtents.y()),
+<span class="lineNum">      67 </span>            :                         btFsels(vec.z(), halfExtents.z(), -halfExtents.z()));
+<span class="lineNum">      68 </span>            :         }
+<span class="lineNum">      69 </span>            : 
+<span class="lineNum">      70 </span>            :         virtual void    batchedUnitVectorGetSupportingVertexWithoutMargin(const btVector3* vectors,btVector3* supportVerticesOut,int numVectors) const
+<span class="lineNum">      71 </span>            :         {
+<span class="lineNum">      72 </span>            :                 const btVector3&amp; halfExtents = getHalfExtentsWithoutMargin();
+<span class="lineNum">      73 </span>            :         
+<span class="lineNum">      74 </span>            :                 for (int i=0;i&lt;numVectors;i++)
+<span class="lineNum">      75 </span>            :                 {
+<span class="lineNum">      76 </span>            :                         const btVector3&amp; vec = vectors[i];
+<span class="lineNum">      77 </span>            :                         supportVerticesOut[i].setValue(btFsels(vec.x(), halfExtents.x(), -halfExtents.x()),
+<span class="lineNum">      78 </span>            :                                 btFsels(vec.y(), halfExtents.y(), -halfExtents.y()),
+<span class="lineNum">      79 </span>            :                                 btFsels(vec.z(), halfExtents.z(), -halfExtents.z())); 
+<span class="lineNum">      80 </span>            :                 }
+<span class="lineNum">      81 </span>            : 
+<span class="lineNum">      82 </span>            :         }
+<span class="lineNum">      83 </span>            : 
+<span class="lineNum">      84 </span>            : 
+<span class="lineNum">      85 </span>            :         btBoxShape( const btVector3&amp; boxHalfExtents);
+<span class="lineNum">      86 </span>            : 
+<span class="lineNum">      87 </span>            :         virtual void setMargin(btScalar collisionMargin)
+<span class="lineNum">      88 </span>            :         {
+<span class="lineNum">      89 </span>            :                 //correct the m_implicitShapeDimensions for the margin
+<span class="lineNum">      90 </span>            :                 btVector3 oldMargin(getMargin(),getMargin(),getMargin());
+<span class="lineNum">      91 </span>            :                 btVector3 implicitShapeDimensionsWithMargin = m_implicitShapeDimensions+oldMargin;
+<span class="lineNum">      92 </span>            :                 
+<span class="lineNum">      93 </span>            :                 btConvexInternalShape::setMargin(collisionMargin);
+<span class="lineNum">      94 </span>            :                 btVector3 newMargin(getMargin(),getMargin(),getMargin());
+<span class="lineNum">      95 </span>            :                 m_implicitShapeDimensions = implicitShapeDimensionsWithMargin - newMargin;
+<span class="lineNum">      96 </span>            : 
+<span class="lineNum">      97 </span>            :         }
+<span class="lineNum">      98 </span>            :         virtual void    setLocalScaling(const btVector3&amp; scaling)
+<span class="lineNum">      99 </span>            :         {
+<span class="lineNum">     100 </span>            :                 btVector3 oldMargin(getMargin(),getMargin(),getMargin());
+<span class="lineNum">     101 </span>            :                 btVector3 implicitShapeDimensionsWithMargin = m_implicitShapeDimensions+oldMargin;
+<span class="lineNum">     102 </span>            :                 btVector3 unScaledImplicitShapeDimensionsWithMargin = implicitShapeDimensionsWithMargin / m_localScaling;
+<span class="lineNum">     103 </span>            : 
+<span class="lineNum">     104 </span>            :                 btConvexInternalShape::setLocalScaling(scaling);
+<span class="lineNum">     105 </span>            : 
+<span class="lineNum">     106 </span>            :                 m_implicitShapeDimensions = (unScaledImplicitShapeDimensionsWithMargin * m_localScaling) - oldMargin;
+<span class="lineNum">     107 </span>            : 
+<span class="lineNum">     108 </span>            :         }
+<span class="lineNum">     109 </span>            : 
+<span class="lineNum">     110 </span>            :         virtual void getAabb(const btTransform&amp; t,btVector3&amp; aabbMin,btVector3&amp; aabbMax) const;
+<span class="lineNum">     111 </span>            : 
+<span class="lineNum">     112 </span>            :         
+<span class="lineNum">     113 </span>            : 
+<span class="lineNum">     114 </span>            :         virtual void    calculateLocalInertia(btScalar mass,btVector3&amp; inertia) const;
+<span class="lineNum">     115 </span>            : 
+<span class="lineNum">     116 </span>            :         virtual void getPlane(btVector3&amp; planeNormal,btVector3&amp; planeSupport,int i ) const
+<span class="lineNum">     117 </span>            :         {
+<span class="lineNum">     118 </span>            :                 //this plane might not be aligned...
+<span class="lineNum">     119 </span>            :                 btVector4 plane ;
+<span class="lineNum">     120 </span>            :                 getPlaneEquation(plane,i);
+<span class="lineNum">     121 </span>            :                 planeNormal = btVector3(plane.getX(),plane.getY(),plane.getZ());
+<span class="lineNum">     122 </span>            :                 planeSupport = localGetSupportingVertex(-planeNormal);
+<span class="lineNum">     123 </span>            :         }
+<span class="lineNum">     124 </span>            : 
+<span class="lineNum">     125 </span>            :         
+<span class="lineNum">     126 </span>            :         virtual int getNumPlanes() const
+<span class="lineNum">     127 </span>            :         {
+<span class="lineNum">     128 </span>            :                 return 6;
+<span class="lineNum">     129 </span>            :         }       
+<span class="lineNum">     130 </span>            :         
+<span class="lineNum">     131 </span>            :         virtual int     getNumVertices() const 
+<span class="lineNum">     132 </span>            :         {
+<span class="lineNum">     133 </span>            :                 return 8;
+<span class="lineNum">     134 </span>            :         }
+<span class="lineNum">     135 </span>            : 
+<span class="lineNum">     136 </span>            :         virtual int getNumEdges() const
+<span class="lineNum">     137 </span>            :         {
+<span class="lineNum">     138 </span>            :                 return 12;
+<span class="lineNum">     139 </span>            :         }
+<span class="lineNum">     140 </span>            : 
+<span class="lineNum">     141 </span>            : 
+<span class="lineNum">     142 </span>            :         virtual void getVertex(int i,btVector3&amp; vtx) const
+<span class="lineNum">     143 </span>            :         {
+<span class="lineNum">     144 </span>            :                 btVector3 halfExtents = getHalfExtentsWithMargin();
+<span class="lineNum">     145 </span>            : 
+<span class="lineNum">     146 </span>            :                 vtx = btVector3(
+<span class="lineNum">     147 </span>            :                                 halfExtents.x() * (1-(i&amp;1)) - halfExtents.x() * (i&amp;1),
+<span class="lineNum">     148 </span>            :                                 halfExtents.y() * (1-((i&amp;2)&gt;&gt;1)) - halfExtents.y() * ((i&amp;2)&gt;&gt;1),
+<span class="lineNum">     149 </span>            :                                 halfExtents.z() * (1-((i&amp;4)&gt;&gt;2)) - halfExtents.z() * ((i&amp;4)&gt;&gt;2));
+<span class="lineNum">     150 </span>            :         }
+<span class="lineNum">     151 </span>            :         
+<span class="lineNum">     152 </span>            : 
+<span class="lineNum">     153 </span>            :         virtual void    getPlaneEquation(btVector4&amp; plane,int i) const
+<span class="lineNum">     154 </span>            :         {
+<span class="lineNum">     155 </span>            :                 btVector3 halfExtents = getHalfExtentsWithoutMargin();
+<span class="lineNum">     156 </span>            : 
+<span class="lineNum">     157 </span>            :                 switch (i)
+<span class="lineNum">     158 </span>            :                 {
+<span class="lineNum">     159 </span>            :                 case 0:
+<span class="lineNum">     160 </span>            :                         plane.setValue(btScalar(1.),btScalar(0.),btScalar(0.),-halfExtents.x());
+<span class="lineNum">     161 </span>            :                         break;
+<span class="lineNum">     162 </span>            :                 case 1:
+<span class="lineNum">     163 </span>            :                         plane.setValue(btScalar(-1.),btScalar(0.),btScalar(0.),-halfExtents.x());
+<span class="lineNum">     164 </span>            :                         break;
+<span class="lineNum">     165 </span>            :                 case 2:
+<span class="lineNum">     166 </span>            :                         plane.setValue(btScalar(0.),btScalar(1.),btScalar(0.),-halfExtents.y());
+<span class="lineNum">     167 </span>            :                         break;
+<span class="lineNum">     168 </span>            :                 case 3:
+<span class="lineNum">     169 </span>            :                         plane.setValue(btScalar(0.),btScalar(-1.),btScalar(0.),-halfExtents.y());
+<span class="lineNum">     170 </span>            :                         break;
+<span class="lineNum">     171 </span>            :                 case 4:
+<span class="lineNum">     172 </span>            :                         plane.setValue(btScalar(0.),btScalar(0.),btScalar(1.),-halfExtents.z());
+<span class="lineNum">     173 </span>            :                         break;
+<span class="lineNum">     174 </span>            :                 case 5:
+<span class="lineNum">     175 </span>            :                         plane.setValue(btScalar(0.),btScalar(0.),btScalar(-1.),-halfExtents.z());
+<span class="lineNum">     176 </span>            :                         break;
+<span class="lineNum">     177 </span>            :                 default:
+<span class="lineNum">     178 </span>            :                         btAssert(0);
+<span class="lineNum">     179 </span>            :                 }
+<span class="lineNum">     180 </span>            :         }
+<span class="lineNum">     181 </span>            : 
+<span class="lineNum">     182 </span>            :         
+<span class="lineNum">     183 </span>            :         virtual void getEdge(int i,btVector3&amp; pa,btVector3&amp; pb) const
+<span class="lineNum">     184 </span>            :         //virtual void getEdge(int i,Edge&amp; edge) const
+<span class="lineNum">     185 </span>            :         {
+<span class="lineNum">     186 </span>            :                 int edgeVert0 = 0;
+<span class="lineNum">     187 </span>            :                 int edgeVert1 = 0;
+<span class="lineNum">     188 </span>            : 
+<span class="lineNum">     189 </span>            :                 switch (i)
+<span class="lineNum">     190 </span>            :                 {
+<span class="lineNum">     191 </span>            :                 case 0:
+<span class="lineNum">     192 </span>            :                                 edgeVert0 = 0;
+<span class="lineNum">     193 </span>            :                                 edgeVert1 = 1;
+<span class="lineNum">     194 </span>            :                         break;
+<span class="lineNum">     195 </span>            :                 case 1:
+<span class="lineNum">     196 </span>            :                                 edgeVert0 = 0;
+<span class="lineNum">     197 </span>            :                                 edgeVert1 = 2;
+<span class="lineNum">     198 </span>            :                         break;
+<span class="lineNum">     199 </span>            :                 case 2:
+<span class="lineNum">     200 </span>            :                         edgeVert0 = 1;
+<span class="lineNum">     201 </span>            :                         edgeVert1 = 3;
+<span class="lineNum">     202 </span>            : 
+<span class="lineNum">     203 </span>            :                         break;
+<span class="lineNum">     204 </span>            :                 case 3:
+<span class="lineNum">     205 </span>            :                         edgeVert0 = 2;
+<span class="lineNum">     206 </span>            :                         edgeVert1 = 3;
+<span class="lineNum">     207 </span>            :                         break;
+<span class="lineNum">     208 </span>            :                 case 4:
+<span class="lineNum">     209 </span>            :                         edgeVert0 = 0;
+<span class="lineNum">     210 </span>            :                         edgeVert1 = 4;
+<span class="lineNum">     211 </span>            :                         break;
+<span class="lineNum">     212 </span>            :                 case 5:
+<span class="lineNum">     213 </span>            :                         edgeVert0 = 1;
+<span class="lineNum">     214 </span>            :                         edgeVert1 = 5;
+<span class="lineNum">     215 </span>            : 
+<span class="lineNum">     216 </span>            :                         break;
+<span class="lineNum">     217 </span>            :                 case 6:
+<span class="lineNum">     218 </span>            :                         edgeVert0 = 2;
+<span class="lineNum">     219 </span>            :                         edgeVert1 = 6;
+<span class="lineNum">     220 </span>            :                         break;
+<span class="lineNum">     221 </span>            :                 case 7:
+<span class="lineNum">     222 </span>            :                         edgeVert0 = 3;
+<span class="lineNum">     223 </span>            :                         edgeVert1 = 7;
+<span class="lineNum">     224 </span>            :                         break;
+<span class="lineNum">     225 </span>            :                 case 8:
+<span class="lineNum">     226 </span>            :                         edgeVert0 = 4;
+<span class="lineNum">     227 </span>            :                         edgeVert1 = 5;
+<span class="lineNum">     228 </span>            :                         break;
+<span class="lineNum">     229 </span>            :                 case 9:
+<span class="lineNum">     230 </span>            :                         edgeVert0 = 4;
+<span class="lineNum">     231 </span>            :                         edgeVert1 = 6;
+<span class="lineNum">     232 </span>            :                         break;
+<span class="lineNum">     233 </span>            :                 case 10:
+<span class="lineNum">     234 </span>            :                         edgeVert0 = 5;
+<span class="lineNum">     235 </span>            :                         edgeVert1 = 7;
+<span class="lineNum">     236 </span>            :                         break;
+<span class="lineNum">     237 </span>            :                 case 11:
+<span class="lineNum">     238 </span>            :                         edgeVert0 = 6;
+<span class="lineNum">     239 </span>            :                         edgeVert1 = 7;
+<span class="lineNum">     240 </span>            :                         break;
+<span class="lineNum">     241 </span>            :                 default:
+<span class="lineNum">     242 </span>            :                         btAssert(0);
+<span class="lineNum">     243 </span>            : 
+<span class="lineNum">     244 </span>            :                 }
+<span class="lineNum">     245 </span>            : 
+<span class="lineNum">     246 </span>            :                 getVertex(edgeVert0,pa );
+<span class="lineNum">     247 </span>            :                 getVertex(edgeVert1,pb );
+<span class="lineNum">     248 </span>            :         }
+<span class="lineNum">     249 </span>            : 
+<span class="lineNum">     250 </span>            : 
+<span class="lineNum">     251 </span>            : 
+<span class="lineNum">     252 </span>            : 
+<span class="lineNum">     253 </span>            :         
+<span class="lineNum">     254 </span>            :         virtual bool isInside(const btVector3&amp; pt,btScalar tolerance) const
+<span class="lineNum">     255 </span>            :         {
+<span class="lineNum">     256 </span>            :                 btVector3 halfExtents = getHalfExtentsWithoutMargin();
+<span class="lineNum">     257 </span>            : 
+<span class="lineNum">     258 </span>            :                 //btScalar minDist = 2*tolerance;
+<span class="lineNum">     259 </span>            :                 
+<span class="lineNum">     260 </span>            :                 bool result =   (pt.x() &lt;= (halfExtents.x()+tolerance)) &amp;&amp;
+<span class="lineNum">     261 </span>            :                                                 (pt.x() &gt;= (-halfExtents.x()-tolerance)) &amp;&amp;
+<span class="lineNum">     262 </span>            :                                                 (pt.y() &lt;= (halfExtents.y()+tolerance)) &amp;&amp;
+<span class="lineNum">     263 </span>            :                                                 (pt.y() &gt;= (-halfExtents.y()-tolerance)) &amp;&amp;
+<span class="lineNum">     264 </span>            :                                                 (pt.z() &lt;= (halfExtents.z()+tolerance)) &amp;&amp;
+<span class="lineNum">     265 </span>            :                                                 (pt.z() &gt;= (-halfExtents.z()-tolerance));
+<span class="lineNum">     266 </span>            :                 
+<span class="lineNum">     267 </span>            :                 return result;
+<span class="lineNum">     268 </span>            :         }
+<span class="lineNum">     269 </span>            : 
+<span class="lineNum">     270 </span>            : 
+<span class="lineNum">     271 </span>            :         //debugging
+<span class="lineNum">     272 </span>            :         virtual const char*     getName()const
+<span class="lineNum">     273 </span>            :         {
+<span class="lineNum">     274 </span>            :                 return &quot;Box&quot;;
+<span class="lineNum">     275 </span>            :         }
+<span class="lineNum">     276 </span>            : 
+<span class="lineNum">     277 </span>            :         virtual int             getNumPreferredPenetrationDirections() const
+<span class="lineNum">     278 </span>            :         {
+<span class="lineNum">     279 </span>            :                 return 6;
+<span class="lineNum">     280 </span>            :         }
+<span class="lineNum">     281 </span>            :         
+<span class="lineNum">     282 </span>            :         virtual void    getPreferredPenetrationDirection(int index, btVector3&amp; penetrationVector) const
+<span class="lineNum">     283 </span>            :         {
+<span class="lineNum">     284 </span>            :                 switch (index)
+<span class="lineNum">     285 </span>            :                 {
+<span class="lineNum">     286 </span>            :                 case 0:
+<span class="lineNum">     287 </span>            :                         penetrationVector.setValue(btScalar(1.),btScalar(0.),btScalar(0.));
+<span class="lineNum">     288 </span>            :                         break;
+<span class="lineNum">     289 </span>            :                 case 1:
+<span class="lineNum">     290 </span>            :                         penetrationVector.setValue(btScalar(-1.),btScalar(0.),btScalar(0.));
+<span class="lineNum">     291 </span>            :                         break;
+<span class="lineNum">     292 </span>            :                 case 2:
+<span class="lineNum">     293 </span>            :                         penetrationVector.setValue(btScalar(0.),btScalar(1.),btScalar(0.));
+<span class="lineNum">     294 </span>            :                         break;
+<span class="lineNum">     295 </span>            :                 case 3:
+<span class="lineNum">     296 </span>            :                         penetrationVector.setValue(btScalar(0.),btScalar(-1.),btScalar(0.));
+<span class="lineNum">     297 </span>            :                         break;
+<span class="lineNum">     298 </span>            :                 case 4:
+<span class="lineNum">     299 </span>            :                         penetrationVector.setValue(btScalar(0.),btScalar(0.),btScalar(1.));
+<span class="lineNum">     300 </span>            :                         break;
+<span class="lineNum">     301 </span>            :                 case 5:
+<span class="lineNum">     302 </span>            :                         penetrationVector.setValue(btScalar(0.),btScalar(0.),btScalar(-1.));
+<span class="lineNum">     303 </span>            :                         break;
+<span class="lineNum">     304 </span>            :                 default:
+<span class="lineNum">     305 </span>            :                         btAssert(0);
+<span class="lineNum">     306 </span>            :                 }
+<span class="lineNum">     307 </span>            :         }
+<span class="lineNum">     308 </span>            : 
+<span class="lineNum">     309 </span>            : };
+<span class="lineNum">     310 </span>            : 
+<span class="lineNum">     311 </span>            : 
+<span class="lineNum">     312 </span>            : #endif //BT_OBB_BOX_MINKOWSKI_H
+<span class="lineNum">     313 </span>            : 
+<span class="lineNum">     314 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

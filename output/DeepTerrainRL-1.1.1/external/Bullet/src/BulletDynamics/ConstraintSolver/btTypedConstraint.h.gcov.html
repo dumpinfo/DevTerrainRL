@@ -1,0 +1,629 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/external/Bullet/src/BulletDynamics/ConstraintSolver/btTypedConstraint.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/external/Bullet/src/BulletDynamics/ConstraintSolver</a> - btTypedConstraint.h<span style="font-size: 80%;"> (source / <a href="btTypedConstraint.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntryLo">16.7 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntryLo">25.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            : Bullet Continuous Collision Detection and Physics Library
+<span class="lineNum">       3 </span>            : Copyright (c) 2003-2010 Erwin Coumans  http://continuousphysics.com/Bullet/
+<span class="lineNum">       4 </span>            : 
+<span class="lineNum">       5 </span>            : This software is provided 'as-is', without any express or implied warranty.
+<span class="lineNum">       6 </span>            : In no event will the authors be held liable for any damages arising from the use of this software.
+<span class="lineNum">       7 </span>            : Permission is granted to anyone to use this software for any purpose, 
+<span class="lineNum">       8 </span>            : including commercial applications, and to alter it and redistribute it freely, 
+<span class="lineNum">       9 </span>            : subject to the following restrictions:
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
+<span class="lineNum">      12 </span>            : 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
+<span class="lineNum">      13 </span>            : 3. This notice may not be removed or altered from any source distribution.
+<span class="lineNum">      14 </span>            : */
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : #ifndef BT_TYPED_CONSTRAINT_H
+<span class="lineNum">      17 </span>            : #define BT_TYPED_CONSTRAINT_H
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            : #include &quot;LinearMath/btScalar.h&quot;
+<span class="lineNum">      21 </span>            : #include &quot;btSolverConstraint.h&quot;
+<span class="lineNum">      22 </span>            : #include &quot;BulletDynamics/Dynamics/btRigidBody.h&quot;
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : #ifdef BT_USE_DOUBLE_PRECISION
+<span class="lineNum">      25 </span>            : #define btTypedConstraintData2          btTypedConstraintDoubleData
+<span class="lineNum">      26 </span>            : #define btTypedConstraintDataName       &quot;btTypedConstraintDoubleData&quot;
+<span class="lineNum">      27 </span>            : #else
+<span class="lineNum">      28 </span>            : #define btTypedConstraintData2          btTypedConstraintFloatData
+<span class="lineNum">      29 </span>            : #define btTypedConstraintDataName  &quot;btTypedConstraintFloatData&quot; 
+<span class="lineNum">      30 </span>            : #endif //BT_USE_DOUBLE_PRECISION
+<span class="lineNum">      31 </span>            : 
+<span class="lineNum">      32 </span>            : 
+<span class="lineNum">      33 </span>            : class btSerializer;
+<span class="lineNum">      34 </span>            : 
+<span class="lineNum">      35 </span>            : //Don't change any of the existing enum values, so add enum types at the end for serialization compatibility
+<span class="lineNum">      36 </span>            : enum btTypedConstraintType
+<span class="lineNum">      37 </span>            : {
+<span class="lineNum">      38 </span>            :         POINT2POINT_CONSTRAINT_TYPE=3,
+<span class="lineNum">      39 </span>            :         HINGE_CONSTRAINT_TYPE,
+<span class="lineNum">      40 </span>            :         CONETWIST_CONSTRAINT_TYPE,
+<span class="lineNum">      41 </span>            :         D6_CONSTRAINT_TYPE,
+<span class="lineNum">      42 </span>            :         SLIDER_CONSTRAINT_TYPE,
+<span class="lineNum">      43 </span>            :         CONTACT_CONSTRAINT_TYPE,
+<span class="lineNum">      44 </span>            :         D6_SPRING_CONSTRAINT_TYPE,
+<span class="lineNum">      45 </span>            :         GEAR_CONSTRAINT_TYPE,
+<span class="lineNum">      46 </span>            :         FIXED_CONSTRAINT_TYPE,
+<span class="lineNum">      47 </span>            :         D6_SPRING_2_CONSTRAINT_TYPE,
+<span class="lineNum">      48 </span>            :         MAX_CONSTRAINT_TYPE
+<span class="lineNum">      49 </span>            : };
+<span class="lineNum">      50 </span>            : 
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span>            : enum btConstraintParams
+<span class="lineNum">      53 </span>            : {
+<span class="lineNum">      54 </span>            :         BT_CONSTRAINT_ERP=1,
+<span class="lineNum">      55 </span>            :         BT_CONSTRAINT_STOP_ERP,
+<span class="lineNum">      56 </span>            :         BT_CONSTRAINT_CFM,
+<span class="lineNum">      57 </span>            :         BT_CONSTRAINT_STOP_CFM
+<span class="lineNum">      58 </span>            : };
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span>            : #if 1
+<span class="lineNum">      61 </span>            :         #define btAssertConstrParams(_par) btAssert(_par) 
+<span class="lineNum">      62 </span>            : #else
+<span class="lineNum">      63 </span>            :         #define btAssertConstrParams(_par)
+<span class="lineNum">      64 </span>            : #endif
+<span class="lineNum">      65 </span>            : 
+<span class="lineNum">      66 </span>            : 
+<span class="lineNum">      67 </span>            : ATTRIBUTE_ALIGNED16(struct)     btJointFeedback
+<span class="lineNum">      68 </span>            : {
+<span class="lineNum">      69 </span>            :         btVector3       m_appliedForceBodyA;
+<span class="lineNum">      70 </span>            :         btVector3       m_appliedTorqueBodyA;
+<span class="lineNum">      71 </span>            :         btVector3       m_appliedForceBodyB;
+<span class="lineNum">      72 </span>            :         btVector3       m_appliedTorqueBodyB;
+<span class="lineNum">      73 </span>            : };
+<span class="lineNum">      74 </span>            : 
+<span class="lineNum">      75 </span>            : 
+<span class="lineNum">      76 </span>            : ///TypedConstraint is the baseclass for Bullet constraints and vehicles
+<span class="lineNum">      77 </span>            : ATTRIBUTE_ALIGNED16(class) btTypedConstraint : public btTypedObject
+<span class="lineNum">      78 </span>            : {
+<span class="lineNum">      79 </span>            :         int     m_userConstraintType;
+<span class="lineNum">      80 </span>            : 
+<span class="lineNum">      81 </span>            :         union
+<span class="lineNum">      82 </span>            :         {
+<span class="lineNum">      83 </span>            :                 int     m_userConstraintId;
+<span class="lineNum">      84 </span>            :                 void* m_userConstraintPtr;
+<span class="lineNum">      85 </span>            :         };
+<span class="lineNum">      86 </span>            : 
+<span class="lineNum">      87 </span>            :         btScalar        m_breakingImpulseThreshold;
+<span class="lineNum">      88 </span>            :         bool            m_isEnabled;
+<span class="lineNum">      89 </span>            :         bool            m_needsFeedback;
+<span class="lineNum">      90 </span>            :         int                     m_overrideNumSolverIterations;
+<span class="lineNum">      91 </span>            : 
+<span class="lineNum">      92 </span>            : 
+<span class="lineNum">      93 </span>            :         btTypedConstraint&amp;  operator=(btTypedConstraint&amp;        other)
+<span class="lineNum">      94 </span>            :         {
+<span class="lineNum">      95 </span>            :                 btAssert(0);
+<span class="lineNum">      96 </span>            :                 (void) other;
+<span class="lineNum">      97 </span>            :                 return *this;
+<span class="lineNum">      98 </span>            :         }
+<span class="lineNum">      99 </span>            : 
+<span class="lineNum">     100 </span>            : protected:
+<span class="lineNum">     101 </span>            :         btRigidBody&amp;        m_rbA;
+<span class="lineNum">     102 </span>            :         btRigidBody&amp;        m_rbB;
+<span class="lineNum">     103 </span>            :         btScalar        m_appliedImpulse;
+<span class="lineNum">     104 </span>            :         btScalar        m_dbgDrawSize;
+<span class="lineNum">     105 </span>            :         btJointFeedback*        m_jointFeedback;
+<span class="lineNum">     106 </span>            : 
+<span class="lineNum">     107 </span>            :         ///internal method used by the constraint solver, don't use them directly
+<span class="lineNum">     108 </span>            :         btScalar getMotorFactor(btScalar pos, btScalar lowLim, btScalar uppLim, btScalar vel, btScalar timeFact);
+<span class="lineNum">     109 </span>            :         
+<span class="lineNum">     110 </span>            : 
+<span class="lineNum">     111 </span>            : public:
+<span class="lineNum">     112 </span>            : 
+<span class="lineNum">     113 </span>            :         BT_DECLARE_ALIGNED_ALLOCATOR();
+<span class="lineNum">     114 </span>            : 
+<span class="lineNum">     115 </span>            :         virtual ~btTypedConstraint() {};
+<span class="lineNum">     116 </span>            :         btTypedConstraint(btTypedConstraintType type, btRigidBody&amp; rbA);
+<span class="lineNum">     117 </span>            :         btTypedConstraint(btTypedConstraintType type, btRigidBody&amp; rbA,btRigidBody&amp; rbB);
+<span class="lineNum">     118 </span>            : 
+<span class="lineNum">     119 </span>            :         struct btConstraintInfo1 {
+<span class="lineNum">     120 </span>            :                 int m_numConstraintRows,nub;
+<span class="lineNum">     121 </span>            :         };
+<span class="lineNum">     122 </span>            : 
+<span class="lineNum">     123 </span>            :         static btRigidBody&amp; getFixedBody();
+<span class="lineNum">     124 </span>            : 
+<span class="lineNum">     125 </span>            :         struct btConstraintInfo2 {
+<span class="lineNum">     126 </span>            :                 // integrator parameters: frames per second (1/stepsize), default error
+<span class="lineNum">     127 </span>            :                 // reduction parameter (0..1).
+<span class="lineNum">     128 </span>            :                 btScalar fps,erp;
+<span class="lineNum">     129 </span>            : 
+<span class="lineNum">     130 </span>            :                 // for the first and second body, pointers to two (linear and angular)
+<span class="lineNum">     131 </span>            :                 // n*3 jacobian sub matrices, stored by rows. these matrices will have
+<span class="lineNum">     132 </span>            :                 // been initialized to 0 on entry. if the second body is zero then the
+<span class="lineNum">     133 </span>            :                 // J2xx pointers may be 0.
+<span class="lineNum">     134 </span>            :                 btScalar *m_J1linearAxis,*m_J1angularAxis,*m_J2linearAxis,*m_J2angularAxis;
+<span class="lineNum">     135 </span>            : 
+<span class="lineNum">     136 </span>            :                 // elements to jump from one row to the next in J's
+<span class="lineNum">     137 </span>            :                 int rowskip;
+<span class="lineNum">     138 </span>            : 
+<span class="lineNum">     139 </span>            :                 // right hand sides of the equation J*v = c + cfm * lambda. cfm is the
+<span class="lineNum">     140 </span>            :                 // &quot;constraint force mixing&quot; vector. c is set to zero on entry, cfm is
+<span class="lineNum">     141 </span>            :                 // set to a constant value (typically very small or zero) value on entry.
+<span class="lineNum">     142 </span>            :                 btScalar *m_constraintError,*cfm;
+<span class="lineNum">     143 </span>            : 
+<span class="lineNum">     144 </span>            :                 // lo and hi limits for variables (set to -/+ infinity on entry).
+<span class="lineNum">     145 </span>            :                 btScalar *m_lowerLimit,*m_upperLimit;
+<span class="lineNum">     146 </span>            : 
+<span class="lineNum">     147 </span>            :                 // findex vector for variables. see the LCP solver interface for a
+<span class="lineNum">     148 </span>            :                 // description of what this does. this is set to -1 on entry.
+<span class="lineNum">     149 </span>            :                 // note that the returned indexes are relative to the first index of
+<span class="lineNum">     150 </span>            :                 // the constraint.
+<span class="lineNum">     151 </span>            :                 int *findex;
+<span class="lineNum">     152 </span>            :                 // number of solver iterations
+<span class="lineNum">     153 </span>            :                 int m_numIterations;
+<span class="lineNum">     154 </span>            : 
+<span class="lineNum">     155 </span>            :                 //damping of the velocity
+<span class="lineNum">     156 </span>            :                 btScalar        m_damping;
+<span class="lineNum">     157 </span>            :         };
+<span class="lineNum">     158 </span>            : 
+<span class="lineNum">     159 </span>            :         int     getOverrideNumSolverIterations() const
+<span class="lineNum">     160 </span>            :         {
+<span class="lineNum">     161 </span>            :                 return m_overrideNumSolverIterations;
+<span class="lineNum">     162 </span>            :         }
+<span class="lineNum">     163 </span>            : 
+<span class="lineNum">     164 </span>            :         ///override the number of constraint solver iterations used to solve this constraint
+<span class="lineNum">     165 </span>            :         ///-1 will use the default number of iterations, as specified in SolverInfo.m_numIterations
+<span class="lineNum">     166 </span>            :         void setOverrideNumSolverIterations(int overideNumIterations)
+<span class="lineNum">     167 </span>            :         {
+<span class="lineNum">     168 </span>            :                 m_overrideNumSolverIterations = overideNumIterations;
+<span class="lineNum">     169 </span>            :         }
+<a name="170"><span class="lineNum">     170 </span>            : </a>
+<span class="lineNum">     171 </span>            :         ///internal method used by the constraint solver, don't use them directly
+<span class="lineNum">     172 </span><span class="lineNoCov">          0 :         virtual void    buildJacobian() {};</span>
+<a name="173"><span class="lineNum">     173 </span>            : </a>
+<span class="lineNum">     174 </span>            :         ///internal method used by the constraint solver, don't use them directly
+<span class="lineNum">     175 </span><span class="lineNoCov">          0 :         virtual void    setupSolverConstraint(btConstraintArray&amp; ca, int solverBodyA,int solverBodyB, btScalar timeStep)</span>
+<span class="lineNum">     176 </span>            :         {
+<span class="lineNum">     177 </span>            :         (void)ca;
+<span class="lineNum">     178 </span>            :         (void)solverBodyA;
+<span class="lineNum">     179 </span>            :         (void)solverBodyB;
+<span class="lineNum">     180 </span>            :         (void)timeStep;
+<span class="lineNum">     181 </span><span class="lineNoCov">          0 :         }</span>
+<span class="lineNum">     182 </span>            :         
+<span class="lineNum">     183 </span>            :         ///internal method used by the constraint solver, don't use them directly
+<span class="lineNum">     184 </span>            :         virtual void getInfo1 (btConstraintInfo1* info)=0;
+<span class="lineNum">     185 </span>            : 
+<span class="lineNum">     186 </span>            :         ///internal method used by the constraint solver, don't use them directly
+<span class="lineNum">     187 </span>            :         virtual void getInfo2 (btConstraintInfo2* info)=0;
+<span class="lineNum">     188 </span>            : 
+<span class="lineNum">     189 </span>            :         ///internal method used by the constraint solver, don't use them directly
+<span class="lineNum">     190 </span>            :         void    internalSetAppliedImpulse(btScalar appliedImpulse)
+<span class="lineNum">     191 </span>            :         {
+<span class="lineNum">     192 </span>            :                 m_appliedImpulse = appliedImpulse;
+<span class="lineNum">     193 </span>            :         }
+<span class="lineNum">     194 </span>            :         ///internal method used by the constraint solver, don't use them directly
+<span class="lineNum">     195 </span>            :         btScalar        internalGetAppliedImpulse()
+<span class="lineNum">     196 </span>            :         {
+<span class="lineNum">     197 </span>            :                 return m_appliedImpulse;
+<span class="lineNum">     198 </span>            :         }
+<span class="lineNum">     199 </span>            : 
+<span class="lineNum">     200 </span>            : 
+<span class="lineNum">     201 </span>            :         btScalar        getBreakingImpulseThreshold() const
+<span class="lineNum">     202 </span>            :         {
+<span class="lineNum">     203 </span>            :                 return  m_breakingImpulseThreshold;
+<span class="lineNum">     204 </span>            :         }
+<span class="lineNum">     205 </span>            : 
+<span class="lineNum">     206 </span>            :         void    setBreakingImpulseThreshold(btScalar threshold)
+<span class="lineNum">     207 </span>            :         {
+<span class="lineNum">     208 </span>            :                 m_breakingImpulseThreshold = threshold;
+<span class="lineNum">     209 </span>            :         }
+<span class="lineNum">     210 </span>            : 
+<span class="lineNum">     211 </span>            :         bool    isEnabled() const
+<span class="lineNum">     212 </span>            :         {
+<span class="lineNum">     213 </span>            :                 return m_isEnabled;
+<span class="lineNum">     214 </span>            :         }
+<span class="lineNum">     215 </span>            : 
+<span class="lineNum">     216 </span>            :         void    setEnabled(bool enabled)
+<span class="lineNum">     217 </span>            :         {
+<span class="lineNum">     218 </span>            :                 m_isEnabled=enabled;
+<span class="lineNum">     219 </span>            :         }
+<span class="lineNum">     220 </span>            : 
+<a name="221"><span class="lineNum">     221 </span>            : </a>
+<span class="lineNum">     222 </span>            :         ///internal method used by the constraint solver, don't use them directly
+<span class="lineNum">     223 </span><span class="lineCov">    2180000 :         virtual void    solveConstraintObsolete(btSolverBody&amp; /*bodyA*/,btSolverBody&amp; /*bodyB*/,btScalar        /*timeStep*/) {};</span>
+<span class="lineNum">     224 </span>            : 
+<span class="lineNum">     225 </span>            :         
+<span class="lineNum">     226 </span>            :         const btRigidBody&amp; getRigidBodyA() const
+<span class="lineNum">     227 </span>            :         {
+<span class="lineNum">     228 </span>            :                 return m_rbA;
+<span class="lineNum">     229 </span>            :         }
+<span class="lineNum">     230 </span>            :         const btRigidBody&amp; getRigidBodyB() const
+<span class="lineNum">     231 </span>            :         {
+<span class="lineNum">     232 </span>            :                 return m_rbB;
+<span class="lineNum">     233 </span>            :         }
+<span class="lineNum">     234 </span>            : 
+<span class="lineNum">     235 </span>            :         btRigidBody&amp; getRigidBodyA() 
+<span class="lineNum">     236 </span>            :         {
+<span class="lineNum">     237 </span>            :                 return m_rbA;
+<span class="lineNum">     238 </span>            :         }
+<span class="lineNum">     239 </span>            :         btRigidBody&amp; getRigidBodyB()
+<span class="lineNum">     240 </span>            :         {
+<span class="lineNum">     241 </span>            :                 return m_rbB;
+<span class="lineNum">     242 </span>            :         }
+<span class="lineNum">     243 </span>            : 
+<span class="lineNum">     244 </span>            :         int getUserConstraintType() const
+<span class="lineNum">     245 </span>            :         {
+<span class="lineNum">     246 </span>            :                 return m_userConstraintType ;
+<span class="lineNum">     247 </span>            :         }
+<span class="lineNum">     248 </span>            : 
+<span class="lineNum">     249 </span>            :         void    setUserConstraintType(int userConstraintType)
+<span class="lineNum">     250 </span>            :         {
+<span class="lineNum">     251 </span>            :                 m_userConstraintType = userConstraintType;
+<span class="lineNum">     252 </span>            :         };
+<span class="lineNum">     253 </span>            : 
+<span class="lineNum">     254 </span>            :         void    setUserConstraintId(int uid)
+<span class="lineNum">     255 </span>            :         {
+<span class="lineNum">     256 </span>            :                 m_userConstraintId = uid;
+<span class="lineNum">     257 </span>            :         }
+<span class="lineNum">     258 </span>            : 
+<span class="lineNum">     259 </span>            :         int getUserConstraintId() const
+<span class="lineNum">     260 </span>            :         {
+<span class="lineNum">     261 </span>            :                 return m_userConstraintId;
+<span class="lineNum">     262 </span>            :         }
+<span class="lineNum">     263 </span>            : 
+<span class="lineNum">     264 </span>            :         void    setUserConstraintPtr(void* ptr)
+<span class="lineNum">     265 </span>            :         {
+<span class="lineNum">     266 </span>            :                 m_userConstraintPtr = ptr;
+<span class="lineNum">     267 </span>            :         }
+<span class="lineNum">     268 </span>            : 
+<span class="lineNum">     269 </span>            :         void*   getUserConstraintPtr()
+<span class="lineNum">     270 </span>            :         {
+<span class="lineNum">     271 </span>            :                 return m_userConstraintPtr;
+<span class="lineNum">     272 </span>            :         }
+<span class="lineNum">     273 </span>            : 
+<span class="lineNum">     274 </span>            :         void    setJointFeedback(btJointFeedback* jointFeedback)
+<span class="lineNum">     275 </span>            :         {
+<span class="lineNum">     276 </span>            :                 m_jointFeedback = jointFeedback;
+<span class="lineNum">     277 </span>            :         }
+<span class="lineNum">     278 </span>            : 
+<span class="lineNum">     279 </span>            :         const btJointFeedback* getJointFeedback() const
+<span class="lineNum">     280 </span>            :         {
+<span class="lineNum">     281 </span>            :                 return m_jointFeedback;
+<span class="lineNum">     282 </span>            :         }
+<span class="lineNum">     283 </span>            : 
+<span class="lineNum">     284 </span>            :         btJointFeedback* getJointFeedback()
+<span class="lineNum">     285 </span>            :         {
+<span class="lineNum">     286 </span>            :                 return m_jointFeedback;
+<span class="lineNum">     287 </span>            :         }
+<span class="lineNum">     288 </span>            : 
+<span class="lineNum">     289 </span>            : 
+<span class="lineNum">     290 </span>            :         int getUid() const
+<span class="lineNum">     291 </span>            :         {
+<span class="lineNum">     292 </span>            :                 return m_userConstraintId;   
+<span class="lineNum">     293 </span>            :         } 
+<span class="lineNum">     294 </span>            : 
+<span class="lineNum">     295 </span>            :         bool    needsFeedback() const
+<span class="lineNum">     296 </span>            :         {
+<span class="lineNum">     297 </span>            :                 return m_needsFeedback;
+<span class="lineNum">     298 </span>            :         }
+<span class="lineNum">     299 </span>            : 
+<span class="lineNum">     300 </span>            :         ///enableFeedback will allow to read the applied linear and angular impulse
+<span class="lineNum">     301 </span>            :         ///use getAppliedImpulse, getAppliedLinearImpulse and getAppliedAngularImpulse to read feedback information
+<span class="lineNum">     302 </span>            :         void    enableFeedback(bool needsFeedback)
+<span class="lineNum">     303 </span>            :         {
+<span class="lineNum">     304 </span>            :                 m_needsFeedback = needsFeedback;
+<span class="lineNum">     305 </span>            :         }
+<span class="lineNum">     306 </span>            : 
+<span class="lineNum">     307 </span>            :         ///getAppliedImpulse is an estimated total applied impulse. 
+<span class="lineNum">     308 </span>            :         ///This feedback could be used to determine breaking constraints or playing sounds.
+<span class="lineNum">     309 </span>            :         btScalar        getAppliedImpulse() const
+<span class="lineNum">     310 </span>            :         {
+<span class="lineNum">     311 </span>            :                 btAssert(m_needsFeedback);
+<span class="lineNum">     312 </span>            :                 return m_appliedImpulse;
+<span class="lineNum">     313 </span>            :         }
+<span class="lineNum">     314 </span>            : 
+<span class="lineNum">     315 </span>            :         btTypedConstraintType getConstraintType () const
+<span class="lineNum">     316 </span>            :         {
+<span class="lineNum">     317 </span>            :                 return btTypedConstraintType(m_objectType);
+<span class="lineNum">     318 </span>            :         }
+<span class="lineNum">     319 </span>            :         
+<span class="lineNum">     320 </span>            :         void setDbgDrawSize(btScalar dbgDrawSize)
+<span class="lineNum">     321 </span>            :         {
+<span class="lineNum">     322 </span>            :                 m_dbgDrawSize = dbgDrawSize;
+<span class="lineNum">     323 </span>            :         }
+<span class="lineNum">     324 </span>            :         btScalar getDbgDrawSize()
+<span class="lineNum">     325 </span>            :         {
+<span class="lineNum">     326 </span>            :                 return m_dbgDrawSize;
+<span class="lineNum">     327 </span>            :         }
+<span class="lineNum">     328 </span>            : 
+<span class="lineNum">     329 </span>            :         ///override the default global value of a parameter (such as ERP or CFM), optionally provide the axis (0..5). 
+<span class="lineNum">     330 </span>            :         ///If no axis is provided, it uses the default axis for this constraint.
+<span class="lineNum">     331 </span>            :         virtual void    setParam(int num, btScalar value, int axis = -1) = 0;
+<span class="lineNum">     332 </span>            : 
+<span class="lineNum">     333 </span>            :         ///return the local value of parameter
+<span class="lineNum">     334 </span>            :         virtual btScalar getParam(int num, int axis = -1) const = 0;
+<span class="lineNum">     335 </span>            :         
+<span class="lineNum">     336 </span>            :         virtual int     calculateSerializeBufferSize() const;
+<span class="lineNum">     337 </span>            : 
+<span class="lineNum">     338 </span>            :         ///fills the dataBuffer and returns the struct name (and 0 on failure)
+<span class="lineNum">     339 </span>            :         virtual const char*     serialize(void* dataBuffer, btSerializer* serializer) const;
+<span class="lineNum">     340 </span>            : 
+<span class="lineNum">     341 </span>            : };
+<span class="lineNum">     342 </span>            : 
+<span class="lineNum">     343 </span>            : // returns angle in range [-SIMD_2_PI, SIMD_2_PI], closest to one of the limits 
+<span class="lineNum">     344 </span>            : // all arguments should be normalized angles (i.e. in range [-SIMD_PI, SIMD_PI])
+<span class="lineNum">     345 </span>            : SIMD_FORCE_INLINE btScalar btAdjustAngleToLimits(btScalar angleInRadians, btScalar angleLowerLimitInRadians, btScalar angleUpperLimitInRadians)
+<span class="lineNum">     346 </span>            : {
+<span class="lineNum">     347 </span>            :         if(angleLowerLimitInRadians &gt;= angleUpperLimitInRadians)
+<span class="lineNum">     348 </span>            :         {
+<span class="lineNum">     349 </span>            :                 return angleInRadians;
+<span class="lineNum">     350 </span>            :         }
+<span class="lineNum">     351 </span>            :         else if(angleInRadians &lt; angleLowerLimitInRadians)
+<span class="lineNum">     352 </span>            :         {
+<span class="lineNum">     353 </span>            :                 btScalar diffLo = btFabs(btNormalizeAngle(angleLowerLimitInRadians - angleInRadians));
+<span class="lineNum">     354 </span>            :                 btScalar diffHi = btFabs(btNormalizeAngle(angleUpperLimitInRadians - angleInRadians));
+<span class="lineNum">     355 </span>            :                 return (diffLo &lt; diffHi) ? angleInRadians : (angleInRadians + SIMD_2_PI);
+<span class="lineNum">     356 </span>            :         }
+<span class="lineNum">     357 </span>            :         else if(angleInRadians &gt; angleUpperLimitInRadians)
+<span class="lineNum">     358 </span>            :         {
+<span class="lineNum">     359 </span>            :                 btScalar diffHi = btFabs(btNormalizeAngle(angleInRadians - angleUpperLimitInRadians));
+<span class="lineNum">     360 </span>            :                 btScalar diffLo = btFabs(btNormalizeAngle(angleInRadians - angleLowerLimitInRadians));
+<span class="lineNum">     361 </span>            :                 return (diffLo &lt; diffHi) ? (angleInRadians - SIMD_2_PI) : angleInRadians;
+<span class="lineNum">     362 </span>            :         }
+<span class="lineNum">     363 </span>            :         else
+<span class="lineNum">     364 </span>            :         {
+<span class="lineNum">     365 </span>            :                 return angleInRadians;
+<span class="lineNum">     366 </span>            :         }
+<span class="lineNum">     367 </span>            : }
+<span class="lineNum">     368 </span>            : 
+<span class="lineNum">     369 </span>            : ///do not change those serialization structures, it requires an updated sBulletDNAstr/sBulletDNAstr64
+<span class="lineNum">     370 </span>            : struct  btTypedConstraintFloatData
+<span class="lineNum">     371 </span>            : {
+<span class="lineNum">     372 </span>            :         btRigidBodyFloatData            *m_rbA;
+<span class="lineNum">     373 </span>            :         btRigidBodyFloatData            *m_rbB;
+<span class="lineNum">     374 </span>            :         char    *m_name;
+<span class="lineNum">     375 </span>            : 
+<span class="lineNum">     376 </span>            :         int     m_objectType;
+<span class="lineNum">     377 </span>            :         int     m_userConstraintType;
+<span class="lineNum">     378 </span>            :         int     m_userConstraintId;
+<span class="lineNum">     379 </span>            :         int     m_needsFeedback;
+<span class="lineNum">     380 </span>            : 
+<span class="lineNum">     381 </span>            :         float   m_appliedImpulse;
+<span class="lineNum">     382 </span>            :         float   m_dbgDrawSize;
+<span class="lineNum">     383 </span>            : 
+<span class="lineNum">     384 </span>            :         int     m_disableCollisionsBetweenLinkedBodies;
+<span class="lineNum">     385 </span>            :         int     m_overrideNumSolverIterations;
+<span class="lineNum">     386 </span>            : 
+<span class="lineNum">     387 </span>            :         float   m_breakingImpulseThreshold;
+<span class="lineNum">     388 </span>            :         int             m_isEnabled;
+<span class="lineNum">     389 </span>            :         
+<span class="lineNum">     390 </span>            : };
+<span class="lineNum">     391 </span>            : 
+<span class="lineNum">     392 </span>            : ///do not change those serialization structures, it requires an updated sBulletDNAstr/sBulletDNAstr64
+<span class="lineNum">     393 </span>            : 
+<span class="lineNum">     394 </span>            : #define BT_BACKWARDS_COMPATIBLE_SERIALIZATION
+<span class="lineNum">     395 </span>            : #ifdef BT_BACKWARDS_COMPATIBLE_SERIALIZATION
+<span class="lineNum">     396 </span>            : ///this structure is not used, except for loading pre-2.82 .bullet files
+<span class="lineNum">     397 </span>            : struct  btTypedConstraintData
+<span class="lineNum">     398 </span>            : {
+<span class="lineNum">     399 </span>            :         btRigidBodyData         *m_rbA;
+<span class="lineNum">     400 </span>            :         btRigidBodyData         *m_rbB;
+<span class="lineNum">     401 </span>            :         char    *m_name;
+<span class="lineNum">     402 </span>            : 
+<span class="lineNum">     403 </span>            :         int     m_objectType;
+<span class="lineNum">     404 </span>            :         int     m_userConstraintType;
+<span class="lineNum">     405 </span>            :         int     m_userConstraintId;
+<span class="lineNum">     406 </span>            :         int     m_needsFeedback;
+<span class="lineNum">     407 </span>            : 
+<span class="lineNum">     408 </span>            :         float   m_appliedImpulse;
+<span class="lineNum">     409 </span>            :         float   m_dbgDrawSize;
+<span class="lineNum">     410 </span>            : 
+<span class="lineNum">     411 </span>            :         int     m_disableCollisionsBetweenLinkedBodies;
+<span class="lineNum">     412 </span>            :         int     m_overrideNumSolverIterations;
+<span class="lineNum">     413 </span>            : 
+<span class="lineNum">     414 </span>            :         float   m_breakingImpulseThreshold;
+<span class="lineNum">     415 </span>            :         int             m_isEnabled;
+<span class="lineNum">     416 </span>            :         
+<span class="lineNum">     417 </span>            : };
+<span class="lineNum">     418 </span>            : #endif //BACKWARDS_COMPATIBLE
+<span class="lineNum">     419 </span>            : 
+<span class="lineNum">     420 </span>            : struct  btTypedConstraintDoubleData
+<span class="lineNum">     421 </span>            : {
+<span class="lineNum">     422 </span>            :         btRigidBodyDoubleData           *m_rbA;
+<span class="lineNum">     423 </span>            :         btRigidBodyDoubleData           *m_rbB;
+<span class="lineNum">     424 </span>            :         char    *m_name;
+<span class="lineNum">     425 </span>            : 
+<span class="lineNum">     426 </span>            :         int     m_objectType;
+<span class="lineNum">     427 </span>            :         int     m_userConstraintType;
+<span class="lineNum">     428 </span>            :         int     m_userConstraintId;
+<span class="lineNum">     429 </span>            :         int     m_needsFeedback;
+<span class="lineNum">     430 </span>            : 
+<span class="lineNum">     431 </span>            :         double  m_appliedImpulse;
+<span class="lineNum">     432 </span>            :         double  m_dbgDrawSize;
+<span class="lineNum">     433 </span>            : 
+<span class="lineNum">     434 </span>            :         int     m_disableCollisionsBetweenLinkedBodies;
+<span class="lineNum">     435 </span>            :         int     m_overrideNumSolverIterations;
+<span class="lineNum">     436 </span>            : 
+<span class="lineNum">     437 </span>            :         double  m_breakingImpulseThreshold;
+<span class="lineNum">     438 </span>            :         int             m_isEnabled;
+<span class="lineNum">     439 </span>            :         char    padding[4];
+<span class="lineNum">     440 </span>            :         
+<span class="lineNum">     441 </span>            : };
+<a name="442"><span class="lineNum">     442 </span>            : </a>
+<span class="lineNum">     443 </span>            : 
+<span class="lineNum">     444 </span><span class="lineNoCov">          0 : SIMD_FORCE_INLINE       int     btTypedConstraint::calculateSerializeBufferSize() const</span>
+<span class="lineNum">     445 </span>            : {
+<span class="lineNum">     446 </span><span class="lineNoCov">          0 :         return sizeof(btTypedConstraintData2);</span>
+<span class="lineNum">     447 </span>            : }
+<span class="lineNum">     448 </span>            : 
+<span class="lineNum">     449 </span>            : 
+<span class="lineNum">     450 </span>            : 
+<span class="lineNum">     451 </span>            : class btAngularLimit
+<span class="lineNum">     452 </span>            : {
+<span class="lineNum">     453 </span>            : private:
+<span class="lineNum">     454 </span>            :         btScalar 
+<span class="lineNum">     455 </span>            :                 m_center,
+<span class="lineNum">     456 </span>            :                 m_halfRange,
+<span class="lineNum">     457 </span>            :                 m_softness,
+<span class="lineNum">     458 </span>            :                 m_biasFactor,
+<span class="lineNum">     459 </span>            :                 m_relaxationFactor,
+<span class="lineNum">     460 </span>            :                 m_correction,
+<span class="lineNum">     461 </span>            :                 m_sign;
+<span class="lineNum">     462 </span>            : 
+<span class="lineNum">     463 </span>            :         bool
+<span class="lineNum">     464 </span>            :                 m_solveLimit;
+<span class="lineNum">     465 </span>            : 
+<span class="lineNum">     466 </span>            : public:
+<span class="lineNum">     467 </span>            :         /// Default constructor initializes limit as inactive, allowing free constraint movement
+<span class="lineNum">     468 </span>            :         btAngularLimit()
+<span class="lineNum">     469 </span>            :                 :m_center(0.0f),
+<span class="lineNum">     470 </span>            :                 m_halfRange(-1.0f),
+<span class="lineNum">     471 </span>            :                 m_softness(0.9f),
+<span class="lineNum">     472 </span>            :                 m_biasFactor(0.3f),
+<span class="lineNum">     473 </span>            :                 m_relaxationFactor(1.0f),
+<span class="lineNum">     474 </span>            :                 m_correction(0.0f),
+<span class="lineNum">     475 </span>            :                 m_sign(0.0f),
+<span class="lineNum">     476 </span>            :                 m_solveLimit(false)
+<span class="lineNum">     477 </span>            :         {}
+<span class="lineNum">     478 </span>            : 
+<span class="lineNum">     479 </span>            :         /// Sets all limit's parameters.
+<span class="lineNum">     480 </span>            :         /// When low &gt; high limit becomes inactive.
+<span class="lineNum">     481 </span>            :         /// When high - low &gt; 2PI limit is ineffective too becouse no angle can exceed the limit
+<span class="lineNum">     482 </span>            :         void set(btScalar low, btScalar high, btScalar _softness = 0.9f, btScalar _biasFactor = 0.3f, btScalar _relaxationFactor = 1.0f);
+<span class="lineNum">     483 </span>            : 
+<span class="lineNum">     484 </span>            :         /// Checks conastaint angle against limit. If limit is active and the angle violates the limit
+<span class="lineNum">     485 </span>            :         /// correction is calculated.
+<span class="lineNum">     486 </span>            :         void test(const btScalar angle);
+<span class="lineNum">     487 </span>            : 
+<span class="lineNum">     488 </span>            :         /// Returns limit's softness
+<span class="lineNum">     489 </span>            :         inline btScalar getSoftness() const
+<span class="lineNum">     490 </span>            :         {
+<span class="lineNum">     491 </span>            :                 return m_softness;
+<span class="lineNum">     492 </span>            :         }
+<span class="lineNum">     493 </span>            : 
+<span class="lineNum">     494 </span>            :         /// Returns limit's bias factor
+<span class="lineNum">     495 </span>            :         inline btScalar getBiasFactor() const
+<span class="lineNum">     496 </span>            :         {
+<span class="lineNum">     497 </span>            :                 return m_biasFactor;
+<span class="lineNum">     498 </span>            :         }
+<span class="lineNum">     499 </span>            : 
+<span class="lineNum">     500 </span>            :         /// Returns limit's relaxation factor
+<span class="lineNum">     501 </span>            :         inline btScalar getRelaxationFactor() const
+<span class="lineNum">     502 </span>            :         {
+<span class="lineNum">     503 </span>            :                 return m_relaxationFactor;
+<span class="lineNum">     504 </span>            :         }
+<span class="lineNum">     505 </span>            : 
+<span class="lineNum">     506 </span>            :         /// Returns correction value evaluated when test() was invoked 
+<span class="lineNum">     507 </span>            :         inline btScalar getCorrection() const
+<span class="lineNum">     508 </span>            :         {
+<span class="lineNum">     509 </span>            :                 return m_correction;
+<span class="lineNum">     510 </span>            :         }
+<span class="lineNum">     511 </span>            : 
+<span class="lineNum">     512 </span>            :         /// Returns sign value evaluated when test() was invoked 
+<span class="lineNum">     513 </span>            :         inline btScalar getSign() const
+<span class="lineNum">     514 </span>            :         {
+<span class="lineNum">     515 </span>            :                 return m_sign;
+<span class="lineNum">     516 </span>            :         }
+<span class="lineNum">     517 </span>            : 
+<span class="lineNum">     518 </span>            :         /// Gives half of the distance between min and max limit angle
+<span class="lineNum">     519 </span>            :         inline btScalar getHalfRange() const
+<span class="lineNum">     520 </span>            :         {
+<span class="lineNum">     521 </span>            :                 return m_halfRange;
+<span class="lineNum">     522 </span>            :         }
+<span class="lineNum">     523 </span>            : 
+<span class="lineNum">     524 </span>            :         /// Returns true when the last test() invocation recognized limit violation
+<span class="lineNum">     525 </span>            :         inline bool isLimit() const
+<span class="lineNum">     526 </span>            :         {
+<span class="lineNum">     527 </span>            :                 return m_solveLimit;
+<span class="lineNum">     528 </span>            :         }
+<span class="lineNum">     529 </span>            : 
+<span class="lineNum">     530 </span>            :         /// Checks given angle against limit. If limit is active and angle doesn't fit it, the angle
+<span class="lineNum">     531 </span>            :         /// returned is modified so it equals to the limit closest to given angle.
+<span class="lineNum">     532 </span>            :         void fit(btScalar&amp; angle) const;
+<span class="lineNum">     533 </span>            : 
+<span class="lineNum">     534 </span>            :         /// Returns correction value multiplied by sign value
+<span class="lineNum">     535 </span>            :         btScalar getError() const;
+<span class="lineNum">     536 </span>            : 
+<span class="lineNum">     537 </span>            :         btScalar getLow() const;
+<span class="lineNum">     538 </span>            : 
+<span class="lineNum">     539 </span>            :         btScalar getHigh() const;
+<span class="lineNum">     540 </span>            : 
+<span class="lineNum">     541 </span>            : };
+<span class="lineNum">     542 </span>            : 
+<span class="lineNum">     543 </span>            : 
+<span class="lineNum">     544 </span>            : 
+<span class="lineNum">     545 </span>            : #endif //BT_TYPED_CONSTRAINT_H
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

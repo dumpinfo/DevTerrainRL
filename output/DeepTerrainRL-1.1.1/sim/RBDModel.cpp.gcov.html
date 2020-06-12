@@ -1,0 +1,367 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/sim/RBDModel.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/sim</a> - RBDModel.cpp<span style="font-size: 80%;"> (source / <a href="RBDModel.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">121</td>
+            <td class="headerCovTableEntry">136</td>
+            <td class="headerCovTableEntryMed">89.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">30</td>
+            <td class="headerCovTableEntry">35</td>
+            <td class="headerCovTableEntryMed">85.7 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;RBDModel.h&quot;</a>
+<span class="lineNum">       2 </span>            : #include &quot;RBDUtil.h&quot;
+<span class="lineNum">       3 </span>            : #include &quot;anim/KinTree.h&quot;
+<span class="lineNum">       4 </span>            : #include &quot;util/Util.h&quot;
+<span class="lineNum">       5 </span>            : 
+<a name="6"><span class="lineNum">       6 </span>            : //#define ENABLE_RBD_PROFILER</a>
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span><span class="lineCov">          2 : cRBDModel::cRBDModel()</span>
+<span class="lineNum">       9 </span>            : {
+<a name="10"><span class="lineNum">      10 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span><span class="lineCov">          2 : cRBDModel::~cRBDModel()</span>
+<span class="lineNum">      13 </span>            : {
+<a name="14"><span class="lineNum">      14 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span><span class="lineCov">          2 : void cRBDModel::Init(const Eigen::MatrixXd&amp; joint_mat, const Eigen::MatrixXd&amp; body_defs, const tVector&amp; gravity)</span>
+<span class="lineNum">      17 </span>            : {
+<span class="lineNum">      18 </span><span class="lineCov">          2 :         assert(joint_mat.rows() == body_defs.rows());</span>
+<span class="lineNum">      19 </span><span class="lineCov">          2 :         mGravity = gravity;</span>
+<span class="lineNum">      20 </span><span class="lineCov">          2 :         mJointMat = joint_mat;</span>
+<span class="lineNum">      21 </span><span class="lineCov">          2 :         mBodyDefs = body_defs;</span>
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span><span class="lineCov">          2 :         int num_dofs = GetNumDof();</span>
+<span class="lineNum">      24 </span><span class="lineCov">          2 :         int num_joints = GetNumJoints();</span>
+<span class="lineNum">      25 </span><span class="lineCov">          2 :         const int svs = cSpAlg::gSpVecSize;</span>
+<span class="lineNum">      26 </span>            : 
+<span class="lineNum">      27 </span><span class="lineCov">          2 :         mPose = Eigen::VectorXd::Zero(num_dofs);</span>
+<span class="lineNum">      28 </span><span class="lineCov">          2 :         mVel = Eigen::VectorXd::Zero(num_dofs);</span>
+<span class="lineNum">      29 </span>            : 
+<span class="lineNum">      30 </span><span class="lineCov">          2 :         tMatrix trans_mat;</span>
+<span class="lineNum">      31 </span><span class="lineCov">          2 :         InitJointSubspaceArr();</span>
+<span class="lineNum">      32 </span><span class="lineCov">          2 :         mChildParentMatArr = Eigen::MatrixXd::Zero(num_joints * trans_mat.rows(), trans_mat.cols());</span>
+<span class="lineNum">      33 </span><span class="lineCov">          2 :         mSpWorldJointTransArr = Eigen::MatrixXd::Zero(num_joints * cSpAlg::gSVTransRows, cSpAlg::gSVTransCols);</span>
+<span class="lineNum">      34 </span><span class="lineCov">          2 :         mMassMat = Eigen::MatrixXd::Zero(num_dofs, num_dofs);</span>
+<span class="lineNum">      35 </span><span class="lineCov">          2 :         mBiasForce = Eigen::VectorXd::Zero(num_dofs);</span>
+<span class="lineNum">      36 </span><span class="lineCov">          2 :         mInertiaBuffer = Eigen::MatrixXd::Zero(num_joints * svs, svs);</span>
+<a name="37"><span class="lineNum">      37 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">      38 </span>            : 
+<span class="lineNum">      39 </span><span class="lineCov">       2180 : void cRBDModel::Update(const Eigen::VectorXd&amp; pose, const Eigen::VectorXd&amp; vel)</span>
+<span class="lineNum">      40 </span>            : {
+<span class="lineNum">      41 </span><span class="lineCov">       2180 :         SetPose(pose);</span>
+<span class="lineNum">      42 </span><span class="lineCov">       2180 :         SetVel(vel);</span>
+<span class="lineNum">      43 </span>            : 
+<span class="lineNum">      44 </span>            : #if defined(ENABLE_RBD_PROFILER)
+<span class="lineNum">      45 </span>            :         printf(&quot;RBD_Update_BEG\n&quot;);
+<span class="lineNum">      46 </span>            : #endif
+<span class="lineNum">      47 </span><span class="lineCov">       2180 :         UpdateJointSubspaceArr();</span>
+<span class="lineNum">      48 </span><span class="lineCov">       2180 :         UpdateChildParentMatArr();</span>
+<span class="lineNum">      49 </span><span class="lineCov">       2180 :         UpdateSpWorldTrans();</span>
+<span class="lineNum">      50 </span><span class="lineCov">       2180 :         UpdateMassMat();</span>
+<span class="lineNum">      51 </span><span class="lineCov">       2180 :         UpdateBiasForce();</span>
+<span class="lineNum">      52 </span>            : #if defined(ENABLE_RBD_PROFILER)
+<span class="lineNum">      53 </span>            :         printf(&quot;RBD_Update_End\n\n&quot;);
+<span class="lineNum">      54 </span>            : #endif
+<a name="55"><span class="lineNum">      55 </span><span class="lineCov">       2180 : }</span></a>
+<span class="lineNum">      56 </span>            : 
+<span class="lineNum">      57 </span><span class="lineCov">       6544 : int cRBDModel::GetNumDof() const</span>
+<span class="lineNum">      58 </span>            : {
+<span class="lineNum">      59 </span><span class="lineCov">       6544 :         return cKinTree::GetNumDof(mJointMat);</span>
+<a name="60"><span class="lineNum">      60 </span>            : }</a>
+<span class="lineNum">      61 </span>            : 
+<span class="lineNum">      62 </span><span class="lineCov">     758778 : int cRBDModel::GetNumJoints() const</span>
+<span class="lineNum">      63 </span>            : {
+<span class="lineNum">      64 </span><span class="lineCov">     758778 :         return cKinTree::GetNumJoints(mJointMat);</span>
+<a name="65"><span class="lineNum">      65 </span>            : }</a>
+<span class="lineNum">      66 </span>            : 
+<span class="lineNum">      67 </span><span class="lineCov">       3237 : const tVector&amp; cRBDModel::GetGravity() const</span>
+<span class="lineNum">      68 </span>            : {
+<span class="lineNum">      69 </span><span class="lineCov">       3237 :         return mGravity;</span>
+<a name="70"><span class="lineNum">      70 </span>            : }</a>
+<span class="lineNum">      71 </span>            : 
+<span class="lineNum">      72 </span><span class="lineCov">      10826 : const Eigen::MatrixXd&amp; cRBDModel::GetJointMat() const</span>
+<span class="lineNum">      73 </span>            : {
+<span class="lineNum">      74 </span><span class="lineCov">      10826 :         return mJointMat;</span>
+<a name="75"><span class="lineNum">      75 </span>            : }</a>
+<span class="lineNum">      76 </span>            : 
+<span class="lineNum">      77 </span><span class="lineCov">       5417 : const Eigen::MatrixXd&amp; cRBDModel::GetBodyDefs() const</span>
+<span class="lineNum">      78 </span>            : {
+<span class="lineNum">      79 </span><span class="lineCov">       5417 :         return mBodyDefs;</span>
+<a name="80"><span class="lineNum">      80 </span>            : }</a>
+<span class="lineNum">      81 </span>            : 
+<span class="lineNum">      82 </span><span class="lineCov">       9777 : const Eigen::VectorXd&amp; cRBDModel::GetPose() const</span>
+<span class="lineNum">      83 </span>            : {
+<span class="lineNum">      84 </span><span class="lineCov">       9777 :         return mPose;</span>
+<a name="85"><span class="lineNum">      85 </span>            : }</a>
+<span class="lineNum">      86 </span>            : 
+<span class="lineNum">      87 </span><span class="lineCov">       4360 : const Eigen::VectorXd&amp; cRBDModel::GetVel() const</span>
+<span class="lineNum">      88 </span>            : {
+<span class="lineNum">      89 </span><span class="lineCov">       4360 :         return mVel;</span>
+<a name="90"><span class="lineNum">      90 </span>            : }</a>
+<span class="lineNum">      91 </span>            : 
+<span class="lineNum">      92 </span><span class="lineCov">      11311 : int cRBDModel::GetParent(int j) const</span>
+<span class="lineNum">      93 </span>            : {
+<span class="lineNum">      94 </span><span class="lineCov">      11311 :         return cKinTree::GetParent(mJointMat, j);</span>
+<a name="95"><span class="lineNum">      95 </span>            : }</a>
+<span class="lineNum">      96 </span>            : 
+<span class="lineNum">      97 </span><span class="lineCov">       2180 : const Eigen::MatrixXd&amp; cRBDModel::GetMassMat() const</span>
+<span class="lineNum">      98 </span>            : {
+<span class="lineNum">      99 </span><span class="lineCov">       2180 :         return mMassMat;</span>
+<a name="100"><span class="lineNum">     100 </span>            : }</a>
+<span class="lineNum">     101 </span>            : 
+<span class="lineNum">     102 </span><span class="lineCov">       2180 : const Eigen::VectorXd&amp; cRBDModel::GetBiasForce() const</span>
+<span class="lineNum">     103 </span>            : {
+<span class="lineNum">     104 </span><span class="lineCov">       2180 :         return mBiasForce;</span>
+<a name="105"><span class="lineNum">     105 </span>            : }</a>
+<span class="lineNum">     106 </span>            : 
+<span class="lineNum">     107 </span><span class="lineNoCov">          0 : Eigen::MatrixXd&amp; cRBDModel::GetInertiaBuffer()</span>
+<span class="lineNum">     108 </span>            : {
+<span class="lineNum">     109 </span><span class="lineNoCov">          0 :         return mInertiaBuffer;</span>
+<a name="110"><span class="lineNum">     110 </span>            : }</a>
+<span class="lineNum">     111 </span>            : 
+<span class="lineNum">     112 </span><span class="lineCov">     245680 : tMatrix cRBDModel::GetChildParentMat(int j) const</span>
+<span class="lineNum">     113 </span>            : {
+<span class="lineNum">     114 </span><span class="lineCov">     245680 :         assert(j &gt;= 0 &amp;&amp; j &lt; GetNumJoints());</span>
+<span class="lineNum">     115 </span><span class="lineCov">     245680 :         tMatrix trans;</span>
+<span class="lineNum">     116 </span><span class="lineCov">     245680 :         int r = static_cast&lt;int&gt;(trans.rows());</span>
+<span class="lineNum">     117 </span><span class="lineCov">     245680 :         int c = static_cast&lt;int&gt;(trans.cols());</span>
+<span class="lineNum">     118 </span><span class="lineCov">     245680 :         trans = mChildParentMatArr.block(j * r, 0, r, c);</span>
+<span class="lineNum">     119 </span><span class="lineCov">     245680 :         return trans;</span>
+<a name="120"><span class="lineNum">     120 </span>            : }</a>
+<span class="lineNum">     121 </span>            : 
+<span class="lineNum">     122 </span><span class="lineCov">      91560 : tMatrix cRBDModel::GetParentChildMat(int j) const</span>
+<span class="lineNum">     123 </span>            : {
+<span class="lineNum">     124 </span><span class="lineCov">      91560 :         tMatrix child_parent_trans = GetChildParentMat(j);</span>
+<span class="lineNum">     125 </span><span class="lineCov">      91560 :         tMatrix parent_child_trans = cMathUtil::InvRigidMat(child_parent_trans);</span>
+<span class="lineNum">     126 </span><span class="lineCov">      91560 :         return parent_child_trans;</span>
+<a name="127"><span class="lineNum">     127 </span>            : }</a>
+<span class="lineNum">     128 </span>            : 
+<span class="lineNum">     129 </span><span class="lineCov">     154120 : cSpAlg::tSpTrans cRBDModel::GetSpChildParentTrans(int j) const</span>
+<span class="lineNum">     130 </span>            : {
+<span class="lineNum">     131 </span><span class="lineCov">     154120 :         tMatrix mat = GetChildParentMat(j);</span>
+<span class="lineNum">     132 </span><span class="lineCov">     154120 :         return cSpAlg::MatToTrans(mat);</span>
+<a name="133"><span class="lineNum">     133 </span>            : }</a>
+<span class="lineNum">     134 </span>            : 
+<span class="lineNum">     135 </span><span class="lineCov">      91560 : cSpAlg::tSpTrans cRBDModel::GetSpParentChildTrans(int j) const</span>
+<span class="lineNum">     136 </span>            : {
+<span class="lineNum">     137 </span><span class="lineCov">      91560 :         tMatrix mat = GetParentChildMat(j);</span>
+<span class="lineNum">     138 </span><span class="lineCov">      91560 :         return cSpAlg::MatToTrans(mat);</span>
+<a name="139"><span class="lineNum">     139 </span>            : }</a>
+<span class="lineNum">     140 </span>            : 
+<span class="lineNum">     141 </span><span class="lineNoCov">          0 : tMatrix cRBDModel::GetWorldJointMat(int j) const</span>
+<span class="lineNum">     142 </span>            : {
+<span class="lineNum">     143 </span><span class="lineNoCov">          0 :         cSpAlg::tSpTrans trans = GetSpWorldJointTrans(j);</span>
+<span class="lineNum">     144 </span><span class="lineNoCov">          0 :         return cSpAlg::TransToMat(trans);</span>
+<a name="145"><span class="lineNum">     145 </span>            : }</a>
+<span class="lineNum">     146 </span>            : 
+<span class="lineNum">     147 </span><span class="lineNoCov">          0 : tMatrix cRBDModel::GetJointWorldMat(int j) const</span>
+<span class="lineNum">     148 </span>            : {
+<span class="lineNum">     149 </span><span class="lineNoCov">          0 :         cSpAlg::tSpTrans trans = GetSpJointWorldTrans(j);</span>
+<span class="lineNum">     150 </span><span class="lineNoCov">          0 :         return cSpAlg::TransToMat(trans);</span>
+<a name="151"><span class="lineNum">     151 </span>            : }</a>
+<span class="lineNum">     152 </span>            : 
+<span class="lineNum">     153 </span><span class="lineCov">     113757 : cSpAlg::tSpTrans cRBDModel::GetSpWorldJointTrans(int j) const</span>
+<span class="lineNum">     154 </span>            : {
+<span class="lineNum">     155 </span><span class="lineCov">     113757 :         assert(j &gt;= 0 &amp;&amp; j &lt; GetNumJoints());</span>
+<span class="lineNum">     156 </span><span class="lineCov">     113757 :         cSpAlg::tSpTrans trans = cSpAlg::GetTrans(mSpWorldJointTransArr, j);</span>
+<span class="lineNum">     157 </span><span class="lineCov">     113757 :         return trans;</span>
+<a name="158"><span class="lineNum">     158 </span>            : }</a>
+<span class="lineNum">     159 </span>            : 
+<span class="lineNum">     160 </span><span class="lineNoCov">          0 : cSpAlg::tSpTrans cRBDModel::GetSpJointWorldTrans(int j) const</span>
+<span class="lineNum">     161 </span>            : {
+<span class="lineNum">     162 </span><span class="lineNoCov">          0 :         cSpAlg::tSpTrans world_joint_trans = GetSpWorldJointTrans(j);</span>
+<span class="lineNum">     163 </span><span class="lineNoCov">          0 :         return cSpAlg::InvTrans(world_joint_trans);</span>
+<a name="164"><span class="lineNum">     164 </span>            : }</a>
+<span class="lineNum">     165 </span>            : 
+<span class="lineNum">     166 </span><span class="lineCov">     392797 : const Eigen::Block&lt;const Eigen::MatrixXd&gt; cRBDModel::GetJointSubspace(int j) const</span>
+<span class="lineNum">     167 </span>            : {
+<span class="lineNum">     168 </span><span class="lineCov">     392797 :         assert(j &gt;= 0 &amp;&amp; j &lt; GetNumJoints());</span>
+<span class="lineNum">     169 </span><span class="lineCov">     392797 :         int offset = cKinTree::GetParamOffset(mJointMat, j);</span>
+<span class="lineNum">     170 </span><span class="lineCov">     392797 :         int dim = cKinTree::GetParamSize(mJointMat, j);</span>
+<span class="lineNum">     171 </span><span class="lineCov">     392797 :         int r = static_cast&lt;int&gt;(mJointSubspaceArr.rows());</span>
+<span class="lineNum">     172 </span><span class="lineCov">     392797 :         return mJointSubspaceArr.block(0, offset, r, dim);</span>
+<a name="173"><span class="lineNum">     173 </span>            : }</a>
+<span class="lineNum">     174 </span>            : 
+<span class="lineNum">     175 </span><span class="lineNoCov">          0 : tVector cRBDModel::CalcJointWorldPos(int j) const</span>
+<span class="lineNum">     176 </span>            : {
+<span class="lineNum">     177 </span><span class="lineNoCov">          0 :         cSpAlg::tSpTrans world_joint_trans = GetSpWorldJointTrans(j);</span>
+<span class="lineNum">     178 </span><span class="lineNoCov">          0 :         tVector r = cSpAlg::GetRad(world_joint_trans);</span>
+<span class="lineNum">     179 </span><span class="lineNoCov">          0 :         return r;</span>
+<a name="180"><span class="lineNum">     180 </span>            : }</a>
+<span class="lineNum">     181 </span>            : 
+<span class="lineNum">     182 </span><span class="lineCov">       2180 : void cRBDModel::SetPose(const Eigen::VectorXd&amp; pose)</span>
+<span class="lineNum">     183 </span>            : {
+<span class="lineNum">     184 </span><span class="lineCov">       2180 :         mPose = pose;</span>
+<a name="185"><span class="lineNum">     185 </span><span class="lineCov">       2180 : }</span></a>
+<span class="lineNum">     186 </span>            : 
+<span class="lineNum">     187 </span><span class="lineCov">       2180 : void cRBDModel::SetVel(const Eigen::VectorXd&amp; vel)</span>
+<span class="lineNum">     188 </span>            : {
+<span class="lineNum">     189 </span><span class="lineCov">       2180 :         mVel = vel;</span>
+<a name="190"><span class="lineNum">     190 </span><span class="lineCov">       2180 : }</span></a>
+<span class="lineNum">     191 </span>            : 
+<span class="lineNum">     192 </span><span class="lineCov">          2 : void cRBDModel::InitJointSubspaceArr()</span>
+<span class="lineNum">     193 </span>            : {
+<span class="lineNum">     194 </span><span class="lineCov">          2 :         int num_dofs = GetNumDof();</span>
+<span class="lineNum">     195 </span><span class="lineCov">          2 :         int num_joints = GetNumJoints();</span>
+<span class="lineNum">     196 </span><span class="lineCov">          2 :         mJointSubspaceArr = Eigen::MatrixXd(cSpAlg::gSpVecSize, num_dofs);</span>
+<span class="lineNum">     197 </span><span class="lineCov">         44 :         for (int j = 0; j &lt; num_joints; ++j)</span>
+<span class="lineNum">     198 </span>            :         {
+<span class="lineNum">     199 </span><span class="lineCov">         42 :                 int offset = cKinTree::GetParamOffset(mJointMat, j);</span>
+<span class="lineNum">     200 </span><span class="lineCov">         42 :                 int dim = cKinTree::GetParamSize(mJointMat, j);</span>
+<span class="lineNum">     201 </span><span class="lineCov">         42 :                 int r = static_cast&lt;int&gt;(mJointSubspaceArr.rows());</span>
+<span class="lineNum">     202 </span><span class="lineCov">         42 :                 mJointSubspaceArr.block(0, offset, r, dim) = cRBDUtil::BuildJointSubspace(mJointMat, mPose, j);</span>
+<span class="lineNum">     203 </span>            :         }
+<a name="204"><span class="lineNum">     204 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">     205 </span>            : 
+<span class="lineNum">     206 </span><span class="lineCov">       2180 : void cRBDModel::UpdateJointSubspaceArr()</span>
+<span class="lineNum">     207 </span>            : {
+<span class="lineNum">     208 </span>            : #if defined(ENABLE_RBD_PROFILER)
+<span class="lineNum">     209 </span>            :         TIMER_PRINT_BEG(Update_Joint_Subspace)
+<span class="lineNum">     210 </span>            : #endif
+<span class="lineNum">     211 </span>            : 
+<span class="lineNum">     212 </span><span class="lineCov">       2180 :         int num_joints = GetNumJoints();</span>
+<span class="lineNum">     213 </span><span class="lineCov">      47960 :         for (int j = 0; j &lt; num_joints; ++j)</span>
+<span class="lineNum">     214 </span>            :         {
+<span class="lineNum">     215 </span><span class="lineCov">      45780 :                 bool const_subspace = cRBDUtil::IsConstJointSubspace(mJointMat, j);</span>
+<span class="lineNum">     216 </span><span class="lineCov">      45780 :                 if (!const_subspace)</span>
+<span class="lineNum">     217 </span>            :                 {
+<span class="lineNum">     218 </span><span class="lineCov">       2180 :                         int offset = cKinTree::GetParamOffset(mJointMat, j);</span>
+<span class="lineNum">     219 </span><span class="lineCov">       2180 :                         int dim = cKinTree::GetParamSize(mJointMat, j);</span>
+<span class="lineNum">     220 </span><span class="lineCov">       2180 :                         int r = static_cast&lt;int&gt;(mJointSubspaceArr.rows());</span>
+<span class="lineNum">     221 </span><span class="lineCov">       2180 :                         mJointSubspaceArr.block(0, offset, r, dim) = cRBDUtil::BuildJointSubspace(mJointMat, mPose, j);</span>
+<span class="lineNum">     222 </span>            :                 }
+<span class="lineNum">     223 </span>            :         }
+<span class="lineNum">     224 </span>            : 
+<span class="lineNum">     225 </span>            : #if defined(ENABLE_RBD_PROFILER)
+<span class="lineNum">     226 </span>            :         TIMER_PRINT_END(Update_Joint_Subspace)
+<span class="lineNum">     227 </span>            : #endif
+<a name="228"><span class="lineNum">     228 </span><span class="lineCov">       2180 : }</span></a>
+<span class="lineNum">     229 </span>            : 
+<span class="lineNum">     230 </span><span class="lineCov">       2180 : void cRBDModel::UpdateChildParentMatArr()</span>
+<span class="lineNum">     231 </span>            : {
+<span class="lineNum">     232 </span>            : #if defined(ENABLE_RBD_PROFILER)
+<span class="lineNum">     233 </span>            :         TIMER_PRINT_BEG(Update_Child_Parent_mat)
+<span class="lineNum">     234 </span>            : #endif
+<span class="lineNum">     235 </span>            : 
+<span class="lineNum">     236 </span><span class="lineCov">       2180 :         int num_joints = GetNumJoints();</span>
+<span class="lineNum">     237 </span><span class="lineCov">      47960 :         for (int j = 0; j &lt; num_joints; ++j)</span>
+<span class="lineNum">     238 </span>            :         {
+<span class="lineNum">     239 </span><span class="lineCov">      45780 :                 tMatrix child_parent_trans = cKinTree::ChildParentTrans(mJointMat, mPose, j);</span>
+<span class="lineNum">     240 </span><span class="lineCov">      45780 :                 int r = static_cast&lt;int&gt;(child_parent_trans.rows());</span>
+<span class="lineNum">     241 </span><span class="lineCov">      45780 :                 int c = static_cast&lt;int&gt;(child_parent_trans.cols());</span>
+<span class="lineNum">     242 </span><span class="lineCov">      45780 :                 mChildParentMatArr.block(j * r, 0, r, c) = child_parent_trans;</span>
+<span class="lineNum">     243 </span>            :         }
+<span class="lineNum">     244 </span>            : 
+<span class="lineNum">     245 </span>            : #if defined(ENABLE_RBD_PROFILER)
+<span class="lineNum">     246 </span>            :         TIMER_PRINT_END(Update_Child_Parent_mat)
+<span class="lineNum">     247 </span>            : #endif
+<a name="248"><span class="lineNum">     248 </span><span class="lineCov">       2180 : }</span></a>
+<span class="lineNum">     249 </span>            : 
+<span class="lineNum">     250 </span><span class="lineCov">       2180 : void cRBDModel::UpdateSpWorldTrans()</span>
+<span class="lineNum">     251 </span>            : {
+<span class="lineNum">     252 </span>            : #if defined(ENABLE_RBD_PROFILER)
+<span class="lineNum">     253 </span>            :         TIMER_PRINT_BEG(Update_SP_World_Trans)
+<span class="lineNum">     254 </span>            : #endif
+<span class="lineNum">     255 </span>            : 
+<span class="lineNum">     256 </span><span class="lineCov">       2180 :         cRBDUtil::CalcWorldJointTransforms(*this, mSpWorldJointTransArr);</span>
+<span class="lineNum">     257 </span>            : 
+<span class="lineNum">     258 </span>            : #if defined(ENABLE_RBD_PROFILER)
+<span class="lineNum">     259 </span>            :         TIMER_PRINT_END(Update_SP_World_Trans)
+<span class="lineNum">     260 </span>            : #endif
+<a name="261"><span class="lineNum">     261 </span><span class="lineCov">       2180 : }</span></a>
+<span class="lineNum">     262 </span>            : 
+<span class="lineNum">     263 </span><span class="lineCov">       2180 : void cRBDModel::UpdateMassMat()</span>
+<span class="lineNum">     264 </span>            : {
+<span class="lineNum">     265 </span>            : #if defined(ENABLE_RBD_PROFILER)
+<span class="lineNum">     266 </span>            :         TIMER_PRINT_BEG(Update_Mass_Mat)
+<span class="lineNum">     267 </span>            : #endif
+<span class="lineNum">     268 </span><span class="lineCov">       2180 :         cRBDUtil::BuildMassMat(*this, mInertiaBuffer, mMassMat);</span>
+<span class="lineNum">     269 </span>            : #if defined(ENABLE_RBD_PROFILER)
+<span class="lineNum">     270 </span>            :         TIMER_PRINT_END(Update_Mass_Mat)
+<span class="lineNum">     271 </span>            : #endif
+<a name="272"><span class="lineNum">     272 </span><span class="lineCov">       2180 : }</span></a>
+<span class="lineNum">     273 </span>            : 
+<span class="lineNum">     274 </span><span class="lineCov">       2180 : void cRBDModel::UpdateBiasForce()</span>
+<span class="lineNum">     275 </span>            : {
+<span class="lineNum">     276 </span>            : #if defined(ENABLE_RBD_PROFILER)
+<span class="lineNum">     277 </span>            :         TIMER_PRINT_BEG(Update_Bias_Force)
+<span class="lineNum">     278 </span>            : #endif
+<span class="lineNum">     279 </span><span class="lineCov">       2180 :         cRBDUtil::BuildBiasForce(*this, mBiasForce);</span>
+<span class="lineNum">     280 </span>            : #if defined(ENABLE_RBD_PROFILER)
+<a name="281"><span class="lineNum">     281 </span>            :         TIMER_PRINT_END(Update_Bias_Force)</a>
+<span class="lineNum">     282 </span>            : #endif
+<span class="lineNum">     283 </span><span class="lineCov">       2183 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

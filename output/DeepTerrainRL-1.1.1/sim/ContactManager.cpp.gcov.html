@@ -1,0 +1,259 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/sim/ContactManager.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/sim</a> - ContactManager.cpp<span style="font-size: 80%;"> (source / <a href="ContactManager.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">88</td>
+            <td class="headerCovTableEntry">98</td>
+            <td class="headerCovTableEntryMed">89.8 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">18</td>
+            <td class="headerCovTableEntry">20</td>
+            <td class="headerCovTableEntryHi">90.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;ContactManager.h&quot;</a>
+<span class="lineNum">       2 </span>            : #include &quot;sim/World.h&quot;
+<span class="lineNum">       3 </span>            : #include &quot;SimObj.h&quot;
+<span class="lineNum">       4 </span>            : #include &lt;iostream&gt;
+<span class="lineNum">       5 </span>            : 
+<a name="6"><span class="lineNum">       6 </span>            : const int cContactManager::gInvalidID = -1;</a>
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span><span class="lineCov">         90 : cContactManager::tContactHandle::tContactHandle()</span>
+<span class="lineNum">       9 </span>            : {
+<span class="lineNum">      10 </span><span class="lineCov">         90 :         mID = gInvalidID;</span>
+<span class="lineNum">      11 </span><span class="lineCov">         90 :         mFlags = gFlagAll;</span>
+<span class="lineNum">      12 </span><span class="lineCov">         90 :         mFilterFlags = gFlagAll;</span>
+<a name="13"><span class="lineNum">      13 </span><span class="lineCov">         90 : }</span></a>
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span><span class="lineCov">         42 : cContactManager::tContactEntry::tContactEntry()</span>
+<span class="lineNum">      16 </span>            : {
+<span class="lineNum">      17 </span><span class="lineCov">         42 :         mFlags = gFlagAll;</span>
+<span class="lineNum">      18 </span><span class="lineCov">         42 :         mFilterFlags = gFlagAll;</span>
+<span class="lineNum">      19 </span><span class="lineCov">         42 :         mInContact = false;</span>
+<a name="20"><span class="lineNum">      20 </span><span class="lineCov">         42 : }</span></a>
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span><span class="lineCov">      54482 : bool cContactManager::tContactHandle::IsValid() const</span>
+<span class="lineNum">      23 </span>            : {
+<span class="lineNum">      24 </span><span class="lineCov">      54482 :         return mID != gInvalidID;</span>
+<a name="25"><span class="lineNum">      25 </span>            : }</a>
+<span class="lineNum">      26 </span>            : 
+<span class="lineNum">      27 </span><span class="lineCov">          2 : cContactManager::cContactManager(cWorld&amp; world)</span>
+<span class="lineNum">      28 </span><span class="lineCov">          2 :         : mWorld(world)</span>
+<span class="lineNum">      29 </span>            : {
+<span class="lineNum">      30 </span>            : 
+<a name="31"><span class="lineNum">      31 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">      32 </span>            : 
+<span class="lineNum">      33 </span><span class="lineCov">          2 : cContactManager::~cContactManager()</span>
+<span class="lineNum">      34 </span>            : {
+<span class="lineNum">      35 </span>            : 
+<a name="36"><span class="lineNum">      36 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">      37 </span>            : 
+<span class="lineNum">      38 </span><span class="lineCov">          2 : void cContactManager::Init()</span>
+<span class="lineNum">      39 </span>            : {
+<span class="lineNum">      40 </span><span class="lineCov">          2 :         Clear();</span>
+<a name="41"><span class="lineNum">      41 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">      42 </span>            : 
+<span class="lineNum">      43 </span><span class="lineCov">          1 : void cContactManager::Reset()</span>
+<span class="lineNum">      44 </span>            : {
+<span class="lineNum">      45 </span><span class="lineCov">         22 :         for (int i = 0; i &lt; GetNumEntries(); ++i)</span>
+<span class="lineNum">      46 </span>            :         {
+<span class="lineNum">      47 </span><span class="lineCov">         21 :                 tContactEntry&amp; entry = mContactEntries[i];</span>
+<span class="lineNum">      48 </span><span class="lineCov">         21 :                 entry.mInContact = false;</span>
+<span class="lineNum">      49 </span>            :         }
+<a name="50"><span class="lineNum">      50 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span><span class="lineCov">          2 : void cContactManager::Clear()</span>
+<span class="lineNum">      53 </span>            : {
+<span class="lineNum">      54 </span><span class="lineCov">          2 :         mContactEntries.clear();</span>
+<a name="55"><span class="lineNum">      55 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">      56 </span>            : 
+<span class="lineNum">      57 </span><span class="lineCov">       2180 : void cContactManager::Update()</span>
+<span class="lineNum">      58 </span>            : {
+<span class="lineNum">      59 </span><span class="lineCov">       2180 :         ClearContacts();</span>
+<span class="lineNum">      60 </span><span class="lineCov">       2180 :         std::unique_ptr&lt;btDiscreteDynamicsWorld&gt;&amp; bt_world = mWorld.GetInternalWorld();</span>
+<span class="lineNum">      61 </span>            : 
+<span class="lineNum">      62 </span><span class="lineCov">       2180 :         int num_manifolds = bt_world-&gt;getDispatcher()-&gt;getNumManifolds();</span>
+<span class="lineNum">      63 </span><span class="lineCov">      20406 :         for (int i = 0; i &lt; num_manifolds; ++i)</span>
+<span class="lineNum">      64 </span>            :         {
+<span class="lineNum">      65 </span><span class="lineCov">      18226 :                 btPersistentManifold* mani = bt_world-&gt;getDispatcher()-&gt;getManifoldByIndexInternal(i);</span>
+<span class="lineNum">      66 </span><span class="lineCov">      18226 :                 const btCollisionObject* obj0 = static_cast&lt;const btCollisionObject*&gt;(mani-&gt;getBody0());</span>
+<span class="lineNum">      67 </span><span class="lineCov">      18226 :                 const btCollisionObject* obj1 = static_cast&lt;const btCollisionObject*&gt;(mani-&gt;getBody1());</span>
+<span class="lineNum">      68 </span>            : 
+<span class="lineNum">      69 </span><span class="lineCov">      18226 :                 int num_contacts = mani-&gt;getNumContacts();</span>
+<span class="lineNum">      70 </span><span class="lineCov">      23999 :                 for (int j = 0; j &lt; num_contacts; ++j)</span>
+<span class="lineNum">      71 </span>            :                 {
+<span class="lineNum">      72 </span><span class="lineCov">       5773 :                         btManifoldPoint&amp; pt = mani-&gt;getContactPoint(j);</span>
+<span class="lineNum">      73 </span>            :                         // std::cout &lt;&lt; &quot; Detected contact1: &quot; &lt;&lt; pt.getDistance() &lt;&lt; std::endl;
+<span class="lineNum">      74 </span><span class="lineCov">       5773 :                         btScalar dist_tol = 0.001f;</span>
+<span class="lineNum">      75 </span><span class="lineCov">       5773 :                         if (pt.getDistance() &lt;= dist_tol)</span>
+<span class="lineNum">      76 </span>            :                         {
+<span class="lineNum">      77 </span>            :                                 // std::cout &lt;&lt; &quot; Detected contact: &quot; &lt;&lt; std::endl;
+<span class="lineNum">      78 </span><span class="lineCov">       5189 :                                 const cSimObj* sim_obj0 = static_cast&lt;const cSimObj*&gt;(obj0-&gt;getUserPointer());</span>
+<span class="lineNum">      79 </span><span class="lineCov">       5189 :                                 const cSimObj* sim_obj1 = static_cast&lt;const cSimObj*&gt;(obj1-&gt;getUserPointer());</span>
+<span class="lineNum">      80 </span>            : 
+<span class="lineNum">      81 </span><span class="lineCov">       5189 :                                 const tContactHandle&amp; h0 = sim_obj0-&gt;GetContactHandle();</span>
+<span class="lineNum">      82 </span><span class="lineCov">       5189 :                                 const tContactHandle&amp; h1 = sim_obj1-&gt;GetContactHandle();</span>
+<span class="lineNum">      83 </span>            :                         
+<span class="lineNum">      84 </span><span class="lineCov">       5189 :                                 bool valid_contact = IsValidContact(h0, h1);</span>
+<span class="lineNum">      85 </span><span class="lineCov">       5189 :                                 if (valid_contact)</span>
+<span class="lineNum">      86 </span>            :                                 {
+<span class="lineNum">      87 </span><span class="lineCov">       2527 :                                         if (h0.IsValid())</span>
+<span class="lineNum">      88 </span>            :                                         {
+<span class="lineNum">      89 </span><span class="lineCov">       2527 :                                                 mContactEntries[h0.mID].mInContact = true;</span>
+<span class="lineNum">      90 </span><span class="lineCov">       2527 :                                                 mContactEntries[h0.mID].mContactPt = mWorld.GetManifoldPtA(pt);</span>
+<span class="lineNum">      91 </span>            :                                         }
+<span class="lineNum">      92 </span>            : 
+<span class="lineNum">      93 </span><span class="lineCov">       2527 :                                         if (h1.IsValid())</span>
+<span class="lineNum">      94 </span>            :                                         {
+<span class="lineNum">      95 </span><span class="lineNoCov">          0 :                                                 mContactEntries[h1.mID].mInContact = true;</span>
+<span class="lineNum">      96 </span><span class="lineNoCov">          0 :                                                 mContactEntries[h0.mID].mContactPt = mWorld.GetManifoldPtB(pt);</span>
+<span class="lineNum">      97 </span>            :                                         }
+<span class="lineNum">      98 </span>            :                                 }
+<span class="lineNum">      99 </span>            :                         }
+<span class="lineNum">     100 </span>            :                 }
+<span class="lineNum">     101 </span>            :         }
+<a name="102"><span class="lineNum">     102 </span><span class="lineCov">       2180 : }</span></a>
+<span class="lineNum">     103 </span>            : 
+<span class="lineNum">     104 </span><span class="lineCov">         42 : cContactManager::tContactHandle cContactManager::RegisterContact(int contact_flags, int filter_flags)</span>
+<span class="lineNum">     105 </span>            : {
+<span class="lineNum">     106 </span><span class="lineCov">         42 :         tContactHandle handle;</span>
+<span class="lineNum">     107 </span><span class="lineCov">         42 :         handle.mFlags = contact_flags;</span>
+<span class="lineNum">     108 </span><span class="lineCov">         42 :         handle.mFilterFlags = filter_flags;</span>
+<span class="lineNum">     109 </span><span class="lineCov">         42 :         handle.mID = RegisterNewID();</span>
+<span class="lineNum">     110 </span>            : 
+<span class="lineNum">     111 </span><span class="lineCov">         42 :         tContactEntry&amp; entry = mContactEntries[handle.mID];</span>
+<span class="lineNum">     112 </span><span class="lineCov">         42 :         entry.mFlags = contact_flags;</span>
+<span class="lineNum">     113 </span><span class="lineCov">         42 :         entry.mFilterFlags = filter_flags;</span>
+<span class="lineNum">     114 </span>            : 
+<span class="lineNum">     115 </span><span class="lineCov">         42 :         assert(handle.IsValid());</span>
+<span class="lineNum">     116 </span><span class="lineCov">         42 :         return handle;</span>
+<a name="117"><span class="lineNum">     117 </span>            : }</a>
+<span class="lineNum">     118 </span>            : 
+<span class="lineNum">     119 </span><span class="lineNoCov">          0 : void cContactManager::UpdateContact(const cContactManager::tContactHandle&amp; handle)</span>
+<span class="lineNum">     120 </span>            : {
+<span class="lineNum">     121 </span><span class="lineNoCov">          0 :         assert(handle.IsValid());</span>
+<span class="lineNum">     122 </span><span class="lineNoCov">          0 :         tContactEntry&amp; entry = mContactEntries[handle.mID];</span>
+<span class="lineNum">     123 </span><span class="lineNoCov">          0 :         entry.mFlags = handle.mFlags;</span>
+<span class="lineNum">     124 </span><span class="lineNoCov">          0 :         entry.mFilterFlags = handle.mFilterFlags;</span>
+<a name="125"><span class="lineNum">     125 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     126 </span>            : 
+<span class="lineNum">     127 </span><span class="lineCov">       2202 : int cContactManager::GetNumEntries() const</span>
+<span class="lineNum">     128 </span>            : {
+<span class="lineNum">     129 </span><span class="lineCov">       2202 :         return static_cast&lt;int&gt;(mContactEntries.size());</span>
+<a name="130"><span class="lineNum">     130 </span>            : }</a>
+<span class="lineNum">     131 </span>            : 
+<span class="lineNum">     132 </span><span class="lineCov">      49253 : bool cContactManager::IsInContact(const tContactHandle&amp; handle) const</span>
+<span class="lineNum">     133 </span>            : {
+<span class="lineNum">     134 </span><span class="lineCov">      49253 :         if (handle.IsValid())</span>
+<span class="lineNum">     135 </span>            :         {
+<span class="lineNum">     136 </span><span class="lineCov">      49253 :                 return mContactEntries[handle.mID].mInContact;</span>
+<span class="lineNum">     137 </span>            :         }
+<span class="lineNum">     138 </span><span class="lineNoCov">          0 :         return false;</span>
+<a name="139"><span class="lineNum">     139 </span>            : }</a>
+<span class="lineNum">     140 </span>            : 
+<span class="lineNum">     141 </span><span class="lineCov">          1 : tVector cContactManager::GetContactPt(const tContactHandle&amp; handle) const</span>
+<span class="lineNum">     142 </span>            : {
+<span class="lineNum">     143 </span><span class="lineCov">          1 :         if (handle.IsValid())</span>
+<span class="lineNum">     144 </span>            :         {
+<span class="lineNum">     145 </span><span class="lineCov">          1 :                 return mContactEntries[handle.mID].mContactPt;</span>
+<span class="lineNum">     146 </span>            :         }
+<span class="lineNum">     147 </span><span class="lineNoCov">          0 :         return tVector::Zero();</span>
+<a name="148"><span class="lineNum">     148 </span>            : }</a>
+<span class="lineNum">     149 </span>            : 
+<span class="lineNum">     150 </span><span class="lineCov">         42 : int cContactManager::RegisterNewID()</span>
+<span class="lineNum">     151 </span>            : {
+<span class="lineNum">     152 </span><span class="lineCov">         42 :         int id = gInvalidID;</span>
+<span class="lineNum">     153 </span><span class="lineCov">         42 :         id = static_cast&lt;int&gt;(mContactEntries.size());</span>
+<span class="lineNum">     154 </span><span class="lineCov">         42 :         mContactEntries.resize(id + 1);</span>
+<span class="lineNum">     155 </span><span class="lineCov">         42 :         return id;</span>
+<a name="156"><span class="lineNum">     156 </span>            : }</a>
+<span class="lineNum">     157 </span>            : 
+<span class="lineNum">     158 </span><span class="lineCov">       2180 : void cContactManager::ClearContacts()</span>
+<span class="lineNum">     159 </span>            : {
+<span class="lineNum">     160 </span><span class="lineCov">       2180 :         int num_entries = GetNumEntries();</span>
+<span class="lineNum">     161 </span><span class="lineCov">      47960 :         for (int i = 0; i &lt; num_entries; ++i)</span>
+<span class="lineNum">     162 </span>            :         {
+<span class="lineNum">     163 </span><span class="lineCov">      45780 :                 tContactEntry&amp; curr_entry = mContactEntries[i];</span>
+<span class="lineNum">     164 </span><span class="lineCov">      45780 :                 curr_entry.mInContact = false;</span>
+<span class="lineNum">     165 </span><span class="lineCov">      45780 :                 curr_entry.mContactPt.setZero();</span>
+<span class="lineNum">     166 </span>            :         }
+<a name="167"><span class="lineNum">     167 </span><span class="lineCov">       2180 : }</span></a>
+<span class="lineNum">     168 </span>            : 
+<span class="lineNum">     169 </span><span class="lineCov">       5189 : bool cContactManager::IsValidContact(const tContactHandle&amp; h0, const tContactHandle&amp; h1) const</span>
+<span class="lineNum">     170 </span>            : {
+<span class="lineNum">     171 </span><span class="lineCov">       5189 :         bool valid_h0 = ((h0.mFilterFlags &amp; h1.mFlags) != 0);</span>
+<span class="lineNum">     172 </span><span class="lineCov">       5189 :         bool valid_h1 = ((h1.mFilterFlags &amp; h0.mFlags) != 0);</span>
+<a name="173"><span class="lineNum">     173 </span><span class="lineCov">       5189 :         bool valid_contact = valid_h0 &amp;&amp; valid_h1;</span></a>
+<span class="lineNum">     174 </span><span class="lineCov">       5189 :         return valid_contact;</span>
+<span class="lineNum">     175 </span><span class="lineCov">          3 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

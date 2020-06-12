@@ -1,0 +1,791 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/sim/TerrainGen2D.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/sim</a> - TerrainGen2D.cpp<span style="font-size: 80%;"> (source / <a href="TerrainGen2D.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">41</td>
+            <td class="headerCovTableEntry">381</td>
+            <td class="headerCovTableEntryLo">10.8 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">9</td>
+            <td class="headerCovTableEntry">28</td>
+            <td class="headerCovTableEntryLo">32.1 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;TerrainGen2D.h&quot;</a>
+<span class="lineNum">       2 </span>            : #include &lt;algorithm&gt;
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : const float cTerrainGen2D::gVertSpacing = 0.1f;
+<span class="lineNum">       5 </span><span class="lineCov">          1 : const std::string cTerrainGen2D::gTypeKey = &quot;Type&quot;;</span>
+<a name="6"><span class="lineNum">       6 </span><span class="lineCov">          1 : const std::string cTerrainGen2D::gParamsKey = &quot;Params&quot;;</span></a>
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span><span class="lineCov">          2 : const cTerrainGen2D::tParamDef cTerrainGen2D::gParamDefs[] =</span>
+<span class="lineNum">       9 </span>            : {
+<span class="lineNum">      10 </span>            :         {&quot;GapSpacingMin&quot;, 4},
+<span class="lineNum">      11 </span>            :         {&quot;GapSpacingMax&quot;, 7},
+<span class="lineNum">      12 </span>            :         {&quot;GapWMin&quot;, 0.5},
+<span class="lineNum">      13 </span>            :         {&quot;GapWMax&quot;, 2},
+<span class="lineNum">      14 </span>            :         {&quot;GapHMin&quot;, -2},
+<span class="lineNum">      15 </span>            :         {&quot;GapHMax&quot;, -2},
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span>            :         {&quot;WallSpacingMin&quot;, 6},
+<span class="lineNum">      18 </span>            :         {&quot;WallSpacingMax&quot;, 8},
+<span class="lineNum">      19 </span>            :         {&quot;WallWMin&quot;, 0.2},
+<span class="lineNum">      20 </span>            :         {&quot;WallWMax&quot;, 0.2},
+<span class="lineNum">      21 </span>            :         {&quot;WallHMin&quot;, 0.25},
+<span class="lineNum">      22 </span>            :         {&quot;WallHMax&quot;, 0.5},
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            :         {&quot;StepSpacingMin&quot;, 5},
+<span class="lineNum">      25 </span>            :         {&quot;StepSpacingMax&quot;, 7},
+<span class="lineNum">      26 </span>            :         {&quot;StepH0Min&quot;, 0.1},
+<span class="lineNum">      27 </span>            :         {&quot;StepH0Max&quot;, 0.4},
+<span class="lineNum">      28 </span>            :         {&quot;StepH1Min&quot;, -0.4},
+<span class="lineNum">      29 </span>            :         {&quot;StepH1Max&quot;, -0.1},
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span>            :         {&quot;BumpHMin&quot;, 0},
+<span class="lineNum">      32 </span>            :         {&quot;BumpHMax&quot;, 0.03},
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span>            :         {&quot;NarrowGapSpacingMin&quot;, 3},
+<span class="lineNum">      35 </span>            :         {&quot;NarrowGapSpacingMax&quot;, 6},
+<span class="lineNum">      36 </span>            :         {&quot;NarrowGapDistMin&quot;, 0.1},
+<span class="lineNum">      37 </span>            :         {&quot;NarrowGapDistMax&quot;, 0.4},
+<span class="lineNum">      38 </span>            :         {&quot;NarrowGapWMin&quot;, 0.15},
+<span class="lineNum">      39 </span>            :         {&quot;NarrowGapWMax&quot;, 0.5},
+<span class="lineNum">      40 </span>            :         {&quot;NarrowGapDepthMin&quot;, -2},
+<span class="lineNum">      41 </span>            :         {&quot;NarrowGapDepthMax&quot;, -2},
+<span class="lineNum">      42 </span>            :         {&quot;NarrowGapCountMin&quot;, 1},
+<span class="lineNum">      43 </span>            :         {&quot;NarrowGapCountMax&quot;, 4},
+<span class="lineNum">      44 </span>            : 
+<span class="lineNum">      45 </span>            :         { &quot;CliffSpacingMin&quot;, 5 },
+<span class="lineNum">      46 </span>            :         { &quot;CliffSpacingMax&quot;, 7 },
+<span class="lineNum">      47 </span>            :         { &quot;CliffH0Min&quot;, 0.1 },
+<span class="lineNum">      48 </span>            :         { &quot;CliffH0Max&quot;, 0.4 },
+<span class="lineNum">      49 </span>            :         { &quot;CliffH1Min&quot;, -0.4 },
+<span class="lineNum">      50 </span>            :         { &quot;CliffH1Max&quot;, -0.1 },
+<span class="lineNum">      51 </span>            :         { &quot;CliffMiniCountMax&quot;, 0},
+<span class="lineNum">      52 </span>            : 
+<span class="lineNum">      53 </span>            :         {&quot;SlopeDeltaRange&quot;, 0.25},
+<span class="lineNum">      54 </span>            :         { &quot;SlopeDeltaMin&quot;, -0.35 },
+<span class="lineNum">      55 </span>            :         {&quot;SlopeDeltaMax&quot;, 0.35}
+<a name="56"><span class="lineNum">      56 </span><span class="lineCov">          1 : };</span></a>
+<span class="lineNum">      57 </span>            : 
+<span class="lineNum">      58 </span><span class="lineCov">          2 : cTerrainGen2D::tParams cTerrainGen2D::GetDefaultParams()</span>
+<span class="lineNum">      59 </span>            : {
+<span class="lineNum">      60 </span><span class="lineCov">          2 :         tParams params;</span>
+<span class="lineNum">      61 </span><span class="lineCov">          2 :         assert(sizeof(gParamDefs) / sizeof(gParamDefs[0]) == eParamsMax);</span>
+<span class="lineNum">      62 </span><span class="lineCov">         82 :         for (int i = 0; i &lt; eParamsMax; ++i)</span>
+<span class="lineNum">      63 </span>            :         {
+<span class="lineNum">      64 </span><span class="lineCov">         80 :                 params[i] = gParamDefs[i].mDefaultVal;</span>
+<span class="lineNum">      65 </span>            :         }
+<span class="lineNum">      66 </span><span class="lineCov">          2 :         return params;</span>
+<a name="67"><span class="lineNum">      67 </span>            : }</a>
+<span class="lineNum">      68 </span>            : 
+<span class="lineNum">      69 </span><span class="lineNoCov">          0 : void cTerrainGen2D::LoadParams(const Json::Value&amp; root, Eigen::VectorXd&amp; out_params)</span>
+<span class="lineNum">      70 </span>            : {
+<span class="lineNum">      71 </span><span class="lineNoCov">          0 :         out_params = cTerrainGen2D::GetDefaultParams();</span>
+<span class="lineNum">      72 </span><span class="lineNoCov">          0 :         for (int i = 0; i &lt; eParamsMax; ++i)</span>
+<span class="lineNum">      73 </span>            :         {
+<span class="lineNum">      74 </span><span class="lineNoCov">          0 :                 const std::string&amp; name = gParamDefs[i].mName;</span>
+<span class="lineNum">      75 </span><span class="lineNoCov">          0 :                 if (!root[name].isNull())</span>
+<span class="lineNum">      76 </span>            :                 {
+<span class="lineNum">      77 </span><span class="lineNoCov">          0 :                         double val = root[name].asDouble();</span>
+<span class="lineNum">      78 </span><span class="lineNoCov">          0 :                         out_params[i] = val;</span>
+<span class="lineNum">      79 </span>            :                 }
+<span class="lineNum">      80 </span>            :         }
+<a name="81"><span class="lineNum">      81 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">      82 </span>            : 
+<span class="lineNum">      83 </span><span class="lineCov">          2 : void cTerrainGen2D::ParseType(const std::string&amp; str, eType&amp; out_type)</span>
+<span class="lineNum">      84 </span>            : {
+<span class="lineNum">      85 </span><span class="lineCov">          4 :         if (str == &quot;flat&quot;</span>
+<span class="lineNum">      86 </span><span class="lineCov">          2 :                 || str == &quot;&quot;)</span>
+<span class="lineNum">      87 </span>            :         {
+<span class="lineNum">      88 </span><span class="lineCov">          2 :                 out_type = eTypeFlat;</span>
+<span class="lineNum">      89 </span>            :         }
+<span class="lineNum">      90 </span><span class="lineNoCov">          0 :         else if (str == &quot;gaps&quot;)</span>
+<span class="lineNum">      91 </span>            :         {
+<span class="lineNum">      92 </span><span class="lineNoCov">          0 :                 out_type = eTypeGaps;</span>
+<span class="lineNum">      93 </span>            :         }
+<span class="lineNum">      94 </span><span class="lineNoCov">          0 :         else if (str == &quot;steps&quot;)</span>
+<span class="lineNum">      95 </span>            :         {
+<span class="lineNum">      96 </span><span class="lineNoCov">          0 :                 out_type = eTypeSteps;</span>
+<span class="lineNum">      97 </span>            :         }
+<span class="lineNum">      98 </span><span class="lineNoCov">          0 :         else if (str == &quot;walls&quot;)</span>
+<span class="lineNum">      99 </span>            :         {
+<span class="lineNum">     100 </span><span class="lineNoCov">          0 :                 out_type = eTypeWalls;</span>
+<span class="lineNum">     101 </span>            :         }
+<span class="lineNum">     102 </span><span class="lineNoCov">          0 :         else if (str == &quot;bumps&quot;)</span>
+<span class="lineNum">     103 </span>            :         {
+<span class="lineNum">     104 </span><span class="lineNoCov">          0 :                 out_type = eTypeBumps;</span>
+<span class="lineNum">     105 </span>            :         }
+<span class="lineNum">     106 </span><span class="lineNoCov">          0 :         else if (str == &quot;mixed&quot;)</span>
+<span class="lineNum">     107 </span>            :         {
+<span class="lineNum">     108 </span><span class="lineNoCov">          0 :                 out_type = eTypeMixed;</span>
+<span class="lineNum">     109 </span>            :         }
+<span class="lineNum">     110 </span><span class="lineNoCov">          0 :         else if (str == &quot;narrow_gaps&quot;)</span>
+<span class="lineNum">     111 </span>            :         {
+<span class="lineNum">     112 </span><span class="lineNoCov">          0 :                 out_type = eTypeNarrowGaps;</span>
+<span class="lineNum">     113 </span>            :         }
+<span class="lineNum">     114 </span><span class="lineNoCov">          0 :         else if (str == &quot;slopes&quot;)</span>
+<span class="lineNum">     115 </span>            :         {
+<span class="lineNum">     116 </span><span class="lineNoCov">          0 :                 out_type = eTypeSlopes;</span>
+<span class="lineNum">     117 </span>            :         }
+<span class="lineNum">     118 </span><span class="lineNoCov">          0 :         else if (str == &quot;slopes_gaps&quot;)</span>
+<span class="lineNum">     119 </span>            :         {
+<span class="lineNum">     120 </span><span class="lineNoCov">          0 :                 out_type = eTypeSlopesGaps;</span>
+<span class="lineNum">     121 </span>            :         }
+<span class="lineNum">     122 </span><span class="lineNoCov">          0 :         else if (str == &quot;slopes_steps&quot;)</span>
+<span class="lineNum">     123 </span>            :         {
+<span class="lineNum">     124 </span><span class="lineNoCov">          0 :                 out_type = eTypeSlopesSteps;</span>
+<span class="lineNum">     125 </span>            :         }
+<span class="lineNum">     126 </span><span class="lineNoCov">          0 :         else if (str == &quot;slopes_walls&quot;)</span>
+<span class="lineNum">     127 </span>            :         {
+<span class="lineNum">     128 </span><span class="lineNoCov">          0 :                 out_type = eTypeSlopesWalls;</span>
+<span class="lineNum">     129 </span>            :         }
+<span class="lineNum">     130 </span><span class="lineNoCov">          0 :         else if (str == &quot;slopes_mixed&quot;)</span>
+<span class="lineNum">     131 </span>            :         {
+<span class="lineNum">     132 </span><span class="lineNoCov">          0 :                 out_type = eTypeSlopesMixed;</span>
+<span class="lineNum">     133 </span>            :         }
+<span class="lineNum">     134 </span><span class="lineNoCov">          0 :         else if (str == &quot;slopes_narrow_gaps&quot;)</span>
+<span class="lineNum">     135 </span>            :         {
+<span class="lineNum">     136 </span><span class="lineNoCov">          0 :                 out_type = eTypeSlopesNarrowGaps;</span>
+<span class="lineNum">     137 </span>            :         }
+<span class="lineNum">     138 </span><span class="lineNoCov">          0 :         else if (str == &quot;cliffs&quot;)</span>
+<span class="lineNum">     139 </span>            :         {
+<span class="lineNum">     140 </span><span class="lineNoCov">          0 :                 out_type = eTypeCliffs;</span>
+<span class="lineNum">     141 </span>            :         }
+<span class="lineNum">     142 </span>            :         else
+<span class="lineNum">     143 </span>            :         {
+<span class="lineNum">     144 </span><span class="lineNoCov">          0 :                 assert(false); // unsupported terrain type</span>
+<span class="lineNum">     145 </span>            :         }
+<a name="146"><span class="lineNum">     146 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">     147 </span>            : 
+<span class="lineNum">     148 </span><span class="lineCov">          2 : cTerrainGen2D::tTerrainFunc cTerrainGen2D::GetTerrainFunc(eType terrain_type)</span>
+<span class="lineNum">     149 </span>            : {
+<span class="lineNum">     150 </span><span class="lineCov">          2 :         switch(terrain_type)</span>
+<span class="lineNum">     151 </span>            :         {
+<span class="lineNum">     152 </span>            :         case eTypeGaps:
+<span class="lineNum">     153 </span><span class="lineNoCov">          0 :                 return BuildGaps;</span>
+<span class="lineNum">     154 </span>            :         case eTypeSteps:
+<span class="lineNum">     155 </span><span class="lineNoCov">          0 :                 return BuildSteps;</span>
+<span class="lineNum">     156 </span>            :         case eTypeWalls:
+<span class="lineNum">     157 </span><span class="lineNoCov">          0 :                 return BuildWalls;</span>
+<span class="lineNum">     158 </span>            :         case eTypeBumps:
+<span class="lineNum">     159 </span><span class="lineNoCov">          0 :                 return BuildBumps;</span>
+<span class="lineNum">     160 </span>            :         case eTypeMixed:
+<span class="lineNum">     161 </span><span class="lineNoCov">          0 :                 return BuildMixed;</span>
+<span class="lineNum">     162 </span>            :         case eTypeNarrowGaps:
+<span class="lineNum">     163 </span><span class="lineNoCov">          0 :                 return BuildNarrowGaps;</span>
+<span class="lineNum">     164 </span>            :         case eTypeSlopes:
+<span class="lineNum">     165 </span><span class="lineNoCov">          0 :                 return BuildSlopes;</span>
+<span class="lineNum">     166 </span>            :         case eTypeSlopesGaps:
+<span class="lineNum">     167 </span><span class="lineNoCov">          0 :                 return BuildSlopesGaps;</span>
+<span class="lineNum">     168 </span>            :         case eTypeSlopesSteps:
+<span class="lineNum">     169 </span><span class="lineNoCov">          0 :                 return BuildSlopesSteps;</span>
+<span class="lineNum">     170 </span>            :         case eTypeSlopesWalls:
+<span class="lineNum">     171 </span><span class="lineNoCov">          0 :                 return BuildSlopesWalls;</span>
+<span class="lineNum">     172 </span>            :         case eTypeSlopesMixed:
+<span class="lineNum">     173 </span><span class="lineNoCov">          0 :                 return BuildSlopesMixed;</span>
+<span class="lineNum">     174 </span>            :         case eTypeSlopesNarrowGaps:
+<span class="lineNum">     175 </span><span class="lineNoCov">          0 :                 return BuildSlopesNarrowGaps;</span>
+<span class="lineNum">     176 </span>            :         case eTypeCliffs:
+<span class="lineNum">     177 </span><span class="lineNoCov">          0 :                 return BuildCliffs;</span>
+<span class="lineNum">     178 </span>            :         default:
+<span class="lineNum">     179 </span><span class="lineCov">          2 :                 return BuildFlat;</span>
+<span class="lineNum">     180 </span>            :         }
+<span class="lineNum">     181 </span>            : }
+<span class="lineNum">     182 </span>            : 
+<a name="183"><span class="lineNum">     183 </span>            : </a>
+<span class="lineNum">     184 </span>            : 
+<span class="lineNum">     185 </span><span class="lineCov">          9 : double cTerrainGen2D::BuildFlat(double width, const tParams&amp; params, cRand&amp; rand, std::vector&lt;float&gt;&amp; out_data)</span>
+<span class="lineNum">     186 </span>            : {
+<span class="lineNum">     187 </span><span class="lineCov">          9 :         return AddFlat(width, out_data);</span>
+<a name="188"><span class="lineNum">     188 </span>            : }</a>
+<span class="lineNum">     189 </span>            : 
+<span class="lineNum">     190 </span><span class="lineNoCov">          0 : double cTerrainGen2D::BuildGaps(double width, const tParams&amp; params, cRand&amp; rand, std::vector&lt;float&gt;&amp; out_data)</span>
+<span class="lineNum">     191 </span>            : {
+<span class="lineNum">     192 </span><span class="lineNoCov">          0 :         double spacing_min = params[eParamsGapSpacingMin];</span>
+<span class="lineNum">     193 </span><span class="lineNoCov">          0 :         double spacing_max = params[eParamsGapSpacingMax];</span>
+<span class="lineNum">     194 </span><span class="lineNoCov">          0 :         double gap_w_min = params[eParamsGapWidthMin];</span>
+<span class="lineNum">     195 </span><span class="lineNoCov">          0 :         double gap_w_max = params[eParamsGapWidthMax];</span>
+<span class="lineNum">     196 </span><span class="lineNoCov">          0 :         double gap_d_min = params[eParamsGapDepthMin];</span>
+<span class="lineNum">     197 </span><span class="lineNoCov">          0 :         double gap_d_max = params[eParamsGapDepthMax];</span>
+<span class="lineNum">     198 </span>            : 
+<span class="lineNum">     199 </span><span class="lineNoCov">          0 :         double total_w = 0;</span>
+<span class="lineNum">     200 </span><span class="lineNoCov">          0 :         while (total_w &lt; width)</span>
+<span class="lineNum">     201 </span>            :         {
+<span class="lineNum">     202 </span><span class="lineNoCov">          0 :                 double spacing = rand.RandDouble(spacing_min, spacing_max);</span>
+<span class="lineNum">     203 </span><span class="lineNoCov">          0 :                 double w = rand.RandDouble(gap_w_min, gap_w_max);</span>
+<span class="lineNum">     204 </span><span class="lineNoCov">          0 :                 double d = rand.RandDouble(gap_d_min, gap_d_max);</span>
+<span class="lineNum">     205 </span>            : 
+<span class="lineNum">     206 </span><span class="lineNoCov">          0 :                 double curr_w = AddBox(spacing, w, d, out_data);</span>
+<span class="lineNum">     207 </span><span class="lineNoCov">          0 :                 total_w += curr_w;</span>
+<span class="lineNum">     208 </span>            :         }
+<span class="lineNum">     209 </span>            : 
+<span class="lineNum">     210 </span><span class="lineNoCov">          0 :         return total_w;</span>
+<a name="211"><span class="lineNum">     211 </span>            : }</a>
+<span class="lineNum">     212 </span>            : 
+<span class="lineNum">     213 </span><span class="lineNoCov">          0 : double cTerrainGen2D::BuildSteps(double width, const tParams&amp; params, cRand&amp; rand, std::vector&lt;float&gt;&amp; out_data)</span>
+<span class="lineNum">     214 </span>            : {
+<span class="lineNum">     215 </span><span class="lineNoCov">          0 :         double spacing_min = params[eParamsStepSpacingMin];</span>
+<span class="lineNum">     216 </span><span class="lineNoCov">          0 :         double spacing_max = params[eParamsStepSpacingMax];</span>
+<span class="lineNum">     217 </span><span class="lineNoCov">          0 :         double step_h0_min = params[eParamsStepHeight0Min];</span>
+<span class="lineNum">     218 </span><span class="lineNoCov">          0 :         double step_h0_max = params[eParamsStepHeight0Max];</span>
+<span class="lineNum">     219 </span><span class="lineNoCov">          0 :         double step_h1_min = params[eParamsStepHeight1Min];</span>
+<span class="lineNum">     220 </span><span class="lineNoCov">          0 :         double step_h1_max = params[eParamsStepHeight1Max];</span>
+<span class="lineNum">     221 </span>            : 
+<span class="lineNum">     222 </span><span class="lineNoCov">          0 :         double total_w = 0;</span>
+<span class="lineNum">     223 </span><span class="lineNoCov">          0 :         while (total_w &lt; width)</span>
+<span class="lineNum">     224 </span>            :         {
+<span class="lineNum">     225 </span><span class="lineNoCov">          0 :                 double min_h = 0;</span>
+<span class="lineNum">     226 </span><span class="lineNoCov">          0 :                 double max_h = 0;</span>
+<span class="lineNum">     227 </span>            : 
+<span class="lineNum">     228 </span><span class="lineNoCov">          0 :                 bool valid_h0 = (step_h0_min != 0 || step_h0_max != 0);</span>
+<span class="lineNum">     229 </span><span class="lineNoCov">          0 :                 bool valid_h1 = (step_h1_min != 0 || step_h1_max != 0);</span>
+<span class="lineNum">     230 </span><span class="lineNoCov">          0 :                 if (valid_h0 &amp;&amp; valid_h1)</span>
+<span class="lineNum">     231 </span>            :                 {
+<span class="lineNum">     232 </span><span class="lineNoCov">          0 :                         bool heads = rand.FlipCoin();</span>
+<span class="lineNum">     233 </span><span class="lineNoCov">          0 :                         min_h = (heads) ? step_h0_min : step_h1_min;</span>
+<span class="lineNum">     234 </span><span class="lineNoCov">          0 :                         max_h = (heads) ? step_h0_max : step_h1_max;</span>
+<span class="lineNum">     235 </span>            :                 }
+<span class="lineNum">     236 </span><span class="lineNoCov">          0 :                 else if (valid_h0)</span>
+<span class="lineNum">     237 </span>            :                 {
+<span class="lineNum">     238 </span><span class="lineNoCov">          0 :                         min_h = step_h0_min;</span>
+<span class="lineNum">     239 </span><span class="lineNoCov">          0 :                         max_h = step_h0_max;</span>
+<span class="lineNum">     240 </span>            :                 }
+<span class="lineNum">     241 </span>            :                 else
+<span class="lineNum">     242 </span>            :                 {
+<span class="lineNum">     243 </span><span class="lineNoCov">          0 :                         min_h = step_h1_min;</span>
+<span class="lineNum">     244 </span><span class="lineNoCov">          0 :                         max_h = step_h1_max;</span>
+<span class="lineNum">     245 </span>            :                 }
+<span class="lineNum">     246 </span>            : 
+<span class="lineNum">     247 </span><span class="lineNoCov">          0 :                 double w = rand.RandDouble(spacing_min, spacing_max);</span>
+<span class="lineNum">     248 </span><span class="lineNoCov">          0 :                 double h = rand.RandDouble(min_h, max_h);</span>
+<span class="lineNum">     249 </span>            : 
+<span class="lineNum">     250 </span><span class="lineNoCov">          0 :                 double curr_w = AddStep(w, h, out_data);</span>
+<span class="lineNum">     251 </span><span class="lineNoCov">          0 :                 total_w += curr_w;</span>
+<span class="lineNum">     252 </span>            :         }
+<span class="lineNum">     253 </span>            : 
+<span class="lineNum">     254 </span><span class="lineNoCov">          0 :         return total_w;</span>
+<a name="255"><span class="lineNum">     255 </span>            : }</a>
+<span class="lineNum">     256 </span>            : 
+<span class="lineNum">     257 </span><span class="lineNoCov">          0 : double cTerrainGen2D::BuildWalls(double width, const tParams&amp; params, cRand&amp; rand, std::vector&lt;float&gt;&amp; out_data)</span>
+<span class="lineNum">     258 </span>            : {
+<span class="lineNum">     259 </span><span class="lineNoCov">          0 :         double spacing_min = params[eParamsWallSpacingMin];</span>
+<span class="lineNum">     260 </span><span class="lineNoCov">          0 :         double spacing_max = params[eParamsWallSpacingMax];</span>
+<span class="lineNum">     261 </span><span class="lineNoCov">          0 :         double wall_w_min = params[eParamsWallWidthMin];</span>
+<span class="lineNum">     262 </span><span class="lineNoCov">          0 :         double wall_w_max = params[eParamsWallWidthMax];</span>
+<span class="lineNum">     263 </span><span class="lineNoCov">          0 :         double wall_g_min = params[eParamsWallHeightMin];</span>
+<span class="lineNum">     264 </span><span class="lineNoCov">          0 :         double wall_g_max = params[eParamsWallHeightMax];</span>
+<span class="lineNum">     265 </span>            : 
+<span class="lineNum">     266 </span><span class="lineNoCov">          0 :         double total_w = 0;</span>
+<span class="lineNum">     267 </span><span class="lineNoCov">          0 :         while (total_w &lt; width)</span>
+<span class="lineNum">     268 </span>            :         {
+<span class="lineNum">     269 </span><span class="lineNoCov">          0 :                 double spacing = rand.RandDouble(spacing_min, spacing_max);</span>
+<span class="lineNum">     270 </span><span class="lineNoCov">          0 :                 double w = rand.RandDouble(wall_w_min, wall_w_max);</span>
+<span class="lineNum">     271 </span><span class="lineNoCov">          0 :                 double h = rand.RandDouble(wall_g_min, wall_g_max);</span>
+<span class="lineNum">     272 </span>            : 
+<span class="lineNum">     273 </span><span class="lineNoCov">          0 :                 double curr_w = AddBox(spacing, w, h, out_data);</span>
+<span class="lineNum">     274 </span><span class="lineNoCov">          0 :                 total_w += curr_w;</span>
+<span class="lineNum">     275 </span>            :         }
+<span class="lineNum">     276 </span>            : 
+<span class="lineNum">     277 </span><span class="lineNoCov">          0 :         return total_w;</span>
+<a name="278"><span class="lineNum">     278 </span>            : }</a>
+<span class="lineNum">     279 </span>            : 
+<span class="lineNum">     280 </span><span class="lineNoCov">          0 : double cTerrainGen2D::BuildBumps(double width, const tParams&amp; params, cRand&amp; rand, std::vector&lt;float&gt;&amp; out_data)</span>
+<span class="lineNum">     281 </span>            : {
+<span class="lineNum">     282 </span><span class="lineNoCov">          0 :         double bump_h_min = params[eParamsBumpHeightMin];</span>
+<span class="lineNum">     283 </span><span class="lineNoCov">          0 :         double bump_h_max = params[eParamsBumpHeightMax];</span>
+<span class="lineNum">     284 </span>            : 
+<span class="lineNum">     285 </span><span class="lineNoCov">          0 :         int beg_idx = static_cast&lt;int&gt;(out_data.size());</span>
+<span class="lineNum">     286 </span><span class="lineNoCov">          0 :         double total_w = BuildFlat(width, params, rand, out_data);</span>
+<span class="lineNum">     287 </span><span class="lineNoCov">          0 :         int end_idx = static_cast&lt;int&gt;(out_data.size());</span>
+<span class="lineNum">     288 </span>            : 
+<span class="lineNum">     289 </span><span class="lineNoCov">          0 :         OverlayBumps(bump_h_min, bump_h_max, beg_idx, end_idx, rand, out_data);</span>
+<span class="lineNum">     290 </span>            : 
+<span class="lineNum">     291 </span><span class="lineNoCov">          0 :         return total_w;</span>
+<a name="292"><span class="lineNum">     292 </span>            : }</a>
+<span class="lineNum">     293 </span>            : 
+<span class="lineNum">     294 </span><span class="lineNoCov">          0 : double cTerrainGen2D::BuildMixed(double width, const tParams&amp; params, cRand&amp; rand, std::vector&lt;float&gt;&amp; out_data)</span>
+<span class="lineNum">     295 </span>            : {
+<span class="lineNum">     296 </span><span class="lineNoCov">          0 :         double total_w = 0;</span>
+<span class="lineNum">     297 </span><span class="lineNoCov">          0 :         const int num_types = 3;</span>
+<span class="lineNum">     298 </span><span class="lineNoCov">          0 :         const double dummy_w = gVertSpacing;</span>
+<span class="lineNum">     299 </span>            : 
+<span class="lineNum">     300 </span><span class="lineNoCov">          0 :         while (total_w &lt; width)</span>
+<span class="lineNum">     301 </span>            :         {
+<span class="lineNum">     302 </span><span class="lineNoCov">          0 :                 double curr_w = 0;</span>
+<span class="lineNum">     303 </span><span class="lineNoCov">          0 :                 int rand_type = rand.RandInt(0, num_types);</span>
+<span class="lineNum">     304 </span>            : 
+<span class="lineNum">     305 </span><span class="lineNoCov">          0 :                 if (rand_type == 0)</span>
+<span class="lineNum">     306 </span>            :                 {
+<span class="lineNum">     307 </span><span class="lineNoCov">          0 :                         curr_w = BuildGaps(dummy_w, params, rand, out_data);</span>
+<span class="lineNum">     308 </span>            :                 }
+<span class="lineNum">     309 </span><span class="lineNoCov">          0 :                 else if (rand_type == 1)</span>
+<span class="lineNum">     310 </span>            :                 {
+<span class="lineNum">     311 </span><span class="lineNoCov">          0 :                         curr_w = BuildSteps(dummy_w, params, rand, out_data);</span>
+<span class="lineNum">     312 </span>            :                 }
+<span class="lineNum">     313 </span><span class="lineNoCov">          0 :                 else if (rand_type == 2)</span>
+<span class="lineNum">     314 </span>            :                 {
+<span class="lineNum">     315 </span><span class="lineNoCov">          0 :                         curr_w = BuildWalls(dummy_w, params, rand, out_data);</span>
+<span class="lineNum">     316 </span>            :                 }
+<span class="lineNum">     317 </span>            : 
+<span class="lineNum">     318 </span><span class="lineNoCov">          0 :                 total_w += curr_w;</span>
+<span class="lineNum">     319 </span>            :         }
+<span class="lineNum">     320 </span>            : 
+<span class="lineNum">     321 </span><span class="lineNoCov">          0 :         return total_w;</span>
+<a name="322"><span class="lineNum">     322 </span>            : }</a>
+<span class="lineNum">     323 </span>            : 
+<span class="lineNum">     324 </span><span class="lineNoCov">          0 : double cTerrainGen2D::BuildNarrowGaps(double width, const tParams&amp; params, cRand&amp; rand, std::vector&lt;float&gt;&amp; out_data)</span>
+<span class="lineNum">     325 </span>            : {
+<span class="lineNum">     326 </span><span class="lineNoCov">          0 :         double spacing_min = params[eParamsNarrowGapSpacingMin];</span>
+<span class="lineNum">     327 </span><span class="lineNoCov">          0 :         double spacing_max = params[eParamsNarrowGapSpacingMax];</span>
+<span class="lineNum">     328 </span><span class="lineNoCov">          0 :         double dist_min = params[eParamsNarrowGapDistMin];</span>
+<span class="lineNum">     329 </span><span class="lineNoCov">          0 :         double dist_max = params[eParamsNarrowGapDistMax];</span>
+<span class="lineNum">     330 </span><span class="lineNoCov">          0 :         double gap_w_min = params[eParamsNarrowGapWidthMin];</span>
+<span class="lineNum">     331 </span><span class="lineNoCov">          0 :         double gap_w_max = params[eParamsNarrowGapWidthMax];</span>
+<span class="lineNum">     332 </span><span class="lineNoCov">          0 :         double gap_d_min = params[eParamsNarrowGapDepthMin];</span>
+<span class="lineNum">     333 </span><span class="lineNoCov">          0 :         double gap_d_max = params[eParamsNarrowGapDepthMax];</span>
+<span class="lineNum">     334 </span><span class="lineNoCov">          0 :         int count_min = std::max(1, static_cast&lt;int&gt;(params[eParamsNarrowGapCountMin]));</span>
+<span class="lineNum">     335 </span><span class="lineNoCov">          0 :         int count_max = std::max(1, static_cast&lt;int&gt;(params[eParamsNarrowGapCountMax]));</span>
+<span class="lineNum">     336 </span>            : 
+<span class="lineNum">     337 </span><span class="lineNoCov">          0 :         double total_w = 0;</span>
+<span class="lineNum">     338 </span><span class="lineNoCov">          0 :         while (total_w &lt; width)</span>
+<span class="lineNum">     339 </span>            :         {
+<span class="lineNum">     340 </span><span class="lineNoCov">          0 :                 double spacing = rand.RandDouble(spacing_min, spacing_max);</span>
+<span class="lineNum">     341 </span><span class="lineNoCov">          0 :                 int count = rand.RandInt(count_min, count_max + 1);</span>
+<span class="lineNum">     342 </span><span class="lineNoCov">          0 :                 for (int i = 0; i &lt; count; ++i)</span>
+<span class="lineNum">     343 </span>            :                 {
+<span class="lineNum">     344 </span><span class="lineNoCov">          0 :                         double w = rand.RandDouble(gap_w_min, gap_w_max);</span>
+<span class="lineNum">     345 </span><span class="lineNoCov">          0 :                         double d = rand.RandDouble(gap_d_min, gap_d_max);</span>
+<span class="lineNum">     346 </span>            : 
+<span class="lineNum">     347 </span><span class="lineNoCov">          0 :                         double curr_w = AddBox(spacing, w, d, out_data);</span>
+<span class="lineNum">     348 </span><span class="lineNoCov">          0 :                         total_w += curr_w;</span>
+<span class="lineNum">     349 </span>            : 
+<span class="lineNum">     350 </span><span class="lineNoCov">          0 :                         spacing = rand.RandDouble(dist_min, dist_max);</span>
+<span class="lineNum">     351 </span>            :                 }
+<span class="lineNum">     352 </span>            :         }
+<span class="lineNum">     353 </span>            :         
+<span class="lineNum">     354 </span><span class="lineNoCov">          0 :         return total_w;</span>
+<a name="355"><span class="lineNum">     355 </span>            : }</a>
+<span class="lineNum">     356 </span>            : 
+<span class="lineNum">     357 </span><span class="lineNoCov">          0 : double cTerrainGen2D::BuildSlopes(double width, const tParams&amp; params, cRand&amp; rand, std::vector&lt;float&gt;&amp; out_data)</span>
+<span class="lineNum">     358 </span>            : {
+<span class="lineNum">     359 </span><span class="lineNoCov">          0 :         const double delta_range = std::abs(params[eParamsSlopeDeltaRange]);</span>
+<span class="lineNum">     360 </span><span class="lineNoCov">          0 :         const double delta_min = params[eParamsSlopeDeltaMin];</span>
+<span class="lineNum">     361 </span><span class="lineNoCov">          0 :         const double delta_max = params[eParamsSlopeDeltaMax];</span>
+<span class="lineNum">     362 </span>            : 
+<span class="lineNum">     363 </span><span class="lineNoCov">          0 :         int beg_idx = static_cast&lt;int&gt;(out_data.size());</span>
+<span class="lineNum">     364 </span><span class="lineNoCov">          0 :         double total_w = BuildFlat(width, params, rand, out_data);</span>
+<span class="lineNum">     365 </span><span class="lineNoCov">          0 :         int end_idx = static_cast&lt;int&gt;(out_data.size());</span>
+<span class="lineNum">     366 </span>            : 
+<span class="lineNum">     367 </span><span class="lineNoCov">          0 :         OverlaySlopes(delta_range, delta_min, delta_max, 0, beg_idx, end_idx, rand, out_data);</span>
+<span class="lineNum">     368 </span>            : 
+<span class="lineNum">     369 </span><span class="lineNoCov">          0 :         return total_w;</span>
+<a name="370"><span class="lineNum">     370 </span>            : }</a>
+<span class="lineNum">     371 </span>            : 
+<span class="lineNum">     372 </span><span class="lineNoCov">          0 : double cTerrainGen2D::BuildSlopesGaps(double width, const tParams&amp; params, cRand&amp; rand, std::vector&lt;float&gt;&amp; out_data)</span>
+<span class="lineNum">     373 </span>            : {
+<span class="lineNum">     374 </span><span class="lineNoCov">          0 :         const double delta_range = std::abs(params[eParamsSlopeDeltaRange]);</span>
+<span class="lineNum">     375 </span><span class="lineNoCov">          0 :         const double delta_min = params[eParamsSlopeDeltaMin];</span>
+<span class="lineNum">     376 </span><span class="lineNoCov">          0 :         const double delta_max = params[eParamsSlopeDeltaMax];</span>
+<span class="lineNum">     377 </span>            : 
+<span class="lineNum">     378 </span><span class="lineNoCov">          0 :         int beg_idx = static_cast&lt;int&gt;(out_data.size());</span>
+<span class="lineNum">     379 </span><span class="lineNoCov">          0 :         double total_w = BuildGaps(width, params, rand, out_data);</span>
+<span class="lineNum">     380 </span><span class="lineNoCov">          0 :         int end_idx = static_cast&lt;int&gt;(out_data.size());</span>
+<span class="lineNum">     381 </span>            : 
+<span class="lineNum">     382 </span><span class="lineNoCov">          0 :         OverlaySlopes(delta_range, delta_min, delta_max, 0, beg_idx, end_idx, rand, out_data);</span>
+<span class="lineNum">     383 </span>            : 
+<span class="lineNum">     384 </span><span class="lineNoCov">          0 :         return total_w;</span>
+<a name="385"><span class="lineNum">     385 </span>            : }</a>
+<span class="lineNum">     386 </span>            : 
+<span class="lineNum">     387 </span><span class="lineNoCov">          0 : double cTerrainGen2D::BuildSlopesSteps(double width, const tParams&amp; params, cRand&amp; rand, std::vector&lt;float&gt;&amp; out_data)</span>
+<span class="lineNum">     388 </span>            : {
+<span class="lineNum">     389 </span><span class="lineNoCov">          0 :         const double delta_range = std::abs(params[eParamsSlopeDeltaRange]);</span>
+<span class="lineNum">     390 </span><span class="lineNoCov">          0 :         const double delta_min = params[eParamsSlopeDeltaMin];</span>
+<span class="lineNum">     391 </span><span class="lineNoCov">          0 :         const double delta_max = params[eParamsSlopeDeltaMax];</span>
+<span class="lineNum">     392 </span>            : 
+<span class="lineNum">     393 </span><span class="lineNoCov">          0 :         int beg_idx = static_cast&lt;int&gt;(out_data.size());</span>
+<span class="lineNum">     394 </span><span class="lineNoCov">          0 :         double total_w = BuildSteps(width, params, rand, out_data);</span>
+<span class="lineNum">     395 </span><span class="lineNoCov">          0 :         int end_idx = static_cast&lt;int&gt;(out_data.size());</span>
+<span class="lineNum">     396 </span>            : 
+<span class="lineNum">     397 </span><span class="lineNoCov">          0 :         OverlaySlopes(delta_range, delta_min, delta_max, 0, beg_idx, end_idx, rand, out_data);</span>
+<span class="lineNum">     398 </span>            : 
+<span class="lineNum">     399 </span><span class="lineNoCov">          0 :         return total_w;</span>
+<a name="400"><span class="lineNum">     400 </span>            : }</a>
+<span class="lineNum">     401 </span>            : 
+<span class="lineNum">     402 </span><span class="lineNoCov">          0 : double cTerrainGen2D::BuildSlopesWalls(double width, const tParams&amp; params, cRand&amp; rand, std::vector&lt;float&gt;&amp; out_data)</span>
+<span class="lineNum">     403 </span>            : {
+<span class="lineNum">     404 </span><span class="lineNoCov">          0 :         const double delta_range = std::abs(params[eParamsSlopeDeltaRange]);</span>
+<span class="lineNum">     405 </span><span class="lineNoCov">          0 :         const double delta_min = params[eParamsSlopeDeltaMin];</span>
+<span class="lineNum">     406 </span><span class="lineNoCov">          0 :         const double delta_max = params[eParamsSlopeDeltaMax];</span>
+<span class="lineNum">     407 </span>            : 
+<span class="lineNum">     408 </span><span class="lineNoCov">          0 :         int beg_idx = static_cast&lt;int&gt;(out_data.size());</span>
+<span class="lineNum">     409 </span><span class="lineNoCov">          0 :         double total_w = BuildWalls(width, params, rand, out_data);</span>
+<span class="lineNum">     410 </span><span class="lineNoCov">          0 :         int end_idx = static_cast&lt;int&gt;(out_data.size());</span>
+<span class="lineNum">     411 </span>            : 
+<span class="lineNum">     412 </span><span class="lineNoCov">          0 :         OverlaySlopes(delta_range, delta_min, delta_max, 0, beg_idx, end_idx, rand, out_data);</span>
+<span class="lineNum">     413 </span>            : 
+<span class="lineNum">     414 </span><span class="lineNoCov">          0 :         return total_w;</span>
+<a name="415"><span class="lineNum">     415 </span>            : }</a>
+<span class="lineNum">     416 </span>            : 
+<span class="lineNum">     417 </span><span class="lineNoCov">          0 : double cTerrainGen2D::BuildSlopesMixed(double width, const tParams&amp; params, cRand&amp; rand, std::vector&lt;float&gt;&amp; out_data)</span>
+<span class="lineNum">     418 </span>            : {
+<span class="lineNum">     419 </span><span class="lineNoCov">          0 :         const double delta_range = std::abs(params[eParamsSlopeDeltaRange]);</span>
+<span class="lineNum">     420 </span><span class="lineNoCov">          0 :         const double delta_min = params[eParamsSlopeDeltaMin];</span>
+<span class="lineNum">     421 </span><span class="lineNoCov">          0 :         const double delta_max = params[eParamsSlopeDeltaMax];</span>
+<span class="lineNum">     422 </span>            : 
+<span class="lineNum">     423 </span><span class="lineNoCov">          0 :         int beg_idx = static_cast&lt;int&gt;(out_data.size());</span>
+<span class="lineNum">     424 </span><span class="lineNoCov">          0 :         double total_w = BuildMixed(width, params, rand, out_data);</span>
+<span class="lineNum">     425 </span><span class="lineNoCov">          0 :         int end_idx = static_cast&lt;int&gt;(out_data.size());</span>
+<span class="lineNum">     426 </span>            : 
+<span class="lineNum">     427 </span><span class="lineNoCov">          0 :         OverlaySlopes(delta_range, delta_min, delta_max, 0, beg_idx, end_idx, rand, out_data);</span>
+<span class="lineNum">     428 </span>            : 
+<span class="lineNum">     429 </span><span class="lineNoCov">          0 :         return total_w;</span>
+<a name="430"><span class="lineNum">     430 </span>            : }</a>
+<span class="lineNum">     431 </span>            : 
+<span class="lineNum">     432 </span><span class="lineNoCov">          0 : double cTerrainGen2D::BuildSlopesNarrowGaps(double width, const tParams&amp; params, cRand&amp; rand, std::vector&lt;float&gt;&amp; out_data)</span>
+<span class="lineNum">     433 </span>            : {
+<span class="lineNum">     434 </span><span class="lineNoCov">          0 :         const double delta_range = std::abs(params[eParamsSlopeDeltaRange]);</span>
+<span class="lineNum">     435 </span><span class="lineNoCov">          0 :         const double delta_min = params[eParamsSlopeDeltaMin];</span>
+<span class="lineNum">     436 </span><span class="lineNoCov">          0 :         const double delta_max = params[eParamsSlopeDeltaMax];</span>
+<span class="lineNum">     437 </span>            : 
+<span class="lineNum">     438 </span><span class="lineNoCov">          0 :         int beg_idx = static_cast&lt;int&gt;(out_data.size());</span>
+<span class="lineNum">     439 </span><span class="lineNoCov">          0 :         double total_w = BuildNarrowGaps(width, params, rand, out_data);</span>
+<span class="lineNum">     440 </span><span class="lineNoCov">          0 :         int end_idx = static_cast&lt;int&gt;(out_data.size());</span>
+<span class="lineNum">     441 </span>            : 
+<span class="lineNum">     442 </span><span class="lineNoCov">          0 :         OverlaySlopes(delta_range, delta_min, delta_max, 0, beg_idx, end_idx, rand, out_data);</span>
+<span class="lineNum">     443 </span>            : 
+<span class="lineNum">     444 </span><span class="lineNoCov">          0 :         return total_w;</span>
+<span class="lineNum">     445 </span>            : 
+<a name="446"><span class="lineNum">     446 </span>            : }</a>
+<span class="lineNum">     447 </span>            : 
+<span class="lineNum">     448 </span><span class="lineNoCov">          0 : double cTerrainGen2D::BuildCliffs(double width, const tParams&amp; params, cRand&amp; rand, std::vector&lt;float&gt;&amp; out_data)</span>
+<span class="lineNum">     449 </span>            : {
+<span class="lineNum">     450 </span><span class="lineNoCov">          0 :         double spacing_min = params[eParamsCliffSpacingMin];</span>
+<span class="lineNum">     451 </span><span class="lineNoCov">          0 :         double spacing_max = params[eParamsCliffSpacingMax];</span>
+<span class="lineNum">     452 </span><span class="lineNoCov">          0 :         double cliff_h0_min = params[eParamsCliffHeight0Min];</span>
+<span class="lineNum">     453 </span><span class="lineNoCov">          0 :         double cliff_h0_max = params[eParamsCliffHeight0Max];</span>
+<span class="lineNum">     454 </span><span class="lineNoCov">          0 :         double cliff_h1_min = params[eParamsCliffHeight1Min];</span>
+<span class="lineNum">     455 </span><span class="lineNoCov">          0 :         double cliff_h1_max = params[eParamsCliffHeight1Max];</span>
+<span class="lineNum">     456 </span><span class="lineNoCov">          0 :         int mini_count_max = static_cast&lt;int&gt;(params[eParamsCliffMiniCountMax]);</span>
+<span class="lineNum">     457 </span>            : 
+<span class="lineNum">     458 </span><span class="lineNoCov">          0 :         double bump_h_min = params[eParamsBumpHeightMin];</span>
+<span class="lineNum">     459 </span><span class="lineNoCov">          0 :         double bump_h_max = params[eParamsBumpHeightMax];</span>
+<span class="lineNum">     460 </span>            : 
+<span class="lineNum">     461 </span><span class="lineNoCov">          0 :         const double delta_range = std::abs(params[eParamsSlopeDeltaRange]);</span>
+<span class="lineNum">     462 </span><span class="lineNoCov">          0 :         const double delta_min = params[eParamsSlopeDeltaMin];</span>
+<span class="lineNum">     463 </span><span class="lineNoCov">          0 :         const double delta_max = params[eParamsSlopeDeltaMax];</span>
+<span class="lineNum">     464 </span>            : 
+<span class="lineNum">     465 </span><span class="lineNoCov">          0 :         int beg_idx = static_cast&lt;int&gt;(out_data.size());</span>
+<span class="lineNum">     466 </span>            : 
+<span class="lineNum">     467 </span><span class="lineNoCov">          0 :         double total_w = 0;</span>
+<span class="lineNum">     468 </span><span class="lineNoCov">          0 :         while (total_w &lt; width)</span>
+<span class="lineNum">     469 </span>            :         {
+<span class="lineNum">     470 </span><span class="lineNoCov">          0 :                 double min_h = 0;</span>
+<span class="lineNum">     471 </span><span class="lineNoCov">          0 :                 double max_h = 0;</span>
+<span class="lineNum">     472 </span>            : 
+<span class="lineNum">     473 </span><span class="lineNoCov">          0 :                 bool valid_h0 = (cliff_h0_min != 0 || cliff_h0_max != 0);</span>
+<span class="lineNum">     474 </span><span class="lineNoCov">          0 :                 bool valid_h1 = (cliff_h1_min != 0 || cliff_h1_max != 0);</span>
+<span class="lineNum">     475 </span><span class="lineNoCov">          0 :                 if (valid_h0 &amp;&amp; valid_h1)</span>
+<span class="lineNum">     476 </span>            :                 {
+<span class="lineNum">     477 </span><span class="lineNoCov">          0 :                         bool heads = rand.FlipCoin();</span>
+<span class="lineNum">     478 </span><span class="lineNoCov">          0 :                         min_h = (heads) ? cliff_h0_min : cliff_h1_min;</span>
+<span class="lineNum">     479 </span><span class="lineNoCov">          0 :                         max_h = (heads) ? cliff_h0_max : cliff_h1_max;</span>
+<span class="lineNum">     480 </span>            :                 }
+<span class="lineNum">     481 </span><span class="lineNoCov">          0 :                 else if (valid_h0)</span>
+<span class="lineNum">     482 </span>            :                 {
+<span class="lineNum">     483 </span><span class="lineNoCov">          0 :                         min_h = cliff_h0_min;</span>
+<span class="lineNum">     484 </span><span class="lineNoCov">          0 :                         max_h = cliff_h0_max;</span>
+<span class="lineNum">     485 </span>            :                 }
+<span class="lineNum">     486 </span>            :                 else
+<span class="lineNum">     487 </span>            :                 {
+<span class="lineNum">     488 </span><span class="lineNoCov">          0 :                         min_h = cliff_h1_min;</span>
+<span class="lineNum">     489 </span><span class="lineNoCov">          0 :                         max_h = cliff_h1_max;</span>
+<span class="lineNum">     490 </span>            :                 }
+<span class="lineNum">     491 </span>            : 
+<span class="lineNum">     492 </span><span class="lineNoCov">          0 :                 double w = rand.RandDouble(spacing_min, spacing_max);</span>
+<span class="lineNum">     493 </span><span class="lineNoCov">          0 :                 double h = rand.RandDouble(min_h, max_h);</span>
+<span class="lineNum">     494 </span>            : 
+<span class="lineNum">     495 </span><span class="lineNoCov">          0 :                 double curr_w = 0;</span>
+<span class="lineNum">     496 </span><span class="lineNoCov">          0 :                 double curr_delta_h = 0;</span>
+<span class="lineNum">     497 </span><span class="lineNoCov">          0 :                 int num_mini = rand.RandInt(0, mini_count_max + 1);</span>
+<span class="lineNum">     498 </span><span class="lineNoCov">          0 :                 for (int i = 0; i &lt; num_mini + 1; ++i)</span>
+<span class="lineNum">     499 </span>            :                 {
+<span class="lineNum">     500 </span><span class="lineNoCov">          0 :                         const double mini_w = (i == 0) ? w : 0.1;</span>
+<span class="lineNum">     501 </span><span class="lineNoCov">          0 :                         double mini_h = rand.RandDouble(curr_delta_h, h);</span>
+<span class="lineNum">     502 </span><span class="lineNoCov">          0 :                         mini_h = (i == num_mini) ? h : mini_h;</span>
+<span class="lineNum">     503 </span>            : 
+<span class="lineNum">     504 </span><span class="lineNoCov">          0 :                         double dh = mini_h - curr_delta_h;</span>
+<span class="lineNum">     505 </span><span class="lineNoCov">          0 :                         curr_w += AddStep(mini_w, dh, out_data);</span>
+<span class="lineNum">     506 </span>            : 
+<span class="lineNum">     507 </span><span class="lineNoCov">          0 :                         curr_delta_h = mini_h;</span>
+<span class="lineNum">     508 </span>            :                 }
+<span class="lineNum">     509 </span>            : 
+<span class="lineNum">     510 </span><span class="lineNoCov">          0 :                 total_w += curr_w;</span>
+<span class="lineNum">     511 </span>            :         }
+<span class="lineNum">     512 </span>            : 
+<span class="lineNum">     513 </span><span class="lineNoCov">          0 :         int end_idx = static_cast&lt;int&gt;(out_data.size());</span>
+<span class="lineNum">     514 </span><span class="lineNoCov">          0 :         OverlaySlopes(delta_range, delta_min, delta_max, 0, beg_idx, end_idx, rand, out_data);</span>
+<span class="lineNum">     515 </span><span class="lineNoCov">          0 :         OverlayBumps(bump_h_min, bump_h_max, beg_idx, end_idx, rand, out_data);</span>
+<span class="lineNum">     516 </span>            : 
+<span class="lineNum">     517 </span><span class="lineNoCov">          0 :         return total_w;</span>
+<a name="518"><span class="lineNum">     518 </span>            : }</a>
+<span class="lineNum">     519 </span>            : 
+<span class="lineNum">     520 </span><span class="lineCov">          9 : int cTerrainGen2D::CalcNumVerts(double w)</span>
+<span class="lineNum">     521 </span>            : {
+<span class="lineNum">     522 </span><span class="lineCov">          9 :         int num_verts = static_cast&lt;int&gt;(std::ceil(w / gVertSpacing)) + 1;</span>
+<span class="lineNum">     523 </span><span class="lineCov">          9 :         return num_verts;</span>
+<a name="524"><span class="lineNum">     524 </span>            : }</a>
+<span class="lineNum">     525 </span>            : 
+<span class="lineNum">     526 </span><span class="lineCov">          9 : double cTerrainGen2D::AddFlat(double width, std::vector&lt;float&gt;&amp; out_data)</span>
+<span class="lineNum">     527 </span>            : {
+<span class="lineNum">     528 </span><span class="lineCov">          9 :         int num_verts = CalcNumVerts(width);</span>
+<span class="lineNum">     529 </span><span class="lineCov">          9 :         int buffer_size = static_cast&lt;int&gt;(out_data.size());</span>
+<span class="lineNum">     530 </span><span class="lineCov">          9 :         int buffer_size0 = buffer_size;</span>
+<span class="lineNum">     531 </span><span class="lineCov">          9 :         bool start_empty = buffer_size0 == 0;</span>
+<span class="lineNum">     532 </span>            : 
+<span class="lineNum">     533 </span><span class="lineCov">          9 :         float base_h = 0;</span>
+<span class="lineNum">     534 </span><span class="lineCov">          9 :         if (!start_empty)</span>
+<span class="lineNum">     535 </span>            :         {
+<span class="lineNum">     536 </span><span class="lineCov">          3 :                 --num_verts;</span>
+<span class="lineNum">     537 </span><span class="lineCov">          3 :                 base_h = out_data[buffer_size0 - 1];</span>
+<span class="lineNum">     538 </span>            :         }
+<span class="lineNum">     539 </span>            : 
+<span class="lineNum">     540 </span><span class="lineCov">       4275 :         for (int i = 0; i &lt; num_verts; ++i)</span>
+<span class="lineNum">     541 </span>            :         {
+<span class="lineNum">     542 </span><span class="lineCov">       4266 :                 out_data.push_back(base_h);</span>
+<span class="lineNum">     543 </span>            :         }
+<span class="lineNum">     544 </span>            : 
+<span class="lineNum">     545 </span><span class="lineCov">          9 :         buffer_size = static_cast&lt;int&gt;(out_data.size());</span>
+<span class="lineNum">     546 </span><span class="lineCov">          9 :         int verts_added = buffer_size - buffer_size0;</span>
+<span class="lineNum">     547 </span><span class="lineCov">          9 :         if (start_empty)</span>
+<span class="lineNum">     548 </span>            :         {
+<span class="lineNum">     549 </span><span class="lineCov">          6 :                 --verts_added;</span>
+<span class="lineNum">     550 </span>            :         }
+<span class="lineNum">     551 </span><span class="lineCov">          9 :         double width_added = verts_added * gVertSpacing;</span>
+<span class="lineNum">     552 </span>            : 
+<span class="lineNum">     553 </span><span class="lineCov">          9 :         return width_added;</span>
+<a name="554"><span class="lineNum">     554 </span>            : }</a>
+<span class="lineNum">     555 </span>            : 
+<span class="lineNum">     556 </span><span class="lineNoCov">          0 : double cTerrainGen2D::AddBox(double spacing, double width, double depth, std::vector&lt;float&gt;&amp; out_data)</span>
+<span class="lineNum">     557 </span>            : {
+<span class="lineNum">     558 </span><span class="lineNoCov">          0 :         int num_verts = CalcNumVerts(spacing);</span>
+<span class="lineNum">     559 </span><span class="lineNoCov">          0 :         int buffer_size = static_cast&lt;int&gt;(out_data.size());</span>
+<span class="lineNum">     560 </span><span class="lineNoCov">          0 :         int buffer_size0 = buffer_size;</span>
+<span class="lineNum">     561 </span><span class="lineNoCov">          0 :         bool start_empty = buffer_size0 == 0;</span>
+<span class="lineNum">     562 </span>            : 
+<span class="lineNum">     563 </span><span class="lineNoCov">          0 :         float base_h = 0;</span>
+<span class="lineNum">     564 </span><span class="lineNoCov">          0 :         if (!start_empty)</span>
+<span class="lineNum">     565 </span>            :         {
+<span class="lineNum">     566 </span><span class="lineNoCov">          0 :                 --num_verts;</span>
+<span class="lineNum">     567 </span><span class="lineNoCov">          0 :                 base_h = out_data[buffer_size0 - 1];</span>
+<span class="lineNum">     568 </span>            :         }
+<span class="lineNum">     569 </span>            : 
+<span class="lineNum">     570 </span><span class="lineNoCov">          0 :         out_data.reserve(buffer_size + num_verts);</span>
+<span class="lineNum">     571 </span><span class="lineNoCov">          0 :         for (int i = 0; i &lt; num_verts; ++i)</span>
+<span class="lineNum">     572 </span>            :         {
+<span class="lineNum">     573 </span><span class="lineNoCov">          0 :                 out_data.push_back(base_h);</span>
+<span class="lineNum">     574 </span>            :         }
+<span class="lineNum">     575 </span>            : 
+<span class="lineNum">     576 </span><span class="lineNoCov">          0 :         num_verts = CalcNumVerts(width) - 1;</span>
+<span class="lineNum">     577 </span><span class="lineNoCov">          0 :         buffer_size = static_cast&lt;int&gt;(out_data.size());</span>
+<span class="lineNum">     578 </span>            : 
+<span class="lineNum">     579 </span><span class="lineNoCov">          0 :         out_data.reserve(buffer_size + num_verts);</span>
+<span class="lineNum">     580 </span><span class="lineNoCov">          0 :         float gap_h = static_cast&lt;float&gt;(base_h + depth);</span>
+<span class="lineNum">     581 </span><span class="lineNoCov">          0 :         for (int i = 0; i &lt; num_verts; ++i)</span>
+<span class="lineNum">     582 </span>            :         {
+<span class="lineNum">     583 </span><span class="lineNoCov">          0 :                 out_data.push_back(gap_h);</span>
+<span class="lineNum">     584 </span>            :         }
+<span class="lineNum">     585 </span><span class="lineNoCov">          0 :         out_data.push_back(base_h);</span>
+<span class="lineNum">     586 </span>            : 
+<span class="lineNum">     587 </span><span class="lineNoCov">          0 :         buffer_size = static_cast&lt;int&gt;(out_data.size());</span>
+<span class="lineNum">     588 </span><span class="lineNoCov">          0 :         int verts_added = buffer_size - buffer_size0;</span>
+<span class="lineNum">     589 </span><span class="lineNoCov">          0 :         if (start_empty)</span>
+<span class="lineNum">     590 </span>            :         {
+<span class="lineNum">     591 </span><span class="lineNoCov">          0 :                 --verts_added;</span>
+<span class="lineNum">     592 </span>            :         }
+<span class="lineNum">     593 </span><span class="lineNoCov">          0 :         double width_added = verts_added * gVertSpacing;</span>
+<span class="lineNum">     594 </span>            : 
+<span class="lineNum">     595 </span><span class="lineNoCov">          0 :         return width_added;</span>
+<a name="596"><span class="lineNum">     596 </span>            : }</a>
+<span class="lineNum">     597 </span>            : 
+<span class="lineNum">     598 </span><span class="lineNoCov">          0 : double cTerrainGen2D::AddStep(double width, double height, std::vector&lt;float&gt;&amp; out_data)</span>
+<span class="lineNum">     599 </span>            : {
+<span class="lineNum">     600 </span><span class="lineNoCov">          0 :         int num_verts = CalcNumVerts(width);</span>
+<span class="lineNum">     601 </span><span class="lineNoCov">          0 :         int buffer_size = static_cast&lt;int&gt;(out_data.size());</span>
+<span class="lineNum">     602 </span><span class="lineNoCov">          0 :         int buffer_size0 = buffer_size;</span>
+<span class="lineNum">     603 </span><span class="lineNoCov">          0 :         bool start_empty = buffer_size0 == 0;</span>
+<span class="lineNum">     604 </span>            : 
+<span class="lineNum">     605 </span><span class="lineNoCov">          0 :         float base_h = 0;</span>
+<span class="lineNum">     606 </span><span class="lineNoCov">          0 :         if (!start_empty)</span>
+<span class="lineNum">     607 </span>            :         {
+<span class="lineNum">     608 </span><span class="lineNoCov">          0 :                 --num_verts;</span>
+<span class="lineNum">     609 </span><span class="lineNoCov">          0 :                 base_h = out_data[buffer_size0 - 1];</span>
+<span class="lineNum">     610 </span>            :         }
+<span class="lineNum">     611 </span>            : 
+<span class="lineNum">     612 </span><span class="lineNoCov">          0 :         out_data.reserve(buffer_size + num_verts + 1);</span>
+<span class="lineNum">     613 </span><span class="lineNoCov">          0 :         for (int i = 0; i &lt; num_verts; ++i)</span>
+<span class="lineNum">     614 </span>            :         {
+<span class="lineNum">     615 </span><span class="lineNoCov">          0 :                 out_data.push_back(base_h);</span>
+<span class="lineNum">     616 </span>            :         }
+<span class="lineNum">     617 </span><span class="lineNoCov">          0 :         out_data.push_back(static_cast&lt;float&gt;(base_h + height));</span>
+<span class="lineNum">     618 </span>            : 
+<span class="lineNum">     619 </span><span class="lineNoCov">          0 :         buffer_size = static_cast&lt;int&gt;(out_data.size());</span>
+<span class="lineNum">     620 </span><span class="lineNoCov">          0 :         int verts_added = buffer_size - buffer_size0;</span>
+<span class="lineNum">     621 </span><span class="lineNoCov">          0 :         if (start_empty)</span>
+<span class="lineNum">     622 </span>            :         {
+<span class="lineNum">     623 </span><span class="lineNoCov">          0 :                 --verts_added;</span>
+<span class="lineNum">     624 </span>            :         }
+<span class="lineNum">     625 </span><span class="lineNoCov">          0 :         double width_added = verts_added * gVertSpacing;</span>
+<span class="lineNum">     626 </span>            : 
+<span class="lineNum">     627 </span><span class="lineNoCov">          0 :         return width_added;</span>
+<a name="628"><span class="lineNum">     628 </span>            : }</a>
+<span class="lineNum">     629 </span>            : 
+<span class="lineNum">     630 </span><span class="lineNoCov">          0 : double cTerrainGen2D::AddSlope(double width, double slope, std::vector&lt;float&gt;&amp; out_data)</span>
+<span class="lineNum">     631 </span>            : {
+<span class="lineNum">     632 </span><span class="lineNoCov">          0 :         int num_verts = CalcNumVerts(width) - 1;</span>
+<span class="lineNum">     633 </span><span class="lineNoCov">          0 :         int buffer_size = static_cast&lt;int&gt;(out_data.size());</span>
+<span class="lineNum">     634 </span><span class="lineNoCov">          0 :         int buffer_size0 = buffer_size;</span>
+<span class="lineNum">     635 </span><span class="lineNoCov">          0 :         bool start_empty = buffer_size0 == 0;</span>
+<span class="lineNum">     636 </span>            : 
+<span class="lineNum">     637 </span><span class="lineNoCov">          0 :         float base_h = 0;</span>
+<span class="lineNum">     638 </span><span class="lineNoCov">          0 :         if (start_empty)</span>
+<span class="lineNum">     639 </span>            :         {
+<span class="lineNum">     640 </span><span class="lineNoCov">          0 :                 out_data.push_back(base_h);</span>
+<span class="lineNum">     641 </span>            :         }
+<span class="lineNum">     642 </span>            :         else
+<span class="lineNum">     643 </span>            :         {
+<span class="lineNum">     644 </span><span class="lineNoCov">          0 :                 base_h = out_data[buffer_size0 - 1];</span>
+<span class="lineNum">     645 </span>            :         }
+<span class="lineNum">     646 </span>            : 
+<span class="lineNum">     647 </span><span class="lineNoCov">          0 :         out_data.reserve(buffer_size + num_verts);</span>
+<span class="lineNum">     648 </span><span class="lineNoCov">          0 :         for (int i = 0; i &lt; num_verts; ++i)</span>
+<span class="lineNum">     649 </span>            :         {
+<span class="lineNum">     650 </span><span class="lineNoCov">          0 :                 double d = (i + 1) * (width / num_verts);</span>
+<span class="lineNum">     651 </span><span class="lineNoCov">          0 :                 out_data.push_back(static_cast&lt;float&gt;(base_h + slope * d));</span>
+<span class="lineNum">     652 </span>            :         }
+<span class="lineNum">     653 </span>            : 
+<span class="lineNum">     654 </span><span class="lineNoCov">          0 :         buffer_size = static_cast&lt;int&gt;(out_data.size());</span>
+<span class="lineNum">     655 </span><span class="lineNoCov">          0 :         int verts_added = buffer_size - buffer_size0;</span>
+<span class="lineNum">     656 </span><span class="lineNoCov">          0 :         if (start_empty)</span>
+<span class="lineNum">     657 </span>            :         {
+<span class="lineNum">     658 </span><span class="lineNoCov">          0 :                 --verts_added;</span>
+<span class="lineNum">     659 </span>            :         }
+<span class="lineNum">     660 </span><span class="lineNoCov">          0 :         double width_added = verts_added * gVertSpacing;</span>
+<span class="lineNum">     661 </span>            : 
+<span class="lineNum">     662 </span><span class="lineNoCov">          0 :         return width_added;</span>
+<a name="663"><span class="lineNum">     663 </span>            : }</a>
+<span class="lineNum">     664 </span>            : 
+<span class="lineNum">     665 </span><span class="lineNoCov">          0 : void cTerrainGen2D::OverlaySlopes(double delta_range, double delta_min, double delta_max, double init_slope, int beg_idx, int end_idx,</span>
+<span class="lineNum">     666 </span>            :                                                                         cRand&amp; rand, std::vector&lt;float&gt;&amp; out_data)
+<span class="lineNum">     667 </span>            : {
+<span class="lineNum">     668 </span><span class="lineNoCov">          0 :         double curr_slope = init_slope;</span>
+<span class="lineNum">     669 </span><span class="lineNoCov">          0 :         double curr_delta_h = 0;</span>
+<span class="lineNum">     670 </span><span class="lineNoCov">          0 :         assert(beg_idx &lt; out_data.size());</span>
+<span class="lineNum">     671 </span><span class="lineNoCov">          0 :         assert(end_idx &lt;= out_data.size());</span>
+<span class="lineNum">     672 </span><span class="lineNoCov">          0 :         assert(delta_min &lt; delta_max);</span>
+<span class="lineNum">     673 </span>            : 
+<span class="lineNum">     674 </span><span class="lineNoCov">          0 :         double delta_mean = 0.5 * (delta_min + delta_max);</span>
+<span class="lineNum">     675 </span><span class="lineNoCov">          0 :         double delta_diff = 0.5 * (delta_max - delta_min);</span>
+<span class="lineNum">     676 </span>            : 
+<span class="lineNum">     677 </span><span class="lineNoCov">          0 :         for (int i = beg_idx; i &lt; end_idx; ++i)</span>
+<span class="lineNum">     678 </span>            :         {
+<span class="lineNum">     679 </span><span class="lineNoCov">          0 :                 const double w = 0.1;</span>
+<span class="lineNum">     680 </span><span class="lineNoCov">          0 :                 double delta = rand.RandDouble(0, delta_range);</span>
+<span class="lineNum">     681 </span>            : 
+<span class="lineNum">     682 </span><span class="lineNoCov">          0 :                 double sign_rand = rand.RandDouble(-1, 1);</span>
+<span class="lineNum">     683 </span><span class="lineNoCov">          0 :                 double sign_threshold = (curr_slope - delta_mean) / delta_diff;</span>
+<span class="lineNum">     684 </span><span class="lineNoCov">          0 :                 bool neg = sign_rand &lt; sign_threshold;</span>
+<span class="lineNum">     685 </span><span class="lineNoCov">          0 :                 delta = (neg) ? -delta : delta;</span>
+<span class="lineNum">     686 </span>            : 
+<span class="lineNum">     687 </span><span class="lineNoCov">          0 :                 curr_slope += delta;</span>
+<span class="lineNum">     688 </span><span class="lineNoCov">          0 :                 curr_delta_h += curr_slope * gVertSpacing;</span>
+<span class="lineNum">     689 </span>            : 
+<span class="lineNum">     690 </span><span class="lineNoCov">          0 :                 out_data[i] += static_cast&lt;float&gt;(curr_delta_h);</span>
+<span class="lineNum">     691 </span>            :         }
+<a name="692"><span class="lineNum">     692 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     693 </span>            : 
+<span class="lineNum">     694 </span><span class="lineNoCov">          0 : void cTerrainGen2D::OverlayBumps(double min_delta_h, double max_delta_h, int beg_idx, int end_idx,</span>
+<span class="lineNum">     695 </span>            :                                                                         cRand&amp; rand, std::vector&lt;float&gt;&amp; out_data)
+<span class="lineNum">     696 </span>            : {
+<span class="lineNum">     697 </span><span class="lineNoCov">          0 :         double curr_slope = 0;</span>
+<span class="lineNum">     698 </span><span class="lineNoCov">          0 :         double curr_delta_h = 0;</span>
+<span class="lineNum">     699 </span><span class="lineNoCov">          0 :         assert(beg_idx &lt; out_data.size());</span>
+<span class="lineNum">     700 </span><span class="lineNoCov">          0 :         assert(end_idx &lt;= out_data.size());</span>
+<span class="lineNum">     701 </span>            : 
+<span class="lineNum">     702 </span><span class="lineNoCov">          0 :         for (int i = beg_idx; i &lt; end_idx - 1; ++i)</span>
+<span class="lineNum">     703 </span>            :         {
+<span class="lineNum">     704 </span><span class="lineNoCov">          0 :                 double delta = rand.RandSign() * rand.RandDouble(min_delta_h, max_delta_h);</span>
+<a name="705"><span class="lineNum">     705 </span><span class="lineNoCov">          0 :                 out_data[i] += static_cast&lt;float&gt;(delta);</span></a>
+<span class="lineNum">     706 </span>            :         }
+<span class="lineNum">     707 </span><span class="lineCov">          3 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

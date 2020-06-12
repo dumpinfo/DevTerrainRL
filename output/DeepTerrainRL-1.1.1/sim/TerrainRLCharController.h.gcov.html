@@ -1,0 +1,190 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/sim/TerrainRLCharController.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/sim</a> - TerrainRLCharController.h<span style="font-size: 80%;"> (source / <a href="TerrainRLCharController.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryLo">50.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntryMed">75.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #pragma once</a>
+<span class="lineNum">       2 </span>            : 
+<span class="lineNum">       3 </span>            : #include &quot;sim/Ground.h&quot;
+<span class="lineNum">       4 </span>            : #include &quot;sim/NNController.h&quot;
+<span class="lineNum">       5 </span>            : #include &quot;util/CircularBuffer.h&quot;
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span>            : class cTerrainRLCharController : public cNNController
+<a name="8"><span class="lineNum">       8 </span>            : {</a>
+<span class="lineNum">       9 </span>            : public:
+<span class="lineNum">      10 </span><span class="lineNoCov">          0 :         EIGEN_MAKE_ALIGNED_OPERATOR_NEW</span>
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            :         virtual ~cTerrainRLCharController();
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span>            :         virtual void Init(cSimCharacter* character);
+<span class="lineNum">      15 </span>            :         virtual void Reset();
+<span class="lineNum">      16 </span>            :         virtual void Clear();
+<span class="lineNum">      17 </span>            :         virtual void Update(double time_step);
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            :         virtual void SetGround(std::shared_ptr&lt;cGround&gt; ground);
+<span class="lineNum">      20 </span>            :         
+<span class="lineNum">      21 </span>            :         virtual int GetNumActions() const = 0;
+<span class="lineNum">      22 </span>            :         virtual int GetCurrActionID() const;
+<span class="lineNum">      23 </span>            :         virtual int GetNumParams() const = 0;
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span>            :         virtual int GetNumGroundSamples() const;
+<span class="lineNum">      26 </span>            :         virtual tVector GetGroundSample(int s) const;
+<span class="lineNum">      27 </span>            :         virtual tVector GetGroundSampleOrigin() const;
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span>            :         virtual bool IsOffPolicy() const;
+<span class="lineNum">      30 </span>            :         virtual int GetPoliStateSize() const;
+<span class="lineNum">      31 </span>            :         virtual int GetPoliActionSize() const;
+<span class="lineNum">      32 </span>            :         virtual void RecordPoliState(Eigen::VectorXd&amp; out_state) const;
+<span class="lineNum">      33 </span>            :         virtual void RecordPoliAction(Eigen::VectorXd&amp; out_action) const = 0;
+<span class="lineNum">      34 </span>            : 
+<span class="lineNum">      35 </span>            :         virtual void BuildNNOutputOffsetScale(Eigen::VectorXd&amp; out_offset, Eigen::VectorXd&amp; out_scale) const = 0;
+<span class="lineNum">      36 </span>            : 
+<span class="lineNum">      37 </span>            : protected:
+<span class="lineNum">      38 </span>            :         enum ePoliState
+<span class="lineNum">      39 </span>            :         {
+<span class="lineNum">      40 </span>            :                 ePoliStateGround,
+<span class="lineNum">      41 </span>            :                 ePoliStatePose,
+<span class="lineNum">      42 </span>            :                 ePoliStateVel,
+<span class="lineNum">      43 </span>            :                 ePoliStateMax
+<a name="44"><span class="lineNum">      44 </span>            :         };</a>
+<span class="lineNum">      45 </span>            : 
+<span class="lineNum">      46 </span><span class="lineCov">         16 :         struct tAction</span>
+<span class="lineNum">      47 </span>            :         {
+<span class="lineNum">      48 </span>            :                 int mID;
+<span class="lineNum">      49 </span>            :                 Eigen::VectorXd mParams;
+<span class="lineNum">      50 </span>            :         };
+<span class="lineNum">      51 </span>            :         
+<span class="lineNum">      52 </span>            :         static const int gPosDim;
+<span class="lineNum">      53 </span>            : 
+<span class="lineNum">      54 </span>            :         bool mFirstCycle;
+<span class="lineNum">      55 </span>            :         bool mIsOffPolicy;
+<span class="lineNum">      56 </span>            :         tAction mCurrAction;
+<span class="lineNum">      57 </span>            :         Eigen::VectorXd mPoliState;
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span>            :         tVector mGroundSampleOrigin;
+<span class="lineNum">      60 </span>            :         std::shared_ptr&lt;cGround&gt; mGround;
+<span class="lineNum">      61 </span>            :         Eigen::VectorXd mGroundSamples;
+<span class="lineNum">      62 </span>            : 
+<span class="lineNum">      63 </span>            :         cTerrainRLCharController();
+<span class="lineNum">      64 </span>            : 
+<span class="lineNum">      65 </span>            :         virtual void ResetParams();
+<span class="lineNum">      66 </span>            : 
+<span class="lineNum">      67 </span>            :         virtual void ApplyAction(int action_id);
+<span class="lineNum">      68 </span>            :         virtual void ApplyAction(const tAction&amp; action);
+<span class="lineNum">      69 </span>            :         virtual void NewCycleUpdate();
+<span class="lineNum">      70 </span>            :         virtual void PostProcessParams(Eigen::VectorXd&amp; out_params) const;
+<span class="lineNum">      71 </span>            :         virtual void SetParams(const Eigen::VectorXd&amp; params);
+<span class="lineNum">      72 </span>            :         virtual bool IsOptParam(int param_idx) const;
+<span class="lineNum">      73 </span>            : 
+<span class="lineNum">      74 </span>            :         virtual void UpdateGroundSampleOrigin();
+<span class="lineNum">      75 </span>            :         virtual void ParseGround();
+<span class="lineNum">      76 </span>            :         virtual bool HasGround() const;
+<span class="lineNum">      77 </span>            :         virtual void SampleGround(Eigen::VectorXd&amp; out_samples) const;
+<span class="lineNum">      78 </span>            :         virtual tVector CalcGroundSamplePos(int s) const;
+<span class="lineNum">      79 </span>            : 
+<span class="lineNum">      80 </span>            :         virtual void BuildPoliState(Eigen::VectorXd&amp; out_state) const;
+<span class="lineNum">      81 </span>            :         virtual void BuildPoliStatePose(Eigen::VectorXd&amp; out_pose) const;
+<span class="lineNum">      82 </span>            :         virtual void BuildPoliStateVel(Eigen::VectorXd&amp; out_vel) const;
+<span class="lineNum">      83 </span>            :         virtual int GetPoliStateOffset(ePoliState params) const;
+<span class="lineNum">      84 </span>            :         virtual int GetPoliStateSize(ePoliState params) const;
+<span class="lineNum">      85 </span>            : 
+<span class="lineNum">      86 </span>            :         virtual void DecideAction(tAction&amp; out_action) = 0;
+<span class="lineNum">      87 </span>            :         virtual void ExploitPolicy(tAction&amp; out_action) = 0;
+<span class="lineNum">      88 </span>            :         virtual void ExploreAction(tAction&amp; out_action) = 0;
+<span class="lineNum">      89 </span>            : 
+<span class="lineNum">      90 </span>            :         virtual void BuildDefaultAction(tAction&amp; out_action) const;
+<span class="lineNum">      91 </span>            :         virtual void BuildBaseAction(int action_id, tAction&amp; out_action) const = 0;
+<span class="lineNum">      92 </span>            :         virtual void BuildRandBaseAction(tAction&amp; out_action) const;
+<span class="lineNum">      93 </span>            : 
+<span class="lineNum">      94 </span>            : #if defined(ENABLE_DEBUG_VISUALIZATION)
+<span class="lineNum">      95 </span>            : public:
+<span class="lineNum">      96 </span>            :         const cCircularBuffer&lt;double&gt;&amp; GetPoliValLog() const;
+<span class="lineNum">      97 </span>            :         virtual void GetVisCharacterFeatures(Eigen::VectorXd&amp; out_features) const;
+<span class="lineNum">      98 </span>            :         virtual void GetVisTerrainFeatures(Eigen::VectorXd&amp; out_features) const;
+<span class="lineNum">      99 </span>            :         virtual void GetVisActionFeatures(Eigen::VectorXd&amp; out_features) const;
+<span class="lineNum">     100 </span>            :         virtual void GetVisActionValues(Eigen::VectorXd&amp; out_vals) const;
+<span class="lineNum">     101 </span>            : 
+<span class="lineNum">     102 </span>            : protected:
+<span class="lineNum">     103 </span>            :         cCircularBuffer&lt;double&gt; mPoliValLog;
+<span class="lineNum">     104 </span>            :         Eigen::VectorXd mVisNNOutput;
+<span class="lineNum">     105 </span>            : #endif // ENABLE_DEBUG_VISUALIZATION
+<span class="lineNum">     106 </span>            : };
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

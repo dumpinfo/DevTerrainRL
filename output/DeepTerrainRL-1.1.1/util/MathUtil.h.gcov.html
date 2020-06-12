@@ -1,0 +1,151 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/util/MathUtil.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/util</a> - MathUtil.h<span style="font-size: 80%;"> (source / <a href="MathUtil.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntryLo">33.3 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #pragma once</a>
+<span class="lineNum">       2 </span>            : 
+<span class="lineNum">       3 </span>            : #include &lt;random&gt;
+<span class="lineNum">       4 </span>            : 
+<span class="lineNum">       5 </span>            : #include &quot;Eigen/Dense&quot;
+<span class="lineNum">       6 </span>            : #include &quot;Eigen/StdVector&quot;
+<span class="lineNum">       7 </span>            : #include &quot;Rand.h&quot;
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : const int gInvalidIdx = -1;
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : // for convenience define standard vector for rendering
+<span class="lineNum">      12 </span>            : typedef Eigen::Vector4d tVector;
+<span class="lineNum">      13 </span>            : typedef Eigen::Vector4d tVector3;
+<span class="lineNum">      14 </span>            : typedef Eigen::Matrix4d tMatrix;
+<span class="lineNum">      15 </span>            : typedef Eigen::Matrix3d tMatrix3;
+<span class="lineNum">      16 </span>            : typedef std::vector&lt;tVector, Eigen::aligned_allocator&lt;tVector&gt;&gt; tVectorArr;
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span>            : const double gRadiansToDegrees = 57.2957795;
+<span class="lineNum">      19 </span><span class="lineCov">         96 : const tVector gGravity = tVector(0, -9.8, 0, 0);</span>
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span>            : class cMathUtil
+<span class="lineNum">      22 </span>            : {
+<span class="lineNum">      23 </span>            : public:
+<span class="lineNum">      24 </span>            :         static int Clamp(int val, int min, int max);
+<span class="lineNum">      25 </span>            :         static double Clamp(double val, double min, double max);
+<span class="lineNum">      26 </span>            :         static double Saturate(double val);
+<span class="lineNum">      27 </span>            : 
+<span class="lineNum">      28 </span>            :         // rand number
+<span class="lineNum">      29 </span>            :         static double RandDouble();
+<span class="lineNum">      30 </span>            :         static double RandDouble(double min, double max);
+<span class="lineNum">      31 </span>            :         static double RandDoubleNorm(double mean, double stdev);
+<span class="lineNum">      32 </span>            :         static int RandInt(int min, int max);
+<span class="lineNum">      33 </span>            :         static int RandIntExclude(int min, int max, int exc);
+<span class="lineNum">      34 </span>            :         static void SeedRand(unsigned long int seed);
+<span class="lineNum">      35 </span>            :         static int RandSign();
+<span class="lineNum">      36 </span>            :         static double SmoothStep(double t);
+<span class="lineNum">      37 </span>            :         static bool FlipCoin(double p = 0.5);
+<span class="lineNum">      38 </span>            : 
+<span class="lineNum">      39 </span>            :         // matrices
+<span class="lineNum">      40 </span>            :         static tMatrix TranslateMat(const tVector&amp; trans);
+<span class="lineNum">      41 </span>            :         static tMatrix ScaleMat(double scale);
+<span class="lineNum">      42 </span>            :         static tMatrix ScaleMat(const tVector&amp; scale);
+<span class="lineNum">      43 </span>            :         static tMatrix RotateMat(const tVector&amp; axis, double theta);
+<span class="lineNum">      44 </span>            :         static tMatrix CrossMat(const tVector&amp; a);
+<span class="lineNum">      45 </span>            :         // inverts a transformation consisting only of rotations and translations
+<span class="lineNum">      46 </span>            :         static tMatrix InvRigidMat(const tMatrix&amp; mat);
+<span class="lineNum">      47 </span>            :         static void RotMatToAxisAngle(const tMatrix&amp; mat, tVector&amp; out_axis, double&amp; out_theta);
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span>            :         static void DeltaRot(const tVector&amp; axis0, double theta0, const tVector&amp; axis1, double theta1,
+<span class="lineNum">      50 </span>            :                                                         tVector&amp; out_axis, double&amp; out_theta);
+<span class="lineNum">      51 </span>            :         static tMatrix DeltaRot(const tMatrix&amp; R0, const tMatrix&amp; R1);
+<span class="lineNum">      52 </span>            : 
+<span class="lineNum">      53 </span>            :         static double Sign(double val);
+<span class="lineNum">      54 </span>            :         static int Sign(int val);
+<span class="lineNum">      55 </span>            : 
+<span class="lineNum">      56 </span>            :         static double AddAverage(double avg0, int count0, double avg1, int count1);
+<span class="lineNum">      57 </span>            :         static void CalcSoftmax(const Eigen::VectorXd&amp; vals, double temp, Eigen::VectorXd&amp; out_prob);
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span>            : private:
+<span class="lineNum">      60 </span>            :         static cRand gRand;
+<a name="61"><span class="lineNum">      61 </span>            : </a>
+<span class="lineNum">      62 </span>            :         template &lt;typename T&gt;
+<span class="lineNum">      63 </span><span class="lineNoCov">          0 :         static T SignAux(T val)</span>
+<span class="lineNum">      64 </span>            :         {
+<span class="lineNum">      65 </span><span class="lineNoCov">          0 :                 return (T(0) &lt; val) - (val &lt; T(0));</span>
+<span class="lineNum">      66 </span>            :         }
+<span class="lineNum">      67 </span>            : };
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

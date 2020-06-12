@@ -1,0 +1,389 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/external/Bullet/src/LinearMath/btTransform.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/external/Bullet/src/LinearMath</a> - btTransform.h<span style="font-size: 80%;"> (source / <a href="btTransform.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">40</td>
+            <td class="headerCovTableEntry">40</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">16</td>
+            <td class="headerCovTableEntry">16</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            : Copyright (c) 2003-2006 Gino van den Bergen / Erwin Coumans  http://continuousphysics.com/Bullet/
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : This software is provided 'as-is', without any express or implied warranty.
+<span class="lineNum">       5 </span>            : In no event will the authors be held liable for any damages arising from the use of this software.
+<span class="lineNum">       6 </span>            : Permission is granted to anyone to use this software for any purpose, 
+<span class="lineNum">       7 </span>            : including commercial applications, and to alter it and redistribute it freely, 
+<span class="lineNum">       8 </span>            : subject to the following restrictions:
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            : 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
+<span class="lineNum">      11 </span>            : 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
+<span class="lineNum">      12 </span>            : 3. This notice may not be removed or altered from any source distribution.
+<span class="lineNum">      13 </span>            : */
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span>            : #ifndef BT_TRANSFORM_H
+<span class="lineNum">      18 </span>            : #define BT_TRANSFORM_H
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span>            : #include &quot;btMatrix3x3.h&quot;
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            : #ifdef BT_USE_DOUBLE_PRECISION
+<span class="lineNum">      24 </span>            : #define btTransformData btTransformDoubleData
+<span class="lineNum">      25 </span>            : #else
+<span class="lineNum">      26 </span>            : #define btTransformData btTransformFloatData
+<span class="lineNum">      27 </span>            : #endif
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span>            : 
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span>            : 
+<span class="lineNum">      32 </span>            : /**@brief The btTransform class supports rigid transforms with only translation and rotation and no scaling/shear.
+<span class="lineNum">      33 </span>            :  *It can be used in combination with btVector3, btQuaternion and btMatrix3x3 linear algebra classes. */
+<span class="lineNum">      34 </span>            : ATTRIBUTE_ALIGNED16(class) btTransform {
+<span class="lineNum">      35 </span>            :         
+<span class="lineNum">      36 </span>            :   ///Storage for the rotation
+<span class="lineNum">      37 </span>            :         btMatrix3x3 m_basis;
+<span class="lineNum">      38 </span>            :   ///Storage for the translation
+<span class="lineNum">      39 </span>            :         btVector3   m_origin;
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span>            : public:
+<a name="42"><span class="lineNum">      42 </span>            :         </a>
+<span class="lineNum">      43 </span>            :   /**@brief No initialization constructor */
+<span class="lineNum">      44 </span><span class="lineCov">    1394285 :         btTransform() {}</span>
+<span class="lineNum">      45 </span>            :   /**@brief Constructor from btQuaternion (optional btVector3 )
+<span class="lineNum">      46 </span>            :    * @param q Rotation from quaternion 
+<span class="lineNum">      47 </span>            :    * @param c Translation from Vector (default 0,0,0) */
+<span class="lineNum">      48 </span>            :         explicit SIMD_FORCE_INLINE btTransform(const btQuaternion&amp; q, 
+<span class="lineNum">      49 </span>            :                 const btVector3&amp; c = btVector3(btScalar(0), btScalar(0), btScalar(0))) 
+<span class="lineNum">      50 </span>            :                 : m_basis(q),
+<span class="lineNum">      51 </span>            :                 m_origin(c)
+<span class="lineNum">      52 </span>            :         {}
+<span class="lineNum">      53 </span>            : 
+<span class="lineNum">      54 </span>            :   /**@brief Constructor from btMatrix3x3 (optional btVector3)
+<a name="55"><span class="lineNum">      55 </span>            :    * @param b Rotation from Matrix </a>
+<span class="lineNum">      56 </span>            :    * @param c Translation from Vector default (0,0,0)*/
+<span class="lineNum">      57 </span><span class="lineCov">     719844 :         explicit SIMD_FORCE_INLINE btTransform(const btMatrix3x3&amp; b, </span>
+<span class="lineNum">      58 </span>            :                 const btVector3&amp; c = btVector3(btScalar(0), btScalar(0), btScalar(0)))
+<span class="lineNum">      59 </span>            :                 : m_basis(b),
+<span class="lineNum">      60 </span><span class="lineCov">     719844 :                 m_origin(c)</span>
+<a name="61"><span class="lineNum">      61 </span><span class="lineCov">     719844 :         {}</span></a>
+<span class="lineNum">      62 </span>            :   /**@brief Copy constructor */
+<span class="lineNum">      63 </span><span class="lineCov">     753722 :         SIMD_FORCE_INLINE btTransform (const btTransform&amp; other)</span>
+<span class="lineNum">      64 </span>            :                 : m_basis(other.m_basis),
+<span class="lineNum">      65 </span><span class="lineCov">     753722 :                 m_origin(other.m_origin)</span>
+<span class="lineNum">      66 </span>            :         {
+<a name="67"><span class="lineNum">      67 </span><span class="lineCov">     753722 :         }</span></a>
+<span class="lineNum">      68 </span>            :   /**@brief Assignment Operator */
+<span class="lineNum">      69 </span><span class="lineCov">    1361618 :         SIMD_FORCE_INLINE btTransform&amp; operator=(const btTransform&amp; other)</span>
+<span class="lineNum">      70 </span>            :         {
+<span class="lineNum">      71 </span><span class="lineCov">    1361618 :                 m_basis = other.m_basis;</span>
+<span class="lineNum">      72 </span><span class="lineCov">    1361618 :                 m_origin = other.m_origin;</span>
+<span class="lineNum">      73 </span><span class="lineCov">    1361618 :                 return *this;</span>
+<span class="lineNum">      74 </span>            :         }
+<span class="lineNum">      75 </span>            : 
+<span class="lineNum">      76 </span>            : 
+<span class="lineNum">      77 </span>            :   /**@brief Set the current transform as the value of the product of two transforms
+<span class="lineNum">      78 </span>            :    * @param t1 Transform 1
+<span class="lineNum">      79 </span>            :    * @param t2 Transform 2
+<span class="lineNum">      80 </span>            :    * This = Transform1 * Transform2 */
+<span class="lineNum">      81 </span>            :                 SIMD_FORCE_INLINE void mult(const btTransform&amp; t1, const btTransform&amp; t2) {
+<span class="lineNum">      82 </span>            :                         m_basis = t1.m_basis * t2.m_basis;
+<span class="lineNum">      83 </span>            :                         m_origin = t1(t2.m_origin);
+<span class="lineNum">      84 </span>            :                 }
+<span class="lineNum">      85 </span>            : 
+<span class="lineNum">      86 </span>            : /*              void multInverseLeft(const btTransform&amp; t1, const btTransform&amp; t2) {
+<span class="lineNum">      87 </span>            :                         btVector3 v = t2.m_origin - t1.m_origin;
+<span class="lineNum">      88 </span>            :                         m_basis = btMultTransposeLeft(t1.m_basis, t2.m_basis);
+<span class="lineNum">      89 </span>            :                         m_origin = v * t1.m_basis;
+<span class="lineNum">      90 </span>            :                 }
+<span class="lineNum">      91 </span>            :                 */
+<a name="92"><span class="lineNum">      92 </span>            : </a>
+<span class="lineNum">      93 </span>            : /**@brief Return the transform of the vector */
+<span class="lineNum">      94 </span><span class="lineCov">    1005716 :         SIMD_FORCE_INLINE btVector3 operator()(const btVector3&amp; x) const</span>
+<span class="lineNum">      95 </span>            :         {
+<span class="lineNum">      96 </span><span class="lineCov">    1005716 :         return x.dot3(m_basis[0], m_basis[1], m_basis[2]) + m_origin;</span>
+<span class="lineNum">      97 </span>            :         }
+<span class="lineNum">      98 </span>            : 
+<span class="lineNum">      99 </span>            :   /**@brief Return the transform of the vector */
+<span class="lineNum">     100 </span>            :         SIMD_FORCE_INLINE btVector3 operator*(const btVector3&amp; x) const
+<span class="lineNum">     101 </span>            :         {
+<span class="lineNum">     102 </span>            :                 return (*this)(x);
+<span class="lineNum">     103 </span>            :         }
+<span class="lineNum">     104 </span>            : 
+<span class="lineNum">     105 </span>            :   /**@brief Return the transform of the btQuaternion */
+<span class="lineNum">     106 </span>            :         SIMD_FORCE_INLINE btQuaternion operator*(const btQuaternion&amp; q) const
+<span class="lineNum">     107 </span>            :         {
+<span class="lineNum">     108 </span>            :                 return getRotation() * q;
+<span class="lineNum">     109 </span>            :         }
+<a name="110"><span class="lineNum">     110 </span>            : </a>
+<span class="lineNum">     111 </span>            :   /**@brief Return the basis matrix for the rotation */
+<a name="112"><span class="lineNum">     112 </span><span class="lineCov">    2058216 :         SIMD_FORCE_INLINE btMatrix3x3&amp;       getBasis()          { return m_basis; }</span></a>
+<span class="lineNum">     113 </span>            :   /**@brief Return the basis matrix for the rotation */
+<span class="lineNum">     114 </span><span class="lineCov">    3257254 :         SIMD_FORCE_INLINE const btMatrix3x3&amp; getBasis()    const { return m_basis; }</span>
+<a name="115"><span class="lineNum">     115 </span>            : </a>
+<span class="lineNum">     116 </span>            :   /**@brief Return the origin vector translation */
+<a name="117"><span class="lineNum">     117 </span><span class="lineCov">    2404107 :         SIMD_FORCE_INLINE btVector3&amp;         getOrigin()         { return m_origin; }</span></a>
+<span class="lineNum">     118 </span>            :   /**@brief Return the origin vector translation */
+<span class="lineNum">     119 </span><span class="lineCov">    1744725 :         SIMD_FORCE_INLINE const btVector3&amp;   getOrigin()   const { return m_origin; }</span>
+<a name="120"><span class="lineNum">     120 </span>            : </a>
+<span class="lineNum">     121 </span>            :   /**@brief Return a quaternion representing the rotation */
+<span class="lineNum">     122 </span><span class="lineCov">    1148900 :         btQuaternion getRotation() const { </span>
+<span class="lineNum">     123 </span><span class="lineCov">    1148900 :                 btQuaternion q;</span>
+<span class="lineNum">     124 </span><span class="lineCov">    1148900 :                 m_basis.getRotation(q);</span>
+<span class="lineNum">     125 </span><span class="lineCov">    1148900 :                 return q;</span>
+<span class="lineNum">     126 </span>            :         }
+<span class="lineNum">     127 </span>            :         
+<span class="lineNum">     128 </span>            :         
+<span class="lineNum">     129 </span>            :   /**@brief Set from an array 
+<span class="lineNum">     130 </span>            :    * @param m A pointer to a 15 element array (12 rotation(row major padded on the right by 1), and 3 translation */
+<span class="lineNum">     131 </span>            :         void setFromOpenGLMatrix(const btScalar *m)
+<span class="lineNum">     132 </span>            :         {
+<span class="lineNum">     133 </span>            :                 m_basis.setFromOpenGLSubMatrix(m);
+<span class="lineNum">     134 </span>            :                 m_origin.setValue(m[12],m[13],m[14]);
+<span class="lineNum">     135 </span>            :         }
+<span class="lineNum">     136 </span>            : 
+<span class="lineNum">     137 </span>            :   /**@brief Fill an array representation
+<span class="lineNum">     138 </span>            :    * @param m A pointer to a 15 element array (12 rotation(row major padded on the right by 1), and 3 translation */
+<span class="lineNum">     139 </span>            :         void getOpenGLMatrix(btScalar *m) const 
+<span class="lineNum">     140 </span>            :         {
+<span class="lineNum">     141 </span>            :                 m_basis.getOpenGLSubMatrix(m);
+<span class="lineNum">     142 </span>            :                 m[12] = m_origin.x();
+<span class="lineNum">     143 </span>            :                 m[13] = m_origin.y();
+<span class="lineNum">     144 </span>            :                 m[14] = m_origin.z();
+<span class="lineNum">     145 </span>            :                 m[15] = btScalar(1.0);
+<span class="lineNum">     146 </span>            :         }
+<span class="lineNum">     147 </span>            : 
+<a name="148"><span class="lineNum">     148 </span>            :   /**@brief Set the translational element</a>
+<span class="lineNum">     149 </span>            :    * @param origin The vector to set the translation to */
+<span class="lineNum">     150 </span><span class="lineCov">     915782 :         SIMD_FORCE_INLINE void setOrigin(const btVector3&amp; origin) </span>
+<span class="lineNum">     151 </span>            :         { 
+<span class="lineNum">     152 </span><span class="lineCov">     915782 :                 m_origin = origin;</span>
+<span class="lineNum">     153 </span><span class="lineCov">     915782 :         }</span>
+<span class="lineNum">     154 </span>            : 
+<span class="lineNum">     155 </span>            :         SIMD_FORCE_INLINE btVector3 invXform(const btVector3&amp; inVec) const;
+<span class="lineNum">     156 </span>            : 
+<span class="lineNum">     157 </span>            : 
+<span class="lineNum">     158 </span>            :   /**@brief Set the rotational element by btMatrix3x3 */
+<span class="lineNum">     159 </span>            :         SIMD_FORCE_INLINE void setBasis(const btMatrix3x3&amp; basis)
+<span class="lineNum">     160 </span>            :         { 
+<span class="lineNum">     161 </span>            :                 m_basis = basis;
+<span class="lineNum">     162 </span>            :         }
+<a name="163"><span class="lineNum">     163 </span>            : </a>
+<span class="lineNum">     164 </span>            :   /**@brief Set the rotational element by btQuaternion */
+<span class="lineNum">     165 </span><span class="lineCov">     915768 :         SIMD_FORCE_INLINE void setRotation(const btQuaternion&amp; q)</span>
+<span class="lineNum">     166 </span>            :         {
+<span class="lineNum">     167 </span><span class="lineCov">     915768 :                 m_basis.setRotation(q);</span>
+<span class="lineNum">     168 </span><span class="lineCov">     915768 :         }</span>
+<span class="lineNum">     169 </span>            : 
+<a name="170"><span class="lineNum">     170 </span>            : </a>
+<span class="lineNum">     171 </span>            :   /**@brief Set this transformation to the identity */
+<span class="lineNum">     172 </span><span class="lineCov">      11177 :         void setIdentity()</span>
+<span class="lineNum">     173 </span>            :         {
+<span class="lineNum">     174 </span><span class="lineCov">      11177 :                 m_basis.setIdentity();</span>
+<span class="lineNum">     175 </span><span class="lineCov">      11177 :                 m_origin.setValue(btScalar(0.0), btScalar(0.0), btScalar(0.0));</span>
+<span class="lineNum">     176 </span><span class="lineCov">      11177 :         }</span>
+<span class="lineNum">     177 </span>            : 
+<span class="lineNum">     178 </span>            :   /**@brief Multiply this Transform by another(this = this * another) 
+<span class="lineNum">     179 </span>            :    * @param t The other transform */
+<span class="lineNum">     180 </span>            :         btTransform&amp; operator*=(const btTransform&amp; t) 
+<span class="lineNum">     181 </span>            :         {
+<span class="lineNum">     182 </span>            :                 m_origin += m_basis * t.m_origin;
+<span class="lineNum">     183 </span>            :                 m_basis *= t.m_basis;
+<span class="lineNum">     184 </span>            :                 return *this;
+<span class="lineNum">     185 </span>            :         }
+<a name="186"><span class="lineNum">     186 </span>            : </a>
+<span class="lineNum">     187 </span>            :   /**@brief Return the inverse of this transform */
+<span class="lineNum">     188 </span><span class="lineCov">      24516 :         btTransform inverse() const</span>
+<span class="lineNum">     189 </span>            :         { 
+<span class="lineNum">     190 </span><span class="lineCov">      24516 :                 btMatrix3x3 inv = m_basis.transpose();</span>
+<span class="lineNum">     191 </span><span class="lineCov">      24516 :                 return btTransform(inv, inv * -m_origin);</span>
+<span class="lineNum">     192 </span>            :         }
+<span class="lineNum">     193 </span>            : 
+<span class="lineNum">     194 </span>            :   /**@brief Return the inverse of this transform times the other transform
+<span class="lineNum">     195 </span>            :    * @param t The other transform 
+<span class="lineNum">     196 </span>            :    * return this.inverse() * the other */
+<span class="lineNum">     197 </span>            :         btTransform inverseTimes(const btTransform&amp; t) const;  
+<span class="lineNum">     198 </span>            : 
+<span class="lineNum">     199 </span>            :   /**@brief Return the product of this transform and the other */
+<span class="lineNum">     200 </span>            :         btTransform operator*(const btTransform&amp; t) const;
+<a name="201"><span class="lineNum">     201 </span>            : </a>
+<span class="lineNum">     202 </span>            :   /**@brief Return an identity transform */
+<span class="lineNum">     203 </span><span class="lineCov">         96 :         static const btTransform&amp;   getIdentity()</span>
+<span class="lineNum">     204 </span>            :         {
+<span class="lineNum">     205 </span><span class="lineCov">         96 :                 static const btTransform identityTransform(btMatrix3x3::getIdentity());</span>
+<span class="lineNum">     206 </span><span class="lineCov">         96 :                 return identityTransform;</span>
+<span class="lineNum">     207 </span>            :         }
+<span class="lineNum">     208 </span>            : 
+<span class="lineNum">     209 </span>            :         void    serialize(struct        btTransformData&amp; dataOut) const;
+<span class="lineNum">     210 </span>            : 
+<span class="lineNum">     211 </span>            :         void    serializeFloat(struct   btTransformFloatData&amp; dataOut) const;
+<span class="lineNum">     212 </span>            : 
+<span class="lineNum">     213 </span>            :         void    deSerialize(const struct        btTransformData&amp; dataIn);
+<span class="lineNum">     214 </span>            : 
+<span class="lineNum">     215 </span>            :         void    deSerializeDouble(const struct  btTransformDoubleData&amp; dataIn);
+<span class="lineNum">     216 </span>            : 
+<span class="lineNum">     217 </span>            :         void    deSerializeFloat(const struct   btTransformFloatData&amp; dataIn);
+<span class="lineNum">     218 </span>            : 
+<span class="lineNum">     219 </span>            : };
+<span class="lineNum">     220 </span>            : 
+<span class="lineNum">     221 </span>            : 
+<span class="lineNum">     222 </span>            : SIMD_FORCE_INLINE btVector3
+<span class="lineNum">     223 </span>            : btTransform::invXform(const btVector3&amp; inVec) const
+<span class="lineNum">     224 </span>            : {
+<span class="lineNum">     225 </span>            :         btVector3 v = inVec - m_origin;
+<span class="lineNum">     226 </span>            :         return (m_basis.transpose() * v);
+<span class="lineNum">     227 </span>            : }
+<span class="lineNum">     228 </span>            : 
+<span class="lineNum">     229 </span>            : SIMD_FORCE_INLINE btTransform 
+<span class="lineNum">     230 </span>            : btTransform::inverseTimes(const btTransform&amp; t) const  
+<span class="lineNum">     231 </span>            : {
+<span class="lineNum">     232 </span>            :         btVector3 v = t.getOrigin() - m_origin;
+<span class="lineNum">     233 </span>            :                 return btTransform(m_basis.transposeTimes(t.m_basis),
+<span class="lineNum">     234 </span>            :                         v * m_basis);
+<span class="lineNum">     235 </span>            : }
+<a name="236"><span class="lineNum">     236 </span>            : </a>
+<span class="lineNum">     237 </span>            : SIMD_FORCE_INLINE btTransform 
+<span class="lineNum">     238 </span><span class="lineCov">     689416 : btTransform::operator*(const btTransform&amp; t) const</span>
+<span class="lineNum">     239 </span>            : {
+<span class="lineNum">     240 </span><span class="lineCov">    1378832 :         return btTransform(m_basis * t.m_basis, </span>
+<span class="lineNum">     241 </span><span class="lineCov">    2068248 :                 (*this)(t.m_origin));</span>
+<span class="lineNum">     242 </span>            : }
+<span class="lineNum">     243 </span>            : 
+<span class="lineNum">     244 </span>            : /**@brief Test if two transforms have all elements equal */
+<span class="lineNum">     245 </span>            : SIMD_FORCE_INLINE bool operator==(const btTransform&amp; t1, const btTransform&amp; t2)
+<span class="lineNum">     246 </span>            : {
+<span class="lineNum">     247 </span>            :    return ( t1.getBasis()  == t2.getBasis() &amp;&amp;
+<span class="lineNum">     248 </span>            :             t1.getOrigin() == t2.getOrigin() );
+<span class="lineNum">     249 </span>            : }
+<span class="lineNum">     250 </span>            : 
+<span class="lineNum">     251 </span>            : 
+<span class="lineNum">     252 </span>            : ///for serialization
+<span class="lineNum">     253 </span>            : struct  btTransformFloatData
+<span class="lineNum">     254 </span>            : {
+<span class="lineNum">     255 </span>            :         btMatrix3x3FloatData    m_basis;
+<span class="lineNum">     256 </span>            :         btVector3FloatData      m_origin;
+<span class="lineNum">     257 </span>            : };
+<span class="lineNum">     258 </span>            : 
+<span class="lineNum">     259 </span>            : struct  btTransformDoubleData
+<span class="lineNum">     260 </span>            : {
+<span class="lineNum">     261 </span>            :         btMatrix3x3DoubleData   m_basis;
+<span class="lineNum">     262 </span>            :         btVector3DoubleData     m_origin;
+<span class="lineNum">     263 </span>            : };
+<span class="lineNum">     264 </span>            : 
+<span class="lineNum">     265 </span>            : 
+<span class="lineNum">     266 </span>            : 
+<span class="lineNum">     267 </span>            : SIMD_FORCE_INLINE       void    btTransform::serialize(btTransformData&amp; dataOut) const
+<span class="lineNum">     268 </span>            : {
+<span class="lineNum">     269 </span>            :         m_basis.serialize(dataOut.m_basis);
+<span class="lineNum">     270 </span>            :         m_origin.serialize(dataOut.m_origin);
+<span class="lineNum">     271 </span>            : }
+<span class="lineNum">     272 </span>            : 
+<span class="lineNum">     273 </span>            : SIMD_FORCE_INLINE       void    btTransform::serializeFloat(btTransformFloatData&amp; dataOut) const
+<span class="lineNum">     274 </span>            : {
+<span class="lineNum">     275 </span>            :         m_basis.serializeFloat(dataOut.m_basis);
+<span class="lineNum">     276 </span>            :         m_origin.serializeFloat(dataOut.m_origin);
+<span class="lineNum">     277 </span>            : }
+<span class="lineNum">     278 </span>            : 
+<span class="lineNum">     279 </span>            : 
+<span class="lineNum">     280 </span>            : SIMD_FORCE_INLINE       void    btTransform::deSerialize(const btTransformData&amp; dataIn)
+<span class="lineNum">     281 </span>            : {
+<span class="lineNum">     282 </span>            :         m_basis.deSerialize(dataIn.m_basis);
+<span class="lineNum">     283 </span>            :         m_origin.deSerialize(dataIn.m_origin);
+<span class="lineNum">     284 </span>            : }
+<span class="lineNum">     285 </span>            : 
+<span class="lineNum">     286 </span>            : SIMD_FORCE_INLINE       void    btTransform::deSerializeFloat(const btTransformFloatData&amp; dataIn)
+<span class="lineNum">     287 </span>            : {
+<span class="lineNum">     288 </span>            :         m_basis.deSerializeFloat(dataIn.m_basis);
+<span class="lineNum">     289 </span>            :         m_origin.deSerializeFloat(dataIn.m_origin);
+<span class="lineNum">     290 </span>            : }
+<span class="lineNum">     291 </span>            : 
+<span class="lineNum">     292 </span>            : SIMD_FORCE_INLINE       void    btTransform::deSerializeDouble(const btTransformDoubleData&amp; dataIn)
+<span class="lineNum">     293 </span>            : {
+<span class="lineNum">     294 </span>            :         m_basis.deSerializeDouble(dataIn.m_basis);
+<span class="lineNum">     295 </span>            :         m_origin.deSerializeDouble(dataIn.m_origin);
+<span class="lineNum">     296 </span>            : }
+<span class="lineNum">     297 </span>            : 
+<span class="lineNum">     298 </span>            : 
+<span class="lineNum">     299 </span>            : #endif //BT_TRANSFORM_H
+<span class="lineNum">     300 </span>            : 
+<span class="lineNum">     301 </span>            : 
+<span class="lineNum">     302 </span>            : 
+<span class="lineNum">     303 </span>            : 
+<span class="lineNum">     304 </span>            : 
+<span class="lineNum">     305 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

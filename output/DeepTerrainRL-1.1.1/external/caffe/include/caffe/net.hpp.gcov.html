@@ -1,0 +1,400 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/external/caffe/include/caffe/net.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/external/caffe/include/caffe</a> - net.hpp<span style="font-size: 80%;"> (source / <a href="net.hpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">20</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">10</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #ifndef CAFFE_NET_HPP_</a>
+<span class="lineNum">       2 </span>            : #define CAFFE_NET_HPP_
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &lt;map&gt;
+<span class="lineNum">       5 </span>            : #include &lt;set&gt;
+<span class="lineNum">       6 </span>            : #include &lt;string&gt;
+<span class="lineNum">       7 </span>            : #include &lt;utility&gt;
+<span class="lineNum">       8 </span>            : #include &lt;vector&gt;
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            : #include &quot;caffe/blob.hpp&quot;
+<span class="lineNum">      11 </span>            : #include &quot;caffe/common.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;caffe/layer.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;caffe/proto/caffe.pb.h&quot;
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            : namespace caffe {
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span>            : /**
+<span class="lineNum">      18 </span>            :  * @brief Connects Layer%s together into a directed acyclic graph (DAG)
+<span class="lineNum">      19 </span>            :  *        specified by a NetParameter.
+<span class="lineNum">      20 </span>            :  *
+<span class="lineNum">      21 </span>            :  * TODO(dox): more thorough description.
+<span class="lineNum">      22 </span>            :  */
+<span class="lineNum">      23 </span>            : template &lt;typename Dtype&gt;
+<span class="lineNum">      24 </span>            : class Net {
+<span class="lineNum">      25 </span>            :  public:
+<span class="lineNum">      26 </span>            :   explicit Net(const NetParameter&amp; param, const Net* root_net = NULL);
+<a name="27"><span class="lineNum">      27 </span>            :   explicit Net(const string&amp; param_file, Phase phase,</a>
+<span class="lineNum">      28 </span>            :       const Net* root_net = NULL);
+<span class="lineNum">      29 </span><span class="lineNoCov">          0 :   virtual ~Net() {}</span>
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span>            :   /// @brief Initialize a network with a NetParameter.
+<span class="lineNum">      32 </span>            :   void Init(const NetParameter&amp; param);
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span>            :   /**
+<span class="lineNum">      35 </span>            :    * @brief Run Forward and return the result.
+<span class="lineNum">      36 </span>            :    *
+<span class="lineNum">      37 </span>            :    */
+<a name="38"><span class="lineNum">      38 </span>            :   const vector&lt;Blob&lt;Dtype&gt;*&gt;&amp; Forward(Dtype* loss = NULL);</a>
+<span class="lineNum">      39 </span>            :   /// @brief DEPRECATED; use Forward() instead.
+<span class="lineNum">      40 </span><span class="lineNoCov">          0 :   const vector&lt;Blob&lt;Dtype&gt;*&gt;&amp; ForwardPrefilled(Dtype* loss = NULL) {</span>
+<span class="lineNum">      41 </span><span class="lineNoCov">          0 :     LOG_EVERY_N(WARNING, 1000) &lt;&lt; &quot;DEPRECATED: ForwardPrefilled() &quot;</span>
+<span class="lineNum">      42 </span>            :         &lt;&lt; &quot;will be removed in a future version. Use Forward().&quot;;
+<span class="lineNum">      43 </span><span class="lineNoCov">          0 :     return Forward(loss);</span>
+<span class="lineNum">      44 </span>            :   }
+<span class="lineNum">      45 </span>            : 
+<span class="lineNum">      46 </span>            :   /**
+<span class="lineNum">      47 </span>            :    * The From and To variants of Forward and Backward operate on the
+<span class="lineNum">      48 </span>            :    * (topological) ordering by which the net is specified. For general DAG
+<span class="lineNum">      49 </span>            :    * networks, note that (1) computing from one layer to another might entail
+<span class="lineNum">      50 </span>            :    * extra computation on unrelated branches, and (2) computation starting in
+<span class="lineNum">      51 </span>            :    * the middle may be incorrect if all of the layers of a fan-in are not
+<span class="lineNum">      52 </span>            :    * included.
+<span class="lineNum">      53 </span>            :    */
+<span class="lineNum">      54 </span>            :   Dtype ForwardFromTo(int start, int end);
+<span class="lineNum">      55 </span>            :   Dtype ForwardFrom(int start);
+<span class="lineNum">      56 </span>            :   Dtype ForwardTo(int end);
+<span class="lineNum">      57 </span>            :   /// @brief DEPRECATED; set input blobs then use Forward() instead.
+<span class="lineNum">      58 </span>            :   const vector&lt;Blob&lt;Dtype&gt;*&gt;&amp; Forward(const vector&lt;Blob&lt;Dtype&gt;* &gt; &amp; bottom,
+<span class="lineNum">      59 </span>            :       Dtype* loss = NULL);
+<span class="lineNum">      60 </span>            : 
+<span class="lineNum">      61 </span>            :   /**
+<span class="lineNum">      62 </span>            :    * @brief Zeroes out the diffs of all net parameters.
+<span class="lineNum">      63 </span>            :    *        Should be run before Backward.
+<span class="lineNum">      64 </span>            :    */
+<span class="lineNum">      65 </span>            :   void ClearParamDiffs();
+<span class="lineNum">      66 </span>            : 
+<span class="lineNum">      67 </span>            :   /**
+<span class="lineNum">      68 </span>            :    * The network backward should take no input and output, since it solely
+<span class="lineNum">      69 </span>            :    * computes the gradient w.r.t the parameters, and the data has already been
+<span class="lineNum">      70 </span>            :    * provided during the forward pass.
+<span class="lineNum">      71 </span>            :    */
+<span class="lineNum">      72 </span>            :   void Backward();
+<span class="lineNum">      73 </span>            :   void BackwardFromTo(int start, int end);
+<span class="lineNum">      74 </span>            :   void BackwardFrom(int start);
+<span class="lineNum">      75 </span>            :   void BackwardTo(int end);
+<span class="lineNum">      76 </span>            : 
+<span class="lineNum">      77 </span>            :   /**
+<span class="lineNum">      78 </span>            :    * @brief Reshape all layers from bottom to top.
+<span class="lineNum">      79 </span>            :    *
+<span class="lineNum">      80 </span>            :    * This is useful to propagate changes to layer sizes without running
+<span class="lineNum">      81 </span>            :    * a forward pass, e.g. to compute output feature size.
+<span class="lineNum">      82 </span>            :    */
+<a name="83"><span class="lineNum">      83 </span>            :   void Reshape();</a>
+<span class="lineNum">      84 </span>            : 
+<span class="lineNum">      85 </span><span class="lineNoCov">          0 :   Dtype ForwardBackward() {</span>
+<span class="lineNum">      86 </span>            :     Dtype loss;
+<span class="lineNum">      87 </span><span class="lineNoCov">          0 :     Forward(&amp;loss);</span>
+<span class="lineNum">      88 </span><span class="lineNoCov">          0 :     Backward();</span>
+<span class="lineNum">      89 </span><span class="lineNoCov">          0 :     return loss;</span>
+<span class="lineNum">      90 </span>            :   }
+<span class="lineNum">      91 </span>            : 
+<span class="lineNum">      92 </span>            :   /// @brief Updates the network weights based on the diff values computed.
+<span class="lineNum">      93 </span>            :   void Update();
+<span class="lineNum">      94 </span>            :   /**
+<span class="lineNum">      95 </span>            :    * @brief Shares weight data of owner blobs with shared blobs.
+<span class="lineNum">      96 </span>            :    *
+<span class="lineNum">      97 </span>            :    * Note: this is called by Net::Init, and thus should normally not be
+<span class="lineNum">      98 </span>            :    * called manually.
+<span class="lineNum">      99 </span>            :    */
+<span class="lineNum">     100 </span>            :   void ShareWeights();
+<span class="lineNum">     101 </span>            : 
+<span class="lineNum">     102 </span>            :   /**
+<span class="lineNum">     103 </span>            :    * @brief For an already initialized net, implicitly copies (i.e., using no
+<span class="lineNum">     104 </span>            :    *        additional memory) the pre-trained layers from another Net.
+<span class="lineNum">     105 </span>            :    */
+<span class="lineNum">     106 </span>            :   void ShareTrainedLayersWith(const Net* other);
+<span class="lineNum">     107 </span>            :   // For an already initialized net, CopyTrainedLayersFrom() copies the already
+<span class="lineNum">     108 </span>            :   // trained layers from another net parameter instance.
+<span class="lineNum">     109 </span>            :   /**
+<span class="lineNum">     110 </span>            :    * @brief For an already initialized net, copies the pre-trained layers from
+<span class="lineNum">     111 </span>            :    *        another Net.
+<span class="lineNum">     112 </span>            :    */
+<span class="lineNum">     113 </span>            :   void CopyTrainedLayersFrom(const NetParameter&amp; param);
+<span class="lineNum">     114 </span>            :   void CopyTrainedLayersFrom(const string trained_filename);
+<span class="lineNum">     115 </span>            :   void CopyTrainedLayersFromBinaryProto(const string trained_filename);
+<span class="lineNum">     116 </span>            :   void CopyTrainedLayersFromHDF5(const string trained_filename);
+<span class="lineNum">     117 </span>            :   /// @brief Writes the net to a proto.
+<span class="lineNum">     118 </span>            :   void ToProto(NetParameter* param, bool write_diff = false) const;
+<span class="lineNum">     119 </span>            :   /// @brief Writes the net to an HDF5 file.
+<span class="lineNum">     120 </span>            :   void ToHDF5(const string&amp; filename, bool write_diff = false) const;
+<span class="lineNum">     121 </span>            : 
+<span class="lineNum">     122 </span>            :   /// @brief returns the network name.
+<span class="lineNum">     123 </span>            :   inline const string&amp; name() const { return name_; }
+<span class="lineNum">     124 </span>            :   /// @brief returns the layer names
+<span class="lineNum">     125 </span>            :   inline const vector&lt;string&gt;&amp; layer_names() const { return layer_names_; }
+<span class="lineNum">     126 </span>            :   /// @brief returns the blob names
+<span class="lineNum">     127 </span>            :   inline const vector&lt;string&gt;&amp; blob_names() const { return blob_names_; }
+<span class="lineNum">     128 </span>            :   /// @brief returns the blobs
+<span class="lineNum">     129 </span>            :   inline const vector&lt;shared_ptr&lt;Blob&lt;Dtype&gt; &gt; &gt;&amp; blobs() const {
+<span class="lineNum">     130 </span>            :     return blobs_;
+<a name="131"><span class="lineNum">     131 </span>            :   }</a>
+<span class="lineNum">     132 </span>            :   /// @brief returns the layers
+<span class="lineNum">     133 </span><span class="lineNoCov">          0 :   inline const vector&lt;shared_ptr&lt;Layer&lt;Dtype&gt; &gt; &gt;&amp; layers() const {</span>
+<span class="lineNum">     134 </span><span class="lineNoCov">          0 :     return layers_;</span>
+<span class="lineNum">     135 </span>            :   }
+<span class="lineNum">     136 </span>            :   /// @brief returns the phase: TRAIN or TEST
+<span class="lineNum">     137 </span>            :   inline Phase phase() const { return phase_; }
+<span class="lineNum">     138 </span>            :   /**
+<span class="lineNum">     139 </span>            :    * @brief returns the bottom vecs for each layer -- usually you won't
+<a name="140"><span class="lineNum">     140 </span>            :    *        need this unless you do per-layer checks such as gradients.</a>
+<span class="lineNum">     141 </span>            :    */
+<span class="lineNum">     142 </span><span class="lineNoCov">          0 :   inline const vector&lt;vector&lt;Blob&lt;Dtype&gt;*&gt; &gt;&amp; bottom_vecs() const {</span>
+<span class="lineNum">     143 </span><span class="lineNoCov">          0 :     return bottom_vecs_;</span>
+<span class="lineNum">     144 </span>            :   }
+<span class="lineNum">     145 </span>            :   /**
+<span class="lineNum">     146 </span>            :    * @brief returns the top vecs for each layer -- usually you won't
+<a name="147"><span class="lineNum">     147 </span>            :    *        need this unless you do per-layer checks such as gradients.</a>
+<span class="lineNum">     148 </span>            :    */
+<span class="lineNum">     149 </span><span class="lineNoCov">          0 :   inline const vector&lt;vector&lt;Blob&lt;Dtype&gt;*&gt; &gt;&amp; top_vecs() const {</span>
+<span class="lineNum">     150 </span><span class="lineNoCov">          0 :     return top_vecs_;</span>
+<span class="lineNum">     151 </span>            :   }
+<span class="lineNum">     152 </span>            :   /// @brief returns the ids of the top blobs of layer i
+<span class="lineNum">     153 </span>            :   inline const vector&lt;int&gt; &amp; top_ids(int i) const {
+<span class="lineNum">     154 </span>            :     CHECK_GE(i, 0) &lt;&lt; &quot;Invalid layer id&quot;;
+<span class="lineNum">     155 </span>            :     CHECK_LT(i, top_id_vecs_.size()) &lt;&lt; &quot;Invalid layer id&quot;;
+<span class="lineNum">     156 </span>            :     return top_id_vecs_[i];
+<span class="lineNum">     157 </span>            :   }
+<span class="lineNum">     158 </span>            :   /// @brief returns the ids of the bottom blobs of layer i
+<span class="lineNum">     159 </span>            :   inline const vector&lt;int&gt; &amp; bottom_ids(int i) const {
+<span class="lineNum">     160 </span>            :     CHECK_GE(i, 0) &lt;&lt; &quot;Invalid layer id&quot;;
+<span class="lineNum">     161 </span>            :     CHECK_LT(i, bottom_id_vecs_.size()) &lt;&lt; &quot;Invalid layer id&quot;;
+<span class="lineNum">     162 </span>            :     return bottom_id_vecs_[i];
+<span class="lineNum">     163 </span>            :   }
+<span class="lineNum">     164 </span>            :   inline const vector&lt;vector&lt;bool&gt; &gt;&amp; bottom_need_backward() const {
+<span class="lineNum">     165 </span>            :     return bottom_need_backward_;
+<span class="lineNum">     166 </span>            :   }
+<span class="lineNum">     167 </span>            :   inline const vector&lt;Dtype&gt;&amp; blob_loss_weights() const {
+<span class="lineNum">     168 </span>            :     return blob_loss_weights_;
+<span class="lineNum">     169 </span>            :   }
+<span class="lineNum">     170 </span>            :   inline const vector&lt;bool&gt;&amp; layer_need_backward() const {
+<span class="lineNum">     171 </span>            :     return layer_need_backward_;
+<span class="lineNum">     172 </span>            :   }
+<span class="lineNum">     173 </span>            :   /// @brief returns the parameters
+<span class="lineNum">     174 </span>            :   inline const vector&lt;shared_ptr&lt;Blob&lt;Dtype&gt; &gt; &gt;&amp; params() const {
+<a name="175"><span class="lineNum">     175 </span>            :     return params_;</a>
+<span class="lineNum">     176 </span>            :   }
+<span class="lineNum">     177 </span><span class="lineNoCov">          0 :   inline const vector&lt;Blob&lt;Dtype&gt;*&gt;&amp; learnable_params() const {</span>
+<span class="lineNum">     178 </span><span class="lineNoCov">          0 :     return learnable_params_;</span>
+<span class="lineNum">     179 </span>            :   }
+<span class="lineNum">     180 </span>            :   /// @brief returns the learnable parameter learning rate multipliers
+<span class="lineNum">     181 </span>            :   inline const vector&lt;float&gt;&amp; params_lr() const { return params_lr_; }
+<span class="lineNum">     182 </span>            :   inline const vector&lt;bool&gt;&amp; has_params_lr() const { return has_params_lr_; }
+<span class="lineNum">     183 </span>            :   /// @brief returns the learnable parameter decay multipliers
+<span class="lineNum">     184 </span>            :   inline const vector&lt;float&gt;&amp; params_weight_decay() const {
+<span class="lineNum">     185 </span>            :     return params_weight_decay_;
+<span class="lineNum">     186 </span>            :   }
+<span class="lineNum">     187 </span>            :   inline const vector&lt;bool&gt;&amp; has_params_decay() const {
+<span class="lineNum">     188 </span>            :     return has_params_decay_;
+<span class="lineNum">     189 </span>            :   }
+<span class="lineNum">     190 </span>            :   const map&lt;string, int&gt;&amp; param_names_index() const {
+<span class="lineNum">     191 </span>            :     return param_names_index_;
+<span class="lineNum">     192 </span>            :   }
+<span class="lineNum">     193 </span>            :   inline const vector&lt;int&gt;&amp; param_owners() const { return param_owners_; }
+<span class="lineNum">     194 </span>            :   inline const vector&lt;string&gt;&amp; param_display_names() const {
+<span class="lineNum">     195 </span>            :     return param_display_names_;
+<span class="lineNum">     196 </span>            :   }
+<span class="lineNum">     197 </span>            :   /// @brief Input and output blob numbers
+<a name="198"><span class="lineNum">     198 </span>            :   inline int num_inputs() const { return net_input_blobs_.size(); }</a>
+<span class="lineNum">     199 </span>            :   inline int num_outputs() const { return net_output_blobs_.size(); }
+<span class="lineNum">     200 </span><span class="lineNoCov">          0 :   inline const vector&lt;Blob&lt;Dtype&gt;*&gt;&amp; input_blobs() const {</span>
+<a name="201"><span class="lineNum">     201 </span><span class="lineNoCov">          0 :     return net_input_blobs_;</span></a>
+<span class="lineNum">     202 </span>            :   }
+<span class="lineNum">     203 </span><span class="lineNoCov">          0 :   inline const vector&lt;Blob&lt;Dtype&gt;*&gt;&amp; output_blobs() const {</span>
+<span class="lineNum">     204 </span><span class="lineNoCov">          0 :     return net_output_blobs_;</span>
+<span class="lineNum">     205 </span>            :   }
+<span class="lineNum">     206 </span>            :   inline const vector&lt;int&gt;&amp; input_blob_indices() const {
+<span class="lineNum">     207 </span>            :     return net_input_blob_indices_;
+<span class="lineNum">     208 </span>            :   }
+<span class="lineNum">     209 </span>            :   inline const vector&lt;int&gt;&amp; output_blob_indices() const {
+<span class="lineNum">     210 </span>            :     return net_output_blob_indices_;
+<span class="lineNum">     211 </span>            :   }
+<span class="lineNum">     212 </span>            :   bool has_blob(const string&amp; blob_name) const;
+<span class="lineNum">     213 </span>            :   const shared_ptr&lt;Blob&lt;Dtype&gt; &gt; blob_by_name(const string&amp; blob_name) const;
+<span class="lineNum">     214 </span>            :   bool has_layer(const string&amp; layer_name) const;
+<span class="lineNum">     215 </span>            :   const shared_ptr&lt;Layer&lt;Dtype&gt; &gt; layer_by_name(const string&amp; layer_name) const;
+<span class="lineNum">     216 </span>            : 
+<span class="lineNum">     217 </span>            :   void set_debug_info(const bool value) { debug_info_ = value; }
+<span class="lineNum">     218 </span>            : 
+<span class="lineNum">     219 </span>            :   // Helpers for Init.
+<span class="lineNum">     220 </span>            :   /**
+<span class="lineNum">     221 </span>            :    * @brief Remove layers that the user specified should be excluded given the current
+<span class="lineNum">     222 </span>            :    *        phase, level, and stage.
+<span class="lineNum">     223 </span>            :    */
+<span class="lineNum">     224 </span>            :   static void FilterNet(const NetParameter&amp; param,
+<span class="lineNum">     225 </span>            :       NetParameter* param_filtered);
+<span class="lineNum">     226 </span>            :   /// @brief return whether NetState state meets NetStateRule rule
+<span class="lineNum">     227 </span>            :   static bool StateMeetsRule(const NetState&amp; state, const NetStateRule&amp; rule,
+<span class="lineNum">     228 </span>            :       const string&amp; layer_name);
+<span class="lineNum">     229 </span>            : 
+<span class="lineNum">     230 </span>            :  protected:
+<span class="lineNum">     231 </span>            :   // Helpers for Init.
+<span class="lineNum">     232 </span>            :   /// @brief Append a new top blob to the net.
+<span class="lineNum">     233 </span>            :   void AppendTop(const NetParameter&amp; param, const int layer_id,
+<span class="lineNum">     234 </span>            :                  const int top_id, set&lt;string&gt;* available_blobs,
+<span class="lineNum">     235 </span>            :                  map&lt;string, int&gt;* blob_name_to_idx);
+<span class="lineNum">     236 </span>            :   /// @brief Append a new bottom blob to the net.
+<span class="lineNum">     237 </span>            :   int AppendBottom(const NetParameter&amp; param, const int layer_id,
+<span class="lineNum">     238 </span>            :                    const int bottom_id, set&lt;string&gt;* available_blobs,
+<span class="lineNum">     239 </span>            :                    map&lt;string, int&gt;* blob_name_to_idx);
+<span class="lineNum">     240 </span>            :   /// @brief Append a new parameter blob to the net.
+<span class="lineNum">     241 </span>            :   void AppendParam(const NetParameter&amp; param, const int layer_id,
+<span class="lineNum">     242 </span>            :                    const int param_id);
+<span class="lineNum">     243 </span>            : 
+<span class="lineNum">     244 </span>            :   /// @brief Helper for displaying debug info in Forward.
+<span class="lineNum">     245 </span>            :   void ForwardDebugInfo(const int layer_id);
+<span class="lineNum">     246 </span>            :   /// @brief Helper for displaying debug info in Backward.
+<span class="lineNum">     247 </span>            :   void BackwardDebugInfo(const int layer_id);
+<span class="lineNum">     248 </span>            :   /// @brief Helper for displaying debug info in Update.
+<span class="lineNum">     249 </span>            :   void UpdateDebugInfo(const int param_id);
+<span class="lineNum">     250 </span>            : 
+<span class="lineNum">     251 </span>            :   /// @brief The network name
+<span class="lineNum">     252 </span>            :   string name_;
+<span class="lineNum">     253 </span>            :   /// @brief The phase: TRAIN or TEST
+<span class="lineNum">     254 </span>            :   Phase phase_;
+<span class="lineNum">     255 </span>            :   /// @brief Individual layers in the net
+<span class="lineNum">     256 </span>            :   vector&lt;shared_ptr&lt;Layer&lt;Dtype&gt; &gt; &gt; layers_;
+<span class="lineNum">     257 </span>            :   vector&lt;string&gt; layer_names_;
+<span class="lineNum">     258 </span>            :   map&lt;string, int&gt; layer_names_index_;
+<span class="lineNum">     259 </span>            :   vector&lt;bool&gt; layer_need_backward_;
+<span class="lineNum">     260 </span>            :   /// @brief the blobs storing intermediate results between the layer.
+<span class="lineNum">     261 </span>            :   vector&lt;shared_ptr&lt;Blob&lt;Dtype&gt; &gt; &gt; blobs_;
+<span class="lineNum">     262 </span>            :   vector&lt;string&gt; blob_names_;
+<span class="lineNum">     263 </span>            :   map&lt;string, int&gt; blob_names_index_;
+<span class="lineNum">     264 </span>            :   vector&lt;bool&gt; blob_need_backward_;
+<span class="lineNum">     265 </span>            :   /// bottom_vecs stores the vectors containing the input for each layer.
+<span class="lineNum">     266 </span>            :   /// They don't actually host the blobs (blobs_ does), so we simply store
+<span class="lineNum">     267 </span>            :   /// pointers.
+<span class="lineNum">     268 </span>            :   vector&lt;vector&lt;Blob&lt;Dtype&gt;*&gt; &gt; bottom_vecs_;
+<span class="lineNum">     269 </span>            :   vector&lt;vector&lt;int&gt; &gt; bottom_id_vecs_;
+<span class="lineNum">     270 </span>            :   vector&lt;vector&lt;bool&gt; &gt; bottom_need_backward_;
+<span class="lineNum">     271 </span>            :   /// top_vecs stores the vectors containing the output for each layer
+<span class="lineNum">     272 </span>            :   vector&lt;vector&lt;Blob&lt;Dtype&gt;*&gt; &gt; top_vecs_;
+<span class="lineNum">     273 </span>            :   vector&lt;vector&lt;int&gt; &gt; top_id_vecs_;
+<span class="lineNum">     274 </span>            :   /// Vector of weight in the loss (or objective) function of each net blob,
+<span class="lineNum">     275 </span>            :   /// indexed by blob_id.
+<span class="lineNum">     276 </span>            :   vector&lt;Dtype&gt; blob_loss_weights_;
+<span class="lineNum">     277 </span>            :   vector&lt;vector&lt;int&gt; &gt; param_id_vecs_;
+<span class="lineNum">     278 </span>            :   vector&lt;int&gt; param_owners_;
+<span class="lineNum">     279 </span>            :   vector&lt;string&gt; param_display_names_;
+<span class="lineNum">     280 </span>            :   vector&lt;pair&lt;int, int&gt; &gt; param_layer_indices_;
+<span class="lineNum">     281 </span>            :   map&lt;string, int&gt; param_names_index_;
+<span class="lineNum">     282 </span>            :   /// blob indices for the input and the output of the net
+<span class="lineNum">     283 </span>            :   vector&lt;int&gt; net_input_blob_indices_;
+<span class="lineNum">     284 </span>            :   vector&lt;int&gt; net_output_blob_indices_;
+<span class="lineNum">     285 </span>            :   vector&lt;Blob&lt;Dtype&gt;*&gt; net_input_blobs_;
+<span class="lineNum">     286 </span>            :   vector&lt;Blob&lt;Dtype&gt;*&gt; net_output_blobs_;
+<span class="lineNum">     287 </span>            :   /// The parameters in the network.
+<span class="lineNum">     288 </span>            :   vector&lt;shared_ptr&lt;Blob&lt;Dtype&gt; &gt; &gt; params_;
+<span class="lineNum">     289 </span>            :   vector&lt;Blob&lt;Dtype&gt;*&gt; learnable_params_;
+<span class="lineNum">     290 </span>            :   /**
+<span class="lineNum">     291 </span>            :    * The mapping from params_ -&gt; learnable_params_: we have
+<span class="lineNum">     292 </span>            :    * learnable_param_ids_.size() == params_.size(),
+<span class="lineNum">     293 </span>            :    * and learnable_params_[learnable_param_ids_[i]] == params_[i].get()
+<span class="lineNum">     294 </span>            :    * if and only if params_[i] is an &quot;owner&quot;; otherwise, params_[i] is a sharer
+<span class="lineNum">     295 </span>            :    * and learnable_params_[learnable_param_ids_[i]] gives its owner.
+<span class="lineNum">     296 </span>            :    */
+<span class="lineNum">     297 </span>            :   vector&lt;int&gt; learnable_param_ids_;
+<span class="lineNum">     298 </span>            :   /// the learning rate multipliers for learnable_params_
+<span class="lineNum">     299 </span>            :   vector&lt;float&gt; params_lr_;
+<span class="lineNum">     300 </span>            :   vector&lt;bool&gt; has_params_lr_;
+<span class="lineNum">     301 </span>            :   /// the weight decay multipliers for learnable_params_
+<span class="lineNum">     302 </span>            :   vector&lt;float&gt; params_weight_decay_;
+<span class="lineNum">     303 </span>            :   vector&lt;bool&gt; has_params_decay_;
+<span class="lineNum">     304 </span>            :   /// The bytes of memory used by this net
+<span class="lineNum">     305 </span>            :   size_t memory_used_;
+<span class="lineNum">     306 </span>            :   /// Whether to compute and display debug info for the net.
+<span class="lineNum">     307 </span>            :   bool debug_info_;
+<span class="lineNum">     308 </span>            :   /// The root net that actually holds the shared layers in data parallelism
+<span class="lineNum">     309 </span>            :   const Net* const root_net_;
+<span class="lineNum">     310 </span>            :   DISABLE_COPY_AND_ASSIGN(Net);
+<span class="lineNum">     311 </span>            : };
+<span class="lineNum">     312 </span>            : 
+<span class="lineNum">     313 </span>            : 
+<span class="lineNum">     314 </span>            : }  // namespace caffe
+<span class="lineNum">     315 </span>            : 
+<span class="lineNum">     316 </span>            : #endif  // CAFFE_NET_HPP_
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

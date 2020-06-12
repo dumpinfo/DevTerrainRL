@@ -1,0 +1,365 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/external/caffe/include/caffe/blob.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/external/caffe/include/caffe</a> - blob.hpp<span style="font-size: 80%;"> (source / <a href="blob.hpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #ifndef CAFFE_BLOB_HPP_</a>
+<span class="lineNum">       2 </span>            : #define CAFFE_BLOB_HPP_
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &lt;algorithm&gt;
+<span class="lineNum">       5 </span>            : #include &lt;string&gt;
+<span class="lineNum">       6 </span>            : #include &lt;vector&gt;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : #include &quot;caffe/common.hpp&quot;
+<span class="lineNum">       9 </span>            : #include &quot;caffe/proto/caffe.pb.h&quot;
+<span class="lineNum">      10 </span>            : #include &quot;caffe/syncedmem.hpp&quot;
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : const int kMaxBlobAxes = 32;
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span>            : namespace caffe {
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : /**
+<span class="lineNum">      17 </span>            :  * @brief A wrapper around SyncedMemory holders serving as the basic
+<span class="lineNum">      18 </span>            :  *        computational unit through which Layer%s, Net%s, and Solver%s
+<span class="lineNum">      19 </span>            :  *        interact.
+<span class="lineNum">      20 </span>            :  *
+<span class="lineNum">      21 </span>            :  * TODO(dox): more thorough description.
+<a name="22"><span class="lineNum">      22 </span>            :  */</a>
+<span class="lineNum">      23 </span>            : template &lt;typename Dtype&gt;
+<span class="lineNum">      24 </span><span class="lineNoCov">          0 : class Blob {</span>
+<span class="lineNum">      25 </span>            :  public:
+<span class="lineNum">      26 </span>            :   Blob()
+<span class="lineNum">      27 </span>            :        : data_(), diff_(), count_(0), capacity_(0) {}
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span>            :   /// @brief Deprecated; use &lt;code&gt;Blob(const vector&lt;int&gt;&amp; shape)&lt;/code&gt;.
+<span class="lineNum">      30 </span>            :   explicit Blob(const int num, const int channels, const int height,
+<span class="lineNum">      31 </span>            :       const int width);
+<span class="lineNum">      32 </span>            :   explicit Blob(const vector&lt;int&gt;&amp; shape);
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span>            :   /// @brief Deprecated; use &lt;code&gt;Reshape(const vector&lt;int&gt;&amp; shape)&lt;/code&gt;.
+<span class="lineNum">      35 </span>            :   void Reshape(const int num, const int channels, const int height,
+<span class="lineNum">      36 </span>            :       const int width);
+<span class="lineNum">      37 </span>            :   /**
+<span class="lineNum">      38 </span>            :    * @brief Change the dimensions of the blob, allocating new memory if
+<span class="lineNum">      39 </span>            :    *        necessary.
+<span class="lineNum">      40 </span>            :    *
+<span class="lineNum">      41 </span>            :    * This function can be called both to create an initial allocation
+<span class="lineNum">      42 </span>            :    * of memory, and to adjust the dimensions of a top blob during Layer::Reshape
+<span class="lineNum">      43 </span>            :    * or Layer::Forward. When changing the size of blob, memory will only be
+<span class="lineNum">      44 </span>            :    * reallocated if sufficient memory does not already exist, and excess memory
+<span class="lineNum">      45 </span>            :    * will never be freed.
+<span class="lineNum">      46 </span>            :    *
+<span class="lineNum">      47 </span>            :    * Note that reshaping an input blob and immediately calling Net::Backward is
+<span class="lineNum">      48 </span>            :    * an error; either Net::Forward or Net::Reshape need to be called to
+<span class="lineNum">      49 </span>            :    * propagate the new input shape to higher layers.
+<span class="lineNum">      50 </span>            :    */
+<span class="lineNum">      51 </span>            :   void Reshape(const vector&lt;int&gt;&amp; shape);
+<span class="lineNum">      52 </span>            :   void Reshape(const BlobShape&amp; shape);
+<span class="lineNum">      53 </span>            :   void ReshapeLike(const Blob&amp; other);
+<span class="lineNum">      54 </span>            :   inline string shape_string() const {
+<span class="lineNum">      55 </span>            :     ostringstream stream;
+<span class="lineNum">      56 </span>            :     for (int i = 0; i &lt; shape_.size(); ++i) {
+<span class="lineNum">      57 </span>            :       stream &lt;&lt; shape_[i] &lt;&lt; &quot; &quot;;
+<span class="lineNum">      58 </span>            :     }
+<span class="lineNum">      59 </span>            :     stream &lt;&lt; &quot;(&quot; &lt;&lt; count_ &lt;&lt; &quot;)&quot;;
+<span class="lineNum">      60 </span>            :     return stream.str();
+<span class="lineNum">      61 </span>            :   }
+<span class="lineNum">      62 </span>            :   inline const vector&lt;int&gt;&amp; shape() const { return shape_; }
+<span class="lineNum">      63 </span>            :   /**
+<span class="lineNum">      64 </span>            :    * @brief Returns the dimension of the index-th axis (or the negative index-th
+<span class="lineNum">      65 </span>            :    *        axis from the end, if index is negative).
+<span class="lineNum">      66 </span>            :    *
+<span class="lineNum">      67 </span>            :    * @param index the axis index, which may be negative as it will be
+<span class="lineNum">      68 </span>            :    *        &quot;canonicalized&quot; using CanonicalAxisIndex.
+<span class="lineNum">      69 </span>            :    *        Dies on out of range index.
+<span class="lineNum">      70 </span>            :    */
+<span class="lineNum">      71 </span>            :   inline int shape(int index) const {
+<span class="lineNum">      72 </span>            :     return shape_[CanonicalAxisIndex(index)];
+<a name="73"><span class="lineNum">      73 </span>            :   }</a>
+<span class="lineNum">      74 </span>            :   inline int num_axes() const { return shape_.size(); }
+<span class="lineNum">      75 </span><span class="lineNoCov">          0 :   inline int count() const { return count_; }</span>
+<span class="lineNum">      76 </span>            : 
+<span class="lineNum">      77 </span>            :   /**
+<span class="lineNum">      78 </span>            :    * @brief Compute the volume of a slice; i.e., the product of dimensions
+<span class="lineNum">      79 </span>            :    *        among a range of axes.
+<span class="lineNum">      80 </span>            :    *
+<span class="lineNum">      81 </span>            :    * @param start_axis The first axis to include in the slice.
+<span class="lineNum">      82 </span>            :    *
+<span class="lineNum">      83 </span>            :    * @param end_axis The first axis to exclude from the slice.
+<span class="lineNum">      84 </span>            :    */
+<span class="lineNum">      85 </span>            :   inline int count(int start_axis, int end_axis) const {
+<span class="lineNum">      86 </span>            :     CHECK_LE(start_axis, end_axis);
+<span class="lineNum">      87 </span>            :     CHECK_GE(start_axis, 0);
+<span class="lineNum">      88 </span>            :     CHECK_GE(end_axis, 0);
+<span class="lineNum">      89 </span>            :     CHECK_LE(start_axis, num_axes());
+<span class="lineNum">      90 </span>            :     CHECK_LE(end_axis, num_axes());
+<span class="lineNum">      91 </span>            :     int count = 1;
+<span class="lineNum">      92 </span>            :     for (int i = start_axis; i &lt; end_axis; ++i) {
+<span class="lineNum">      93 </span>            :       count *= shape(i);
+<span class="lineNum">      94 </span>            :     }
+<span class="lineNum">      95 </span>            :     return count;
+<span class="lineNum">      96 </span>            :   }
+<span class="lineNum">      97 </span>            :   /**
+<span class="lineNum">      98 </span>            :    * @brief Compute the volume of a slice spanning from a particular first
+<span class="lineNum">      99 </span>            :    *        axis to the final axis.
+<span class="lineNum">     100 </span>            :    *
+<span class="lineNum">     101 </span>            :    * @param start_axis The first axis to include in the slice.
+<span class="lineNum">     102 </span>            :    */
+<span class="lineNum">     103 </span>            :   inline int count(int start_axis) const {
+<span class="lineNum">     104 </span>            :     return count(start_axis, num_axes());
+<span class="lineNum">     105 </span>            :   }
+<span class="lineNum">     106 </span>            : 
+<span class="lineNum">     107 </span>            :   /**
+<span class="lineNum">     108 </span>            :    * @brief Returns the 'canonical' version of a (usually) user-specified axis,
+<span class="lineNum">     109 </span>            :    *        allowing for negative indexing (e.g., -1 for the last axis).
+<span class="lineNum">     110 </span>            :    *
+<span class="lineNum">     111 </span>            :    * @param axis_index the axis index.
+<span class="lineNum">     112 </span>            :    *        If 0 &lt;= index &lt; num_axes(), return index.
+<span class="lineNum">     113 </span>            :    *        If -num_axes &lt;= index &lt;= -1, return (num_axes() - (-index)),
+<span class="lineNum">     114 </span>            :    *        e.g., the last axis index (num_axes() - 1) if index == -1,
+<span class="lineNum">     115 </span>            :    *        the second to last if index == -2, etc.
+<span class="lineNum">     116 </span>            :    *        Dies on out of range index.
+<span class="lineNum">     117 </span>            :    */
+<span class="lineNum">     118 </span>            :   inline int CanonicalAxisIndex(int axis_index) const {
+<span class="lineNum">     119 </span>            :     CHECK_GE(axis_index, -num_axes())
+<span class="lineNum">     120 </span>            :         &lt;&lt; &quot;axis &quot; &lt;&lt; axis_index &lt;&lt; &quot; out of range for &quot; &lt;&lt; num_axes()
+<span class="lineNum">     121 </span>            :         &lt;&lt; &quot;-D Blob with shape &quot; &lt;&lt; shape_string();
+<span class="lineNum">     122 </span>            :     CHECK_LT(axis_index, num_axes())
+<span class="lineNum">     123 </span>            :         &lt;&lt; &quot;axis &quot; &lt;&lt; axis_index &lt;&lt; &quot; out of range for &quot; &lt;&lt; num_axes()
+<span class="lineNum">     124 </span>            :         &lt;&lt; &quot;-D Blob with shape &quot; &lt;&lt; shape_string();
+<span class="lineNum">     125 </span>            :     if (axis_index &lt; 0) {
+<span class="lineNum">     126 </span>            :       return axis_index + num_axes();
+<span class="lineNum">     127 </span>            :     }
+<span class="lineNum">     128 </span>            :     return axis_index;
+<span class="lineNum">     129 </span>            :   }
+<span class="lineNum">     130 </span>            : 
+<span class="lineNum">     131 </span>            :   /// @brief Deprecated legacy shape accessor num: use shape(0) instead.
+<span class="lineNum">     132 </span>            :   inline int num() const { return LegacyShape(0); }
+<span class="lineNum">     133 </span>            :   /// @brief Deprecated legacy shape accessor channels: use shape(1) instead.
+<span class="lineNum">     134 </span>            :   inline int channels() const { return LegacyShape(1); }
+<span class="lineNum">     135 </span>            :   /// @brief Deprecated legacy shape accessor height: use shape(2) instead.
+<span class="lineNum">     136 </span>            :   inline int height() const { return LegacyShape(2); }
+<span class="lineNum">     137 </span>            :   /// @brief Deprecated legacy shape accessor width: use shape(3) instead.
+<span class="lineNum">     138 </span>            :   inline int width() const { return LegacyShape(3); }
+<span class="lineNum">     139 </span>            :   inline int LegacyShape(int index) const {
+<span class="lineNum">     140 </span>            :     CHECK_LE(num_axes(), 4)
+<span class="lineNum">     141 </span>            :         &lt;&lt; &quot;Cannot use legacy accessors on Blobs with &gt; 4 axes.&quot;;
+<span class="lineNum">     142 </span>            :     CHECK_LT(index, 4);
+<span class="lineNum">     143 </span>            :     CHECK_GE(index, -4);
+<span class="lineNum">     144 </span>            :     if (index &gt;= num_axes() || index &lt; -num_axes()) {
+<span class="lineNum">     145 </span>            :       // Axis is out of range, but still in [0, 3] (or [-4, -1] for reverse
+<span class="lineNum">     146 </span>            :       // indexing) -- this special case simulates the one-padding used to fill
+<span class="lineNum">     147 </span>            :       // extraneous axes of legacy blobs.
+<span class="lineNum">     148 </span>            :       return 1;
+<span class="lineNum">     149 </span>            :     }
+<span class="lineNum">     150 </span>            :     return shape(index);
+<span class="lineNum">     151 </span>            :   }
+<span class="lineNum">     152 </span>            : 
+<span class="lineNum">     153 </span>            :   inline int offset(const int n, const int c = 0, const int h = 0,
+<span class="lineNum">     154 </span>            :       const int w = 0) const {
+<span class="lineNum">     155 </span>            :     CHECK_GE(n, 0);
+<span class="lineNum">     156 </span>            :     CHECK_LE(n, num());
+<span class="lineNum">     157 </span>            :     CHECK_GE(channels(), 0);
+<span class="lineNum">     158 </span>            :     CHECK_LE(c, channels());
+<span class="lineNum">     159 </span>            :     CHECK_GE(height(), 0);
+<span class="lineNum">     160 </span>            :     CHECK_LE(h, height());
+<span class="lineNum">     161 </span>            :     CHECK_GE(width(), 0);
+<span class="lineNum">     162 </span>            :     CHECK_LE(w, width());
+<span class="lineNum">     163 </span>            :     return ((n * channels() + c) * height() + h) * width() + w;
+<span class="lineNum">     164 </span>            :   }
+<span class="lineNum">     165 </span>            : 
+<span class="lineNum">     166 </span>            :   inline int offset(const vector&lt;int&gt;&amp; indices) const {
+<span class="lineNum">     167 </span>            :     CHECK_LE(indices.size(), num_axes());
+<span class="lineNum">     168 </span>            :     int offset = 0;
+<span class="lineNum">     169 </span>            :     for (int i = 0; i &lt; num_axes(); ++i) {
+<span class="lineNum">     170 </span>            :       offset *= shape(i);
+<span class="lineNum">     171 </span>            :       if (indices.size() &gt; i) {
+<span class="lineNum">     172 </span>            :         CHECK_GE(indices[i], 0);
+<span class="lineNum">     173 </span>            :         CHECK_LT(indices[i], shape(i));
+<span class="lineNum">     174 </span>            :         offset += indices[i];
+<span class="lineNum">     175 </span>            :       }
+<span class="lineNum">     176 </span>            :     }
+<span class="lineNum">     177 </span>            :     return offset;
+<span class="lineNum">     178 </span>            :   }
+<span class="lineNum">     179 </span>            :   /**
+<span class="lineNum">     180 </span>            :    * @brief Copy from a source Blob.
+<span class="lineNum">     181 </span>            :    *
+<span class="lineNum">     182 </span>            :    * @param source the Blob to copy from
+<span class="lineNum">     183 </span>            :    * @param copy_diff if false, copy the data; if true, copy the diff
+<span class="lineNum">     184 </span>            :    * @param reshape if false, require this Blob to be pre-shaped to the shape
+<span class="lineNum">     185 </span>            :    *        of other (and die otherwise); if true, Reshape this Blob to other's
+<span class="lineNum">     186 </span>            :    *        shape if necessary
+<span class="lineNum">     187 </span>            :    */
+<span class="lineNum">     188 </span>            :   void CopyFrom(const Blob&lt;Dtype&gt;&amp; source, bool copy_diff = false,
+<span class="lineNum">     189 </span>            :       bool reshape = false);
+<span class="lineNum">     190 </span>            : 
+<span class="lineNum">     191 </span>            :   inline Dtype data_at(const int n, const int c, const int h,
+<span class="lineNum">     192 </span>            :       const int w) const {
+<span class="lineNum">     193 </span>            :     return cpu_data()[offset(n, c, h, w)];
+<span class="lineNum">     194 </span>            :   }
+<span class="lineNum">     195 </span>            : 
+<span class="lineNum">     196 </span>            :   inline Dtype diff_at(const int n, const int c, const int h,
+<span class="lineNum">     197 </span>            :       const int w) const {
+<span class="lineNum">     198 </span>            :     return cpu_diff()[offset(n, c, h, w)];
+<span class="lineNum">     199 </span>            :   }
+<span class="lineNum">     200 </span>            : 
+<span class="lineNum">     201 </span>            :   inline Dtype data_at(const vector&lt;int&gt;&amp; index) const {
+<span class="lineNum">     202 </span>            :     return cpu_data()[offset(index)];
+<span class="lineNum">     203 </span>            :   }
+<span class="lineNum">     204 </span>            : 
+<span class="lineNum">     205 </span>            :   inline Dtype diff_at(const vector&lt;int&gt;&amp; index) const {
+<span class="lineNum">     206 </span>            :     return cpu_diff()[offset(index)];
+<span class="lineNum">     207 </span>            :   }
+<span class="lineNum">     208 </span>            : 
+<span class="lineNum">     209 </span>            :   inline const shared_ptr&lt;SyncedMemory&gt;&amp; data() const {
+<span class="lineNum">     210 </span>            :     CHECK(data_);
+<span class="lineNum">     211 </span>            :     return data_;
+<span class="lineNum">     212 </span>            :   }
+<span class="lineNum">     213 </span>            : 
+<span class="lineNum">     214 </span>            :   inline const shared_ptr&lt;SyncedMemory&gt;&amp; diff() const {
+<span class="lineNum">     215 </span>            :     CHECK(diff_);
+<span class="lineNum">     216 </span>            :     return diff_;
+<span class="lineNum">     217 </span>            :   }
+<span class="lineNum">     218 </span>            : 
+<span class="lineNum">     219 </span>            :   const Dtype* cpu_data() const;
+<span class="lineNum">     220 </span>            :   void set_cpu_data(Dtype* data);
+<span class="lineNum">     221 </span>            :   const int* gpu_shape() const;
+<span class="lineNum">     222 </span>            :   const Dtype* gpu_data() const;
+<span class="lineNum">     223 </span>            :   const Dtype* cpu_diff() const;
+<span class="lineNum">     224 </span>            :   const Dtype* gpu_diff() const;
+<span class="lineNum">     225 </span>            :   Dtype* mutable_cpu_data();
+<span class="lineNum">     226 </span>            :   Dtype* mutable_gpu_data();
+<span class="lineNum">     227 </span>            :   Dtype* mutable_cpu_diff();
+<span class="lineNum">     228 </span>            :   Dtype* mutable_gpu_diff();
+<span class="lineNum">     229 </span>            :   void Update();
+<span class="lineNum">     230 </span>            :   void FromProto(const BlobProto&amp; proto, bool reshape = true);
+<span class="lineNum">     231 </span>            :   void ToProto(BlobProto* proto, bool write_diff = false) const;
+<span class="lineNum">     232 </span>            : 
+<span class="lineNum">     233 </span>            :   /// @brief Compute the sum of absolute values (L1 norm) of the data.
+<span class="lineNum">     234 </span>            :   Dtype asum_data() const;
+<span class="lineNum">     235 </span>            :   /// @brief Compute the sum of absolute values (L1 norm) of the diff.
+<span class="lineNum">     236 </span>            :   Dtype asum_diff() const;
+<span class="lineNum">     237 </span>            :   /// @brief Compute the sum of squares (L2 norm squared) of the data.
+<span class="lineNum">     238 </span>            :   Dtype sumsq_data() const;
+<span class="lineNum">     239 </span>            :   /// @brief Compute the sum of squares (L2 norm squared) of the diff.
+<span class="lineNum">     240 </span>            :   Dtype sumsq_diff() const;
+<span class="lineNum">     241 </span>            : 
+<span class="lineNum">     242 </span>            :   /// @brief Scale the blob data by a constant factor.
+<span class="lineNum">     243 </span>            :   void scale_data(Dtype scale_factor);
+<span class="lineNum">     244 </span>            :   /// @brief Scale the blob diff by a constant factor.
+<span class="lineNum">     245 </span>            :   void scale_diff(Dtype scale_factor);
+<span class="lineNum">     246 </span>            : 
+<span class="lineNum">     247 </span>            :   /**
+<span class="lineNum">     248 </span>            :    * @brief Set the data_ shared_ptr to point to the SyncedMemory holding the
+<span class="lineNum">     249 </span>            :    *        data_ of Blob other -- useful in Layer%s which simply perform a copy
+<span class="lineNum">     250 </span>            :    *        in their Forward pass.
+<span class="lineNum">     251 </span>            :    *
+<span class="lineNum">     252 </span>            :    * This deallocates the SyncedMemory holding this Blob's data_, as
+<span class="lineNum">     253 </span>            :    * shared_ptr calls its destructor when reset with the &quot;=&quot; operator.
+<span class="lineNum">     254 </span>            :    */
+<span class="lineNum">     255 </span>            :   void ShareData(const Blob&amp; other);
+<span class="lineNum">     256 </span>            :   /**
+<span class="lineNum">     257 </span>            :    * @brief Set the diff_ shared_ptr to point to the SyncedMemory holding the
+<span class="lineNum">     258 </span>            :    *        diff_ of Blob other -- useful in Layer%s which simply perform a copy
+<span class="lineNum">     259 </span>            :    *        in their Forward pass.
+<span class="lineNum">     260 </span>            :    *
+<span class="lineNum">     261 </span>            :    * This deallocates the SyncedMemory holding this Blob's diff_, as
+<span class="lineNum">     262 </span>            :    * shared_ptr calls its destructor when reset with the &quot;=&quot; operator.
+<span class="lineNum">     263 </span>            :    */
+<span class="lineNum">     264 </span>            :   void ShareDiff(const Blob&amp; other);
+<span class="lineNum">     265 </span>            : 
+<span class="lineNum">     266 </span>            :   bool ShapeEquals(const BlobProto&amp; other);
+<span class="lineNum">     267 </span>            : 
+<span class="lineNum">     268 </span>            :  protected:
+<span class="lineNum">     269 </span>            :   shared_ptr&lt;SyncedMemory&gt; data_;
+<span class="lineNum">     270 </span>            :   shared_ptr&lt;SyncedMemory&gt; diff_;
+<span class="lineNum">     271 </span>            :   shared_ptr&lt;SyncedMemory&gt; shape_data_;
+<span class="lineNum">     272 </span>            :   vector&lt;int&gt; shape_;
+<span class="lineNum">     273 </span>            :   int count_;
+<span class="lineNum">     274 </span>            :   int capacity_;
+<span class="lineNum">     275 </span>            : 
+<span class="lineNum">     276 </span>            :   DISABLE_COPY_AND_ASSIGN(Blob);
+<span class="lineNum">     277 </span>            : };  // class Blob
+<span class="lineNum">     278 </span>            : 
+<span class="lineNum">     279 </span>            : }  // namespace caffe
+<span class="lineNum">     280 </span>            : 
+<span class="lineNum">     281 </span>            : #endif  // CAFFE_BLOB_HPP_
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/learning/NeuralNet.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/learning</a> - NeuralNet.h<span style="font-size: 80%;"> (source / <a href="NeuralNet.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #pragma once</a>
+<span class="lineNum">       2 </span>            : #include &quot;util/MathUtil.h&quot;
+<span class="lineNum">       3 </span>            : #include &lt;caffe/net.hpp&gt;
+<span class="lineNum">       4 </span>            : #include &lt;caffe/caffe.hpp&gt;
+<span class="lineNum">       5 </span>            : #include &lt;caffe/layers/memory_data_layer.hpp&gt;
+<span class="lineNum">       6 </span>            : #include &lt;mutex&gt;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : class cNNSolver;
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            : class cNeuralNet
+<span class="lineNum">      11 </span>            : {
+<span class="lineNum">      12 </span>            : public:
+<a name="13"><span class="lineNum">      13 </span>            :         typedef double tNNData;</a>
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span><span class="lineNoCov">          0 :         struct tProblem</span>
+<span class="lineNum">      16 </span>            :         {
+<span class="lineNum">      17 </span>            :                 tProblem();
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            :                 Eigen::MatrixXd mX;
+<span class="lineNum">      20 </span>            :                 Eigen::MatrixXd mY;
+<span class="lineNum">      21 </span>            :                 int mPassesPerStep;
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            :                 bool HasData() const;
+<span class="lineNum">      24 </span>            :         };
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span>            :         static void PrintParams(const caffe::Net&lt;tNNData&gt;&amp; net);
+<span class="lineNum">      27 </span>            :         static int CalcNumParams(const caffe::Net&lt;tNNData&gt;&amp; net);
+<span class="lineNum">      28 </span>            :         static void CopyModel(const caffe::Net&lt;tNNData&gt;&amp; src, caffe::Net&lt;tNNData&gt;&amp; dst);
+<span class="lineNum">      29 </span>            :         static void CopyParams(const std::vector&lt;caffe::Blob&lt;tNNData&gt;*&gt;&amp; src_params, const std::vector&lt;caffe::Blob&lt;tNNData&gt;*&gt;&amp; dst_params);
+<span class="lineNum">      30 </span>            :         static bool CompareModel(const caffe::Net&lt;tNNData&gt;&amp; a, const caffe::Net&lt;tNNData&gt;&amp; b);
+<span class="lineNum">      31 </span>            :         static bool CompareParams(const std::vector&lt;caffe::Blob&lt;tNNData&gt;*&gt;&amp; a_params, const std::vector&lt;caffe::Blob&lt;tNNData&gt;*&gt;&amp; b_params);
+<span class="lineNum">      32 </span>            : 
+<span class="lineNum">      33 </span>            :         cNeuralNet();
+<span class="lineNum">      34 </span>            :         virtual ~cNeuralNet();
+<span class="lineNum">      35 </span>            : 
+<span class="lineNum">      36 </span>            :         virtual void LoadNet(const std::string&amp; net_file);
+<span class="lineNum">      37 </span>            :         virtual void LoadModel(const std::string&amp; model_file);
+<span class="lineNum">      38 </span>            :         virtual void LoadSolver(const std::string&amp; solver_file, bool async = false);
+<span class="lineNum">      39 </span>            :         virtual void LoadScale(const std::string&amp; scale_file);
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span>            :         virtual void Clear();
+<span class="lineNum">      42 </span>            :         virtual void Train(const tProblem&amp; prob);
+<span class="lineNum">      43 </span>            :         virtual double ForwardBackward(const tProblem&amp; prob);
+<span class="lineNum">      44 </span>            :         virtual void StepSolver(int iters);
+<span class="lineNum">      45 </span>            :         virtual void ResetSolver();
+<span class="lineNum">      46 </span>            :         virtual void CalcOffsetScale(const Eigen::MatrixXd&amp; X, Eigen::VectorXd&amp; out_offset, Eigen::VectorXd&amp; out_scale) const;
+<span class="lineNum">      47 </span>            :         virtual void SetInputOffsetScale(const Eigen::VectorXd&amp; offset, const Eigen::VectorXd&amp; scale);
+<span class="lineNum">      48 </span>            :         virtual void SetOutputOffsetScale(const Eigen::VectorXd&amp; offset, const Eigen::VectorXd&amp; scale);
+<span class="lineNum">      49 </span>            : 
+<span class="lineNum">      50 </span>            :         virtual const Eigen::VectorXd&amp; GetInputOffset() const;
+<span class="lineNum">      51 </span>            :         virtual const Eigen::VectorXd&amp; GetInputScale() const;
+<span class="lineNum">      52 </span>            :         virtual const Eigen::VectorXd&amp; GetOutputOffset() const;
+<span class="lineNum">      53 </span>            :         virtual const Eigen::VectorXd&amp; GetOutputScale() const;
+<span class="lineNum">      54 </span>            : 
+<span class="lineNum">      55 </span>            :         virtual void Eval(const Eigen::VectorXd&amp; x, Eigen::VectorXd&amp; out_y) const;
+<span class="lineNum">      56 </span>            :         virtual void EvalBatch(const Eigen::MatrixXd&amp; X, Eigen::MatrixXd&amp; out_Y) const;
+<span class="lineNum">      57 </span>            :         virtual void Backward(const Eigen::VectorXd&amp; y_diff, Eigen::VectorXd&amp; out_x_diff) const;
+<span class="lineNum">      58 </span>            :         
+<span class="lineNum">      59 </span>            :         virtual int GetInputSize() const;
+<span class="lineNum">      60 </span>            :         virtual int GetOutputSize() const;
+<span class="lineNum">      61 </span>            :         virtual int GetBatchSize() const;
+<span class="lineNum">      62 </span>            :         virtual int CalcNumParams() const;
+<span class="lineNum">      63 </span>            : 
+<span class="lineNum">      64 </span>            :         virtual void OutputModel(const std::string&amp; out_file) const;
+<span class="lineNum">      65 </span>            :         virtual void PrintParams() const;
+<span class="lineNum">      66 </span>            : 
+<span class="lineNum">      67 </span>            :         virtual bool HasNet() const;
+<span class="lineNum">      68 </span>            :         virtual bool HasSolver() const;
+<span class="lineNum">      69 </span>            :         virtual bool HasLayer(const std::string layer_name) const;
+<span class="lineNum">      70 </span>            :         virtual bool HasValidModel() const;
+<span class="lineNum">      71 </span>            : 
+<span class="lineNum">      72 </span>            :         virtual void NormalizeInput(Eigen::MatrixXd&amp; X) const;
+<span class="lineNum">      73 </span>            :         virtual void NormalizeInput(Eigen::VectorXd&amp; x) const;
+<span class="lineNum">      74 </span>            :         virtual void NormalizeInputDiff(Eigen::VectorXd&amp; x_diff) const;
+<span class="lineNum">      75 </span>            :         virtual void UnnormalizeInput(Eigen::VectorXd&amp; x) const;
+<span class="lineNum">      76 </span>            :         virtual void UnnormalizeInputDiff(Eigen::VectorXd&amp; x_diff) const;
+<span class="lineNum">      77 </span>            :         virtual void NormalizeOutput(Eigen::VectorXd&amp; y) const;
+<span class="lineNum">      78 </span>            :         virtual void NormalizeOutputDiff(Eigen::VectorXd&amp; y_diff) const;
+<span class="lineNum">      79 </span>            :         virtual void UnnormalizeOutput(Eigen::VectorXd&amp; y) const;
+<span class="lineNum">      80 </span>            :         virtual void UnnormalizeOutputDiff(Eigen::VectorXd&amp; y_diff) const;
+<span class="lineNum">      81 </span>            : 
+<span class="lineNum">      82 </span>            :         virtual void CopyModel(const cNeuralNet&amp; other);
+<span class="lineNum">      83 </span>            :         virtual void LerpModel(const cNeuralNet&amp; other, double lerp);
+<span class="lineNum">      84 </span>            :         virtual void BlendModel(const cNeuralNet&amp; other, double this_weight, double other_weight);
+<span class="lineNum">      85 </span>            :         virtual void BuildNetParams(caffe::NetParameter&amp; out_params) const;
+<span class="lineNum">      86 </span>            :         virtual bool CompareModel(const cNeuralNet&amp; other) const;
+<span class="lineNum">      87 </span>            : 
+<span class="lineNum">      88 </span>            :         virtual void ForwardInjectNoisePrefilled(double mean, double stdev, const std::string&amp; layer_name, Eigen::VectorXd&amp; out_y) const;
+<span class="lineNum">      89 </span>            :         virtual void GetLayerState(const std::string&amp; layer_name, Eigen::VectorXd&amp; out_state) const;
+<span class="lineNum">      90 </span>            :         virtual void SetLayerState(const Eigen::VectorXd&amp; state, const std::string&amp; layer_name) const;
+<span class="lineNum">      91 </span>            : 
+<span class="lineNum">      92 </span>            :         virtual const std::vector&lt;caffe::Blob&lt;tNNData&gt;*&gt;&amp; GetParams() const;
+<span class="lineNum">      93 </span>            :         virtual void SyncSolverParams();
+<span class="lineNum">      94 </span>            :         virtual void SyncNetParams();
+<span class="lineNum">      95 </span>            : 
+<span class="lineNum">      96 </span>            :         virtual void CopyGrad(const cNeuralNet&amp; other);
+<span class="lineNum">      97 </span>            : 
+<span class="lineNum">      98 </span>            : protected:
+<span class="lineNum">      99 </span>            :         class cCaffeNetWrapper : public caffe::Net&lt;tNNData&gt;
+<span class="lineNum">     100 </span>            :         {
+<span class="lineNum">     101 </span>            :         public:
+<span class="lineNum">     102 </span>            :                 cCaffeNetWrapper(const std::string&amp; net_file, caffe::Phase phase);
+<span class="lineNum">     103 </span>            :                 virtual ~cCaffeNetWrapper();
+<span class="lineNum">     104 </span>            : 
+<span class="lineNum">     105 </span>            :                 virtual int GetLayerIdx(const std::string&amp; layer_name) const;
+<span class="lineNum">     106 </span>            :         };
+<span class="lineNum">     107 </span>            : 
+<span class="lineNum">     108 </span>            :         static std::mutex gOutputLock;
+<span class="lineNum">     109 </span>            : 
+<span class="lineNum">     110 </span>            :         bool mValidModel;
+<span class="lineNum">     111 </span>            :         bool mAsync;
+<span class="lineNum">     112 </span>            : 
+<span class="lineNum">     113 </span>            :         std::unique_ptr&lt;cCaffeNetWrapper&gt; mNet;
+<span class="lineNum">     114 </span>            :         std::shared_ptr&lt;cNNSolver&gt; mSolver;
+<span class="lineNum">     115 </span>            :         std::string mSolverFile;
+<span class="lineNum">     116 </span>            :         
+<span class="lineNum">     117 </span>            :         Eigen::VectorXd mInputOffset;
+<span class="lineNum">     118 </span>            :         Eigen::VectorXd mInputScale;
+<span class="lineNum">     119 </span>            :         Eigen::VectorXd mOutputOffset;
+<span class="lineNum">     120 </span>            :         Eigen::VectorXd mOutputScale;
+<span class="lineNum">     121 </span>            : 
+<span class="lineNum">     122 </span>            :         virtual bool ValidOffsetScale() const;
+<span class="lineNum">     123 </span>            :         virtual void InitOffsetScale();
+<span class="lineNum">     124 </span>            : 
+<span class="lineNum">     125 </span>            :         virtual void FetchOutput(const std::vector&lt;caffe::Blob&lt;tNNData&gt;*&gt;&amp; results_arr, Eigen::VectorXd&amp; out_y) const;
+<span class="lineNum">     126 </span>            :         virtual void FetchInput(Eigen::VectorXd&amp; out_x) const;
+<span class="lineNum">     127 </span>            :         virtual void EvalBatchNet(const Eigen::MatrixXd&amp; X, Eigen::MatrixXd&amp; out_Y) const;
+<span class="lineNum">     128 </span>            :         virtual void EvalBatchSolver(const Eigen::MatrixXd&amp; X, Eigen::MatrixXd&amp; out_Y) const;
+<span class="lineNum">     129 </span>            : 
+<span class="lineNum">     130 </span>            :         virtual boost::shared_ptr&lt;caffe::Net&lt;tNNData&gt;&gt; GetTrainNet() const;
+<span class="lineNum">     131 </span>            :         virtual boost::shared_ptr&lt;caffe::MemoryDataLayer&lt;tNNData&gt;&gt; GetTrainDataLayer() const;
+<span class="lineNum">     132 </span>            :         virtual void LoadTrainData(const Eigen::MatrixXd&amp; X, const Eigen::MatrixXd&amp; Y);
+<span class="lineNum">     133 </span>            : 
+<span class="lineNum">     134 </span>            :         virtual bool WriteData(const Eigen::MatrixXd&amp; X, const Eigen::MatrixXd&amp; Y, const std::string&amp; out_file);
+<span class="lineNum">     135 </span>            :         virtual std::string GetOffsetScaleFile(const std::string&amp; model_file) const;
+<span class="lineNum">     136 </span>            : 
+<span class="lineNum">     137 </span>            :         virtual void WriteOffsetScale(const std::string&amp; scale_file) const;
+<span class="lineNum">     138 </span>            :         virtual const std::string&amp; GetInputLayerName() const;
+<span class="lineNum">     139 </span>            :         virtual const std::string&amp; GetOutputLayerName() const;
+<span class="lineNum">     140 </span>            : };
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

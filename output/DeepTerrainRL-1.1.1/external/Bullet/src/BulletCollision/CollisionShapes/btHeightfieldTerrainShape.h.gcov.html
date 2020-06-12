@@ -1,0 +1,251 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/external/Bullet/src/BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/external/Bullet/src/BulletCollision/CollisionShapes</a> - btHeightfieldTerrainShape.h<span style="font-size: 80%;"> (source / <a href="btHeightfieldTerrainShape.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            : Bullet Continuous Collision Detection and Physics Library
+<span class="lineNum">       3 </span>            : Copyright (c) 2003-2009 Erwin Coumans  http://bulletphysics.org
+<span class="lineNum">       4 </span>            : 
+<span class="lineNum">       5 </span>            : This software is provided 'as-is', without any express or implied warranty.
+<span class="lineNum">       6 </span>            : In no event will the authors be held liable for any damages arising from the use of this software.
+<span class="lineNum">       7 </span>            : Permission is granted to anyone to use this software for any purpose, 
+<span class="lineNum">       8 </span>            : including commercial applications, and to alter it and redistribute it freely, 
+<span class="lineNum">       9 </span>            : subject to the following restrictions:
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
+<span class="lineNum">      12 </span>            : 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
+<span class="lineNum">      13 </span>            : 3. This notice may not be removed or altered from any source distribution.
+<span class="lineNum">      14 </span>            : */
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : #ifndef BT_HEIGHTFIELD_TERRAIN_SHAPE_H
+<span class="lineNum">      17 </span>            : #define BT_HEIGHTFIELD_TERRAIN_SHAPE_H
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            : #include &quot;btConcaveShape.h&quot;
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span>            : ///btHeightfieldTerrainShape simulates a 2D heightfield terrain
+<span class="lineNum">      22 </span>            : /**
+<span class="lineNum">      23 </span>            :   The caller is responsible for maintaining the heightfield array; this
+<span class="lineNum">      24 </span>            :   class does not make a copy.
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span>            :   The heightfield can be dynamic so long as the min/max height values
+<span class="lineNum">      27 </span>            :   capture the extremes (heights must always be in that range).
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span>            :   The local origin of the heightfield is assumed to be the exact
+<span class="lineNum">      30 </span>            :   center (as determined by width and length and height, with each
+<span class="lineNum">      31 </span>            :   axis multiplied by the localScaling).
+<span class="lineNum">      32 </span>            : 
+<span class="lineNum">      33 </span>            :   \b NOTE: be careful with coordinates.  If you have a heightfield with a local
+<span class="lineNum">      34 </span>            :   min height of -100m, and a max height of +500m, you may be tempted to place it
+<span class="lineNum">      35 </span>            :   at the origin (0,0) and expect the heights in world coordinates to be
+<span class="lineNum">      36 </span>            :   -100 to +500 meters.
+<span class="lineNum">      37 </span>            :   Actually, the heights will be -300 to +300m, because bullet will re-center
+<span class="lineNum">      38 </span>            :   the heightfield based on its AABB (which is determined by the min/max
+<span class="lineNum">      39 </span>            :   heights).  So keep in mind that once you create a btHeightfieldTerrainShape
+<span class="lineNum">      40 </span>            :   object, the heights will be adjusted relative to the center of the AABB.  This
+<span class="lineNum">      41 </span>            :   is different to the behavior of many rendering engines, but is useful for
+<span class="lineNum">      42 </span>            :   physics engines.
+<span class="lineNum">      43 </span>            : 
+<span class="lineNum">      44 </span>            :   Most (but not all) rendering and heightfield libraries assume upAxis = 1
+<span class="lineNum">      45 </span>            :   (that is, the y-axis is &quot;up&quot;).  This class allows any of the 3 coordinates
+<span class="lineNum">      46 </span>            :   to be &quot;up&quot;.  Make sure your choice of axis is consistent with your rendering
+<span class="lineNum">      47 </span>            :   system.
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span>            :   The heightfield heights are determined from the data type used for the
+<span class="lineNum">      50 </span>            :   heightfieldData array.  
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span>            :    - PHY_UCHAR: height at a point is the uchar value at the
+<span class="lineNum">      53 </span>            :        grid point, multipled by heightScale.  uchar isn't recommended
+<span class="lineNum">      54 </span>            :        because of its inability to deal with negative values, and
+<span class="lineNum">      55 </span>            :        low resolution (8-bit).
+<span class="lineNum">      56 </span>            : 
+<span class="lineNum">      57 </span>            :    - PHY_SHORT: height at a point is the short int value at that grid
+<span class="lineNum">      58 </span>            :        point, multipled by heightScale.
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span>            :    - PHY_FLOAT: height at a point is the float value at that grid
+<span class="lineNum">      61 </span>            :        point.  heightScale is ignored when using the float heightfield
+<span class="lineNum">      62 </span>            :        data type.
+<span class="lineNum">      63 </span>            : 
+<span class="lineNum">      64 </span>            :   Whatever the caller specifies as minHeight and maxHeight will be honored.
+<span class="lineNum">      65 </span>            :   The class will not inspect the heightfield to discover the actual minimum
+<span class="lineNum">      66 </span>            :   or maximum heights.  These values are used to determine the heightfield's
+<span class="lineNum">      67 </span>            :   axis-aligned bounding box, multiplied by localScaling.
+<span class="lineNum">      68 </span>            : 
+<span class="lineNum">      69 </span>            :   For usage and testing see the TerrainDemo.
+<span class="lineNum">      70 </span>            :  */
+<span class="lineNum">      71 </span>            : ATTRIBUTE_ALIGNED16(class) btHeightfieldTerrainShape : public btConcaveShape
+<span class="lineNum">      72 </span>            : {
+<span class="lineNum">      73 </span>            : protected:
+<span class="lineNum">      74 </span>            :         btVector3       m_localAabbMin;
+<span class="lineNum">      75 </span>            :         btVector3       m_localAabbMax;
+<span class="lineNum">      76 </span>            :         btVector3       m_localOrigin;
+<span class="lineNum">      77 </span>            : 
+<span class="lineNum">      78 </span>            :         ///terrain data
+<span class="lineNum">      79 </span>            :         int     m_heightStickWidth;
+<span class="lineNum">      80 </span>            :         int m_heightStickLength;
+<span class="lineNum">      81 </span>            :         btScalar        m_minHeight;
+<span class="lineNum">      82 </span>            :         btScalar        m_maxHeight;
+<span class="lineNum">      83 </span>            :         btScalar m_width;
+<span class="lineNum">      84 </span>            :         btScalar m_length;
+<span class="lineNum">      85 </span>            :         btScalar m_heightScale;
+<span class="lineNum">      86 </span>            :         union
+<span class="lineNum">      87 </span>            :         {
+<span class="lineNum">      88 </span>            :                 const unsigned char*    m_heightfieldDataUnsignedChar;
+<span class="lineNum">      89 </span>            :                 const short*            m_heightfieldDataShort;
+<span class="lineNum">      90 </span>            :                 const btScalar*                 m_heightfieldDataFloat;
+<span class="lineNum">      91 </span>            :                 const void*     m_heightfieldDataUnknown;
+<span class="lineNum">      92 </span>            :         };
+<span class="lineNum">      93 </span>            : 
+<span class="lineNum">      94 </span>            :         PHY_ScalarType  m_heightDataType;       
+<span class="lineNum">      95 </span>            :         bool    m_flipQuadEdges;
+<span class="lineNum">      96 </span>            :         bool  m_useDiamondSubdivision;
+<span class="lineNum">      97 </span>            :         bool m_useZigzagSubdivision;
+<span class="lineNum">      98 </span>            : 
+<span class="lineNum">      99 </span>            :         int     m_upAxis;
+<span class="lineNum">     100 </span>            :         
+<span class="lineNum">     101 </span>            :         btVector3       m_localScaling;
+<span class="lineNum">     102 </span>            : 
+<span class="lineNum">     103 </span>            :         virtual btScalar        getRawHeightFieldValue(int x,int y) const;
+<span class="lineNum">     104 </span>            :         void            quantizeWithClamp(int* out, const btVector3&amp; point,int isMax) const;
+<span class="lineNum">     105 </span>            :         void            getVertex(int x,int y,btVector3&amp; vertex) const;
+<span class="lineNum">     106 </span>            : 
+<span class="lineNum">     107 </span>            : 
+<span class="lineNum">     108 </span>            : 
+<span class="lineNum">     109 </span>            :         /// protected initialization
+<span class="lineNum">     110 </span>            :         /**
+<span class="lineNum">     111 </span>            :           Handles the work of constructors so that public constructors can be
+<span class="lineNum">     112 </span>            :           backwards-compatible without a lot of copy/paste.
+<span class="lineNum">     113 </span>            :          */
+<span class="lineNum">     114 </span>            :         void initialize(int heightStickWidth, int heightStickLength,
+<span class="lineNum">     115 </span>            :                         const void* heightfieldData, btScalar heightScale,
+<span class="lineNum">     116 </span>            :                         btScalar minHeight, btScalar maxHeight, int upAxis,
+<span class="lineNum">     117 </span>            :                         PHY_ScalarType heightDataType, bool flipQuadEdges);
+<span class="lineNum">     118 </span>            : 
+<a name="119"><span class="lineNum">     119 </span>            : public:</a>
+<span class="lineNum">     120 </span>            :         
+<span class="lineNum">     121 </span><span class="lineCov">         12 :         BT_DECLARE_ALIGNED_ALLOCATOR();</span>
+<span class="lineNum">     122 </span>            :         
+<span class="lineNum">     123 </span>            :         /// preferred constructor
+<span class="lineNum">     124 </span>            :         /**
+<span class="lineNum">     125 </span>            :           This constructor supports a range of heightfield
+<span class="lineNum">     126 </span>            :           data types, and allows for a non-zero minimum height value.
+<span class="lineNum">     127 </span>            :           heightScale is needed for any integer-based heightfield data types.
+<span class="lineNum">     128 </span>            :          */
+<span class="lineNum">     129 </span>            :         btHeightfieldTerrainShape(int heightStickWidth,int heightStickLength,
+<span class="lineNum">     130 </span>            :                                   const void* heightfieldData, btScalar heightScale,
+<span class="lineNum">     131 </span>            :                                   btScalar minHeight, btScalar maxHeight,
+<span class="lineNum">     132 </span>            :                                   int upAxis, PHY_ScalarType heightDataType,
+<span class="lineNum">     133 </span>            :                                   bool flipQuadEdges);
+<span class="lineNum">     134 </span>            : 
+<span class="lineNum">     135 </span>            :         /// legacy constructor
+<span class="lineNum">     136 </span>            :         /**
+<span class="lineNum">     137 </span>            :           The legacy constructor assumes the heightfield has a minimum height
+<span class="lineNum">     138 </span>            :           of zero.  Only unsigned char or floats are supported.  For legacy
+<span class="lineNum">     139 </span>            :           compatibility reasons, heightScale is calculated as maxHeight / 65535 
+<span class="lineNum">     140 </span>            :           (and is only used when useFloatData = false).
+<span class="lineNum">     141 </span>            :          */
+<span class="lineNum">     142 </span>            :         btHeightfieldTerrainShape(int heightStickWidth,int heightStickLength,const void* heightfieldData, btScalar maxHeight,int upAxis,bool useFloatData,bool flipQuadEdges);
+<span class="lineNum">     143 </span>            : 
+<span class="lineNum">     144 </span>            :         virtual ~btHeightfieldTerrainShape();
+<span class="lineNum">     145 </span>            : 
+<span class="lineNum">     146 </span>            : 
+<span class="lineNum">     147 </span>            :         void setUseDiamondSubdivision(bool useDiamondSubdivision=true) { m_useDiamondSubdivision = useDiamondSubdivision;}
+<span class="lineNum">     148 </span>            : 
+<span class="lineNum">     149 </span>            :         ///could help compatibility with Ogre heightfields. See https://code.google.com/p/bullet/issues/detail?id=625   
+<span class="lineNum">     150 </span>            :         void setUseZigzagSubdivision(bool useZigzagSubdivision=true) { m_useZigzagSubdivision = useZigzagSubdivision;}
+<span class="lineNum">     151 </span>            : 
+<span class="lineNum">     152 </span>            :         virtual void getAabb(const btTransform&amp; t,btVector3&amp; aabbMin,btVector3&amp; aabbMax) const;
+<span class="lineNum">     153 </span>            : 
+<span class="lineNum">     154 </span>            :         virtual void    processAllTriangles(btTriangleCallback* callback,const btVector3&amp; aabbMin,const btVector3&amp; aabbMax) const;
+<span class="lineNum">     155 </span>            : 
+<span class="lineNum">     156 </span>            :         virtual void    calculateLocalInertia(btScalar mass,btVector3&amp; inertia) const;
+<span class="lineNum">     157 </span>            : 
+<span class="lineNum">     158 </span>            :         virtual void    setLocalScaling(const btVector3&amp; scaling);
+<span class="lineNum">     159 </span>            :         
+<span class="lineNum">     160 </span>            :         virtual const btVector3&amp; getLocalScaling() const;
+<span class="lineNum">     161 </span>            :         
+<span class="lineNum">     162 </span>            :         //debugging
+<span class="lineNum">     163 </span>            :         virtual const char*     getName()const {return &quot;HEIGHTFIELD&quot;;}
+<span class="lineNum">     164 </span>            : 
+<span class="lineNum">     165 </span>            : };
+<span class="lineNum">     166 </span>            : 
+<span class="lineNum">     167 </span>            : #endif //BT_HEIGHTFIELD_TERRAIN_SHAPE_H
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

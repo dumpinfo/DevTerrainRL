@@ -1,0 +1,225 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/sim/SimCharacter.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/sim</a> - SimCharacter.h<span style="font-size: 80%;"> (source / <a href="SimCharacter.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryLo">50.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryLo">50.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #pragma once</a>
+<span class="lineNum">       2 </span>            : 
+<span class="lineNum">       3 </span>            : #include &quot;sim/World.h&quot;
+<span class="lineNum">       4 </span>            : #include &quot;sim/SimObj.h&quot;
+<span class="lineNum">       5 </span>            : #include &quot;sim/Joint.h&quot;
+<span class="lineNum">       6 </span>            : #include &quot;sim/CharController.h&quot;
+<span class="lineNum">       7 </span>            : #include &quot;anim/Character.h&quot;
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            : class cSimCharacter : public cCharacter
+<a name="11"><span class="lineNum">      11 </span>            : {</a>
+<span class="lineNum">      12 </span>            : public:
+<a name="13"><span class="lineNum">      13 </span><span class="lineNoCov">          0 :         EIGEN_MAKE_ALIGNED_OPERATOR_NEW</span></a>
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span><span class="lineCov">          2 :         struct tParams</span>
+<span class="lineNum">      16 </span>            :         {
+<span class="lineNum">      17 </span>            :                 EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            :                 tParams();
+<span class="lineNum">      20 </span>            :                 std::string mCharFile;
+<span class="lineNum">      21 </span>            :                 std::string mStateFile;
+<span class="lineNum">      22 </span>            :                 tVector mPos;
+<span class="lineNum">      23 </span>            :                 cWorld::ePlaneCons mPlaneCons;
+<span class="lineNum">      24 </span>            :         };
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span>            :         cSimCharacter();
+<span class="lineNum">      27 </span>            :         virtual ~cSimCharacter();
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span>            :         virtual bool Init(std::shared_ptr&lt;cWorld&gt; world, const tParams&amp; params);
+<span class="lineNum">      30 </span>            :         virtual void Clear();
+<span class="lineNum">      31 </span>            :         virtual void Reset();
+<span class="lineNum">      32 </span>            :         virtual void Update(double time_step);
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span>            :         virtual tVector GetRootPos() const;
+<span class="lineNum">      35 </span>            :         virtual void GetRootRotation(tVector&amp; out_axis, double&amp; out_theta) const;
+<span class="lineNum">      36 </span>            :         virtual tVector GetRootVel() const;
+<span class="lineNum">      37 </span>            :         virtual tVector GetRootAngVel() const;
+<span class="lineNum">      38 </span>            :         virtual const Eigen::MatrixXd&amp; GetBodyDefs() const;
+<span class="lineNum">      39 </span>            :         virtual const Eigen::MatrixXd&amp; GetDrawShapeDefs() const;
+<span class="lineNum">      40 </span>            :         virtual void SetRootPos(const tVector&amp; pos);
+<span class="lineNum">      41 </span>            : 
+<span class="lineNum">      42 </span>            :         virtual int GetNumBodyParts() const;
+<span class="lineNum">      43 </span>            : 
+<span class="lineNum">      44 </span>            :         virtual void BuildPose(Eigen::VectorXd&amp; out_pose) const;
+<span class="lineNum">      45 </span>            :         virtual void SetPose(const Eigen::VectorXd&amp; pose);
+<span class="lineNum">      46 </span>            :         virtual void BuildVel(Eigen::VectorXd&amp; out_vel) const;
+<span class="lineNum">      47 </span>            :         virtual void SetVel(const Eigen::VectorXd&amp; vel);
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span>            :         virtual tVector CalcJointPos(int joint_id) const;
+<span class="lineNum">      50 </span>            :         virtual tVector CalcJointVel(int joint_id) const;
+<span class="lineNum">      51 </span>            :         virtual void CalcJointWorldRotation(int joint_id, tVector&amp; out_axis, double&amp; out_theta) const;
+<span class="lineNum">      52 </span>            :         virtual void CalcJointRotation(int joint_id, tVector&amp; out_axis, double&amp; out_theta) const;
+<span class="lineNum">      53 </span>            :         virtual tMatrix BuildJointWorldTrans(int joint_id) const;
+<span class="lineNum">      54 </span>            : 
+<span class="lineNum">      55 </span>            :         virtual tVector CalcCOM() const;
+<span class="lineNum">      56 </span>            :         virtual tVector CalcCOMVel() const;
+<span class="lineNum">      57 </span>            :         virtual void CalcAABB(tVector&amp; out_min, tVector&amp; out_max) const;
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span>            :         virtual const cJoint&amp; GetJoint(int joint_id) const;
+<span class="lineNum">      60 </span>            :         virtual cJoint&amp; GetJoint(int joint_id);
+<span class="lineNum">      61 </span>            :         virtual const std::shared_ptr&lt;cSimObj&gt;&amp; GetBodyPart(int idx) const;
+<span class="lineNum">      62 </span>            :         virtual std::shared_ptr&lt;cSimObj&gt;&amp; GetBodyPart(int idx);
+<span class="lineNum">      63 </span>            :         virtual const std::shared_ptr&lt;cSimObj&gt;&amp; GetRootPart() const;
+<span class="lineNum">      64 </span>            :         virtual std::shared_ptr&lt;cSimObj&gt; GetRootPart();
+<span class="lineNum">      65 </span>            : 
+<span class="lineNum">      66 </span>            :         virtual void RegisterContacts(int contact_flag, int filter_flag);
+<span class="lineNum">      67 </span>            :         virtual bool HasFallen() const;
+<span class="lineNum">      68 </span>            :         virtual bool HasStumbled() const;
+<span class="lineNum">      69 </span>            :         virtual bool HasExploded() const;
+<span class="lineNum">      70 </span>            : 
+<span class="lineNum">      71 </span>            :         virtual bool IsEndEffector(int idx) const;
+<span class="lineNum">      72 </span>            :         virtual bool IsInContact() const;
+<span class="lineNum">      73 </span>            :         virtual bool IsInContact(int idx) const;
+<span class="lineNum">      74 </span>            :         virtual tVector GetContactPt(int idx) const;
+<span class="lineNum">      75 </span>            : 
+<span class="lineNum">      76 </span>            :         virtual int GetState() const;
+<span class="lineNum">      77 </span>            :         virtual double GetPhase() const;
+<span class="lineNum">      78 </span>            : 
+<span class="lineNum">      79 </span>            :         virtual bool IsValidBodyPart(int idx) const;
+<span class="lineNum">      80 </span>            : 
+<span class="lineNum">      81 </span>            :         virtual void SetController(std::shared_ptr&lt;cCharController&gt; ctrl);
+<span class="lineNum">      82 </span>            :         virtual void RemoveController();
+<span class="lineNum">      83 </span>            :         virtual bool HasController() const;
+<span class="lineNum">      84 </span>            :         virtual const std::shared_ptr&lt;cCharController&gt;&amp; GetController();
+<span class="lineNum">      85 </span>            :         virtual const std::shared_ptr&lt;cCharController&gt;&amp; GetController() const;
+<span class="lineNum">      86 </span>            :         virtual void EnableController(bool enable);
+<span class="lineNum">      87 </span>            : 
+<span class="lineNum">      88 </span>            :         virtual void ApplyControlForces(const Eigen::VectorXd&amp; tau);
+<span class="lineNum">      89 </span>            :         virtual void PlayPossum();
+<span class="lineNum">      90 </span>            : 
+<span class="lineNum">      91 </span>            : #if defined(ENABLE_TRAINING)
+<span class="lineNum">      92 </span>            :         virtual double CalcEffort() const;
+<span class="lineNum">      93 </span>            :         virtual void ClearEffortBuffer();
+<span class="lineNum">      94 </span>            : #endif
+<span class="lineNum">      95 </span>            : 
+<span class="lineNum">      96 </span>            :         virtual tVector GetPartColor(int part_id) const;
+<span class="lineNum">      97 </span>            :         virtual bool HasDrawShapes() const;
+<span class="lineNum">      98 </span>            : 
+<span class="lineNum">      99 </span>            :         // weights for each joint used to compute the pose error during training
+<span class="lineNum">     100 </span>            :         virtual double GetPoseJointWeight(int joint_id) const;
+<span class="lineNum">     101 </span>            :         virtual const std::shared_ptr&lt;cWorld&gt;&amp; GetWorld() const;
+<span class="lineNum">     102 </span>            : 
+<span class="lineNum">     103 </span>            : protected:
+<span class="lineNum">     104 </span>            :         std::shared_ptr&lt;cWorld&gt; mWorld;
+<span class="lineNum">     105 </span>            :         std::vector&lt;std::shared_ptr&lt;cSimObj&gt;&gt; mBodyParts;
+<span class="lineNum">     106 </span>            :         std::vector&lt;cJoint, Eigen::aligned_allocator&lt;cJoint&gt;&gt; mJoints;
+<span class="lineNum">     107 </span>            :         Eigen::MatrixXd mBodyDefs;
+<span class="lineNum">     108 </span>            :         Eigen::MatrixXd mDrawShapeDefs;
+<span class="lineNum">     109 </span>            :         double mFriction;
+<span class="lineNum">     110 </span>            : 
+<span class="lineNum">     111 </span>            :         std::shared_ptr&lt;cCharController&gt; mController;
+<span class="lineNum">     112 </span>            : 
+<span class="lineNum">     113 </span>            :         // used to calculate root orientation in the case that root body is attached at an angle
+<span class="lineNum">     114 </span>            :         tMatrix mRootBodyTrans;
+<span class="lineNum">     115 </span>            : 
+<span class="lineNum">     116 </span>            : #if defined(ENABLE_TRAINING)
+<span class="lineNum">     117 </span>            :         // effort is the sum of squared torques over time
+<span class="lineNum">     118 </span>            :         std::vector&lt;double&gt; mEffortBuffer;
+<span class="lineNum">     119 </span>            : #endif
+<span class="lineNum">     120 </span>            :         virtual bool BuildSimBody(const tParams&amp; params, const tVector&amp; root_pos);
+<span class="lineNum">     121 </span>            :         virtual bool LoadBodyDefs(const std::string&amp; char_file, Eigen::MatrixXd&amp; out_body_defs) const;
+<span class="lineNum">     122 </span>            :         virtual bool LoadDrawShapeDefs(const std::string&amp; char_file, Eigen::MatrixXd&amp; out_draw_defs) const;
+<span class="lineNum">     123 </span>            : 
+<span class="lineNum">     124 </span>            :         virtual void BuildBodyPart(int part_id, const tVector&amp; root_pos, double friction, std::shared_ptr&lt;cSimObj&gt;&amp; out_part);
+<span class="lineNum">     125 </span>            :         virtual void BuildBoxPart(int part_id, const tVector&amp; root_pos, double friction, std::shared_ptr&lt;cSimObj&gt;&amp; out_part);
+<span class="lineNum">     126 </span>            :         virtual void BuildCapsulePart(int part_id, const tVector&amp; root_pos, double friction, std::shared_ptr&lt;cSimObj&gt;&amp; out_part);
+<span class="lineNum">     127 </span>            :         virtual void BuildConstraints(cWorld::ePlaneCons plane_cons);
+<span class="lineNum">     128 </span>            :         virtual void BuildConsFactor(cWorld::ePlaneCons plane_cons, int joint_id, tVector&amp; out_linear_factor, tVector&amp; out_angular_factor) const;
+<span class="lineNum">     129 </span>            :         virtual void BuildRootConsFactor(cKinTree::eJointType joint_type, tVector&amp; out_linear_factor, tVector&amp; out_angular_factor) const;
+<span class="lineNum">     130 </span>            : 
+<span class="lineNum">     131 </span>            :         virtual void ClearJointTorques();
+<span class="lineNum">     132 </span>            :         virtual void UpdateJoints();
+<span class="lineNum">     133 </span>            : 
+<span class="lineNum">     134 </span>            :         virtual short GetPartColGroup(int part_id) const;
+<span class="lineNum">     135 </span>            :         virtual short GetPartColMask(int part_id) const;
+<span class="lineNum">     136 </span>            : 
+<span class="lineNum">     137 </span>            :         
+<span class="lineNum">     138 </span>            : #if defined(ENABLE_TRAINING)
+<span class="lineNum">     139 </span>            :         virtual void UpdateEffortBuffer(double time_step);
+<span class="lineNum">     140 </span>            : #endif
+<span class="lineNum">     141 </span>            : };
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

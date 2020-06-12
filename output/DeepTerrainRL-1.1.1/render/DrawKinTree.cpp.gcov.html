@@ -1,0 +1,143 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/render/DrawKinTree.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/render</a> - DrawKinTree.cpp<span style="font-size: 80%;"> (source / <a href="DrawKinTree.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">35</td>
+            <td class="headerCovTableEntryLo">2.9 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntryLo">50.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;DrawKinTree.h&quot;</a>
+<span class="lineNum">       2 </span>            : 
+<a name="3"><span class="lineNum">       3 </span>            : #include &quot;render/DrawUtil.h&quot;</a>
+<span class="lineNum">       4 </span>            : 
+<span class="lineNum">       5 </span><span class="lineNoCov">          0 : void cDrawKinTree::Draw(const Eigen::MatrixXd&amp; joint_desc, const Eigen::VectorXd&amp; pose, double link_width, const tVector&amp; fill_col, const tVector&amp; line_col)</span>
+<span class="lineNum">       6 </span>            : {
+<span class="lineNum">       7 </span><span class="lineNoCov">          0 :         int root_id = cKinTree::GetRoot(joint_desc);</span>
+<span class="lineNum">       8 </span><span class="lineNoCov">          0 :         cDrawUtil::SetLineWidth(1);</span>
+<span class="lineNum">       9 </span><span class="lineNoCov">          0 :         DrawTree(joint_desc, pose, root_id, link_width, fill_col, line_col);</span>
+<a name="10"><span class="lineNum">      10 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span><span class="lineNoCov">          0 : void cDrawKinTree::DrawTree(const Eigen::MatrixXd&amp; joint_desc, const Eigen::VectorXd&amp; pose, int joint_id, double link_width,</span>
+<span class="lineNum">      13 </span>            :                                                 const tVector&amp; fill_col, const tVector&amp; line_col)
+<span class="lineNum">      14 </span>            : {
+<span class="lineNum">      15 </span><span class="lineNoCov">          0 :         const double node_radius = 0.02;</span>
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span><span class="lineNoCov">          0 :         if (joint_id != cKinTree::gInvalidJointID)</span>
+<span class="lineNum">      18 </span>            :         {
+<span class="lineNum">      19 </span><span class="lineNoCov">          0 :                 bool has_parent = cKinTree::HasParent(joint_desc, joint_id);</span>
+<span class="lineNum">      20 </span><span class="lineNoCov">          0 :                 if (has_parent)</span>
+<span class="lineNum">      21 </span>            :                 {
+<span class="lineNum">      22 </span><span class="lineNoCov">          0 :                         tVector attach_pt = cKinTree::GetScaledAttachPt(joint_desc, joint_id);</span>
+<span class="lineNum">      23 </span><span class="lineNoCov">          0 :                         attach_pt[2] = 0; // hack ignore z</span>
+<span class="lineNum">      24 </span><span class="lineNoCov">          0 :                         double len = attach_pt.norm();</span>
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span><span class="lineNoCov">          0 :                         glPushMatrix();</span>
+<span class="lineNum">      27 </span><span class="lineNoCov">          0 :                         tVector pos = tVector(len / 2, 0, 0, 0);</span>
+<span class="lineNum">      28 </span><span class="lineNoCov">          0 :                         tVector size = tVector(len, link_width, 0, 0);</span>
+<span class="lineNum">      29 </span>            : 
+<span class="lineNum">      30 </span><span class="lineNoCov">          0 :                         double theta = std::atan2(attach_pt[1], attach_pt[0]);</span>
+<span class="lineNum">      31 </span><span class="lineNoCov">          0 :                         cDrawUtil::Rotate(theta, tVector(0, 0, 1, 0));</span>
+<span class="lineNum">      32 </span>            : 
+<span class="lineNum">      33 </span><span class="lineNoCov">          0 :                         cDrawUtil::SetColor(tVector(fill_col[0], fill_col[1], fill_col[2], fill_col[3]));</span>
+<span class="lineNum">      34 </span><span class="lineNoCov">          0 :                         cDrawUtil::DrawRect(pos, size, cDrawUtil::eDrawSolid);</span>
+<span class="lineNum">      35 </span><span class="lineNoCov">          0 :                         cDrawUtil::SetColor(tVector(line_col[0], line_col[1], line_col[2], line_col[3]));</span>
+<span class="lineNum">      36 </span><span class="lineNoCov">          0 :                         cDrawUtil::DrawRect(pos, size, cDrawUtil::eDrawWire);</span>
+<span class="lineNum">      37 </span>            :                         
+<span class="lineNum">      38 </span>            :                         // draw node
+<span class="lineNum">      39 </span><span class="lineNoCov">          0 :                         cDrawUtil::SetColor(tVector(fill_col[0] * 0.25, fill_col[1] * 0.25, fill_col[2] * 0.25, fill_col[3]));</span>
+<span class="lineNum">      40 </span><span class="lineNoCov">          0 :                         cDrawUtil::DrawDisk(node_radius, 16);</span>
+<span class="lineNum">      41 </span>            :                         
+<span class="lineNum">      42 </span><span class="lineNoCov">          0 :                         glPopMatrix();</span>
+<span class="lineNum">      43 </span>            :                 }
+<span class="lineNum">      44 </span>            : 
+<span class="lineNum">      45 </span><span class="lineNoCov">          0 :                 glPushMatrix();</span>
+<span class="lineNum">      46 </span><span class="lineNoCov">          0 :                 tMatrix m = cKinTree::ChildParentTrans(joint_desc, pose, joint_id);</span>
+<span class="lineNum">      47 </span><span class="lineNoCov">          0 :                 cDrawUtil::GLMultMatrix(m);</span>
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span><span class="lineNoCov">          0 :                 Eigen::VectorXi children;</span>
+<span class="lineNum">      50 </span><span class="lineNoCov">          0 :                 cKinTree::FindChildren(joint_desc, joint_id, children);</span>
+<span class="lineNum">      51 </span><span class="lineNoCov">          0 :                 for (int i = 0; i &lt; children.size(); ++i)</span>
+<span class="lineNum">      52 </span>            :                 {
+<span class="lineNum">      53 </span><span class="lineNoCov">          0 :                         int child_id = children[i];</span>
+<span class="lineNum">      54 </span><span class="lineNoCov">          0 :                         DrawTree(joint_desc, pose, child_id, link_width, fill_col, line_col);</span>
+<span class="lineNum">      55 </span>            :                 }
+<span class="lineNum">      56 </span>            : 
+<a name="57"><span class="lineNum">      57 </span><span class="lineNoCov">          0 :                 glPopMatrix();</span></a>
+<span class="lineNum">      58 </span>            :         }
+<span class="lineNum">      59 </span><span class="lineCov">          3 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

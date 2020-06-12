@@ -1,0 +1,328 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/external/Bullet/src/LinearMath/btQuadWord.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/external/Bullet/src/LinearMath</a> - btQuadWord.h<span style="font-size: 80%;"> (source / <a href="btQuadWord.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">12</td>
+            <td class="headerCovTableEntry">12</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            : Copyright (c) 2003-2006 Gino van den Bergen / Erwin Coumans  http://continuousphysics.com/Bullet/
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : This software is provided 'as-is', without any express or implied warranty.
+<span class="lineNum">       5 </span>            : In no event will the authors be held liable for any damages arising from the use of this software.
+<span class="lineNum">       6 </span>            : Permission is granted to anyone to use this software for any purpose, 
+<span class="lineNum">       7 </span>            : including commercial applications, and to alter it and redistribute it freely, 
+<span class="lineNum">       8 </span>            : subject to the following restrictions:
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            : 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
+<span class="lineNum">      11 </span>            : 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
+<span class="lineNum">      12 </span>            : 3. This notice may not be removed or altered from any source distribution.
+<span class="lineNum">      13 </span>            : */
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : #ifndef BT_SIMD_QUADWORD_H
+<span class="lineNum">      17 </span>            : #define BT_SIMD_QUADWORD_H
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            : #include &quot;btScalar.h&quot;
+<span class="lineNum">      20 </span>            : #include &quot;btMinMax.h&quot;
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span>            : #if defined (__CELLOS_LV2) &amp;&amp; defined (__SPU__)
+<span class="lineNum">      27 </span>            : #include &lt;altivec.h&gt;
+<span class="lineNum">      28 </span>            : #endif
+<span class="lineNum">      29 </span>            : 
+<span class="lineNum">      30 </span>            : /**@brief The btQuadWord class is base class for btVector3 and btQuaternion. 
+<span class="lineNum">      31 </span>            :  * Some issues under PS3 Linux with IBM 2.1 SDK, gcc compiler prevent from using aligned quadword.
+<span class="lineNum">      32 </span>            :  */
+<span class="lineNum">      33 </span>            : #ifndef USE_LIBSPE2
+<span class="lineNum">      34 </span>            : ATTRIBUTE_ALIGNED16(class) btQuadWord
+<span class="lineNum">      35 </span>            : #else
+<span class="lineNum">      36 </span>            : class btQuadWord
+<span class="lineNum">      37 </span>            : #endif
+<span class="lineNum">      38 </span>            : {
+<span class="lineNum">      39 </span>            : protected:
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span>            : #if defined (__SPU__) &amp;&amp; defined (__CELLOS_LV2__)
+<span class="lineNum">      42 </span>            :         union {
+<span class="lineNum">      43 </span>            :                 vec_float4 mVec128;
+<span class="lineNum">      44 </span>            :                 btScalar        m_floats[4];
+<span class="lineNum">      45 </span>            :         };
+<span class="lineNum">      46 </span>            : public:
+<span class="lineNum">      47 </span>            :         vec_float4      get128() const
+<span class="lineNum">      48 </span>            :         {
+<span class="lineNum">      49 </span>            :                 return mVec128;
+<span class="lineNum">      50 </span>            :         }
+<span class="lineNum">      51 </span>            : protected:
+<span class="lineNum">      52 </span>            : #else //__CELLOS_LV2__ __SPU__
+<span class="lineNum">      53 </span>            : 
+<span class="lineNum">      54 </span>            : #if defined(BT_USE_SSE) || defined(BT_USE_NEON) 
+<span class="lineNum">      55 </span>            :         union {
+<span class="lineNum">      56 </span>            :                 btSimdFloat4 mVec128;
+<span class="lineNum">      57 </span>            :                 btScalar        m_floats[4];
+<span class="lineNum">      58 </span>            :         };
+<span class="lineNum">      59 </span>            : public:
+<span class="lineNum">      60 </span>            :         SIMD_FORCE_INLINE       btSimdFloat4    get128() const
+<span class="lineNum">      61 </span>            :         {
+<span class="lineNum">      62 </span>            :                 return mVec128;
+<span class="lineNum">      63 </span>            :         }
+<span class="lineNum">      64 </span>            :         SIMD_FORCE_INLINE       void    set128(btSimdFloat4 v128)
+<span class="lineNum">      65 </span>            :         {
+<span class="lineNum">      66 </span>            :                 mVec128 = v128;
+<span class="lineNum">      67 </span>            :         }
+<span class="lineNum">      68 </span>            : #else
+<span class="lineNum">      69 </span>            :         btScalar        m_floats[4];
+<span class="lineNum">      70 </span>            : #endif // BT_USE_SSE
+<span class="lineNum">      71 </span>            : 
+<span class="lineNum">      72 </span>            : #endif //__CELLOS_LV2__ __SPU__
+<span class="lineNum">      73 </span>            : 
+<span class="lineNum">      74 </span>            :         public:
+<span class="lineNum">      75 </span>            :   
+<span class="lineNum">      76 </span>            : #if (defined(BT_USE_SSE_IN_API) &amp;&amp; defined(BT_USE_SSE)) || defined(BT_USE_NEON)
+<span class="lineNum">      77 </span>            : 
+<span class="lineNum">      78 </span>            :         // Set Vector 
+<span class="lineNum">      79 </span>            :         SIMD_FORCE_INLINE btQuadWord(const btSimdFloat4 vec)
+<span class="lineNum">      80 </span>            :         {
+<span class="lineNum">      81 </span>            :                 mVec128 = vec;
+<span class="lineNum">      82 </span>            :         }
+<span class="lineNum">      83 </span>            : 
+<span class="lineNum">      84 </span>            :         // Copy constructor
+<span class="lineNum">      85 </span>            :         SIMD_FORCE_INLINE btQuadWord(const btQuadWord&amp; rhs)
+<span class="lineNum">      86 </span>            :         {
+<span class="lineNum">      87 </span>            :                 mVec128 = rhs.mVec128;
+<span class="lineNum">      88 </span>            :         }
+<span class="lineNum">      89 </span>            : 
+<span class="lineNum">      90 </span>            :         // Assignment Operator
+<span class="lineNum">      91 </span>            :         SIMD_FORCE_INLINE btQuadWord&amp; 
+<span class="lineNum">      92 </span>            :         operator=(const btQuadWord&amp; v) 
+<span class="lineNum">      93 </span>            :         {
+<span class="lineNum">      94 </span>            :                 mVec128 = v.mVec128;
+<span class="lineNum">      95 </span>            :                 
+<span class="lineNum">      96 </span>            :                 return *this;
+<span class="lineNum">      97 </span>            :         }
+<span class="lineNum">      98 </span>            :         
+<span class="lineNum">      99 </span>            : #endif
+<span class="lineNum">     100 </span>            : 
+<span class="lineNum">     101 </span>            :   /**@brief Return the x value */
+<span class="lineNum">     102 </span>            :                 SIMD_FORCE_INLINE const btScalar&amp; getX() const { return m_floats[0]; }
+<span class="lineNum">     103 </span>            :   /**@brief Return the y value */
+<span class="lineNum">     104 </span>            :                 SIMD_FORCE_INLINE const btScalar&amp; getY() const { return m_floats[1]; }
+<span class="lineNum">     105 </span>            :   /**@brief Return the z value */
+<span class="lineNum">     106 </span>            :                 SIMD_FORCE_INLINE const btScalar&amp; getZ() const { return m_floats[2]; }
+<span class="lineNum">     107 </span>            :   /**@brief Set the x value */
+<span class="lineNum">     108 </span>            :                 SIMD_FORCE_INLINE void  setX(btScalar _x) { m_floats[0] = _x;};
+<span class="lineNum">     109 </span>            :   /**@brief Set the y value */
+<span class="lineNum">     110 </span>            :                 SIMD_FORCE_INLINE void  setY(btScalar _y) { m_floats[1] = _y;};
+<span class="lineNum">     111 </span>            :   /**@brief Set the z value */
+<span class="lineNum">     112 </span>            :                 SIMD_FORCE_INLINE void  setZ(btScalar _z) { m_floats[2] = _z;};
+<span class="lineNum">     113 </span>            :   /**@brief Set the w value */
+<a name="114"><span class="lineNum">     114 </span>            :                 SIMD_FORCE_INLINE void  setW(btScalar _w) { m_floats[3] = _w;};</a>
+<span class="lineNum">     115 </span>            :   /**@brief Return the x value */
+<a name="116"><span class="lineNum">     116 </span><span class="lineCov">   16024120 :                 SIMD_FORCE_INLINE const btScalar&amp; x() const { return m_floats[0]; }</span></a>
+<span class="lineNum">     117 </span>            :   /**@brief Return the y value */
+<a name="118"><span class="lineNum">     118 </span><span class="lineCov">   15108352 :                 SIMD_FORCE_INLINE const btScalar&amp; y() const { return m_floats[1]; }</span></a>
+<span class="lineNum">     119 </span>            :   /**@brief Return the z value */
+<a name="120"><span class="lineNum">     120 </span><span class="lineCov">   14192584 :                 SIMD_FORCE_INLINE const btScalar&amp; z() const { return m_floats[2]; }</span></a>
+<span class="lineNum">     121 </span>            :   /**@brief Return the w value */
+<span class="lineNum">     122 </span><span class="lineCov">   11445624 :                 SIMD_FORCE_INLINE const btScalar&amp; w() const { return m_floats[3]; }</span>
+<span class="lineNum">     123 </span>            : 
+<span class="lineNum">     124 </span>            :         //SIMD_FORCE_INLINE btScalar&amp;       operator[](int i)       { return (&amp;m_floats[0])[i]; }      
+<span class="lineNum">     125 </span>            :         //SIMD_FORCE_INLINE const btScalar&amp; operator[](int i) const { return (&amp;m_floats[0])[i]; }
+<span class="lineNum">     126 </span>            :         ///operator btScalar*() replaces operator[], using implicit conversion. We added operator != and operator == to avoid pointer comparisons.
+<span class="lineNum">     127 </span>            :         SIMD_FORCE_INLINE       operator       btScalar *()       { return &amp;m_floats[0]; }
+<span class="lineNum">     128 </span>            :         SIMD_FORCE_INLINE       operator const btScalar *() const { return &amp;m_floats[0]; }
+<span class="lineNum">     129 </span>            : 
+<span class="lineNum">     130 </span>            :         SIMD_FORCE_INLINE       bool    operator==(const btQuadWord&amp; other) const
+<span class="lineNum">     131 </span>            :         {
+<span class="lineNum">     132 </span>            : #ifdef BT_USE_SSE
+<span class="lineNum">     133 </span>            :         return (0xf == _mm_movemask_ps((__m128)_mm_cmpeq_ps(mVec128, other.mVec128)));
+<span class="lineNum">     134 </span>            : #else 
+<span class="lineNum">     135 </span>            :                 return ((m_floats[3]==other.m_floats[3]) &amp;&amp; 
+<span class="lineNum">     136 </span>            :                 (m_floats[2]==other.m_floats[2]) &amp;&amp; 
+<span class="lineNum">     137 </span>            :                 (m_floats[1]==other.m_floats[1]) &amp;&amp; 
+<span class="lineNum">     138 </span>            :                 (m_floats[0]==other.m_floats[0]));
+<span class="lineNum">     139 </span>            : #endif
+<span class="lineNum">     140 </span>            :         }
+<span class="lineNum">     141 </span>            : 
+<span class="lineNum">     142 </span>            :         SIMD_FORCE_INLINE       bool    operator!=(const btQuadWord&amp; other) const
+<span class="lineNum">     143 </span>            :         {
+<span class="lineNum">     144 </span>            :                 return !(*this == other);
+<span class="lineNum">     145 </span>            :         }
+<span class="lineNum">     146 </span>            : 
+<span class="lineNum">     147 </span>            :   /**@brief Set x,y,z and zero w 
+<span class="lineNum">     148 </span>            :    * @param x Value of x
+<span class="lineNum">     149 </span>            :    * @param y Value of y
+<span class="lineNum">     150 </span>            :    * @param z Value of z
+<span class="lineNum">     151 </span>            :    */
+<span class="lineNum">     152 </span>            :                 SIMD_FORCE_INLINE void  setValue(const btScalar&amp; _x, const btScalar&amp; _y, const btScalar&amp; _z)
+<span class="lineNum">     153 </span>            :                 {
+<span class="lineNum">     154 </span>            :                         m_floats[0]=_x;
+<span class="lineNum">     155 </span>            :                         m_floats[1]=_y;
+<span class="lineNum">     156 </span>            :                         m_floats[2]=_z;
+<span class="lineNum">     157 </span>            :                         m_floats[3] = 0.f;
+<span class="lineNum">     158 </span>            :                 }
+<span class="lineNum">     159 </span>            : 
+<span class="lineNum">     160 </span>            : /*              void getValue(btScalar *m) const 
+<span class="lineNum">     161 </span>            :                 {
+<span class="lineNum">     162 </span>            :                         m[0] = m_floats[0];
+<span class="lineNum">     163 </span>            :                         m[1] = m_floats[1];
+<span class="lineNum">     164 </span>            :                         m[2] = m_floats[2];
+<span class="lineNum">     165 </span>            :                 }
+<span class="lineNum">     166 </span>            : */
+<span class="lineNum">     167 </span>            : /**@brief Set the values 
+<span class="lineNum">     168 </span>            :    * @param x Value of x
+<span class="lineNum">     169 </span>            :    * @param y Value of y
+<span class="lineNum">     170 </span>            :    * @param z Value of z
+<a name="171"><span class="lineNum">     171 </span>            :    * @param w Value of w</a>
+<span class="lineNum">     172 </span>            :    */
+<span class="lineNum">     173 </span><span class="lineCov">    1606908 :                 SIMD_FORCE_INLINE void  setValue(const btScalar&amp; _x, const btScalar&amp; _y, const btScalar&amp; _z,const btScalar&amp; _w)</span>
+<span class="lineNum">     174 </span>            :                 {
+<span class="lineNum">     175 </span><span class="lineCov">    1606908 :                         m_floats[0]=_x;</span>
+<span class="lineNum">     176 </span><span class="lineCov">    1606908 :                         m_floats[1]=_y;</span>
+<span class="lineNum">     177 </span><span class="lineCov">    1606908 :                         m_floats[2]=_z;</span>
+<span class="lineNum">     178 </span><span class="lineCov">    1606908 :                         m_floats[3]=_w;</span>
+<a name="179"><span class="lineNum">     179 </span><span class="lineCov">    1606908 :                 }</span></a>
+<span class="lineNum">     180 </span>            :   /**@brief No initialization constructor */
+<span class="lineNum">     181 </span><span class="lineCov">    1149068 :                 SIMD_FORCE_INLINE btQuadWord()</span>
+<span class="lineNum">     182 </span>            :                 //      :m_floats[0](btScalar(0.)),m_floats[1](btScalar(0.)),m_floats[2](btScalar(0.)),m_floats[3](btScalar(0.))
+<span class="lineNum">     183 </span>            :                 {
+<span class="lineNum">     184 </span><span class="lineCov">    1149068 :                 }</span>
+<span class="lineNum">     185 </span>            :  
+<span class="lineNum">     186 </span>            :   /**@brief Three argument constructor (zeros w)
+<span class="lineNum">     187 </span>            :    * @param x Value of x
+<span class="lineNum">     188 </span>            :    * @param y Value of y
+<span class="lineNum">     189 </span>            :    * @param z Value of z
+<span class="lineNum">     190 </span>            :    */
+<span class="lineNum">     191 </span>            :                 SIMD_FORCE_INLINE btQuadWord(const btScalar&amp; _x, const btScalar&amp; _y, const btScalar&amp; _z)            
+<span class="lineNum">     192 </span>            :                 {
+<span class="lineNum">     193 </span>            :                         m_floats[0] = _x, m_floats[1] = _y, m_floats[2] = _z, m_floats[3] = 0.0f;
+<span class="lineNum">     194 </span>            :                 }
+<span class="lineNum">     195 </span>            : 
+<span class="lineNum">     196 </span>            : /**@brief Initializing constructor
+<span class="lineNum">     197 </span>            :    * @param x Value of x
+<span class="lineNum">     198 </span>            :    * @param y Value of y
+<span class="lineNum">     199 </span>            :    * @param z Value of z
+<span class="lineNum">     200 </span>            :    * @param w Value of w
+<span class="lineNum">     201 </span>            :    */
+<span class="lineNum">     202 </span>            :                 SIMD_FORCE_INLINE btQuadWord(const btScalar&amp; _x, const btScalar&amp; _y, const btScalar&amp; _z,const btScalar&amp; _w) 
+<span class="lineNum">     203 </span>            :                 {
+<span class="lineNum">     204 </span>            :                         m_floats[0] = _x, m_floats[1] = _y, m_floats[2] = _z, m_floats[3] = _w;
+<span class="lineNum">     205 </span>            :                 }
+<span class="lineNum">     206 </span>            : 
+<span class="lineNum">     207 </span>            :   /**@brief Set each element to the max of the current values and the values of another btQuadWord
+<span class="lineNum">     208 </span>            :    * @param other The other btQuadWord to compare with 
+<span class="lineNum">     209 </span>            :    */
+<span class="lineNum">     210 </span>            :                 SIMD_FORCE_INLINE void  setMax(const btQuadWord&amp; other)
+<span class="lineNum">     211 </span>            :                 {
+<span class="lineNum">     212 </span>            :         #ifdef BT_USE_SSE
+<span class="lineNum">     213 </span>            :             mVec128 = _mm_max_ps(mVec128, other.mVec128);
+<span class="lineNum">     214 </span>            :         #elif defined(BT_USE_NEON)
+<span class="lineNum">     215 </span>            :             mVec128 = vmaxq_f32(mVec128, other.mVec128);
+<span class="lineNum">     216 </span>            :         #else
+<span class="lineNum">     217 </span>            :                 btSetMax(m_floats[0], other.m_floats[0]);
+<span class="lineNum">     218 </span>            :                         btSetMax(m_floats[1], other.m_floats[1]);
+<span class="lineNum">     219 </span>            :                         btSetMax(m_floats[2], other.m_floats[2]);
+<span class="lineNum">     220 </span>            :                         btSetMax(m_floats[3], other.m_floats[3]);
+<span class="lineNum">     221 </span>            :                 #endif
+<span class="lineNum">     222 </span>            :         }
+<span class="lineNum">     223 </span>            :   /**@brief Set each element to the min of the current values and the values of another btQuadWord
+<span class="lineNum">     224 </span>            :    * @param other The other btQuadWord to compare with 
+<span class="lineNum">     225 </span>            :    */
+<span class="lineNum">     226 </span>            :                 SIMD_FORCE_INLINE void  setMin(const btQuadWord&amp; other)
+<span class="lineNum">     227 </span>            :                 {
+<span class="lineNum">     228 </span>            :         #ifdef BT_USE_SSE
+<span class="lineNum">     229 </span>            :             mVec128 = _mm_min_ps(mVec128, other.mVec128);
+<span class="lineNum">     230 </span>            :         #elif defined(BT_USE_NEON)
+<span class="lineNum">     231 </span>            :             mVec128 = vminq_f32(mVec128, other.mVec128);
+<span class="lineNum">     232 </span>            :         #else
+<span class="lineNum">     233 </span>            :                 btSetMin(m_floats[0], other.m_floats[0]);
+<span class="lineNum">     234 </span>            :                         btSetMin(m_floats[1], other.m_floats[1]);
+<span class="lineNum">     235 </span>            :                         btSetMin(m_floats[2], other.m_floats[2]);
+<span class="lineNum">     236 </span>            :                         btSetMin(m_floats[3], other.m_floats[3]);
+<span class="lineNum">     237 </span>            :                 #endif
+<span class="lineNum">     238 </span>            :         }
+<span class="lineNum">     239 </span>            : 
+<span class="lineNum">     240 </span>            : 
+<span class="lineNum">     241 </span>            : 
+<span class="lineNum">     242 </span>            : };
+<span class="lineNum">     243 </span>            : 
+<span class="lineNum">     244 </span>            : #endif //BT_SIMD_QUADWORD_H
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

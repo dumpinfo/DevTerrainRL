@@ -1,0 +1,156 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/render/GraphUtil.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/render</a> - GraphUtil.cpp<span style="font-size: 80%;"> (source / <a href="GraphUtil.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">49</td>
+            <td class="headerCovTableEntry">49</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;GraphUtil.h&quot;</a>
+<span class="lineNum">       2 </span>            : 
+<span class="lineNum">       3 </span><span class="lineCov">        108 : cGraphUtil::tBarPlot::tBarPlot()</span>
+<span class="lineNum">       4 </span>            : {
+<span class="lineNum">       5 </span><span class="lineCov">        108 :         mMinVal = 0;</span>
+<span class="lineNum">       6 </span><span class="lineCov">        108 :         mMaxVal = 1;</span>
+<span class="lineNum">       7 </span><span class="lineCov">        108 :         mBaseVal = 0;</span>
+<span class="lineNum">       8 </span><span class="lineCov">        108 :         mVals.resize(0);</span>
+<span class="lineNum">       9 </span><span class="lineCov">        108 :         mColors.clear();</span>
+<a name="10"><span class="lineNum">      10 </span><span class="lineCov">        108 : }</span></a>
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span><span class="lineCov">        108 : void cGraphUtil::DrawBarPlot(const tBarPlot&amp; bar_plot, const tVector&amp; pos, const tVector&amp; size)</span>
+<span class="lineNum">      13 </span>            : {
+<span class="lineNum">      14 </span><span class="lineCov">        108 :         cDrawUtil::SetLineWidth(1);</span>
+<span class="lineNum">      15 </span><span class="lineCov">        108 :         cDrawUtil::SetColor(tVector(1, 1, 1, 0.5));</span>
+<span class="lineNum">      16 </span><span class="lineCov">        108 :         cDrawUtil::DrawRect(pos, size);</span>
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span><span class="lineCov">        108 :         const Eigen::VectorXd&amp; vals = bar_plot.mVals;</span>
+<span class="lineNum">      19 </span><span class="lineCov">        108 :         double min_val = bar_plot.mMinVal;</span>
+<span class="lineNum">      20 </span><span class="lineCov">        108 :         double max_val = bar_plot.mMaxVal; </span>
+<span class="lineNum">      21 </span><span class="lineCov">        108 :         double base_val = bar_plot.mBaseVal;</span>
+<span class="lineNum">      22 </span><span class="lineCov">        108 :         const tVectorArr&amp; cols = bar_plot.mColors;</span>
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span><span class="lineCov">        108 :         int num_vals = static_cast&lt;int&gt;(vals.size());</span>
+<span class="lineNum">      25 </span><span class="lineCov">        108 :         int num_cols = static_cast&lt;int&gt;(cols.size());</span>
+<span class="lineNum">      26 </span>            : 
+<span class="lineNum">      27 </span><span class="lineCov">        108 :         double norm_base_val = (base_val - min_val) / (max_val - min_val);</span>
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span><span class="lineCov">      10584 :         for (int i = 0; i &lt; num_vals; ++i)</span>
+<span class="lineNum">      30 </span>            :         {
+<span class="lineNum">      31 </span><span class="lineCov">      10476 :                 double curr_val = vals[i];</span>
+<span class="lineNum">      32 </span><span class="lineCov">      10476 :                 double norm_curr_val = (curr_val - min_val) / (max_val - min_val);</span>
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span><span class="lineCov">      10476 :                 tVector bar_min = tVector::Zero();</span>
+<span class="lineNum">      35 </span><span class="lineCov">      10476 :                 tVector bar_max = tVector::Zero();</span>
+<span class="lineNum">      36 </span>            :                 
+<span class="lineNum">      37 </span><span class="lineCov">      10476 :                 bar_min[0] = static_cast&lt;double&gt;(i) / num_vals;</span>
+<span class="lineNum">      38 </span><span class="lineCov">      10476 :                 bar_max[0] = static_cast&lt;double&gt;(i + 1) / num_vals;</span>
+<span class="lineNum">      39 </span>            : 
+<span class="lineNum">      40 </span><span class="lineCov">      10476 :                 if (curr_val &lt; base_val)</span>
+<span class="lineNum">      41 </span>            :                 {
+<span class="lineNum">      42 </span><span class="lineCov">        921 :                         bar_min[1] = norm_curr_val;</span>
+<span class="lineNum">      43 </span><span class="lineCov">        921 :                         bar_max[1] = norm_base_val;</span>
+<span class="lineNum">      44 </span>            :                 }
+<span class="lineNum">      45 </span>            :                 else
+<span class="lineNum">      46 </span>            :                 {
+<span class="lineNum">      47 </span><span class="lineCov">       9555 :                         bar_min[1] = norm_base_val;</span>
+<span class="lineNum">      48 </span><span class="lineCov">       9555 :                         bar_max[1] = norm_curr_val;</span>
+<span class="lineNum">      49 </span>            :                 }
+<span class="lineNum">      50 </span>            : 
+<span class="lineNum">      51 </span><span class="lineCov">      10476 :                 bar_min[1] = cMathUtil::Clamp(bar_min[1], 0.0, 1.0);</span>
+<span class="lineNum">      52 </span><span class="lineCov">      10476 :                 bar_max[1] = cMathUtil::Clamp(bar_max[1], 0.0, 1.0);</span>
+<span class="lineNum">      53 </span><span class="lineCov">      10476 :                 bar_min = size.cwiseProduct(bar_min) + pos - 0.5 * size;</span>
+<span class="lineNum">      54 </span><span class="lineCov">      10476 :                 bar_max = size.cwiseProduct(bar_max) + pos - 0.5 * size;</span>
+<span class="lineNum">      55 </span>            : 
+<span class="lineNum">      56 </span><span class="lineCov">      10476 :                 const tVector&amp; col = cols[i % num_cols];</span>
+<span class="lineNum">      57 </span><span class="lineCov">      10476 :                 cDrawUtil::SetColor(col);</span>
+<span class="lineNum">      58 </span><span class="lineCov">      10476 :                 cDrawUtil::DrawRect(0.5 * (bar_max + bar_min), bar_max - bar_min);</span>
+<span class="lineNum">      59 </span>            :         }
+<span class="lineNum">      60 </span>            : 
+<span class="lineNum">      61 </span><span class="lineCov">        108 :         double base_y = size[1] * norm_base_val + pos[1] - 0.5 * size[1];</span>
+<span class="lineNum">      62 </span><span class="lineCov">        108 :         tVector base0 = pos;</span>
+<span class="lineNum">      63 </span><span class="lineCov">        108 :         tVector base1 = pos;</span>
+<span class="lineNum">      64 </span><span class="lineCov">        108 :         base0[0] += -0.5 * size[0];</span>
+<span class="lineNum">      65 </span><span class="lineCov">        108 :         base1[0] += 0.5 * size[0];</span>
+<span class="lineNum">      66 </span><span class="lineCov">        108 :         base0[1] = base_y;</span>
+<span class="lineNum">      67 </span><span class="lineCov">        108 :         base1[1] = base_y;</span>
+<span class="lineNum">      68 </span>            : 
+<span class="lineNum">      69 </span><span class="lineCov">        108 :         cDrawUtil::SetColor(tVector(0, 0, 0, 1));</span>
+<a name="70"><span class="lineNum">      70 </span><span class="lineCov">        108 :         cDrawUtil::DrawLine(base0, base1);</span></a>
+<span class="lineNum">      71 </span><span class="lineCov">        108 :         cDrawUtil::DrawRect(pos, size, cDrawUtil::eDrawWire);</span>
+<span class="lineNum">      72 </span><span class="lineCov">        111 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,695 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/external/Eigen/src/Cholesky/LDLT.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/external/Eigen/src/Cholesky</a> - LDLT.h<span style="font-size: 80%;"> (source / <a href="LDLT.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">91</td>
+            <td class="headerCovTableEntry">99</td>
+            <td class="headerCovTableEntryHi">91.9 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">17</td>
+            <td class="headerCovTableEntry">20</td>
+            <td class="headerCovTableEntryMed">85.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : // This file is part of Eigen, a lightweight C++ template library</a>
+<span class="lineNum">       2 </span>            : // for linear algebra.
+<span class="lineNum">       3 </span>            : //
+<span class="lineNum">       4 </span>            : // Copyright (C) 2008-2011 Gael Guennebaud &lt;gael.guennebaud@inria.fr&gt;
+<span class="lineNum">       5 </span>            : // Copyright (C) 2009 Keir Mierle &lt;mierle@gmail.com&gt;
+<span class="lineNum">       6 </span>            : // Copyright (C) 2009 Benoit Jacob &lt;jacob.benoit.1@gmail.com&gt;
+<span class="lineNum">       7 </span>            : // Copyright (C) 2011 Timothy E. Holy &lt;tim.holy@gmail.com &gt;
+<span class="lineNum">       8 </span>            : //
+<span class="lineNum">       9 </span>            : // This Source Code Form is subject to the terms of the Mozilla
+<span class="lineNum">      10 </span>            : // Public License v. 2.0. If a copy of the MPL was not distributed
+<span class="lineNum">      11 </span>            : // with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span>            : #ifndef EIGEN_LDLT_H
+<span class="lineNum">      14 </span>            : #define EIGEN_LDLT_H
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : namespace Eigen { 
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span>            : namespace internal {
+<span class="lineNum">      19 </span>            :   template&lt;typename MatrixType, int UpLo&gt; struct LDLT_Traits;
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span>            :   // PositiveSemiDef means positive semi-definite and non-zero; same for NegativeSemiDef
+<span class="lineNum">      22 </span>            :   enum SignMatrix { PositiveSemiDef, NegativeSemiDef, ZeroSign, Indefinite };
+<span class="lineNum">      23 </span>            : }
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span>            : /** \ingroup Cholesky_Module
+<span class="lineNum">      26 </span>            :   *
+<span class="lineNum">      27 </span>            :   * \class LDLT
+<span class="lineNum">      28 </span>            :   *
+<span class="lineNum">      29 </span>            :   * \brief Robust Cholesky decomposition of a matrix with pivoting
+<span class="lineNum">      30 </span>            :   *
+<span class="lineNum">      31 </span>            :   * \param MatrixType the type of the matrix of which to compute the LDL^T Cholesky decomposition
+<span class="lineNum">      32 </span>            :   * \param UpLo the triangular part that will be used for the decompositon: Lower (default) or Upper.
+<span class="lineNum">      33 </span>            :   *             The other triangular part won't be read.
+<span class="lineNum">      34 </span>            :   *
+<span class="lineNum">      35 </span>            :   * Perform a robust Cholesky decomposition of a positive semidefinite or negative semidefinite
+<span class="lineNum">      36 </span>            :   * matrix \f$ A \f$ such that \f$ A =  P^TLDL^*P \f$, where P is a permutation matrix, L
+<span class="lineNum">      37 </span>            :   * is lower triangular with a unit diagonal and D is a diagonal matrix.
+<span class="lineNum">      38 </span>            :   *
+<span class="lineNum">      39 </span>            :   * The decomposition uses pivoting to ensure stability, so that L will have
+<span class="lineNum">      40 </span>            :   * zeros in the bottom right rank(A) - n submatrix. Avoiding the square root
+<span class="lineNum">      41 </span>            :   * on D also stabilizes the computation.
+<span class="lineNum">      42 </span>            :   *
+<span class="lineNum">      43 </span>            :   * Remember that Cholesky decompositions are not rank-revealing. Also, do not use a Cholesky
+<span class="lineNum">      44 </span>            :   * decomposition to determine whether a system of equations has a solution.
+<span class="lineNum">      45 </span>            :   *
+<a name="46"><span class="lineNum">      46 </span>            :   * \sa MatrixBase::ldlt(), class LLT</a>
+<span class="lineNum">      47 </span>            :   */
+<span class="lineNum">      48 </span><span class="lineCov">       2180 : template&lt;typename _MatrixType, int _UpLo&gt; class LDLT</span>
+<span class="lineNum">      49 </span>            : {
+<span class="lineNum">      50 </span>            :   public:
+<span class="lineNum">      51 </span>            :     typedef _MatrixType MatrixType;
+<span class="lineNum">      52 </span>            :     enum {
+<span class="lineNum">      53 </span>            :       RowsAtCompileTime = MatrixType::RowsAtCompileTime,
+<span class="lineNum">      54 </span>            :       ColsAtCompileTime = MatrixType::ColsAtCompileTime,
+<span class="lineNum">      55 </span>            :       Options = MatrixType::Options &amp; ~RowMajorBit, // these are the options for the TmpMatrixType, we need a ColMajor matrix here!
+<span class="lineNum">      56 </span>            :       MaxRowsAtCompileTime = MatrixType::MaxRowsAtCompileTime,
+<span class="lineNum">      57 </span>            :       MaxColsAtCompileTime = MatrixType::MaxColsAtCompileTime,
+<span class="lineNum">      58 </span>            :       UpLo = _UpLo
+<span class="lineNum">      59 </span>            :     };
+<span class="lineNum">      60 </span>            :     typedef typename MatrixType::Scalar Scalar;
+<span class="lineNum">      61 </span>            :     typedef typename NumTraits&lt;typename MatrixType::Scalar&gt;::Real RealScalar;
+<span class="lineNum">      62 </span>            :     typedef typename MatrixType::Index Index;
+<span class="lineNum">      63 </span>            :     typedef Matrix&lt;Scalar, RowsAtCompileTime, 1, Options, MaxRowsAtCompileTime, 1&gt; TmpMatrixType;
+<span class="lineNum">      64 </span>            : 
+<span class="lineNum">      65 </span>            :     typedef Transpositions&lt;RowsAtCompileTime, MaxRowsAtCompileTime&gt; TranspositionType;
+<span class="lineNum">      66 </span>            :     typedef PermutationMatrix&lt;RowsAtCompileTime, MaxRowsAtCompileTime&gt; PermutationType;
+<span class="lineNum">      67 </span>            : 
+<span class="lineNum">      68 </span>            :     typedef internal::LDLT_Traits&lt;MatrixType,UpLo&gt; Traits;
+<span class="lineNum">      69 </span>            : 
+<span class="lineNum">      70 </span>            :     /** \brief Default Constructor.
+<span class="lineNum">      71 </span>            :       *
+<span class="lineNum">      72 </span>            :       * The default constructor is useful in cases in which the user intends to
+<span class="lineNum">      73 </span>            :       * perform decompositions via LDLT::compute(const MatrixType&amp;).
+<span class="lineNum">      74 </span>            :       */
+<span class="lineNum">      75 </span>            :     LDLT() 
+<span class="lineNum">      76 </span>            :       : m_matrix(), 
+<span class="lineNum">      77 </span>            :         m_transpositions(), 
+<span class="lineNum">      78 </span>            :         m_sign(internal::ZeroSign),
+<span class="lineNum">      79 </span>            :         m_isInitialized(false) 
+<span class="lineNum">      80 </span>            :     {}
+<span class="lineNum">      81 </span>            : 
+<span class="lineNum">      82 </span>            :     /** \brief Default Constructor with memory preallocation
+<span class="lineNum">      83 </span>            :       *
+<span class="lineNum">      84 </span>            :       * Like the default constructor but with preallocation of the internal data
+<span class="lineNum">      85 </span>            :       * according to the specified problem \a size.
+<span class="lineNum">      86 </span>            :       * \sa LDLT()
+<span class="lineNum">      87 </span>            :       */
+<span class="lineNum">      88 </span>            :     LDLT(Index size)
+<span class="lineNum">      89 </span>            :       : m_matrix(size, size),
+<span class="lineNum">      90 </span>            :         m_transpositions(size),
+<span class="lineNum">      91 </span>            :         m_temporary(size),
+<span class="lineNum">      92 </span>            :         m_sign(internal::ZeroSign),
+<span class="lineNum">      93 </span>            :         m_isInitialized(false)
+<span class="lineNum">      94 </span>            :     {}
+<span class="lineNum">      95 </span>            : 
+<span class="lineNum">      96 </span>            :     /** \brief Constructor with decomposition
+<span class="lineNum">      97 </span>            :       *
+<span class="lineNum">      98 </span>            :       * This calculates the decomposition for the input \a matrix.
+<a name="99"><span class="lineNum">      99 </span>            :       * \sa LDLT(Index size)</a>
+<span class="lineNum">     100 </span>            :       */
+<span class="lineNum">     101 </span><span class="lineCov">       2180 :     LDLT(const MatrixType&amp; matrix)</span>
+<span class="lineNum">     102 </span>            :       : m_matrix(matrix.rows(), matrix.cols()),
+<span class="lineNum">     103 </span>            :         m_transpositions(matrix.rows()),
+<span class="lineNum">     104 </span>            :         m_temporary(matrix.rows()),
+<span class="lineNum">     105 </span>            :         m_sign(internal::ZeroSign),
+<span class="lineNum">     106 </span><span class="lineCov">       2180 :         m_isInitialized(false)</span>
+<span class="lineNum">     107 </span>            :     {
+<span class="lineNum">     108 </span><span class="lineCov">       2180 :       compute(matrix);</span>
+<span class="lineNum">     109 </span><span class="lineCov">       2180 :     }</span>
+<span class="lineNum">     110 </span>            : 
+<span class="lineNum">     111 </span>            :     /** Clear any existing decomposition
+<span class="lineNum">     112 </span>            :      * \sa rankUpdate(w,sigma)
+<span class="lineNum">     113 </span>            :      */
+<span class="lineNum">     114 </span>            :     void setZero()
+<span class="lineNum">     115 </span>            :     {
+<span class="lineNum">     116 </span>            :       m_isInitialized = false;
+<span class="lineNum">     117 </span>            :     }
+<a name="118"><span class="lineNum">     118 </span>            : </a>
+<span class="lineNum">     119 </span>            :     /** \returns a view of the upper triangular matrix U */
+<span class="lineNum">     120 </span><span class="lineCov">       2180 :     inline typename Traits::MatrixU matrixU() const</span>
+<span class="lineNum">     121 </span>            :     {
+<span class="lineNum">     122 </span><span class="lineCov">       2180 :       eigen_assert(m_isInitialized &amp;&amp; &quot;LDLT is not initialized.&quot;);</span>
+<span class="lineNum">     123 </span><span class="lineCov">       2180 :       return Traits::getU(m_matrix);</span>
+<span class="lineNum">     124 </span>            :     }
+<a name="125"><span class="lineNum">     125 </span>            : </a>
+<span class="lineNum">     126 </span>            :     /** \returns a view of the lower triangular matrix L */
+<span class="lineNum">     127 </span><span class="lineCov">       2180 :     inline typename Traits::MatrixL matrixL() const</span>
+<span class="lineNum">     128 </span>            :     {
+<span class="lineNum">     129 </span><span class="lineCov">       2180 :       eigen_assert(m_isInitialized &amp;&amp; &quot;LDLT is not initialized.&quot;);</span>
+<span class="lineNum">     130 </span><span class="lineCov">       2180 :       return Traits::getL(m_matrix);</span>
+<span class="lineNum">     131 </span>            :     }
+<span class="lineNum">     132 </span>            : 
+<a name="133"><span class="lineNum">     133 </span>            :     /** \returns the permutation matrix P as a transposition sequence.</a>
+<span class="lineNum">     134 </span>            :       */
+<span class="lineNum">     135 </span><span class="lineCov">       4360 :     inline const TranspositionType&amp; transpositionsP() const</span>
+<span class="lineNum">     136 </span>            :     {
+<span class="lineNum">     137 </span><span class="lineCov">       4360 :       eigen_assert(m_isInitialized &amp;&amp; &quot;LDLT is not initialized.&quot;);</span>
+<span class="lineNum">     138 </span><span class="lineCov">       4360 :       return m_transpositions;</span>
+<span class="lineNum">     139 </span>            :     }
+<a name="140"><span class="lineNum">     140 </span>            : </a>
+<span class="lineNum">     141 </span>            :     /** \returns the coefficients of the diagonal matrix D */
+<span class="lineNum">     142 </span><span class="lineCov">       2180 :     inline Diagonal&lt;const MatrixType&gt; vectorD() const</span>
+<span class="lineNum">     143 </span>            :     {
+<span class="lineNum">     144 </span><span class="lineCov">       2180 :       eigen_assert(m_isInitialized &amp;&amp; &quot;LDLT is not initialized.&quot;);</span>
+<span class="lineNum">     145 </span><span class="lineCov">       2180 :       return m_matrix.diagonal();</span>
+<span class="lineNum">     146 </span>            :     }
+<span class="lineNum">     147 </span>            : 
+<span class="lineNum">     148 </span>            :     /** \returns true if the matrix is positive (semidefinite) */
+<span class="lineNum">     149 </span>            :     inline bool isPositive() const
+<span class="lineNum">     150 </span>            :     {
+<span class="lineNum">     151 </span>            :       eigen_assert(m_isInitialized &amp;&amp; &quot;LDLT is not initialized.&quot;);
+<span class="lineNum">     152 </span>            :       return m_sign == internal::PositiveSemiDef || m_sign == internal::ZeroSign;
+<span class="lineNum">     153 </span>            :     }
+<span class="lineNum">     154 </span>            :     
+<span class="lineNum">     155 </span>            :     #ifdef EIGEN2_SUPPORT
+<span class="lineNum">     156 </span>            :     inline bool isPositiveDefinite() const
+<span class="lineNum">     157 </span>            :     {
+<span class="lineNum">     158 </span>            :       return isPositive();
+<span class="lineNum">     159 </span>            :     }
+<span class="lineNum">     160 </span>            :     #endif
+<span class="lineNum">     161 </span>            : 
+<span class="lineNum">     162 </span>            :     /** \returns true if the matrix is negative (semidefinite) */
+<span class="lineNum">     163 </span>            :     inline bool isNegative(void) const
+<span class="lineNum">     164 </span>            :     {
+<span class="lineNum">     165 </span>            :       eigen_assert(m_isInitialized &amp;&amp; &quot;LDLT is not initialized.&quot;);
+<span class="lineNum">     166 </span>            :       return m_sign == internal::NegativeSemiDef || m_sign == internal::ZeroSign;
+<span class="lineNum">     167 </span>            :     }
+<span class="lineNum">     168 </span>            : 
+<span class="lineNum">     169 </span>            :     /** \returns a solution x of \f$ A x = b \f$ using the current decomposition of A.
+<span class="lineNum">     170 </span>            :       *
+<span class="lineNum">     171 </span>            :       * This function also supports in-place solves using the syntax &lt;tt&gt;x = decompositionObject.solve(x)&lt;/tt&gt; .
+<span class="lineNum">     172 </span>            :       *
+<span class="lineNum">     173 </span>            :       * \note_about_checking_solutions
+<span class="lineNum">     174 </span>            :       *
+<span class="lineNum">     175 </span>            :       * More precisely, this method solves \f$ A x = b \f$ using the decomposition \f$ A = P^T L D L^* P \f$
+<span class="lineNum">     176 </span>            :       * by solving the systems \f$ P^T y_1 = b \f$, \f$ L y_2 = y_1 \f$, \f$ D y_3 = y_2 \f$, 
+<span class="lineNum">     177 </span>            :       * \f$ L^* y_4 = y_3 \f$ and \f$ P x = y_4 \f$ in succession. If the matrix \f$ A \f$ is singular, then
+<span class="lineNum">     178 </span>            :       * \f$ D \f$ will also be singular (all the other matrices are invertible). In that case, the
+<span class="lineNum">     179 </span>            :       * least-square solution of \f$ D y_3 = y_2 \f$ is computed. This does not mean that this function
+<span class="lineNum">     180 </span>            :       * computes the least-square solution of \f$ A x = b \f$ is \f$ A \f$ is singular.
+<span class="lineNum">     181 </span>            :       *
+<span class="lineNum">     182 </span>            :       * \sa MatrixBase::ldlt()
+<span class="lineNum">     183 </span>            :       */
+<a name="184"><span class="lineNum">     184 </span>            :     template&lt;typename Rhs&gt;</a>
+<span class="lineNum">     185 </span>            :     inline const internal::solve_retval&lt;LDLT, Rhs&gt;
+<span class="lineNum">     186 </span><span class="lineCov">       2180 :     solve(const MatrixBase&lt;Rhs&gt;&amp; b) const</span>
+<span class="lineNum">     187 </span>            :     {
+<span class="lineNum">     188 </span><span class="lineCov">       2180 :       eigen_assert(m_isInitialized &amp;&amp; &quot;LDLT is not initialized.&quot;);</span>
+<span class="lineNum">     189 </span><span class="lineCov">       2180 :       eigen_assert(m_matrix.rows()==b.rows()</span>
+<span class="lineNum">     190 </span>            :                 &amp;&amp; &quot;LDLT::solve(): invalid number of rows of the right hand side matrix b&quot;);
+<span class="lineNum">     191 </span><span class="lineCov">       2180 :       return internal::solve_retval&lt;LDLT, Rhs&gt;(*this, b.derived());</span>
+<span class="lineNum">     192 </span>            :     }
+<span class="lineNum">     193 </span>            : 
+<span class="lineNum">     194 </span>            :     #ifdef EIGEN2_SUPPORT
+<span class="lineNum">     195 </span>            :     template&lt;typename OtherDerived, typename ResultType&gt;
+<span class="lineNum">     196 </span>            :     bool solve(const MatrixBase&lt;OtherDerived&gt;&amp; b, ResultType *result) const
+<span class="lineNum">     197 </span>            :     {
+<span class="lineNum">     198 </span>            :       *result = this-&gt;solve(b);
+<span class="lineNum">     199 </span>            :       return true;
+<span class="lineNum">     200 </span>            :     }
+<span class="lineNum">     201 </span>            :     #endif
+<span class="lineNum">     202 </span>            : 
+<span class="lineNum">     203 </span>            :     template&lt;typename Derived&gt;
+<span class="lineNum">     204 </span>            :     bool solveInPlace(MatrixBase&lt;Derived&gt; &amp;bAndX) const;
+<span class="lineNum">     205 </span>            : 
+<span class="lineNum">     206 </span>            :     LDLT&amp; compute(const MatrixType&amp; matrix);
+<span class="lineNum">     207 </span>            : 
+<span class="lineNum">     208 </span>            :     template &lt;typename Derived&gt;
+<span class="lineNum">     209 </span>            :     LDLT&amp; rankUpdate(const MatrixBase&lt;Derived&gt;&amp; w, const RealScalar&amp; alpha=1);
+<span class="lineNum">     210 </span>            : 
+<span class="lineNum">     211 </span>            :     /** \returns the internal LDLT decomposition matrix
+<span class="lineNum">     212 </span>            :       *
+<a name="213"><span class="lineNum">     213 </span>            :       * TODO: document the storage layout</a>
+<span class="lineNum">     214 </span>            :       */
+<span class="lineNum">     215 </span><span class="lineCov">       2180 :     inline const MatrixType&amp; matrixLDLT() const</span>
+<span class="lineNum">     216 </span>            :     {
+<span class="lineNum">     217 </span><span class="lineCov">       2180 :       eigen_assert(m_isInitialized &amp;&amp; &quot;LDLT is not initialized.&quot;);</span>
+<span class="lineNum">     218 </span><span class="lineCov">       2180 :       return m_matrix;</span>
+<span class="lineNum">     219 </span>            :     }
+<span class="lineNum">     220 </span>            : 
+<span class="lineNum">     221 </span>            :     MatrixType reconstructedMatrix() const;
+<a name="222"><span class="lineNum">     222 </span>            : </a>
+<span class="lineNum">     223 </span>            :     inline Index rows() const { return m_matrix.rows(); }
+<span class="lineNum">     224 </span><span class="lineCov">       2180 :     inline Index cols() const { return m_matrix.cols(); }</span>
+<span class="lineNum">     225 </span>            : 
+<span class="lineNum">     226 </span>            :     /** \brief Reports whether previous computation was successful.
+<span class="lineNum">     227 </span>            :       *
+<span class="lineNum">     228 </span>            :       * \returns \c Success if computation was succesful,
+<span class="lineNum">     229 </span>            :       *          \c NumericalIssue if the matrix.appears to be negative.
+<span class="lineNum">     230 </span>            :       */
+<span class="lineNum">     231 </span>            :     ComputationInfo info() const
+<span class="lineNum">     232 </span>            :     {
+<span class="lineNum">     233 </span>            :       eigen_assert(m_isInitialized &amp;&amp; &quot;LDLT is not initialized.&quot;);
+<span class="lineNum">     234 </span>            :       return Success;
+<span class="lineNum">     235 </span>            :     }
+<span class="lineNum">     236 </span>            : 
+<a name="237"><span class="lineNum">     237 </span>            :   protected:</a>
+<span class="lineNum">     238 </span>            :     
+<span class="lineNum">     239 </span><span class="lineCov">       2180 :     static void check_template_parameters()</span>
+<span class="lineNum">     240 </span>            :     {
+<span class="lineNum">     241 </span>            :       EIGEN_STATIC_ASSERT_NON_INTEGER(Scalar);
+<span class="lineNum">     242 </span><span class="lineCov">       2180 :     }</span>
+<span class="lineNum">     243 </span>            : 
+<span class="lineNum">     244 </span>            :     /** \internal
+<span class="lineNum">     245 </span>            :       * Used to compute and store the Cholesky decomposition A = L D L^* = U^* D U.
+<span class="lineNum">     246 </span>            :       * The strict upper part is used during the decomposition, the strict lower
+<span class="lineNum">     247 </span>            :       * part correspond to the coefficients of L (its diagonal is equal to 1 and
+<span class="lineNum">     248 </span>            :       * is not stored), and the diagonal entries correspond to D.
+<span class="lineNum">     249 </span>            :       */
+<span class="lineNum">     250 </span>            :     MatrixType m_matrix;
+<span class="lineNum">     251 </span>            :     TranspositionType m_transpositions;
+<span class="lineNum">     252 </span>            :     TmpMatrixType m_temporary;
+<span class="lineNum">     253 </span>            :     internal::SignMatrix m_sign;
+<span class="lineNum">     254 </span>            :     bool m_isInitialized;
+<span class="lineNum">     255 </span>            : };
+<span class="lineNum">     256 </span>            : 
+<span class="lineNum">     257 </span>            : namespace internal {
+<span class="lineNum">     258 </span>            : 
+<span class="lineNum">     259 </span>            : template&lt;int UpLo&gt; struct ldlt_inplace;
+<span class="lineNum">     260 </span>            : 
+<span class="lineNum">     261 </span>            : template&lt;&gt; struct ldlt_inplace&lt;Lower&gt;
+<a name="262"><span class="lineNum">     262 </span>            : {</a>
+<span class="lineNum">     263 </span>            :   template&lt;typename MatrixType, typename TranspositionType, typename Workspace&gt;
+<span class="lineNum">     264 </span><span class="lineCov">       2180 :   static bool unblocked(MatrixType&amp; mat, TranspositionType&amp; transpositions, Workspace&amp; temp, SignMatrix&amp; sign)</span>
+<span class="lineNum">     265 </span>            :   {
+<span class="lineNum">     266 </span>            :     using std::abs;
+<span class="lineNum">     267 </span>            :     typedef typename MatrixType::Scalar Scalar;
+<span class="lineNum">     268 </span>            :     typedef typename MatrixType::RealScalar RealScalar;
+<span class="lineNum">     269 </span>            :     typedef typename MatrixType::Index Index;
+<span class="lineNum">     270 </span><span class="lineCov">       2180 :     eigen_assert(mat.rows()==mat.cols());</span>
+<span class="lineNum">     271 </span><span class="lineCov">       2180 :     const Index size = mat.rows();</span>
+<span class="lineNum">     272 </span>            : 
+<span class="lineNum">     273 </span><span class="lineCov">       2180 :     if (size &lt;= 1)</span>
+<span class="lineNum">     274 </span>            :     {
+<span class="lineNum">     275 </span><span class="lineNoCov">          0 :       transpositions.setIdentity();</span>
+<span class="lineNum">     276 </span><span class="lineNoCov">          0 :       if (numext::real(mat.coeff(0,0)) &gt; 0) sign = PositiveSemiDef;</span>
+<span class="lineNum">     277 </span><span class="lineNoCov">          0 :       else if (numext::real(mat.coeff(0,0)) &lt; 0) sign = NegativeSemiDef;</span>
+<span class="lineNum">     278 </span><span class="lineNoCov">          0 :       else sign = ZeroSign;</span>
+<span class="lineNum">     279 </span><span class="lineNoCov">          0 :       return true;</span>
+<span class="lineNum">     280 </span>            :     }
+<span class="lineNum">     281 </span>            : 
+<span class="lineNum">     282 </span><span class="lineCov">      52320 :     for (Index k = 0; k &lt; size; ++k)</span>
+<span class="lineNum">     283 </span>            :     {
+<span class="lineNum">     284 </span>            :       // Find largest diagonal element
+<span class="lineNum">     285 </span>            :       Index index_of_biggest_in_corner;
+<span class="lineNum">     286 </span><span class="lineCov">      50140 :       mat.diagonal().tail(size-k).cwiseAbs().maxCoeff(&amp;index_of_biggest_in_corner);</span>
+<span class="lineNum">     287 </span><span class="lineCov">      50140 :       index_of_biggest_in_corner += k;</span>
+<span class="lineNum">     288 </span>            : 
+<span class="lineNum">     289 </span><span class="lineCov">      50140 :       transpositions.coeffRef(k) = index_of_biggest_in_corner;</span>
+<span class="lineNum">     290 </span><span class="lineCov">      50140 :       if(k != index_of_biggest_in_corner)</span>
+<span class="lineNum">     291 </span>            :       {
+<span class="lineNum">     292 </span>            :         // apply the transposition while taking care to consider only
+<span class="lineNum">     293 </span>            :         // the lower triangular part
+<span class="lineNum">     294 </span><span class="lineCov">      28099 :         Index s = size-index_of_biggest_in_corner-1; // trailing size after the biggest element</span>
+<span class="lineNum">     295 </span><span class="lineCov">      28099 :         mat.row(k).head(k).swap(mat.row(index_of_biggest_in_corner).head(k));</span>
+<span class="lineNum">     296 </span><span class="lineCov">      28099 :         mat.col(k).tail(s).swap(mat.col(index_of_biggest_in_corner).tail(s));</span>
+<span class="lineNum">     297 </span><span class="lineCov">      28099 :         std::swap(mat.coeffRef(k,k),mat.coeffRef(index_of_biggest_in_corner,index_of_biggest_in_corner));</span>
+<span class="lineNum">     298 </span><span class="lineCov">     129363 :         for(int i=k+1;i&lt;index_of_biggest_in_corner;++i)</span>
+<span class="lineNum">     299 </span>            :         {
+<span class="lineNum">     300 </span><span class="lineCov">     101264 :           Scalar tmp = mat.coeffRef(i,k);</span>
+<span class="lineNum">     301 </span><span class="lineCov">     101264 :           mat.coeffRef(i,k) = numext::conj(mat.coeffRef(index_of_biggest_in_corner,i));</span>
+<span class="lineNum">     302 </span><span class="lineCov">     101264 :           mat.coeffRef(index_of_biggest_in_corner,i) = numext::conj(tmp);</span>
+<span class="lineNum">     303 </span>            :         }
+<span class="lineNum">     304 </span>            :         if(NumTraits&lt;Scalar&gt;::IsComplex)
+<span class="lineNum">     305 </span>            :           mat.coeffRef(index_of_biggest_in_corner,k) = numext::conj(mat.coeff(index_of_biggest_in_corner,k));
+<span class="lineNum">     306 </span>            :       }
+<span class="lineNum">     307 </span>            : 
+<span class="lineNum">     308 </span>            :       // partition the matrix:
+<span class="lineNum">     309 </span>            :       //       A00 |  -  |  -
+<span class="lineNum">     310 </span>            :       // lu  = A10 | A11 |  -
+<span class="lineNum">     311 </span>            :       //       A20 | A21 | A22
+<span class="lineNum">     312 </span><span class="lineCov">      50140 :       Index rs = size - k - 1;</span>
+<span class="lineNum">     313 </span><span class="lineCov">      50140 :       Block&lt;MatrixType,Dynamic,1&gt; A21(mat,k+1,k,rs,1);</span>
+<span class="lineNum">     314 </span><span class="lineCov">      50140 :       Block&lt;MatrixType,1,Dynamic&gt; A10(mat,k,0,1,k);</span>
+<span class="lineNum">     315 </span><span class="lineCov">      50140 :       Block&lt;MatrixType,Dynamic,Dynamic&gt; A20(mat,k+1,0,rs,k);</span>
+<span class="lineNum">     316 </span>            : 
+<span class="lineNum">     317 </span><span class="lineCov">      50140 :       if(k&gt;0)</span>
+<span class="lineNum">     318 </span>            :       {
+<span class="lineNum">     319 </span><span class="lineCov">      47960 :         temp.head(k) = mat.diagonal().real().head(k).asDiagonal() * A10.adjoint();</span>
+<span class="lineNum">     320 </span><span class="lineCov">      47960 :         mat.coeffRef(k,k) -= (A10 * temp.head(k)).value();</span>
+<span class="lineNum">     321 </span><span class="lineCov">      47960 :         if(rs&gt;0)</span>
+<span class="lineNum">     322 </span><span class="lineCov">      45780 :           A21.noalias() -= A20 * temp.head(k);</span>
+<span class="lineNum">     323 </span>            :       }
+<span class="lineNum">     324 </span>            :       
+<span class="lineNum">     325 </span>            :       // In some previous versions of Eigen (e.g., 3.2.1), the scaling was omitted if the pivot
+<span class="lineNum">     326 </span>            :       // was smaller than the cutoff value. However, soince LDLT is not rank-revealing
+<span class="lineNum">     327 </span>            :       // we should only make sure we do not introduce INF or NaN values.
+<span class="lineNum">     328 </span>            :       // LAPACK also uses 0 as the cutoff value.
+<span class="lineNum">     329 </span><span class="lineCov">      50140 :       RealScalar realAkk = numext::real(mat.coeffRef(k,k));</span>
+<span class="lineNum">     330 </span><span class="lineCov">      50140 :       if((rs&gt;0) &amp;&amp; (abs(realAkk) &gt; RealScalar(0)))</span>
+<span class="lineNum">     331 </span><span class="lineCov">      47960 :         A21 /= realAkk;</span>
+<span class="lineNum">     332 </span>            : 
+<span class="lineNum">     333 </span><span class="lineCov">      50140 :       if (sign == PositiveSemiDef) {</span>
+<span class="lineNum">     334 </span><span class="lineCov">      47960 :         if (realAkk &lt; 0) sign = Indefinite;</span>
+<span class="lineNum">     335 </span><span class="lineCov">       2180 :       } else if (sign == NegativeSemiDef) {</span>
+<span class="lineNum">     336 </span><span class="lineNoCov">          0 :         if (realAkk &gt; 0) sign = Indefinite;</span>
+<span class="lineNum">     337 </span><span class="lineCov">       2180 :       } else if (sign == ZeroSign) {</span>
+<span class="lineNum">     338 </span><span class="lineCov">       2180 :         if (realAkk &gt; 0) sign = PositiveSemiDef;</span>
+<span class="lineNum">     339 </span><span class="lineNoCov">          0 :         else if (realAkk &lt; 0) sign = NegativeSemiDef;</span>
+<span class="lineNum">     340 </span>            :       }
+<span class="lineNum">     341 </span>            :     }
+<span class="lineNum">     342 </span>            : 
+<span class="lineNum">     343 </span><span class="lineCov">       2180 :     return true;</span>
+<span class="lineNum">     344 </span>            :   }
+<span class="lineNum">     345 </span>            : 
+<span class="lineNum">     346 </span>            :   // Reference for the algorithm: Davis and Hager, &quot;Multiple Rank
+<span class="lineNum">     347 </span>            :   // Modifications of a Sparse Cholesky Factorization&quot; (Algorithm 1)
+<span class="lineNum">     348 </span>            :   // Trivial rearrangements of their computations (Timothy E. Holy)
+<span class="lineNum">     349 </span>            :   // allow their algorithm to work for rank-1 updates even if the
+<span class="lineNum">     350 </span>            :   // original matrix is not of full rank.
+<span class="lineNum">     351 </span>            :   // Here only rank-1 updates are implemented, to reduce the
+<span class="lineNum">     352 </span>            :   // requirement for intermediate storage and improve accuracy
+<span class="lineNum">     353 </span>            :   template&lt;typename MatrixType, typename WDerived&gt;
+<span class="lineNum">     354 </span>            :   static bool updateInPlace(MatrixType&amp; mat, MatrixBase&lt;WDerived&gt;&amp; w, const typename MatrixType::RealScalar&amp; sigma=1)
+<span class="lineNum">     355 </span>            :   {
+<span class="lineNum">     356 </span>            :     using numext::isfinite;
+<span class="lineNum">     357 </span>            :     typedef typename MatrixType::Scalar Scalar;
+<span class="lineNum">     358 </span>            :     typedef typename MatrixType::RealScalar RealScalar;
+<span class="lineNum">     359 </span>            :     typedef typename MatrixType::Index Index;
+<span class="lineNum">     360 </span>            : 
+<span class="lineNum">     361 </span>            :     const Index size = mat.rows();
+<span class="lineNum">     362 </span>            :     eigen_assert(mat.cols() == size &amp;&amp; w.size()==size);
+<span class="lineNum">     363 </span>            : 
+<span class="lineNum">     364 </span>            :     RealScalar alpha = 1;
+<span class="lineNum">     365 </span>            : 
+<span class="lineNum">     366 </span>            :     // Apply the update
+<span class="lineNum">     367 </span>            :     for (Index j = 0; j &lt; size; j++)
+<span class="lineNum">     368 </span>            :     {
+<span class="lineNum">     369 </span>            :       // Check for termination due to an original decomposition of low-rank
+<span class="lineNum">     370 </span>            :       if (!(isfinite)(alpha))
+<span class="lineNum">     371 </span>            :         break;
+<span class="lineNum">     372 </span>            : 
+<span class="lineNum">     373 </span>            :       // Update the diagonal terms
+<span class="lineNum">     374 </span>            :       RealScalar dj = numext::real(mat.coeff(j,j));
+<span class="lineNum">     375 </span>            :       Scalar wj = w.coeff(j);
+<span class="lineNum">     376 </span>            :       RealScalar swj2 = sigma*numext::abs2(wj);
+<span class="lineNum">     377 </span>            :       RealScalar gamma = dj*alpha + swj2;
+<span class="lineNum">     378 </span>            : 
+<span class="lineNum">     379 </span>            :       mat.coeffRef(j,j) += swj2/alpha;
+<span class="lineNum">     380 </span>            :       alpha += swj2/dj;
+<span class="lineNum">     381 </span>            : 
+<span class="lineNum">     382 </span>            : 
+<span class="lineNum">     383 </span>            :       // Update the terms of L
+<span class="lineNum">     384 </span>            :       Index rs = size-j-1;
+<span class="lineNum">     385 </span>            :       w.tail(rs) -= wj * mat.col(j).tail(rs);
+<span class="lineNum">     386 </span>            :       if(gamma != 0)
+<span class="lineNum">     387 </span>            :         mat.col(j).tail(rs) += (sigma*numext::conj(wj)/gamma)*w.tail(rs);
+<span class="lineNum">     388 </span>            :     }
+<span class="lineNum">     389 </span>            :     return true;
+<span class="lineNum">     390 </span>            :   }
+<span class="lineNum">     391 </span>            : 
+<span class="lineNum">     392 </span>            :   template&lt;typename MatrixType, typename TranspositionType, typename Workspace, typename WType&gt;
+<span class="lineNum">     393 </span>            :   static bool update(MatrixType&amp; mat, const TranspositionType&amp; transpositions, Workspace&amp; tmp, const WType&amp; w, const typename MatrixType::RealScalar&amp; sigma=1)
+<span class="lineNum">     394 </span>            :   {
+<span class="lineNum">     395 </span>            :     // Apply the permutation to the input w
+<span class="lineNum">     396 </span>            :     tmp = transpositions * w;
+<span class="lineNum">     397 </span>            : 
+<span class="lineNum">     398 </span>            :     return ldlt_inplace&lt;Lower&gt;::updateInPlace(mat,tmp,sigma);
+<span class="lineNum">     399 </span>            :   }
+<span class="lineNum">     400 </span>            : };
+<span class="lineNum">     401 </span>            : 
+<span class="lineNum">     402 </span>            : template&lt;&gt; struct ldlt_inplace&lt;Upper&gt;
+<span class="lineNum">     403 </span>            : {
+<span class="lineNum">     404 </span>            :   template&lt;typename MatrixType, typename TranspositionType, typename Workspace&gt;
+<span class="lineNum">     405 </span>            :   static EIGEN_STRONG_INLINE bool unblocked(MatrixType&amp; mat, TranspositionType&amp; transpositions, Workspace&amp; temp, SignMatrix&amp; sign)
+<span class="lineNum">     406 </span>            :   {
+<span class="lineNum">     407 </span>            :     Transpose&lt;MatrixType&gt; matt(mat);
+<span class="lineNum">     408 </span>            :     return ldlt_inplace&lt;Lower&gt;::unblocked(matt, transpositions, temp, sign);
+<span class="lineNum">     409 </span>            :   }
+<span class="lineNum">     410 </span>            : 
+<span class="lineNum">     411 </span>            :   template&lt;typename MatrixType, typename TranspositionType, typename Workspace, typename WType&gt;
+<span class="lineNum">     412 </span>            :   static EIGEN_STRONG_INLINE bool update(MatrixType&amp; mat, TranspositionType&amp; transpositions, Workspace&amp; tmp, WType&amp; w, const typename MatrixType::RealScalar&amp; sigma=1)
+<span class="lineNum">     413 </span>            :   {
+<span class="lineNum">     414 </span>            :     Transpose&lt;MatrixType&gt; matt(mat);
+<span class="lineNum">     415 </span>            :     return ldlt_inplace&lt;Lower&gt;::update(matt, transpositions, tmp, w.conjugate(), sigma);
+<span class="lineNum">     416 </span>            :   }
+<span class="lineNum">     417 </span>            : };
+<span class="lineNum">     418 </span>            : 
+<span class="lineNum">     419 </span>            : template&lt;typename MatrixType&gt; struct LDLT_Traits&lt;MatrixType,Lower&gt;
+<span class="lineNum">     420 </span>            : {
+<a name="421"><span class="lineNum">     421 </span>            :   typedef const TriangularView&lt;const MatrixType, UnitLower&gt; MatrixL;</a>
+<a name="422"><span class="lineNum">     422 </span>            :   typedef const TriangularView&lt;const typename MatrixType::AdjointReturnType, UnitUpper&gt; MatrixU;</a>
+<span class="lineNum">     423 </span><span class="lineCov">       2180 :   static inline MatrixL getL(const MatrixType&amp; m) { return m; }</span>
+<span class="lineNum">     424 </span><span class="lineCov">       2180 :   static inline MatrixU getU(const MatrixType&amp; m) { return m.adjoint(); }</span>
+<span class="lineNum">     425 </span>            : };
+<span class="lineNum">     426 </span>            : 
+<span class="lineNum">     427 </span>            : template&lt;typename MatrixType&gt; struct LDLT_Traits&lt;MatrixType,Upper&gt;
+<span class="lineNum">     428 </span>            : {
+<span class="lineNum">     429 </span>            :   typedef const TriangularView&lt;const typename MatrixType::AdjointReturnType, UnitLower&gt; MatrixL;
+<span class="lineNum">     430 </span>            :   typedef const TriangularView&lt;const MatrixType, UnitUpper&gt; MatrixU;
+<span class="lineNum">     431 </span>            :   static inline MatrixL getL(const MatrixType&amp; m) { return m.adjoint(); }
+<span class="lineNum">     432 </span>            :   static inline MatrixU getU(const MatrixType&amp; m) { return m; }
+<span class="lineNum">     433 </span>            : };
+<span class="lineNum">     434 </span>            : 
+<span class="lineNum">     435 </span>            : } // end namespace internal
+<span class="lineNum">     436 </span>            : 
+<span class="lineNum">     437 </span>            : /** Compute / recompute the LDLT decomposition A = L D L^* = U^* D U of \a matrix
+<a name="438"><span class="lineNum">     438 </span>            :   */</a>
+<span class="lineNum">     439 </span>            : template&lt;typename MatrixType, int _UpLo&gt;
+<span class="lineNum">     440 </span><span class="lineCov">       2180 : LDLT&lt;MatrixType,_UpLo&gt;&amp; LDLT&lt;MatrixType,_UpLo&gt;::compute(const MatrixType&amp; a)</span>
+<span class="lineNum">     441 </span>            : {
+<span class="lineNum">     442 </span><span class="lineCov">       2180 :   check_template_parameters();</span>
+<span class="lineNum">     443 </span>            :   
+<span class="lineNum">     444 </span><span class="lineCov">       2180 :   eigen_assert(a.rows()==a.cols());</span>
+<span class="lineNum">     445 </span><span class="lineCov">       2180 :   const Index size = a.rows();</span>
+<span class="lineNum">     446 </span>            : 
+<span class="lineNum">     447 </span><span class="lineCov">       2180 :   m_matrix = a;</span>
+<span class="lineNum">     448 </span>            : 
+<span class="lineNum">     449 </span><span class="lineCov">       2180 :   m_transpositions.resize(size);</span>
+<span class="lineNum">     450 </span><span class="lineCov">       2180 :   m_isInitialized = false;</span>
+<span class="lineNum">     451 </span><span class="lineCov">       2180 :   m_temporary.resize(size);</span>
+<span class="lineNum">     452 </span><span class="lineCov">       2180 :   m_sign = internal::ZeroSign;</span>
+<span class="lineNum">     453 </span>            : 
+<span class="lineNum">     454 </span><span class="lineCov">       2180 :   internal::ldlt_inplace&lt;UpLo&gt;::unblocked(m_matrix, m_transpositions, m_temporary, m_sign);</span>
+<span class="lineNum">     455 </span>            : 
+<span class="lineNum">     456 </span><span class="lineCov">       2180 :   m_isInitialized = true;</span>
+<span class="lineNum">     457 </span><span class="lineCov">       2180 :   return *this;</span>
+<span class="lineNum">     458 </span>            : }
+<span class="lineNum">     459 </span>            : 
+<span class="lineNum">     460 </span>            : /** Update the LDLT decomposition:  given A = L D L^T, efficiently compute the decomposition of A + sigma w w^T.
+<span class="lineNum">     461 </span>            :  * \param w a vector to be incorporated into the decomposition.
+<span class="lineNum">     462 </span>            :  * \param sigma a scalar, +1 for updates and -1 for &quot;downdates,&quot; which correspond to removing previously-added column vectors. Optional; default value is +1.
+<span class="lineNum">     463 </span>            :  * \sa setZero()
+<span class="lineNum">     464 </span>            :   */
+<span class="lineNum">     465 </span>            : template&lt;typename MatrixType, int _UpLo&gt;
+<span class="lineNum">     466 </span>            : template&lt;typename Derived&gt;
+<span class="lineNum">     467 </span>            : LDLT&lt;MatrixType,_UpLo&gt;&amp; LDLT&lt;MatrixType,_UpLo&gt;::rankUpdate(const MatrixBase&lt;Derived&gt;&amp; w, const typename NumTraits&lt;typename MatrixType::Scalar&gt;::Real&amp; sigma)
+<span class="lineNum">     468 </span>            : {
+<span class="lineNum">     469 </span>            :   const Index size = w.rows();
+<span class="lineNum">     470 </span>            :   if (m_isInitialized)
+<span class="lineNum">     471 </span>            :   {
+<span class="lineNum">     472 </span>            :     eigen_assert(m_matrix.rows()==size);
+<span class="lineNum">     473 </span>            :   }
+<span class="lineNum">     474 </span>            :   else
+<span class="lineNum">     475 </span>            :   {    
+<span class="lineNum">     476 </span>            :     m_matrix.resize(size,size);
+<span class="lineNum">     477 </span>            :     m_matrix.setZero();
+<span class="lineNum">     478 </span>            :     m_transpositions.resize(size);
+<span class="lineNum">     479 </span>            :     for (Index i = 0; i &lt; size; i++)
+<span class="lineNum">     480 </span>            :       m_transpositions.coeffRef(i) = i;
+<span class="lineNum">     481 </span>            :     m_temporary.resize(size);
+<span class="lineNum">     482 </span>            :     m_sign = sigma&gt;=0 ? internal::PositiveSemiDef : internal::NegativeSemiDef;
+<span class="lineNum">     483 </span>            :     m_isInitialized = true;
+<span class="lineNum">     484 </span>            :   }
+<span class="lineNum">     485 </span>            : 
+<span class="lineNum">     486 </span>            :   internal::ldlt_inplace&lt;UpLo&gt;::update(m_matrix, m_transpositions, m_temporary, w, sigma);
+<span class="lineNum">     487 </span>            : 
+<span class="lineNum">     488 </span>            :   return *this;
+<span class="lineNum">     489 </span>            : }
+<span class="lineNum">     490 </span>            : 
+<span class="lineNum">     491 </span>            : namespace internal {
+<span class="lineNum">     492 </span>            : template&lt;typename _MatrixType, int _UpLo, typename Rhs&gt;
+<span class="lineNum">     493 </span>            : struct solve_retval&lt;LDLT&lt;_MatrixType,_UpLo&gt;, Rhs&gt;
+<span class="lineNum">     494 </span>            :   : solve_retval_base&lt;LDLT&lt;_MatrixType,_UpLo&gt;, Rhs&gt;
+<a name="495"><span class="lineNum">     495 </span>            : {</a>
+<span class="lineNum">     496 </span>            :   typedef LDLT&lt;_MatrixType,_UpLo&gt; LDLTType;
+<a name="497"><span class="lineNum">     497 </span><span class="lineCov">       2180 :   EIGEN_MAKE_SOLVE_HELPERS(LDLTType,Rhs)</span></a>
+<span class="lineNum">     498 </span>            : 
+<span class="lineNum">     499 </span><span class="lineCov">       2180 :   template&lt;typename Dest&gt; void evalTo(Dest&amp; dst) const</span>
+<span class="lineNum">     500 </span>            :   {
+<span class="lineNum">     501 </span><span class="lineCov">       2180 :     eigen_assert(rhs().rows() == dec().matrixLDLT().rows());</span>
+<span class="lineNum">     502 </span>            :     // dst = P b
+<span class="lineNum">     503 </span><span class="lineCov">       2180 :     dst = dec().transpositionsP() * rhs();</span>
+<span class="lineNum">     504 </span>            : 
+<span class="lineNum">     505 </span>            :     // dst = L^-1 (P b)
+<span class="lineNum">     506 </span><span class="lineCov">       2180 :     dec().matrixL().solveInPlace(dst);</span>
+<span class="lineNum">     507 </span>            : 
+<span class="lineNum">     508 </span>            :     // dst = D^-1 (L^-1 P b)
+<span class="lineNum">     509 </span>            :     // more precisely, use pseudo-inverse of D (see bug 241)
+<span class="lineNum">     510 </span>            :     using std::abs;
+<span class="lineNum">     511 </span>            :     using std::max;
+<span class="lineNum">     512 </span>            :     typedef typename LDLTType::MatrixType MatrixType;
+<span class="lineNum">     513 </span>            :     typedef typename LDLTType::RealScalar RealScalar;
+<span class="lineNum">     514 </span><span class="lineCov">       2180 :     const typename Diagonal&lt;const MatrixType&gt;::RealReturnType vectorD(dec().vectorD());</span>
+<span class="lineNum">     515 </span>            :     // In some previous versions, tolerance was set to the max of 1/highest and the maximal diagonal entry * epsilon
+<span class="lineNum">     516 </span>            :     // as motivated by LAPACK's xGELSS:
+<span class="lineNum">     517 </span>            :     // RealScalar tolerance = (max)(vectorD.array().abs().maxCoeff() *NumTraits&lt;RealScalar&gt;::epsilon(),RealScalar(1) / NumTraits&lt;RealScalar&gt;::highest());
+<span class="lineNum">     518 </span>            :     // However, LDLT is not rank revealing, and so adjusting the tolerance wrt to the highest
+<span class="lineNum">     519 </span>            :     // diagonal element is not well justified and to numerical issues in some cases.
+<span class="lineNum">     520 </span>            :     // Moreover, Lapack's xSYTRS routines use 0 for the tolerance.
+<span class="lineNum">     521 </span><span class="lineCov">       2180 :     RealScalar tolerance = RealScalar(1) / NumTraits&lt;RealScalar&gt;::highest();</span>
+<span class="lineNum">     522 </span>            :     
+<span class="lineNum">     523 </span><span class="lineCov">      52320 :     for (Index i = 0; i &lt; vectorD.size(); ++i) {</span>
+<span class="lineNum">     524 </span><span class="lineCov">      50140 :       if(abs(vectorD(i)) &gt; tolerance)</span>
+<span class="lineNum">     525 </span><span class="lineCov">      50140 :         dst.row(i) /= vectorD(i);</span>
+<span class="lineNum">     526 </span>            :       else
+<span class="lineNum">     527 </span><span class="lineNoCov">          0 :         dst.row(i).setZero();</span>
+<span class="lineNum">     528 </span>            :     }
+<span class="lineNum">     529 </span>            : 
+<span class="lineNum">     530 </span>            :     // dst = L^-T (D^-1 L^-1 P b)
+<span class="lineNum">     531 </span><span class="lineCov">       2180 :     dec().matrixU().solveInPlace(dst);</span>
+<span class="lineNum">     532 </span>            : 
+<span class="lineNum">     533 </span>            :     // dst = P^-1 (L^-T D^-1 L^-1 P b) = A^-1 b
+<span class="lineNum">     534 </span><span class="lineCov">       2180 :     dst = dec().transpositionsP().transpose() * dst;</span>
+<span class="lineNum">     535 </span><span class="lineCov">       2180 :   }</span>
+<span class="lineNum">     536 </span>            : };
+<span class="lineNum">     537 </span>            : }
+<span class="lineNum">     538 </span>            : 
+<span class="lineNum">     539 </span>            : /** \internal use x = ldlt_object.solve(x);
+<span class="lineNum">     540 </span>            :   *
+<span class="lineNum">     541 </span>            :   * This is the \em in-place version of solve().
+<span class="lineNum">     542 </span>            :   *
+<span class="lineNum">     543 </span>            :   * \param bAndX represents both the right-hand side matrix b and result x.
+<span class="lineNum">     544 </span>            :   *
+<span class="lineNum">     545 </span>            :   * \returns true always! If you need to check for existence of solutions, use another decomposition like LU, QR, or SVD.
+<span class="lineNum">     546 </span>            :   *
+<span class="lineNum">     547 </span>            :   * This version avoids a copy when the right hand side matrix b is not
+<span class="lineNum">     548 </span>            :   * needed anymore.
+<span class="lineNum">     549 </span>            :   *
+<span class="lineNum">     550 </span>            :   * \sa LDLT::solve(), MatrixBase::ldlt()
+<span class="lineNum">     551 </span>            :   */
+<span class="lineNum">     552 </span>            : template&lt;typename MatrixType,int _UpLo&gt;
+<span class="lineNum">     553 </span>            : template&lt;typename Derived&gt;
+<span class="lineNum">     554 </span>            : bool LDLT&lt;MatrixType,_UpLo&gt;::solveInPlace(MatrixBase&lt;Derived&gt; &amp;bAndX) const
+<span class="lineNum">     555 </span>            : {
+<span class="lineNum">     556 </span>            :   eigen_assert(m_isInitialized &amp;&amp; &quot;LDLT is not initialized.&quot;);
+<span class="lineNum">     557 </span>            :   eigen_assert(m_matrix.rows() == bAndX.rows());
+<span class="lineNum">     558 </span>            : 
+<span class="lineNum">     559 </span>            :   bAndX = this-&gt;solve(bAndX);
+<span class="lineNum">     560 </span>            : 
+<span class="lineNum">     561 </span>            :   return true;
+<span class="lineNum">     562 </span>            : }
+<span class="lineNum">     563 </span>            : 
+<span class="lineNum">     564 </span>            : /** \returns the matrix represented by the decomposition,
+<span class="lineNum">     565 </span>            :  * i.e., it returns the product: P^T L D L^* P.
+<span class="lineNum">     566 </span>            :  * This function is provided for debug purpose. */
+<span class="lineNum">     567 </span>            : template&lt;typename MatrixType, int _UpLo&gt;
+<span class="lineNum">     568 </span>            : MatrixType LDLT&lt;MatrixType,_UpLo&gt;::reconstructedMatrix() const
+<span class="lineNum">     569 </span>            : {
+<span class="lineNum">     570 </span>            :   eigen_assert(m_isInitialized &amp;&amp; &quot;LDLT is not initialized.&quot;);
+<span class="lineNum">     571 </span>            :   const Index size = m_matrix.rows();
+<span class="lineNum">     572 </span>            :   MatrixType res(size,size);
+<span class="lineNum">     573 </span>            : 
+<span class="lineNum">     574 </span>            :   // P
+<span class="lineNum">     575 </span>            :   res.setIdentity();
+<span class="lineNum">     576 </span>            :   res = transpositionsP() * res;
+<span class="lineNum">     577 </span>            :   // L^* P
+<span class="lineNum">     578 </span>            :   res = matrixU() * res;
+<span class="lineNum">     579 </span>            :   // D(L^*P)
+<span class="lineNum">     580 </span>            :   res = vectorD().real().asDiagonal() * res;
+<span class="lineNum">     581 </span>            :   // L(DL^*P)
+<span class="lineNum">     582 </span>            :   res = matrixL() * res;
+<span class="lineNum">     583 </span>            :   // P^T (LDL^*P)
+<span class="lineNum">     584 </span>            :   res = transpositionsP().transpose() * res;
+<span class="lineNum">     585 </span>            : 
+<span class="lineNum">     586 </span>            :   return res;
+<span class="lineNum">     587 </span>            : }
+<span class="lineNum">     588 </span>            : 
+<span class="lineNum">     589 </span>            : /** \cholesky_module
+<span class="lineNum">     590 </span>            :   * \returns the Cholesky decomposition with full pivoting without square root of \c *this
+<span class="lineNum">     591 </span>            :   */
+<span class="lineNum">     592 </span>            : template&lt;typename MatrixType, unsigned int UpLo&gt;
+<span class="lineNum">     593 </span>            : inline const LDLT&lt;typename SelfAdjointView&lt;MatrixType, UpLo&gt;::PlainObject, UpLo&gt;
+<span class="lineNum">     594 </span>            : SelfAdjointView&lt;MatrixType, UpLo&gt;::ldlt() const
+<span class="lineNum">     595 </span>            : {
+<span class="lineNum">     596 </span>            :   return LDLT&lt;PlainObject,UpLo&gt;(m_matrix);
+<span class="lineNum">     597 </span>            : }
+<span class="lineNum">     598 </span>            : 
+<span class="lineNum">     599 </span>            : /** \cholesky_module
+<span class="lineNum">     600 </span>            :   * \returns the Cholesky decomposition with full pivoting without square root of \c *this
+<span class="lineNum">     601 </span>            :   */
+<a name="602"><span class="lineNum">     602 </span>            : template&lt;typename Derived&gt;</a>
+<span class="lineNum">     603 </span>            : inline const LDLT&lt;typename MatrixBase&lt;Derived&gt;::PlainObject&gt;
+<span class="lineNum">     604 </span><span class="lineCov">       2180 : MatrixBase&lt;Derived&gt;::ldlt() const</span>
+<span class="lineNum">     605 </span>            : {
+<span class="lineNum">     606 </span><span class="lineCov">       2180 :   return LDLT&lt;PlainObject&gt;(derived());</span>
+<span class="lineNum">     607 </span>            : }
+<span class="lineNum">     608 </span>            : 
+<span class="lineNum">     609 </span>            : } // end namespace Eigen
+<span class="lineNum">     610 </span>            : 
+<span class="lineNum">     611 </span>            : #endif // EIGEN_LDLT_H
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

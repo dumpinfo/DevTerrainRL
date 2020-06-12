@@ -1,0 +1,700 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/external/Bullet/src/BulletDynamics/Dynamics/btRigidBody.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/external/Bullet/src/BulletDynamics/Dynamics</a> - btRigidBody.h<span style="font-size: 80%;"> (source / <a href="btRigidBody.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">39</td>
+            <td class="headerCovTableEntry">45</td>
+            <td class="headerCovTableEntryMed">86.7 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">13</td>
+            <td class="headerCovTableEntry">15</td>
+            <td class="headerCovTableEntryMed">86.7 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            : Bullet Continuous Collision Detection and Physics Library
+<span class="lineNum">       3 </span>            : Copyright (c) 2003-2006 Erwin Coumans  http://continuousphysics.com/Bullet/
+<span class="lineNum">       4 </span>            : 
+<span class="lineNum">       5 </span>            : This software is provided 'as-is', without any express or implied warranty.
+<span class="lineNum">       6 </span>            : In no event will the authors be held liable for any damages arising from the use of this software.
+<span class="lineNum">       7 </span>            : Permission is granted to anyone to use this software for any purpose, 
+<span class="lineNum">       8 </span>            : including commercial applications, and to alter it and redistribute it freely, 
+<span class="lineNum">       9 </span>            : subject to the following restrictions:
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
+<span class="lineNum">      12 </span>            : 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
+<span class="lineNum">      13 </span>            : 3. This notice may not be removed or altered from any source distribution.
+<span class="lineNum">      14 </span>            : */
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : #ifndef BT_RIGIDBODY_H
+<span class="lineNum">      17 </span>            : #define BT_RIGIDBODY_H
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            : #include &quot;LinearMath/btAlignedObjectArray.h&quot;
+<span class="lineNum">      20 </span>            : #include &quot;LinearMath/btTransform.h&quot;
+<span class="lineNum">      21 </span>            : #include &quot;BulletCollision/BroadphaseCollision/btBroadphaseProxy.h&quot;
+<span class="lineNum">      22 </span>            : #include &quot;BulletCollision/CollisionDispatch/btCollisionObject.h&quot;
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : class btCollisionShape;
+<span class="lineNum">      25 </span>            : class btMotionState;
+<span class="lineNum">      26 </span>            : class btTypedConstraint;
+<span class="lineNum">      27 </span>            : 
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span>            : extern btScalar gDeactivationTime;
+<span class="lineNum">      30 </span>            : extern bool gDisableDeactivation;
+<span class="lineNum">      31 </span>            : 
+<span class="lineNum">      32 </span>            : #ifdef BT_USE_DOUBLE_PRECISION
+<span class="lineNum">      33 </span>            : #define btRigidBodyData btRigidBodyDoubleData
+<span class="lineNum">      34 </span>            : #define btRigidBodyDataName     &quot;btRigidBodyDoubleData&quot;
+<span class="lineNum">      35 </span>            : #else
+<span class="lineNum">      36 </span>            : #define btRigidBodyData btRigidBodyFloatData
+<span class="lineNum">      37 </span>            : #define btRigidBodyDataName     &quot;btRigidBodyFloatData&quot;
+<span class="lineNum">      38 </span>            : #endif //BT_USE_DOUBLE_PRECISION
+<span class="lineNum">      39 </span>            : 
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span>            : enum    btRigidBodyFlags
+<span class="lineNum">      42 </span>            : {
+<span class="lineNum">      43 </span>            :         BT_DISABLE_WORLD_GRAVITY = 1,
+<span class="lineNum">      44 </span>            :         ///BT_ENABLE_GYROPSCOPIC_FORCE flags is enabled by default in Bullet 2.83 and onwards.
+<span class="lineNum">      45 </span>            :         ///and it BT_ENABLE_GYROPSCOPIC_FORCE becomes equivalent to BT_ENABLE_GYROSCOPIC_FORCE_IMPLICIT_BODY
+<span class="lineNum">      46 </span>            :         ///See Demos/GyroscopicDemo and computeGyroscopicImpulseImplicit
+<span class="lineNum">      47 </span>            :         BT_ENABLE_GYROSCOPIC_FORCE_EXPLICIT = 2,
+<span class="lineNum">      48 </span>            :         BT_ENABLE_GYROSCOPIC_FORCE_IMPLICIT_WORLD=4,
+<span class="lineNum">      49 </span>            :         BT_ENABLE_GYROSCOPIC_FORCE_IMPLICIT_BODY=8,
+<span class="lineNum">      50 </span>            :         BT_ENABLE_GYROPSCOPIC_FORCE = BT_ENABLE_GYROSCOPIC_FORCE_IMPLICIT_BODY,
+<span class="lineNum">      51 </span>            : };
+<span class="lineNum">      52 </span>            : 
+<span class="lineNum">      53 </span>            : 
+<span class="lineNum">      54 </span>            : ///The btRigidBody is the main class for rigid body objects. It is derived from btCollisionObject, so it keeps a pointer to a btCollisionShape.
+<span class="lineNum">      55 </span>            : ///It is recommended for performance and memory use to share btCollisionShape objects whenever possible.
+<span class="lineNum">      56 </span>            : ///There are 3 types of rigid bodies: 
+<span class="lineNum">      57 </span>            : ///- A) Dynamic rigid bodies, with positive mass. Motion is controlled by rigid body dynamics.
+<span class="lineNum">      58 </span>            : ///- B) Fixed objects with zero mass. They are not moving (basically collision objects)
+<span class="lineNum">      59 </span>            : ///- C) Kinematic objects, which are objects without mass, but the user can move them. There is on-way interaction, and Bullet calculates a velocity based on the timestep and previous and current world transform.
+<span class="lineNum">      60 </span>            : ///Bullet automatically deactivates dynamic rigid bodies, when the velocity is below a threshold for a given time.
+<span class="lineNum">      61 </span>            : ///Deactivated (sleeping) rigid bodies don't take any processing time, except a minor broadphase collision detection impact (to allow active objects to activate/wake up sleeping objects)
+<span class="lineNum">      62 </span>            : class btRigidBody  : public btCollisionObject
+<span class="lineNum">      63 </span>            : {
+<span class="lineNum">      64 </span>            : 
+<span class="lineNum">      65 </span>            :         btMatrix3x3     m_invInertiaTensorWorld;
+<span class="lineNum">      66 </span>            :         btVector3               m_linearVelocity;
+<span class="lineNum">      67 </span>            :         btVector3               m_angularVelocity;
+<span class="lineNum">      68 </span>            :         btScalar                m_inverseMass;
+<span class="lineNum">      69 </span>            :         btVector3               m_linearFactor;
+<span class="lineNum">      70 </span>            : 
+<span class="lineNum">      71 </span>            :         btVector3               m_gravity;      
+<span class="lineNum">      72 </span>            :         btVector3               m_gravity_acceleration;
+<span class="lineNum">      73 </span>            :         btVector3               m_invInertiaLocal;
+<span class="lineNum">      74 </span>            :         btVector3               m_totalForce;
+<span class="lineNum">      75 </span>            :         btVector3               m_totalTorque;
+<span class="lineNum">      76 </span>            :         
+<span class="lineNum">      77 </span>            :         btScalar                m_linearDamping;
+<span class="lineNum">      78 </span>            :         btScalar                m_angularDamping;
+<span class="lineNum">      79 </span>            : 
+<span class="lineNum">      80 </span>            :         bool                    m_additionalDamping;
+<span class="lineNum">      81 </span>            :         btScalar                m_additionalDampingFactor;
+<span class="lineNum">      82 </span>            :         btScalar                m_additionalLinearDampingThresholdSqr;
+<span class="lineNum">      83 </span>            :         btScalar                m_additionalAngularDampingThresholdSqr;
+<span class="lineNum">      84 </span>            :         btScalar                m_additionalAngularDampingFactor;
+<span class="lineNum">      85 </span>            : 
+<span class="lineNum">      86 </span>            : 
+<span class="lineNum">      87 </span>            :         btScalar                m_linearSleepingThreshold;
+<span class="lineNum">      88 </span>            :         btScalar                m_angularSleepingThreshold;
+<span class="lineNum">      89 </span>            : 
+<span class="lineNum">      90 </span>            :         //m_optionalMotionState allows to automatic synchronize the world transform for active objects
+<span class="lineNum">      91 </span>            :         btMotionState*  m_optionalMotionState;
+<span class="lineNum">      92 </span>            : 
+<span class="lineNum">      93 </span>            :         //keep track of typed constraints referencing this rigid body, to disable collision between linked bodies
+<span class="lineNum">      94 </span>            :         btAlignedObjectArray&lt;btTypedConstraint*&gt; m_constraintRefs;
+<span class="lineNum">      95 </span>            : 
+<span class="lineNum">      96 </span>            :         int                             m_rigidbodyFlags;
+<span class="lineNum">      97 </span>            :         
+<span class="lineNum">      98 </span>            :         int                             m_debugBodyId;
+<span class="lineNum">      99 </span>            :         
+<span class="lineNum">     100 </span>            : 
+<span class="lineNum">     101 </span>            : protected:
+<span class="lineNum">     102 </span>            : 
+<span class="lineNum">     103 </span>            :         ATTRIBUTE_ALIGNED16(btVector3           m_deltaLinearVelocity);
+<span class="lineNum">     104 </span>            :         btVector3               m_deltaAngularVelocity;
+<span class="lineNum">     105 </span>            :         btVector3               m_angularFactor;
+<span class="lineNum">     106 </span>            :         btVector3               m_invMass;
+<span class="lineNum">     107 </span>            :         btVector3               m_pushVelocity;
+<span class="lineNum">     108 </span>            :         btVector3               m_turnVelocity;
+<span class="lineNum">     109 </span>            : 
+<span class="lineNum">     110 </span>            : 
+<span class="lineNum">     111 </span>            : public:
+<span class="lineNum">     112 </span>            : 
+<span class="lineNum">     113 </span>            : 
+<span class="lineNum">     114 </span>            :         ///The btRigidBodyConstructionInfo structure provides information to create a rigid body. Setting mass to zero creates a fixed (non-dynamic) rigid body.
+<span class="lineNum">     115 </span>            :         ///For dynamic objects, you can use the collision shape to approximate the local inertia tensor, otherwise use the zero vector (default argument)
+<span class="lineNum">     116 </span>            :         ///You can use the motion state to synchronize the world transform between physics and graphics objects. 
+<span class="lineNum">     117 </span>            :         ///And if the motion state is provided, the rigid body will initialize its initial world transform from the motion state,
+<span class="lineNum">     118 </span>            :         ///m_startWorldTransform is only used when you don't provide a motion state.
+<span class="lineNum">     119 </span>            :         struct  btRigidBodyConstructionInfo
+<span class="lineNum">     120 </span>            :         {
+<span class="lineNum">     121 </span>            :                 btScalar                        m_mass;
+<span class="lineNum">     122 </span>            : 
+<span class="lineNum">     123 </span>            :                 ///When a motionState is provided, the rigid body will initialize its world transform from the motion state
+<span class="lineNum">     124 </span>            :                 ///In this case, m_startWorldTransform is ignored.
+<span class="lineNum">     125 </span>            :                 btMotionState*          m_motionState;
+<span class="lineNum">     126 </span>            :                 btTransform     m_startWorldTransform;
+<span class="lineNum">     127 </span>            : 
+<span class="lineNum">     128 </span>            :                 btCollisionShape*       m_collisionShape;
+<span class="lineNum">     129 </span>            :                 btVector3                       m_localInertia;
+<span class="lineNum">     130 </span>            :                 btScalar                        m_linearDamping;
+<span class="lineNum">     131 </span>            :                 btScalar                        m_angularDamping;
+<span class="lineNum">     132 </span>            : 
+<span class="lineNum">     133 </span>            :                 ///best simulation results when friction is non-zero
+<span class="lineNum">     134 </span>            :                 btScalar                        m_friction;
+<span class="lineNum">     135 </span>            :                 ///the m_rollingFriction prevents rounded shapes, such as spheres, cylinders and capsules from rolling forever.
+<span class="lineNum">     136 </span>            :                 ///See Bullet/Demos/RollingFrictionDemo for usage
+<span class="lineNum">     137 </span>            :                 btScalar                        m_rollingFriction;
+<span class="lineNum">     138 </span>            :                 ///best simulation results using zero restitution.
+<span class="lineNum">     139 </span>            :                 btScalar                        m_restitution;
+<span class="lineNum">     140 </span>            : 
+<span class="lineNum">     141 </span>            :                 btScalar                        m_linearSleepingThreshold;
+<span class="lineNum">     142 </span>            :                 btScalar                        m_angularSleepingThreshold;
+<span class="lineNum">     143 </span>            : 
+<span class="lineNum">     144 </span>            :                 //Additional damping can help avoiding lowpass jitter motion, help stability for ragdolls etc.
+<span class="lineNum">     145 </span>            :                 //Such damping is undesirable, so once the overall simulation quality of the rigid body dynamics system has improved, this should become obsolete
+<span class="lineNum">     146 </span>            :                 bool                            m_additionalDamping;
+<span class="lineNum">     147 </span>            :                 btScalar                        m_additionalDampingFactor;
+<span class="lineNum">     148 </span>            :                 btScalar                        m_additionalLinearDampingThresholdSqr;
+<span class="lineNum">     149 </span>            :                 btScalar                        m_additionalAngularDampingThresholdSqr;
+<a name="150"><span class="lineNum">     150 </span>            :                 btScalar                        m_additionalAngularDampingFactor;</a>
+<span class="lineNum">     151 </span>            : 
+<span class="lineNum">     152 </span><span class="lineCov">         48 :                 btRigidBodyConstructionInfo(    btScalar mass, btMotionState* motionState, btCollisionShape* collisionShape, const btVector3&amp; localInertia=btVector3(0,0,0)):</span>
+<span class="lineNum">     153 </span>            :                 m_mass(mass),
+<span class="lineNum">     154 </span>            :                         m_motionState(motionState),
+<span class="lineNum">     155 </span>            :                         m_collisionShape(collisionShape),
+<span class="lineNum">     156 </span>            :                         m_localInertia(localInertia),
+<span class="lineNum">     157 </span>            :                         m_linearDamping(btScalar(0.)),
+<span class="lineNum">     158 </span>            :                         m_angularDamping(btScalar(0.)),
+<span class="lineNum">     159 </span>            :                         m_friction(btScalar(0.5)),
+<span class="lineNum">     160 </span>            :                         m_rollingFriction(btScalar(0)),
+<span class="lineNum">     161 </span>            :                         m_restitution(btScalar(0.)),
+<span class="lineNum">     162 </span>            :                         m_linearSleepingThreshold(btScalar(0.8)),
+<span class="lineNum">     163 </span>            :                         m_angularSleepingThreshold(btScalar(1.f)),
+<span class="lineNum">     164 </span>            :                         m_additionalDamping(false),
+<span class="lineNum">     165 </span>            :                         m_additionalDampingFactor(btScalar(0.005)),
+<span class="lineNum">     166 </span>            :                         m_additionalLinearDampingThresholdSqr(btScalar(0.01)),
+<span class="lineNum">     167 </span>            :                         m_additionalAngularDampingThresholdSqr(btScalar(0.01)),
+<span class="lineNum">     168 </span><span class="lineCov">         48 :                         m_additionalAngularDampingFactor(btScalar(0.01))</span>
+<span class="lineNum">     169 </span>            :                 {
+<span class="lineNum">     170 </span><span class="lineCov">         48 :                         m_startWorldTransform.setIdentity();</span>
+<span class="lineNum">     171 </span><span class="lineCov">         48 :                 }</span>
+<span class="lineNum">     172 </span>            :         };
+<span class="lineNum">     173 </span>            : 
+<span class="lineNum">     174 </span>            :         ///btRigidBody constructor using construction info
+<span class="lineNum">     175 </span>            :         btRigidBody(    const btRigidBodyConstructionInfo&amp; constructionInfo);
+<span class="lineNum">     176 </span>            : 
+<span class="lineNum">     177 </span>            :         ///btRigidBody constructor for backwards compatibility. 
+<span class="lineNum">     178 </span>            :         ///To specify friction (etc) during rigid body construction, please use the other constructor (using btRigidBodyConstructionInfo)
+<span class="lineNum">     179 </span>            :         btRigidBody(    btScalar mass, btMotionState* motionState, btCollisionShape* collisionShape, const btVector3&amp; localInertia=btVector3(0,0,0));
+<span class="lineNum">     180 </span>            : 
+<span class="lineNum">     181 </span>            : 
+<span class="lineNum">     182 </span>            :         virtual ~btRigidBody()
+<span class="lineNum">     183 </span>            :         { 
+<span class="lineNum">     184 </span>            :                 //No constraints should point to this rigidbody
+<span class="lineNum">     185 </span>            :                 //Remove constraints from the dynamics world before you delete the related rigidbodies. 
+<span class="lineNum">     186 </span>            :                 btAssert(m_constraintRefs.size()==0); 
+<span class="lineNum">     187 </span>            :         }
+<span class="lineNum">     188 </span>            : 
+<span class="lineNum">     189 </span>            : protected:
+<span class="lineNum">     190 </span>            : 
+<span class="lineNum">     191 </span>            :         ///setupRigidBody is only used internally by the constructor
+<span class="lineNum">     192 </span>            :         void    setupRigidBody(const btRigidBodyConstructionInfo&amp; constructionInfo);
+<span class="lineNum">     193 </span>            : 
+<span class="lineNum">     194 </span>            : public:
+<span class="lineNum">     195 </span>            : 
+<span class="lineNum">     196 </span>            :         void                    proceedToTransform(const btTransform&amp; newTrans); 
+<span class="lineNum">     197 </span>            :         
+<span class="lineNum">     198 </span>            :         ///to keep collision detection and dynamics separate we don't store a rigidbody pointer
+<span class="lineNum">     199 </span>            :         ///but a rigidbody is derived from btCollisionObject, so we can safely perform an upcast
+<span class="lineNum">     200 </span>            :         static const btRigidBody*       upcast(const btCollisionObject* colObj)
+<span class="lineNum">     201 </span>            :         {
+<span class="lineNum">     202 </span>            :                 if (colObj-&gt;getInternalType()&amp;btCollisionObject::CO_RIGID_BODY)
+<span class="lineNum">     203 </span>            :                         return (const btRigidBody*)colObj;
+<span class="lineNum">     204 </span>            :                 return 0;
+<span class="lineNum">     205 </span>            :         }
+<span class="lineNum">     206 </span>            :         static btRigidBody*     upcast(btCollisionObject* colObj)
+<span class="lineNum">     207 </span>            :         {
+<span class="lineNum">     208 </span>            :                 if (colObj-&gt;getInternalType()&amp;btCollisionObject::CO_RIGID_BODY)
+<span class="lineNum">     209 </span>            :                         return (btRigidBody*)colObj;
+<span class="lineNum">     210 </span>            :                 return 0;
+<span class="lineNum">     211 </span>            :         }
+<span class="lineNum">     212 </span>            :         
+<span class="lineNum">     213 </span>            :         /// continuous collision detection needs prediction
+<span class="lineNum">     214 </span>            :         void                    predictIntegratedTransform(btScalar step, btTransform&amp; predictedTransform) ;
+<span class="lineNum">     215 </span>            :         
+<span class="lineNum">     216 </span>            :         void                    saveKinematicState(btScalar step);
+<span class="lineNum">     217 </span>            :         
+<span class="lineNum">     218 </span>            :         void                    applyGravity();
+<span class="lineNum">     219 </span>            :         
+<span class="lineNum">     220 </span>            :         void                    setGravity(const btVector3&amp; acceleration);  
+<span class="lineNum">     221 </span>            : 
+<span class="lineNum">     222 </span>            :         const btVector3&amp;    getGravity() const
+<span class="lineNum">     223 </span>            :         {
+<span class="lineNum">     224 </span>            :                 return m_gravity_acceleration;
+<span class="lineNum">     225 </span>            :         }
+<span class="lineNum">     226 </span>            : 
+<span class="lineNum">     227 </span>            :         void                    setDamping(btScalar lin_damping, btScalar ang_damping);
+<span class="lineNum">     228 </span>            : 
+<span class="lineNum">     229 </span>            :         btScalar getLinearDamping() const
+<span class="lineNum">     230 </span>            :         {
+<span class="lineNum">     231 </span>            :                 return m_linearDamping;
+<span class="lineNum">     232 </span>            :         }
+<span class="lineNum">     233 </span>            : 
+<span class="lineNum">     234 </span>            :         btScalar getAngularDamping() const
+<span class="lineNum">     235 </span>            :         {
+<span class="lineNum">     236 </span>            :                 return m_angularDamping;
+<span class="lineNum">     237 </span>            :         }
+<span class="lineNum">     238 </span>            : 
+<span class="lineNum">     239 </span>            :         btScalar getLinearSleepingThreshold() const
+<span class="lineNum">     240 </span>            :         {
+<span class="lineNum">     241 </span>            :                 return m_linearSleepingThreshold;
+<span class="lineNum">     242 </span>            :         }
+<span class="lineNum">     243 </span>            : 
+<span class="lineNum">     244 </span>            :         btScalar getAngularSleepingThreshold() const
+<span class="lineNum">     245 </span>            :         {
+<span class="lineNum">     246 </span>            :                 return m_angularSleepingThreshold;
+<span class="lineNum">     247 </span>            :         }
+<span class="lineNum">     248 </span>            : 
+<span class="lineNum">     249 </span>            :         void                    applyDamping(btScalar timeStep);
+<span class="lineNum">     250 </span>            : 
+<span class="lineNum">     251 </span>            :         SIMD_FORCE_INLINE const btCollisionShape*       getCollisionShape() const {
+<span class="lineNum">     252 </span>            :                 return m_collisionShape;
+<span class="lineNum">     253 </span>            :         }
+<span class="lineNum">     254 </span>            : 
+<span class="lineNum">     255 </span>            :         SIMD_FORCE_INLINE btCollisionShape*     getCollisionShape() {
+<span class="lineNum">     256 </span>            :                         return m_collisionShape;
+<span class="lineNum">     257 </span>            :         }
+<span class="lineNum">     258 </span>            :         
+<span class="lineNum">     259 </span>            :         void                    setMassProps(btScalar mass, const btVector3&amp; inertia);
+<span class="lineNum">     260 </span>            :         
+<span class="lineNum">     261 </span>            :         const btVector3&amp; getLinearFactor() const
+<span class="lineNum">     262 </span>            :         {
+<a name="263"><span class="lineNum">     263 </span>            :                 return m_linearFactor;</a>
+<span class="lineNum">     264 </span>            :         }
+<span class="lineNum">     265 </span><span class="lineCov">         90 :         void setLinearFactor(const btVector3&amp; linearFactor)</span>
+<span class="lineNum">     266 </span>            :         {
+<span class="lineNum">     267 </span><span class="lineCov">         90 :                 m_linearFactor = linearFactor;</span>
+<a name="268"><span class="lineNum">     268 </span><span class="lineCov">         90 :                 m_invMass = m_linearFactor*m_inverseMass;</span></a>
+<span class="lineNum">     269 </span><span class="lineCov">         90 :         }</span>
+<span class="lineNum">     270 </span><span class="lineCov">    4205528 :         btScalar                getInvMass() const { return m_inverseMass; }</span>
+<span class="lineNum">     271 </span>            :         const btMatrix3x3&amp; getInvInertiaTensorWorld() const { 
+<span class="lineNum">     272 </span>            :                 return m_invInertiaTensorWorld; 
+<span class="lineNum">     273 </span>            :         }
+<span class="lineNum">     274 </span>            :                 
+<span class="lineNum">     275 </span>            :         void                    integrateVelocities(btScalar step);
+<span class="lineNum">     276 </span>            : 
+<a name="277"><span class="lineNum">     277 </span>            :         void                    setCenterOfMassTransform(const btTransform&amp; xform);</a>
+<span class="lineNum">     278 </span>            : 
+<span class="lineNum">     279 </span><span class="lineCov">      45780 :         void                    applyCentralForce(const btVector3&amp; force)</span>
+<span class="lineNum">     280 </span>            :         {
+<span class="lineNum">     281 </span><span class="lineCov">      45780 :                 m_totalForce += force*m_linearFactor;</span>
+<span class="lineNum">     282 </span><span class="lineCov">      45780 :         }</span>
+<span class="lineNum">     283 </span>            : 
+<span class="lineNum">     284 </span>            :         const btVector3&amp; getTotalForce() const
+<span class="lineNum">     285 </span>            :         {
+<span class="lineNum">     286 </span>            :                 return m_totalForce;
+<span class="lineNum">     287 </span>            :         };
+<span class="lineNum">     288 </span>            : 
+<span class="lineNum">     289 </span>            :         const btVector3&amp; getTotalTorque() const
+<span class="lineNum">     290 </span>            :         {
+<span class="lineNum">     291 </span>            :                 return m_totalTorque;
+<span class="lineNum">     292 </span>            :         };
+<span class="lineNum">     293 </span>            :     
+<span class="lineNum">     294 </span>            :         const btVector3&amp; getInvInertiaDiagLocal() const
+<span class="lineNum">     295 </span>            :         {
+<span class="lineNum">     296 </span>            :                 return m_invInertiaLocal;
+<span class="lineNum">     297 </span>            :         };
+<span class="lineNum">     298 </span>            : 
+<span class="lineNum">     299 </span>            :         void    setInvInertiaDiagLocal(const btVector3&amp; diagInvInertia)
+<span class="lineNum">     300 </span>            :         {
+<span class="lineNum">     301 </span>            :                 m_invInertiaLocal = diagInvInertia;
+<span class="lineNum">     302 </span>            :         }
+<span class="lineNum">     303 </span>            : 
+<span class="lineNum">     304 </span>            :         void    setSleepingThresholds(btScalar linear,btScalar angular)
+<span class="lineNum">     305 </span>            :         {
+<span class="lineNum">     306 </span>            :                 m_linearSleepingThreshold = linear;
+<span class="lineNum">     307 </span>            :                 m_angularSleepingThreshold = angular;
+<a name="308"><span class="lineNum">     308 </span>            :         }</a>
+<span class="lineNum">     309 </span>            : 
+<span class="lineNum">     310 </span><span class="lineCov">      87200 :         void    applyTorque(const btVector3&amp; torque)</span>
+<span class="lineNum">     311 </span>            :         {
+<span class="lineNum">     312 </span><span class="lineCov">      87200 :                 m_totalTorque += torque*m_angularFactor;</span>
+<a name="313"><span class="lineNum">     313 </span><span class="lineCov">      87200 :         }</span></a>
+<span class="lineNum">     314 </span>            :         
+<span class="lineNum">     315 </span><span class="lineNoCov">          0 :         void    applyForce(const btVector3&amp; force, const btVector3&amp; rel_pos) </span>
+<span class="lineNum">     316 </span>            :         {
+<span class="lineNum">     317 </span><span class="lineNoCov">          0 :                 applyCentralForce(force);</span>
+<span class="lineNum">     318 </span><span class="lineNoCov">          0 :                 applyTorque(rel_pos.cross(force*m_linearFactor));</span>
+<span class="lineNum">     319 </span><span class="lineNoCov">          0 :         }</span>
+<span class="lineNum">     320 </span>            :         
+<span class="lineNum">     321 </span>            :         void applyCentralImpulse(const btVector3&amp; impulse)
+<span class="lineNum">     322 </span>            :         {
+<span class="lineNum">     323 </span>            :                 m_linearVelocity += impulse *m_linearFactor * m_inverseMass;
+<span class="lineNum">     324 </span>            :         }
+<span class="lineNum">     325 </span>            :         
+<span class="lineNum">     326 </span>            :         void applyTorqueImpulse(const btVector3&amp; torque)
+<span class="lineNum">     327 </span>            :         {
+<span class="lineNum">     328 </span>            :                         m_angularVelocity += m_invInertiaTensorWorld * torque * m_angularFactor;
+<span class="lineNum">     329 </span>            :         }
+<span class="lineNum">     330 </span>            :         
+<span class="lineNum">     331 </span>            :         void applyImpulse(const btVector3&amp; impulse, const btVector3&amp; rel_pos) 
+<span class="lineNum">     332 </span>            :         {
+<span class="lineNum">     333 </span>            :                 if (m_inverseMass != btScalar(0.))
+<span class="lineNum">     334 </span>            :                 {
+<span class="lineNum">     335 </span>            :                         applyCentralImpulse(impulse);
+<span class="lineNum">     336 </span>            :                         if (m_angularFactor)
+<span class="lineNum">     337 </span>            :                         {
+<span class="lineNum">     338 </span>            :                                 applyTorqueImpulse(rel_pos.cross(impulse*m_linearFactor));
+<span class="lineNum">     339 </span>            :                         }
+<span class="lineNum">     340 </span>            :                 }
+<a name="341"><span class="lineNum">     341 </span>            :         }</a>
+<span class="lineNum">     342 </span>            : 
+<span class="lineNum">     343 </span><span class="lineCov">      45801 :         void clearForces() </span>
+<span class="lineNum">     344 </span>            :         {
+<span class="lineNum">     345 </span><span class="lineCov">      45801 :                 m_totalForce.setValue(btScalar(0.0), btScalar(0.0), btScalar(0.0));</span>
+<span class="lineNum">     346 </span><span class="lineCov">      45801 :                 m_totalTorque.setValue(btScalar(0.0), btScalar(0.0), btScalar(0.0));</span>
+<span class="lineNum">     347 </span><span class="lineCov">      45801 :         }</span>
+<span class="lineNum">     348 </span>            :         
+<span class="lineNum">     349 </span>            :         void updateInertiaTensor();    
+<span class="lineNum">     350 </span>            :         
+<span class="lineNum">     351 </span>            :         const btVector3&amp;     getCenterOfMassPosition() const { 
+<span class="lineNum">     352 </span>            :                 return m_worldTransform.getOrigin(); 
+<span class="lineNum">     353 </span>            :         }
+<span class="lineNum">     354 </span>            :         btQuaternion getOrientation() const;
+<span class="lineNum">     355 </span>            :         
+<span class="lineNum">     356 </span>            :         const btTransform&amp;  getCenterOfMassTransform() const { 
+<a name="357"><span class="lineNum">     357 </span>            :                 return m_worldTransform; </a>
+<span class="lineNum">     358 </span>            :         }
+<span class="lineNum">     359 </span><span class="lineCov">    2691916 :         const btVector3&amp;   getLinearVelocity() const { </span>
+<a name="360"><span class="lineNum">     360 </span><span class="lineCov">    2691916 :                 return m_linearVelocity; </span></a>
+<span class="lineNum">     361 </span>            :         }
+<span class="lineNum">     362 </span><span class="lineCov">    3542674 :         const btVector3&amp;    getAngularVelocity() const { </span>
+<span class="lineNum">     363 </span><span class="lineCov">    3542674 :                 return m_angularVelocity; </span>
+<span class="lineNum">     364 </span>            :         }
+<a name="365"><span class="lineNum">     365 </span>            :         </a>
+<span class="lineNum">     366 </span>            : 
+<span class="lineNum">     367 </span><span class="lineCov">     229005 :         inline void setLinearVelocity(const btVector3&amp; lin_vel)</span>
+<span class="lineNum">     368 </span>            :         { 
+<span class="lineNum">     369 </span><span class="lineCov">     229005 :                 m_updateRevision++;</span>
+<span class="lineNum">     370 </span><span class="lineCov">     229005 :                 m_linearVelocity = lin_vel; </span>
+<a name="371"><span class="lineNum">     371 </span><span class="lineCov">     229005 :         }</span></a>
+<span class="lineNum">     372 </span>            : 
+<span class="lineNum">     373 </span><span class="lineCov">     228963 :         inline void setAngularVelocity(const btVector3&amp; ang_vel) </span>
+<span class="lineNum">     374 </span>            :         { 
+<span class="lineNum">     375 </span><span class="lineCov">     228963 :                 m_updateRevision++;</span>
+<span class="lineNum">     376 </span><span class="lineCov">     228963 :                 m_angularVelocity = ang_vel; </span>
+<a name="377"><span class="lineNum">     377 </span><span class="lineCov">     228963 :         }</span></a>
+<span class="lineNum">     378 </span>            : 
+<span class="lineNum">     379 </span><span class="lineCov">      45447 :         btVector3 getVelocityInLocalPoint(const btVector3&amp; rel_pos) const</span>
+<span class="lineNum">     380 </span>            :         {
+<span class="lineNum">     381 </span>            :                 //we also calculate lin/ang velocity for kinematic objects
+<span class="lineNum">     382 </span><span class="lineCov">      45447 :                 return m_linearVelocity + m_angularVelocity.cross(rel_pos);</span>
+<span class="lineNum">     383 </span>            : 
+<span class="lineNum">     384 </span>            :                 //for kinematic objects, we could also use use:
+<span class="lineNum">     385 </span>            :                 //              return  (m_worldTransform(rel_pos) - m_interpolationWorldTransform(rel_pos)) / m_kinematicTimeStep;
+<span class="lineNum">     386 </span>            :         }
+<span class="lineNum">     387 </span>            : 
+<span class="lineNum">     388 </span>            :         void translate(const btVector3&amp; v) 
+<span class="lineNum">     389 </span>            :         {
+<span class="lineNum">     390 </span>            :                 m_worldTransform.getOrigin() += v; 
+<span class="lineNum">     391 </span>            :         }
+<span class="lineNum">     392 </span>            : 
+<span class="lineNum">     393 </span>            :         
+<span class="lineNum">     394 </span>            :         void    getAabb(btVector3&amp; aabbMin,btVector3&amp; aabbMax) const;
+<span class="lineNum">     395 </span>            : 
+<span class="lineNum">     396 </span>            : 
+<span class="lineNum">     397 </span>            : 
+<span class="lineNum">     398 </span>            : 
+<span class="lineNum">     399 </span>            :         
+<span class="lineNum">     400 </span>            :         SIMD_FORCE_INLINE btScalar computeImpulseDenominator(const btVector3&amp; pos, const btVector3&amp; normal) const
+<span class="lineNum">     401 </span>            :         {
+<span class="lineNum">     402 </span>            :                 btVector3 r0 = pos - getCenterOfMassPosition();
+<span class="lineNum">     403 </span>            : 
+<span class="lineNum">     404 </span>            :                 btVector3 c0 = (r0).cross(normal);
+<span class="lineNum">     405 </span>            : 
+<span class="lineNum">     406 </span>            :                 btVector3 vec = (c0 * getInvInertiaTensorWorld()).cross(r0);
+<span class="lineNum">     407 </span>            : 
+<span class="lineNum">     408 </span>            :                 return m_inverseMass + normal.dot(vec);
+<span class="lineNum">     409 </span>            : 
+<span class="lineNum">     410 </span>            :         }
+<span class="lineNum">     411 </span>            : 
+<span class="lineNum">     412 </span>            :         SIMD_FORCE_INLINE btScalar computeAngularImpulseDenominator(const btVector3&amp; axis) const
+<span class="lineNum">     413 </span>            :         {
+<span class="lineNum">     414 </span>            :                 btVector3 vec = axis * getInvInertiaTensorWorld();
+<span class="lineNum">     415 </span>            :                 return axis.dot(vec);
+<span class="lineNum">     416 </span>            :         }
+<span class="lineNum">     417 </span>            : 
+<span class="lineNum">     418 </span>            :         SIMD_FORCE_INLINE void  updateDeactivation(btScalar timeStep)
+<span class="lineNum">     419 </span>            :         {
+<span class="lineNum">     420 </span>            :                 if ( (getActivationState() == ISLAND_SLEEPING) || (getActivationState() == DISABLE_DEACTIVATION))
+<span class="lineNum">     421 </span>            :                         return;
+<span class="lineNum">     422 </span>            : 
+<span class="lineNum">     423 </span>            :                 if ((getLinearVelocity().length2() &lt; m_linearSleepingThreshold*m_linearSleepingThreshold) &amp;&amp;
+<span class="lineNum">     424 </span>            :                         (getAngularVelocity().length2() &lt; m_angularSleepingThreshold*m_angularSleepingThreshold))
+<span class="lineNum">     425 </span>            :                 {
+<span class="lineNum">     426 </span>            :                         m_deactivationTime += timeStep;
+<span class="lineNum">     427 </span>            :                 } else
+<span class="lineNum">     428 </span>            :                 {
+<span class="lineNum">     429 </span>            :                         m_deactivationTime=btScalar(0.);
+<span class="lineNum">     430 </span>            :                         setActivationState(0);
+<span class="lineNum">     431 </span>            :                 }
+<span class="lineNum">     432 </span>            : 
+<span class="lineNum">     433 </span>            :         }
+<span class="lineNum">     434 </span>            : 
+<span class="lineNum">     435 </span>            :         SIMD_FORCE_INLINE bool  wantsSleeping()
+<span class="lineNum">     436 </span>            :         {
+<span class="lineNum">     437 </span>            : 
+<span class="lineNum">     438 </span>            :                 if (getActivationState() == DISABLE_DEACTIVATION)
+<span class="lineNum">     439 </span>            :                         return false;
+<span class="lineNum">     440 </span>            : 
+<span class="lineNum">     441 </span>            :                 //disable deactivation
+<span class="lineNum">     442 </span>            :                 if (gDisableDeactivation || (gDeactivationTime == btScalar(0.)))
+<span class="lineNum">     443 </span>            :                         return false;
+<span class="lineNum">     444 </span>            : 
+<span class="lineNum">     445 </span>            :                 if ( (getActivationState() == ISLAND_SLEEPING) || (getActivationState() == WANTS_DEACTIVATION))
+<span class="lineNum">     446 </span>            :                         return true;
+<span class="lineNum">     447 </span>            : 
+<span class="lineNum">     448 </span>            :                 if (m_deactivationTime&gt; gDeactivationTime)
+<span class="lineNum">     449 </span>            :                 {
+<span class="lineNum">     450 </span>            :                         return true;
+<span class="lineNum">     451 </span>            :                 }
+<span class="lineNum">     452 </span>            :                 return false;
+<span class="lineNum">     453 </span>            :         }
+<span class="lineNum">     454 </span>            : 
+<span class="lineNum">     455 </span>            : 
+<span class="lineNum">     456 </span>            :         
+<span class="lineNum">     457 </span>            :         const btBroadphaseProxy*        getBroadphaseProxy() const
+<span class="lineNum">     458 </span>            :         {
+<span class="lineNum">     459 </span>            :                 return m_broadphaseHandle;
+<span class="lineNum">     460 </span>            :         }
+<span class="lineNum">     461 </span>            :         btBroadphaseProxy*      getBroadphaseProxy() 
+<span class="lineNum">     462 </span>            :         {
+<span class="lineNum">     463 </span>            :                 return m_broadphaseHandle;
+<span class="lineNum">     464 </span>            :         }
+<span class="lineNum">     465 </span>            :         void    setNewBroadphaseProxy(btBroadphaseProxy* broadphaseProxy)
+<span class="lineNum">     466 </span>            :         {
+<span class="lineNum">     467 </span>            :                 m_broadphaseHandle = broadphaseProxy;
+<span class="lineNum">     468 </span>            :         }
+<span class="lineNum">     469 </span>            : 
+<span class="lineNum">     470 </span>            :         //btMotionState allows to automatic synchronize the world transform for active objects
+<span class="lineNum">     471 </span>            :         btMotionState*  getMotionState()
+<span class="lineNum">     472 </span>            :         {
+<span class="lineNum">     473 </span>            :                 return m_optionalMotionState;
+<span class="lineNum">     474 </span>            :         }
+<span class="lineNum">     475 </span>            :         const btMotionState*    getMotionState() const
+<span class="lineNum">     476 </span>            :         {
+<span class="lineNum">     477 </span>            :                 return m_optionalMotionState;
+<span class="lineNum">     478 </span>            :         }
+<span class="lineNum">     479 </span>            :         void    setMotionState(btMotionState* motionState)
+<span class="lineNum">     480 </span>            :         {
+<span class="lineNum">     481 </span>            :                 m_optionalMotionState = motionState;
+<span class="lineNum">     482 </span>            :                 if (m_optionalMotionState)
+<span class="lineNum">     483 </span>            :                         motionState-&gt;getWorldTransform(m_worldTransform);
+<span class="lineNum">     484 </span>            :         }
+<span class="lineNum">     485 </span>            : 
+<span class="lineNum">     486 </span>            :         //for experimental overriding of friction/contact solver func
+<span class="lineNum">     487 </span>            :         int     m_contactSolverType;
+<a name="488"><span class="lineNum">     488 </span>            :         int     m_frictionSolverType;</a>
+<span class="lineNum">     489 </span>            : 
+<span class="lineNum">     490 </span><span class="lineCov">         90 :         void    setAngularFactor(const btVector3&amp; angFac)</span>
+<span class="lineNum">     491 </span>            :         {
+<span class="lineNum">     492 </span><span class="lineCov">         90 :                 m_updateRevision++;</span>
+<span class="lineNum">     493 </span><span class="lineCov">         90 :                 m_angularFactor = angFac;</span>
+<span class="lineNum">     494 </span><span class="lineCov">         90 :         }</span>
+<span class="lineNum">     495 </span>            : 
+<span class="lineNum">     496 </span>            :         void    setAngularFactor(btScalar angFac)
+<span class="lineNum">     497 </span>            :         {
+<span class="lineNum">     498 </span>            :                 m_updateRevision++;
+<span class="lineNum">     499 </span>            :                 m_angularFactor.setValue(angFac,angFac,angFac);
+<span class="lineNum">     500 </span>            :         }
+<span class="lineNum">     501 </span>            :         const btVector3&amp;    getAngularFactor() const
+<span class="lineNum">     502 </span>            :         {
+<span class="lineNum">     503 </span>            :                 return m_angularFactor;
+<span class="lineNum">     504 </span>            :         }
+<span class="lineNum">     505 </span>            : 
+<span class="lineNum">     506 </span>            :         //is this rigidbody added to a btCollisionWorld/btDynamicsWorld/btBroadphase?
+<span class="lineNum">     507 </span>            :         bool    isInWorld() const
+<span class="lineNum">     508 </span>            :         {
+<span class="lineNum">     509 </span>            :                 return (getBroadphaseProxy() != 0);
+<span class="lineNum">     510 </span>            :         }
+<span class="lineNum">     511 </span>            : 
+<span class="lineNum">     512 </span>            :         void addConstraintRef(btTypedConstraint* c);
+<a name="513"><span class="lineNum">     513 </span>            :         void removeConstraintRef(btTypedConstraint* c);</a>
+<span class="lineNum">     514 </span>            : 
+<span class="lineNum">     515 </span><span class="lineNoCov">          0 :         btTypedConstraint* getConstraintRef(int index)</span>
+<span class="lineNum">     516 </span>            :         {
+<span class="lineNum">     517 </span><span class="lineNoCov">          0 :                 return m_constraintRefs[index];</span>
+<a name="518"><span class="lineNum">     518 </span>            :         }</a>
+<span class="lineNum">     519 </span>            : 
+<span class="lineNum">     520 </span><span class="lineCov">         48 :         int getNumConstraintRefs() const</span>
+<span class="lineNum">     521 </span>            :         {
+<span class="lineNum">     522 </span><span class="lineCov">         48 :                 return m_constraintRefs.size();</span>
+<span class="lineNum">     523 </span>            :         }
+<span class="lineNum">     524 </span>            : 
+<span class="lineNum">     525 </span>            :         void    setFlags(int flags)
+<span class="lineNum">     526 </span>            :         {
+<span class="lineNum">     527 </span>            :                 m_rigidbodyFlags = flags;
+<span class="lineNum">     528 </span>            :         }
+<span class="lineNum">     529 </span>            : 
+<span class="lineNum">     530 </span>            :         int getFlags() const
+<span class="lineNum">     531 </span>            :         {
+<span class="lineNum">     532 </span>            :                 return m_rigidbodyFlags;
+<span class="lineNum">     533 </span>            :         }
+<span class="lineNum">     534 </span>            : 
+<span class="lineNum">     535 </span>            : 
+<span class="lineNum">     536 </span>            :         
+<span class="lineNum">     537 </span>            : 
+<span class="lineNum">     538 </span>            :         ///perform implicit force computation in world space
+<span class="lineNum">     539 </span>            :         btVector3 computeGyroscopicImpulseImplicit_World(btScalar dt) const;
+<span class="lineNum">     540 </span>            :         
+<span class="lineNum">     541 </span>            :         ///perform implicit force computation in body space (inertial frame)
+<span class="lineNum">     542 </span>            :         btVector3 computeGyroscopicImpulseImplicit_Body(btScalar step) const;
+<span class="lineNum">     543 </span>            : 
+<span class="lineNum">     544 </span>            :         ///explicit version is best avoided, it gains energy
+<span class="lineNum">     545 </span>            :         btVector3 computeGyroscopicForceExplicit(btScalar maxGyroscopicForce) const;
+<span class="lineNum">     546 </span>            :         btVector3 getLocalInertia() const;
+<span class="lineNum">     547 </span>            : 
+<span class="lineNum">     548 </span>            :         ///////////////////////////////////////////////
+<span class="lineNum">     549 </span>            : 
+<span class="lineNum">     550 </span>            :         virtual int     calculateSerializeBufferSize()  const;
+<span class="lineNum">     551 </span>            : 
+<span class="lineNum">     552 </span>            :         ///fills the dataBuffer and returns the struct name (and 0 on failure)
+<span class="lineNum">     553 </span>            :         virtual const char*     serialize(void* dataBuffer,  class btSerializer* serializer) const;
+<span class="lineNum">     554 </span>            : 
+<span class="lineNum">     555 </span>            :         virtual void serializeSingleObject(class btSerializer* serializer) const;
+<span class="lineNum">     556 </span>            : 
+<span class="lineNum">     557 </span>            : };
+<span class="lineNum">     558 </span>            : 
+<span class="lineNum">     559 </span>            : //@todo add m_optionalMotionState and m_constraintRefs to btRigidBodyData
+<span class="lineNum">     560 </span>            : ///do not change those serialization structures, it requires an updated sBulletDNAstr/sBulletDNAstr64
+<span class="lineNum">     561 </span>            : struct  btRigidBodyFloatData
+<span class="lineNum">     562 </span>            : {
+<span class="lineNum">     563 </span>            :         btCollisionObjectFloatData      m_collisionObjectData;
+<span class="lineNum">     564 </span>            :         btMatrix3x3FloatData            m_invInertiaTensorWorld;
+<span class="lineNum">     565 </span>            :         btVector3FloatData              m_linearVelocity;
+<span class="lineNum">     566 </span>            :         btVector3FloatData              m_angularVelocity;
+<span class="lineNum">     567 </span>            :         btVector3FloatData              m_angularFactor;
+<span class="lineNum">     568 </span>            :         btVector3FloatData              m_linearFactor;
+<span class="lineNum">     569 </span>            :         btVector3FloatData              m_gravity;      
+<span class="lineNum">     570 </span>            :         btVector3FloatData              m_gravity_acceleration;
+<span class="lineNum">     571 </span>            :         btVector3FloatData              m_invInertiaLocal;
+<span class="lineNum">     572 </span>            :         btVector3FloatData              m_totalForce;
+<span class="lineNum">     573 </span>            :         btVector3FloatData              m_totalTorque;
+<span class="lineNum">     574 </span>            :         float                                   m_inverseMass;
+<span class="lineNum">     575 </span>            :         float                                   m_linearDamping;
+<span class="lineNum">     576 </span>            :         float                                   m_angularDamping;
+<span class="lineNum">     577 </span>            :         float                                   m_additionalDampingFactor;
+<span class="lineNum">     578 </span>            :         float                                   m_additionalLinearDampingThresholdSqr;
+<span class="lineNum">     579 </span>            :         float                                   m_additionalAngularDampingThresholdSqr;
+<span class="lineNum">     580 </span>            :         float                                   m_additionalAngularDampingFactor;
+<span class="lineNum">     581 </span>            :         float                                   m_linearSleepingThreshold;
+<span class="lineNum">     582 </span>            :         float                                   m_angularSleepingThreshold;
+<span class="lineNum">     583 </span>            :         int                                             m_additionalDamping;
+<span class="lineNum">     584 </span>            : };
+<span class="lineNum">     585 </span>            : 
+<span class="lineNum">     586 </span>            : ///do not change those serialization structures, it requires an updated sBulletDNAstr/sBulletDNAstr64
+<span class="lineNum">     587 </span>            : struct  btRigidBodyDoubleData
+<span class="lineNum">     588 </span>            : {
+<span class="lineNum">     589 </span>            :         btCollisionObjectDoubleData     m_collisionObjectData;
+<span class="lineNum">     590 </span>            :         btMatrix3x3DoubleData           m_invInertiaTensorWorld;
+<span class="lineNum">     591 </span>            :         btVector3DoubleData             m_linearVelocity;
+<span class="lineNum">     592 </span>            :         btVector3DoubleData             m_angularVelocity;
+<span class="lineNum">     593 </span>            :         btVector3DoubleData             m_angularFactor;
+<span class="lineNum">     594 </span>            :         btVector3DoubleData             m_linearFactor;
+<span class="lineNum">     595 </span>            :         btVector3DoubleData             m_gravity;      
+<span class="lineNum">     596 </span>            :         btVector3DoubleData             m_gravity_acceleration;
+<span class="lineNum">     597 </span>            :         btVector3DoubleData             m_invInertiaLocal;
+<span class="lineNum">     598 </span>            :         btVector3DoubleData             m_totalForce;
+<span class="lineNum">     599 </span>            :         btVector3DoubleData             m_totalTorque;
+<span class="lineNum">     600 </span>            :         double                                  m_inverseMass;
+<span class="lineNum">     601 </span>            :         double                                  m_linearDamping;
+<span class="lineNum">     602 </span>            :         double                                  m_angularDamping;
+<span class="lineNum">     603 </span>            :         double                                  m_additionalDampingFactor;
+<span class="lineNum">     604 </span>            :         double                                  m_additionalLinearDampingThresholdSqr;
+<span class="lineNum">     605 </span>            :         double                                  m_additionalAngularDampingThresholdSqr;
+<span class="lineNum">     606 </span>            :         double                                  m_additionalAngularDampingFactor;
+<span class="lineNum">     607 </span>            :         double                                  m_linearSleepingThreshold;
+<span class="lineNum">     608 </span>            :         double                                  m_angularSleepingThreshold;
+<span class="lineNum">     609 </span>            :         int                                             m_additionalDamping;
+<span class="lineNum">     610 </span>            :         char    m_padding[4];
+<span class="lineNum">     611 </span>            : };
+<span class="lineNum">     612 </span>            : 
+<span class="lineNum">     613 </span>            : 
+<span class="lineNum">     614 </span>            : 
+<span class="lineNum">     615 </span>            : #endif //BT_RIGIDBODY_H
+<span class="lineNum">     616 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

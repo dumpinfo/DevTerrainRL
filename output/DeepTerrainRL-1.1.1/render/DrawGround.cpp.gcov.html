@@ -1,0 +1,323 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/render/DrawGround.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/render</a> - DrawGround.cpp<span style="font-size: 80%;"> (source / <a href="DrawGround.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">54</td>
+            <td class="headerCovTableEntry">154</td>
+            <td class="headerCovTableEntryLo">35.1 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntry">8</td>
+            <td class="headerCovTableEntryLo">50.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;DrawGround.h&quot;</a>
+<span class="lineNum">       2 </span>            : #include &quot;DrawUtil.h&quot;
+<span class="lineNum">       3 </span>            : #include &quot;sim/GroundFlat.h&quot;
+<span class="lineNum">       4 </span>            : #include &quot;sim/GroundVar2D.h&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : const double gMarkerSpacing = 0.20;
+<span class="lineNum">       7 </span>            : const double gBigMarkerSpacing = gMarkerSpacing * 5;
+<span class="lineNum">       8 </span>            : const double gMarkerH = 0.04;
+<a name="9"><span class="lineNum">       9 </span>            : const double gBigMarkerH = 0.075;</a>
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span><span class="lineCov">         84 : void cDrawGround::Draw2D(const cGround* ground, const tVector&amp; col, const tVector&amp; bound_min, const tVector&amp; bound_max)</span>
+<span class="lineNum">      12 </span>            : {
+<span class="lineNum">      13 </span><span class="lineCov">         84 :         cGround::eGroundType type = ground-&gt;GetGroundType();</span>
+<span class="lineNum">      14 </span><span class="lineCov">         84 :         switch (type)</span>
+<span class="lineNum">      15 </span>            :         {
+<span class="lineNum">      16 </span>            :         case cGround::eGroundTypeFlat:
+<span class="lineNum">      17 </span><span class="lineNoCov">          0 :                 DrawFlat2D(ground, col, bound_min, bound_max);</span>
+<span class="lineNum">      18 </span><span class="lineNoCov">          0 :                 break;</span>
+<span class="lineNum">      19 </span>            :         case cGround::eGroundTypeVar2D:
+<span class="lineNum">      20 </span><span class="lineCov">         84 :                 DrawVar2D(ground, col, bound_min, bound_max);</span>
+<span class="lineNum">      21 </span><span class="lineCov">         84 :                 break;</span>
+<span class="lineNum">      22 </span>            :         default:
+<span class="lineNum">      23 </span><span class="lineNoCov">          0 :                 assert(false); // unsupported ground type</span>
+<span class="lineNum">      24 </span>            :                 break;
+<span class="lineNum">      25 </span>            :         }
+<a name="26"><span class="lineNum">      26 </span><span class="lineCov">         84 : }</span></a>
+<span class="lineNum">      27 </span>            : 
+<span class="lineNum">      28 </span><span class="lineNoCov">          0 : void cDrawGround::Draw3D(const cGround* ground, const tVector&amp; col, const tVector&amp; bound_min, const tVector&amp; bound_max)</span>
+<span class="lineNum">      29 </span>            : {
+<span class="lineNum">      30 </span><span class="lineNoCov">          0 :         cGround::eGroundType type = ground-&gt;GetGroundType();</span>
+<span class="lineNum">      31 </span><span class="lineNoCov">          0 :         switch (type)</span>
+<span class="lineNum">      32 </span>            :         {
+<span class="lineNum">      33 </span>            :         case cGround::eGroundTypeFlat:
+<span class="lineNum">      34 </span><span class="lineNoCov">          0 :                 DrawFlat3D(ground, col, bound_min, bound_max);</span>
+<span class="lineNum">      35 </span><span class="lineNoCov">          0 :                 break;</span>
+<span class="lineNum">      36 </span>            :         case cGround::eGroundTypeVar2D:
+<span class="lineNum">      37 </span><span class="lineNoCov">          0 :                 DrawVar3D(ground, col, bound_min, bound_max);</span>
+<span class="lineNum">      38 </span><span class="lineNoCov">          0 :                 break;</span>
+<span class="lineNum">      39 </span>            :         default:
+<span class="lineNum">      40 </span><span class="lineNoCov">          0 :                 assert(false); // unsupported ground type</span>
+<span class="lineNum">      41 </span>            :                 break;
+<span class="lineNum">      42 </span>            :         }
+<a name="43"><span class="lineNum">      43 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">      44 </span>            : 
+<span class="lineNum">      45 </span><span class="lineNoCov">          0 : void cDrawGround::DrawFlat2D(const cGround* ground, const tVector&amp; col, const tVector&amp; bound_min, const tVector&amp; bound_max)</span>
+<span class="lineNum">      46 </span>            : {
+<span class="lineNum">      47 </span><span class="lineNoCov">          0 :         assert(ground-&gt;GetGroundType() == cGround::eGroundTypeFlat);</span>
+<span class="lineNum">      48 </span>            :         
+<span class="lineNum">      49 </span><span class="lineNoCov">          0 :         const cGroundFlat* ground_flat = reinterpret_cast&lt;const cGroundFlat*&gt;(ground);</span>
+<span class="lineNum">      50 </span><span class="lineNoCov">          0 :         tVector ground_origin = ground_flat-&gt;GetPos();</span>
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span><span class="lineNoCov">          0 :         const double ground_h = ground_flat-&gt;SampleHeight(tVector::Zero());</span>
+<span class="lineNum">      53 </span>            : 
+<span class="lineNum">      54 </span><span class="lineNoCov">          0 :         tVector origin = (bound_min + bound_max) * 0.5;</span>
+<span class="lineNum">      55 </span><span class="lineNoCov">          0 :         double w = bound_max[0] - bound_min[0];</span>
+<span class="lineNum">      56 </span><span class="lineNoCov">          0 :         double h = bound_max[1] - bound_min[1];</span>
+<span class="lineNum">      57 </span>            : 
+<span class="lineNum">      58 </span><span class="lineNoCov">          0 :         double max_x = origin(0) + w;</span>
+<span class="lineNum">      59 </span><span class="lineNoCov">          0 :         double max_y = ground_h;</span>
+<span class="lineNum">      60 </span><span class="lineNoCov">          0 :         double min_x = origin(0) - w;</span>
+<span class="lineNum">      61 </span><span class="lineNoCov">          0 :         double min_y = std::min(origin(1) - h * 0.5f, max_y - 0.05f);</span>
+<span class="lineNum">      62 </span>            : 
+<span class="lineNum">      63 </span><span class="lineNoCov">          0 :         tVector pos = tVector(origin(0), (min_y + max_y) * 0.5, 0, 0);</span>
+<span class="lineNum">      64 </span><span class="lineNoCov">          0 :         tVector size = tVector(w, (max_y - min_y), 0, 0);</span>
+<span class="lineNum">      65 </span>            : 
+<span class="lineNum">      66 </span><span class="lineNoCov">          0 :         cDrawUtil::DrawRuler2D(pos, size, col, gMarkerSpacing, gBigMarkerSpacing, gMarkerH, gBigMarkerH);</span>
+<a name="67"><span class="lineNum">      67 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">      68 </span>            : 
+<span class="lineNum">      69 </span><span class="lineNoCov">          0 : void cDrawGround::DrawFlat3D(const cGround* ground, const tVector&amp; col, const tVector&amp; bound_min, const tVector&amp; bound_max)</span>
+<span class="lineNum">      70 </span>            : {
+<span class="lineNum">      71 </span><span class="lineNoCov">          0 :         assert(ground-&gt;GetGroundType() == cGround::eGroundTypeFlat);</span>
+<span class="lineNum">      72 </span>            : 
+<span class="lineNum">      73 </span><span class="lineNoCov">          0 :         const cGroundFlat* ground_flat = reinterpret_cast&lt;const cGroundFlat*&gt;(ground);</span>
+<span class="lineNum">      74 </span><span class="lineNoCov">          0 :         tVector pos = ground_flat-&gt;GetPos();</span>
+<span class="lineNum">      75 </span><span class="lineNoCov">          0 :         tVector size = bound_max - bound_min;</span>
+<span class="lineNum">      76 </span>            : 
+<span class="lineNum">      77 </span><span class="lineNoCov">          0 :         cDrawUtil::SetColor(col);</span>
+<span class="lineNum">      78 </span><span class="lineNoCov">          0 :         glPushMatrix();</span>
+<span class="lineNum">      79 </span><span class="lineNoCov">          0 :         cDrawUtil::Rotate(-0.5 * M_PI, tVector(1, 0, 0, 0));</span>
+<span class="lineNum">      80 </span><span class="lineNoCov">          0 :         cDrawUtil::DrawRect(pos, size, cDrawUtil::eDrawSolid);</span>
+<span class="lineNum">      81 </span><span class="lineNoCov">          0 :         glPopMatrix();</span>
+<a name="82"><span class="lineNum">      82 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">      83 </span>            : 
+<span class="lineNum">      84 </span><span class="lineCov">         84 : void cDrawGround::DrawVar2D(const cGround* ground, const tVector&amp; col, const tVector&amp; bound_min, const tVector&amp; bound_max)</span>
+<span class="lineNum">      85 </span>            : {
+<span class="lineNum">      86 </span><span class="lineCov">         84 :         assert(ground-&gt;GetGroundType() == cGround::eGroundTypeVar2D);</span>
+<span class="lineNum">      87 </span>            : 
+<span class="lineNum">      88 </span><span class="lineCov">         84 :         const cGroundVar2D* ground_var = reinterpret_cast&lt;const cGroundVar2D*&gt;(ground);</span>
+<span class="lineNum">      89 </span><span class="lineCov">         84 :         tVector ground_origin = ground_var-&gt;GetPos();</span>
+<span class="lineNum">      90 </span>            : 
+<span class="lineNum">      91 </span><span class="lineCov">         84 :         tVector origin = (bound_min + bound_max) * 0.5;</span>
+<span class="lineNum">      92 </span><span class="lineCov">         84 :         double w = bound_max[0] - bound_min[0];</span>
+<span class="lineNum">      93 </span><span class="lineCov">         84 :         double h = bound_max[1] - bound_min[1];</span>
+<span class="lineNum">      94 </span>            : 
+<span class="lineNum">      95 </span><span class="lineCov">         84 :         double max_x = origin(0) + w * 0.5;</span>
+<span class="lineNum">      96 </span><span class="lineCov">         84 :         double min_x = origin(0) - w * 0.5;</span>
+<span class="lineNum">      97 </span><span class="lineCov">         84 :         double min_y = origin(1) - h * 0.5;</span>
+<span class="lineNum">      98 </span>            : 
+<span class="lineNum">      99 </span><span class="lineCov">         84 :         int grid_w = ground_var-&gt;GetGridWidth();</span>
+<span class="lineNum">     100 </span>            : 
+<span class="lineNum">     101 </span><span class="lineCov">         84 :         tVector min_coord = ground_var-&gt;CalcGridCoord(tVector(min_x, 0, ground_origin[2], 0));</span>
+<span class="lineNum">     102 </span><span class="lineCov">         84 :         tVector max_coord = ground_var-&gt;CalcGridCoord(tVector(max_x, 0, ground_origin[2], 0));</span>
+<span class="lineNum">     103 </span><span class="lineCov">         84 :         int min_i = static_cast&lt;int&gt;(std::floor(min_coord[0]));</span>
+<span class="lineNum">     104 </span><span class="lineCov">         84 :         int max_i = static_cast&lt;int&gt;(std::ceil(max_coord[0])) + 1; // + 1 padding</span>
+<span class="lineNum">     105 </span>            : 
+<span class="lineNum">     106 </span><span class="lineCov">         84 :         min_i = cMathUtil::Clamp(min_i, 0, grid_w - 1);</span>
+<span class="lineNum">     107 </span><span class="lineCov">         84 :         max_i = cMathUtil::Clamp(max_i, 0, grid_w - 1);</span>
+<span class="lineNum">     108 </span>            : 
+<span class="lineNum">     109 </span><span class="lineCov">       4032 :         for (int i = min_i; i &lt; max_i; ++i)</span>
+<span class="lineNum">     110 </span>            :         {
+<span class="lineNum">     111 </span><span class="lineCov">       3948 :                 tVector a = ground_var-&gt;GetVertex(i, 0);</span>
+<span class="lineNum">     112 </span><span class="lineCov">       3948 :                 tVector b = ground_var-&gt;GetVertex(i + 1, 0);</span>
+<span class="lineNum">     113 </span><span class="lineCov">       3948 :                 a[2] = 0;</span>
+<span class="lineNum">     114 </span><span class="lineCov">       3948 :                 b[2] = 0;</span>
+<span class="lineNum">     115 </span>            : 
+<span class="lineNum">     116 </span><span class="lineCov">       3948 :                 double curr_min_y = std::min(a[1], b[1]);</span>
+<span class="lineNum">     117 </span><span class="lineCov">       3948 :                 curr_min_y = std::min(curr_min_y, min_y);</span>
+<span class="lineNum">     118 </span>            : 
+<span class="lineNum">     119 </span><span class="lineCov">       3948 :                 tVector c = b;</span>
+<span class="lineNum">     120 </span><span class="lineCov">       3948 :                 tVector d = a;</span>
+<span class="lineNum">     121 </span><span class="lineCov">       3948 :                 c[1] = curr_min_y;</span>
+<span class="lineNum">     122 </span><span class="lineCov">       3948 :                 d[1] = curr_min_y;</span>
+<span class="lineNum">     123 </span>            :                 
+<span class="lineNum">     124 </span><span class="lineCov">       3948 :                 cDrawUtil::SetLineWidth(1);</span>
+<span class="lineNum">     125 </span><span class="lineCov">       3948 :                 cDrawUtil::SetColor(col);</span>
+<span class="lineNum">     126 </span><span class="lineCov">       3948 :                 cDrawUtil::DrawQuad(a, d, c, b);</span>
+<span class="lineNum">     127 </span><span class="lineCov">       3948 :                 cDrawUtil::SetColor(tVector(0, 0, 0, 1));</span>
+<span class="lineNum">     128 </span><span class="lineCov">       3948 :                 cDrawUtil::DrawLine(a, b);</span>
+<span class="lineNum">     129 </span>            :         }
+<span class="lineNum">     130 </span>            : 
+<span class="lineNum">     131 </span>            :         // draw markers
+<span class="lineNum">     132 </span><span class="lineCov">         84 :         cDrawUtil::SetColor(tVector(0.f, 0.f, 0.f, 1.f));</span>
+<span class="lineNum">     133 </span><span class="lineCov">        252 :         for (int i = 0; i &lt; 2; ++i)</span>
+<span class="lineNum">     134 </span>            :         {
+<span class="lineNum">     135 </span><span class="lineCov">        168 :                 bool big = (i == 1);</span>
+<span class="lineNum">     136 </span><span class="lineCov">        168 :                 cDrawUtil::SetLineWidth((big) ? 3.f : 2.f);</span>
+<span class="lineNum">     137 </span><span class="lineCov">        168 :                 double curr_spacing = (big) ? gBigMarkerSpacing : gMarkerSpacing;</span>
+<span class="lineNum">     138 </span><span class="lineCov">        168 :                 double curr_h = (big) ? gBigMarkerH : gMarkerH;</span>
+<span class="lineNum">     139 </span>            : 
+<span class="lineNum">     140 </span><span class="lineCov">       2539 :                 for (double x = min_x - std::fmod(min_x, curr_spacing); x &lt; max_x; x += curr_spacing)</span>
+<span class="lineNum">     141 </span>            :                 {
+<span class="lineNum">     142 </span><span class="lineCov">       2371 :                         bool valid_sample = true;</span>
+<span class="lineNum">     143 </span><span class="lineCov">       2371 :                         double ground_h = ground-&gt;SampleHeight(tVector(x, 0, ground_origin[2], 0), valid_sample);</span>
+<span class="lineNum">     144 </span>            :                         
+<span class="lineNum">     145 </span><span class="lineCov">       2371 :                         if (valid_sample)</span>
+<span class="lineNum">     146 </span>            :                         {
+<span class="lineNum">     147 </span><span class="lineCov">       2371 :                                 tVector a = tVector(x, ground_h + curr_h * 0.5f, 0, 0);</span>
+<span class="lineNum">     148 </span><span class="lineCov">       2371 :                                 tVector b = tVector(x, ground_h - curr_h * 0.5f, 0, 0);</span>
+<span class="lineNum">     149 </span><span class="lineCov">       2371 :                                 cDrawUtil::DrawLine(a, b);</span>
+<span class="lineNum">     150 </span>            :                         }
+<span class="lineNum">     151 </span>            :                 }
+<span class="lineNum">     152 </span>            :         }
+<a name="153"><span class="lineNum">     153 </span><span class="lineCov">         84 : }</span></a>
+<span class="lineNum">     154 </span>            : 
+<span class="lineNum">     155 </span><span class="lineNoCov">          0 : void cDrawGround::DrawVar3D(const cGround* ground, const tVector&amp; col, const tVector&amp; bound_min, const tVector&amp; bound_max)</span>
+<span class="lineNum">     156 </span>            : {
+<span class="lineNum">     157 </span><span class="lineNoCov">          0 :         assert(ground-&gt;GetGroundType() == cGround::eGroundTypeVar2D);</span>
+<span class="lineNum">     158 </span><span class="lineNoCov">          0 :         const tVector tex_size = tVector(0.5, 0.5, 0, 0);</span>
+<span class="lineNum">     159 </span>            : 
+<span class="lineNum">     160 </span><span class="lineNoCov">          0 :         const cGroundVar2D* ground_var = reinterpret_cast&lt;const cGroundVar2D*&gt;(ground);</span>
+<span class="lineNum">     161 </span><span class="lineNoCov">          0 :         double ground_w = ground_var-&gt;GetWidth();</span>
+<span class="lineNum">     162 </span><span class="lineNoCov">          0 :         tVector ground_origin = ground_var-&gt;GetPos();</span>
+<span class="lineNum">     163 </span>            : 
+<span class="lineNum">     164 </span><span class="lineNoCov">          0 :         tVector origin = (bound_min + bound_max) * 0.5;</span>
+<span class="lineNum">     165 </span><span class="lineNoCov">          0 :         double w = bound_max[0] - bound_min[0];</span>
+<span class="lineNum">     166 </span><span class="lineNoCov">          0 :         double h = bound_max[1] - bound_min[1];</span>
+<span class="lineNum">     167 </span>            : 
+<span class="lineNum">     168 </span><span class="lineNoCov">          0 :         double max_x = origin(0) + w * 0.5;</span>
+<span class="lineNum">     169 </span><span class="lineNoCov">          0 :         double min_x = origin(0) - w * 0.5;</span>
+<span class="lineNum">     170 </span><span class="lineNoCov">          0 :         double min_y = origin(1) - h * 0.5;</span>
+<span class="lineNum">     171 </span>            : 
+<span class="lineNum">     172 </span><span class="lineNoCov">          0 :         int grid_w = ground_var-&gt;GetGridWidth();</span>
+<span class="lineNum">     173 </span>            : 
+<span class="lineNum">     174 </span><span class="lineNoCov">          0 :         tVector min_coord = ground_var-&gt;CalcGridCoord(tVector(min_x, 0, ground_origin[2], 0));</span>
+<span class="lineNum">     175 </span><span class="lineNoCov">          0 :         tVector max_coord = ground_var-&gt;CalcGridCoord(tVector(max_x, 0, ground_origin[2], 0));</span>
+<span class="lineNum">     176 </span><span class="lineNoCov">          0 :         int min_i = static_cast&lt;int&gt;(std::floor(min_coord[0]));</span>
+<span class="lineNum">     177 </span><span class="lineNoCov">          0 :         int max_i = static_cast&lt;int&gt;(std::ceil(max_coord[0])) + 1; // + 1 padding</span>
+<span class="lineNum">     178 </span>            : 
+<span class="lineNum">     179 </span><span class="lineNoCov">          0 :         min_i = cMathUtil::Clamp(min_i, 0, grid_w - 1);</span>
+<span class="lineNum">     180 </span><span class="lineNoCov">          0 :         max_i = cMathUtil::Clamp(max_i, 0, grid_w - 1);</span>
+<span class="lineNum">     181 </span>            : 
+<span class="lineNum">     182 </span><span class="lineNoCov">          0 :         cDrawUtil::SetColor(col);</span>
+<span class="lineNum">     183 </span><span class="lineNoCov">          0 :         for (int i = min_i; i &lt; max_i; ++i)</span>
+<span class="lineNum">     184 </span>            :         {
+<span class="lineNum">     185 </span><span class="lineNoCov">          0 :                 tVector a = ground_var-&gt;GetVertex(i, 0);</span>
+<span class="lineNum">     186 </span><span class="lineNoCov">          0 :                 tVector b = ground_var-&gt;GetVertex(i + 1, 0);</span>
+<span class="lineNum">     187 </span>            : 
+<span class="lineNum">     188 </span><span class="lineNoCov">          0 :                 double curr_min_y = std::min(a[1], b[1]);</span>
+<span class="lineNum">     189 </span><span class="lineNoCov">          0 :                 curr_min_y = std::min(curr_min_y, min_y);</span>
+<span class="lineNum">     190 </span>            : 
+<span class="lineNum">     191 </span><span class="lineNoCov">          0 :                 tVector c = b;</span>
+<span class="lineNum">     192 </span><span class="lineNoCov">          0 :                 tVector d = a;</span>
+<span class="lineNum">     193 </span><span class="lineNoCov">          0 :                 c[1] = curr_min_y;</span>
+<span class="lineNum">     194 </span><span class="lineNoCov">          0 :                 d[1] = curr_min_y;</span>
+<span class="lineNum">     195 </span>            : 
+<span class="lineNum">     196 </span><span class="lineNoCov">          0 :                 double z0 = ground_origin[3] - 0.5 * ground_w;</span>
+<span class="lineNum">     197 </span><span class="lineNoCov">          0 :                 double z1 = ground_origin[3] + 0.5 * ground_w;</span>
+<span class="lineNum">     198 </span><span class="lineNoCov">          0 :                 double a_coord = a[0] / tex_size[0];</span>
+<span class="lineNum">     199 </span><span class="lineNoCov">          0 :                 double b_coord = b[0] / tex_size[0];</span>
+<span class="lineNum">     200 </span><span class="lineNoCov">          0 :                 b_coord -= a_coord;</span>
+<span class="lineNum">     201 </span><span class="lineNoCov">          0 :                 a_coord = a_coord - static_cast&lt;int&gt;(a_coord);</span>
+<span class="lineNum">     202 </span><span class="lineNoCov">          0 :                 b_coord += a_coord;</span>
+<span class="lineNum">     203 </span>            : 
+<span class="lineNum">     204 </span><span class="lineNoCov">          0 :                 double slope = std::abs((b[1] - a[1]) / (b[0] - a[0]));</span>
+<span class="lineNum">     205 </span><span class="lineNoCov">          0 :                 if (slope &gt; 1)</span>
+<span class="lineNum">     206 </span>            :                 {
+<span class="lineNum">     207 </span><span class="lineNoCov">          0 :                         a_coord = 0;</span>
+<span class="lineNum">     208 </span><span class="lineNoCov">          0 :                         b_coord = 0;</span>
+<span class="lineNum">     209 </span>            :                 }
+<span class="lineNum">     210 </span>            : 
+<span class="lineNum">     211 </span><span class="lineNoCov">          0 :                 tVector coord_a0 = tVector(a_coord, z0 / tex_size[1], 0, 0);</span>
+<span class="lineNum">     212 </span><span class="lineNoCov">          0 :                 tVector coord_b0 = tVector(b_coord, z0 / tex_size[1], 0, 0);</span>
+<span class="lineNum">     213 </span><span class="lineNoCov">          0 :                 tVector coord_a1 = tVector(a_coord, z1 / tex_size[1], 0, 0);</span>
+<span class="lineNum">     214 </span><span class="lineNoCov">          0 :                 tVector coord_b1 = tVector(b_coord, z1 / tex_size[1], 0, 0);</span>
+<span class="lineNum">     215 </span>            : 
+<span class="lineNum">     216 </span>            :                 //tVector coord_c = tVector(b_coord, 0.2 / tex_size[1], 0, 0);
+<span class="lineNum">     217 </span>            :                 //tVector coord_d = tVector(a_coord, 0.2 / tex_size[1], 0, 0);
+<span class="lineNum">     218 </span><span class="lineNoCov">          0 :                 tVector coord_c = tVector(0, 0, 0, 0);</span>
+<span class="lineNum">     219 </span><span class="lineNoCov">          0 :                 tVector coord_d = tVector(0, 0, 0, 0);</span>
+<span class="lineNum">     220 </span>            : 
+<span class="lineNum">     221 </span><span class="lineNoCov">          0 :                 a[2] = z0;</span>
+<span class="lineNum">     222 </span><span class="lineNoCov">          0 :                 b[2] = z0;</span>
+<span class="lineNum">     223 </span><span class="lineNoCov">          0 :                 c[2] = z0;</span>
+<span class="lineNum">     224 </span><span class="lineNoCov">          0 :                 d[2] = z0;</span>
+<span class="lineNum">     225 </span><span class="lineNoCov">          0 :                 cDrawUtil::DrawQuad(a, b, c, d, coord_d, coord_c, coord_c, coord_d);</span>
+<span class="lineNum">     226 </span>            : 
+<span class="lineNum">     227 </span><span class="lineNoCov">          0 :                 a[2] = z1;</span>
+<span class="lineNum">     228 </span><span class="lineNoCov">          0 :                 b[2] = z1;</span>
+<span class="lineNum">     229 </span><span class="lineNoCov">          0 :                 c[2] = z1;</span>
+<span class="lineNum">     230 </span><span class="lineNoCov">          0 :                 d[2] = z1;</span>
+<span class="lineNum">     231 </span><span class="lineNoCov">          0 :                 cDrawUtil::DrawQuad(a, d, c, b, coord_d, coord_d, coord_c, coord_c);</span>
+<span class="lineNum">     232 </span>            : 
+<span class="lineNum">     233 </span><span class="lineNoCov">          0 :                 cDrawUtil::DrawQuad(tVector(a[0], a[1], z0, 0),</span>
+<span class="lineNum">     234 </span><span class="lineNoCov">          0 :                                                         tVector(a[0], a[1], z1, 0),</span>
+<span class="lineNum">     235 </span><span class="lineNoCov">          0 :                                                         tVector(b[0], b[1], z1, 0),</span>
+<span class="lineNum">     236 </span><span class="lineNoCov">          0 :                                                         tVector(b[0], b[1], z0, 0),</span>
+<a name="237"><span class="lineNum">     237 </span><span class="lineNoCov">          0 :                                                         coord_a0, coord_a1, coord_b1, coord_b0);</span></a>
+<span class="lineNum">     238 </span>            :         }
+<span class="lineNum">     239 </span><span class="lineCov">          3 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,398 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/sim/CharTracer.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/sim</a> - CharTracer.cpp<span style="font-size: 80%;"> (source / <a href="CharTracer.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">145</td>
+            <td class="headerCovTableEntry">174</td>
+            <td class="headerCovTableEntryMed">83.3 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">24</td>
+            <td class="headerCovTableEntry">28</td>
+            <td class="headerCovTableEntryMed">85.7 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;CharTracer.h&quot;</a>
+<span class="lineNum">       2 </span>            : #include &quot;render/DrawUtil.h&quot;
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : const int gNumEndEffMarkers = 4;
+<a name="5"><span class="lineNum">       5 </span>            : const double gMarkerSize = 0.075;</a>
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span><span class="lineCov">          4 : cCharTracer::tParams::tParams()</span>
+<span class="lineNum">       8 </span>            : {
+<span class="lineNum">       9 </span><span class="lineCov">          4 :         mType = eTraceJoint;</span>
+<span class="lineNum">      10 </span><span class="lineCov">          4 :         mChar = nullptr;</span>
+<span class="lineNum">      11 </span><span class="lineCov">          4 :         mTraceID = 0;</span>
+<span class="lineNum">      12 </span><span class="lineCov">          4 :         mColIdx = 0;</span>
+<span class="lineNum">      13 </span><span class="lineCov">          4 :         mColors.resize(1);</span>
+<span class="lineNum">      14 </span><span class="lineCov">          4 :         mColors[0] = tVector(0, 0, 1, 0.5);</span>
+<a name="15"><span class="lineNum">      15 </span><span class="lineCov">          4 : }</span></a>
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span><span class="lineCov">          2 : bool cCharTracer::tParams::IsValid() const</span>
+<span class="lineNum">      18 </span>            : {
+<span class="lineNum">      19 </span><span class="lineCov">          2 :         bool valid = true;</span>
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span><span class="lineCov">          2 :         if (mChar == nullptr)</span>
+<span class="lineNum">      22 </span>            :         {
+<span class="lineNum">      23 </span><span class="lineNoCov">          0 :                 valid = false;</span>
+<span class="lineNum">      24 </span>            :         }
+<span class="lineNum">      25 </span>            :         else
+<span class="lineNum">      26 </span>            :         {
+<span class="lineNum">      27 </span><span class="lineCov">          2 :                 if (mType == eTraceJoint || mType == eTracePart)</span>
+<span class="lineNum">      28 </span>            :                 {
+<span class="lineNum">      29 </span><span class="lineNoCov">          0 :                         if (mTraceID &lt; 0 || mTraceID &gt;= mChar-&gt;GetNumJoints())</span>
+<span class="lineNum">      30 </span>            :                         {
+<span class="lineNum">      31 </span><span class="lineNoCov">          0 :                                 valid = false;</span>
+<span class="lineNum">      32 </span>            :                         }
+<span class="lineNum">      33 </span><span class="lineNoCov">          0 :                         else if (mType == eTracePart)</span>
+<span class="lineNum">      34 </span>            :                         {
+<span class="lineNum">      35 </span><span class="lineNoCov">          0 :                                 if (!mChar-&gt;IsValidBodyPart(mTraceID))</span>
+<span class="lineNum">      36 </span>            :                                 {
+<span class="lineNum">      37 </span><span class="lineNoCov">          0 :                                         valid = false;</span>
+<span class="lineNum">      38 </span>            :                                 }
+<span class="lineNum">      39 </span>            :                         }
+<span class="lineNum">      40 </span>            :                 }
+<span class="lineNum">      41 </span>            :         }
+<span class="lineNum">      42 </span>            :         
+<span class="lineNum">      43 </span><span class="lineCov">          2 :         return valid;</span>
+<a name="44"><span class="lineNum">      44 </span>            : }</a>
+<span class="lineNum">      45 </span>            : 
+<span class="lineNum">      46 </span><span class="lineCov">          2 : cCharTracer::cCharTracer()</span>
+<span class="lineNum">      47 </span>            : {
+<span class="lineNum">      48 </span><span class="lineCov">          2 :         mBufferSize = 300;</span>
+<span class="lineNum">      49 </span><span class="lineCov">          2 :         mSamplePeriod = 0.066;</span>
+<a name="50"><span class="lineNum">      50 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span><span class="lineCov">          2 : cCharTracer::~cCharTracer()</span>
+<span class="lineNum">      53 </span>            : {
+<span class="lineNum">      54 </span>            : 
+<a name="55"><span class="lineNum">      55 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">      56 </span>            : 
+<span class="lineNum">      57 </span><span class="lineCov">          2 : void cCharTracer::Init(int buffer_size, double sample_period)</span>
+<span class="lineNum">      58 </span>            : {
+<span class="lineNum">      59 </span><span class="lineCov">          2 :         Clear();</span>
+<span class="lineNum">      60 </span><span class="lineCov">          2 :         mBufferSize = buffer_size;</span>
+<span class="lineNum">      61 </span><span class="lineCov">          2 :         mSamplePeriod = sample_period;</span>
+<a name="62"><span class="lineNum">      62 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">      63 </span>            : 
+<span class="lineNum">      64 </span><span class="lineCov">          3 : void cCharTracer::Update(double time_step)</span>
+<span class="lineNum">      65 </span>            : {
+<span class="lineNum">      66 </span><span class="lineCov">          3 :         mTimer += time_step;</span>
+<span class="lineNum">      67 </span>            : 
+<span class="lineNum">      68 </span><span class="lineCov">          6 :         for (int i = 0; i &lt; GetNumTraces(); ++i)</span>
+<span class="lineNum">      69 </span>            :         {
+<span class="lineNum">      70 </span><span class="lineCov">          3 :                 UpdateTrace(mTraces[i]);</span>
+<span class="lineNum">      71 </span>            :         }
+<span class="lineNum">      72 </span>            : 
+<span class="lineNum">      73 </span><span class="lineCov">          3 :         if (mTimer &gt;= mSamplePeriod)</span>
+<span class="lineNum">      74 </span>            :         {
+<span class="lineNum">      75 </span><span class="lineCov">          3 :                 ResetTimer();</span>
+<span class="lineNum">      76 </span>            :         }
+<a name="77"><span class="lineNum">      77 </span><span class="lineCov">          3 : }</span></a>
+<span class="lineNum">      78 </span>            : 
+<span class="lineNum">      79 </span><span class="lineCov">          3 : void cCharTracer::Reset()</span>
+<span class="lineNum">      80 </span>            : {
+<span class="lineNum">      81 </span><span class="lineCov">          3 :         ResetTimer();</span>
+<span class="lineNum">      82 </span>            :         
+<span class="lineNum">      83 </span><span class="lineCov">          6 :         for (int i = 0; i &lt; GetNumTraces(); ++i)</span>
+<span class="lineNum">      84 </span>            :         {
+<span class="lineNum">      85 </span><span class="lineCov">          3 :                 ResetTrace(mTraces[i]);</span>
+<span class="lineNum">      86 </span>            :         }
+<a name="87"><span class="lineNum">      87 </span><span class="lineCov">          3 : }</span></a>
+<span class="lineNum">      88 </span>            : 
+<span class="lineNum">      89 </span><span class="lineCov">          2 : void cCharTracer::Clear()</span>
+<span class="lineNum">      90 </span>            : {
+<span class="lineNum">      91 </span><span class="lineCov">          2 :         ResetTimer();</span>
+<span class="lineNum">      92 </span><span class="lineCov">          2 :         mTraces.clear();</span>
+<a name="93"><span class="lineNum">      93 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">      94 </span>            : 
+<span class="lineNum">      95 </span><span class="lineCov">          2 : int cCharTracer::AddTrace(const tParams&amp; params)</span>
+<span class="lineNum">      96 </span>            : {
+<span class="lineNum">      97 </span><span class="lineCov">          2 :         int handle = gInvalidIdx;</span>
+<span class="lineNum">      98 </span><span class="lineCov">          2 :         if (params.IsValid())</span>
+<span class="lineNum">      99 </span>            :         {
+<span class="lineNum">     100 </span><span class="lineCov">          4 :                 tTrace trace;</span>
+<span class="lineNum">     101 </span><span class="lineCov">          2 :                 BuildTrace(params, trace);</span>
+<span class="lineNum">     102 </span>            : 
+<span class="lineNum">     103 </span><span class="lineCov">          2 :                 handle = GetNumTraces();</span>
+<span class="lineNum">     104 </span><span class="lineCov">          2 :                 mTraces.push_back(trace);</span>
+<span class="lineNum">     105 </span>            :         }
+<span class="lineNum">     106 </span>            :         else
+<span class="lineNum">     107 </span>            :         {
+<span class="lineNum">     108 </span><span class="lineNoCov">          0 :                 assert(false); // invalid trace parameters</span>
+<span class="lineNum">     109 </span>            :         }
+<span class="lineNum">     110 </span><span class="lineCov">          2 :         return handle;</span>
+<a name="111"><span class="lineNum">     111 </span>            : }</a>
+<span class="lineNum">     112 </span>            : 
+<span class="lineNum">     113 </span><span class="lineNoCov">          0 : void cCharTracer::SetTraceColIdx(int handle, int col_idx)</span>
+<span class="lineNum">     114 </span>            : {
+<span class="lineNum">     115 </span><span class="lineNoCov">          0 :         tTrace&amp; trace = GetTrace(handle);</span>
+<span class="lineNum">     116 </span><span class="lineNoCov">          0 :         SetTraceColIdx(col_idx, trace);</span>
+<a name="117"><span class="lineNum">     117 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     118 </span>            : 
+<span class="lineNum">     119 </span><span class="lineCov">         20 : int cCharTracer::GetNumTraces() const</span>
+<span class="lineNum">     120 </span>            : {
+<span class="lineNum">     121 </span><span class="lineCov">         20 :         return static_cast&lt;int&gt;(mTraces.size());</span>
+<a name="122"><span class="lineNum">     122 </span>            : }</a>
+<span class="lineNum">     123 </span>            : 
+<span class="lineNum">     124 </span><span class="lineCov">          3 : void cCharTracer::Draw() const</span>
+<span class="lineNum">     125 </span>            : {
+<span class="lineNum">     126 </span><span class="lineCov">          6 :         for (int i = 0; i &lt; GetNumTraces(); ++i)</span>
+<span class="lineNum">     127 </span>            :         {
+<span class="lineNum">     128 </span><span class="lineCov">          3 :                 DrawTrace(mTraces[i]);</span>
+<span class="lineNum">     129 </span>            :         }
+<a name="130"><span class="lineNum">     130 </span><span class="lineCov">          3 : }</span></a>
+<span class="lineNum">     131 </span>            : 
+<span class="lineNum">     132 </span><span class="lineCov">          8 : void cCharTracer::ResetTimer()</span>
+<span class="lineNum">     133 </span>            : {
+<span class="lineNum">     134 </span><span class="lineCov">          8 :         mTimer = 0;</span>
+<a name="135"><span class="lineNum">     135 </span><span class="lineCov">          8 : }</span></a>
+<span class="lineNum">     136 </span>            : 
+<span class="lineNum">     137 </span><span class="lineCov">          2 : void cCharTracer::BuildTrace(const tParams&amp; params, tTrace&amp; out_trace) const</span>
+<span class="lineNum">     138 </span>            : {
+<span class="lineNum">     139 </span><span class="lineCov">          2 :         out_trace.mParams = params;</span>
+<span class="lineNum">     140 </span><span class="lineCov">          2 :         out_trace.mPosTraj.Reserve(mBufferSize);</span>
+<span class="lineNum">     141 </span>            : 
+<span class="lineNum">     142 </span><span class="lineCov">          2 :         size_t num_contacts = params.mContactList.size();</span>
+<span class="lineNum">     143 </span><span class="lineCov">          2 :         size_t end_pos_size = static_cast&lt;size_t&gt;(mBufferSize * mSamplePeriod * num_contacts);</span>
+<span class="lineNum">     144 </span><span class="lineCov">          2 :         out_trace.mEndEffPos.Reserve(end_pos_size);</span>
+<span class="lineNum">     145 </span>            : 
+<span class="lineNum">     146 </span><span class="lineCov">          2 :         const auto&amp; character = params.mChar;</span>
+<span class="lineNum">     147 </span><span class="lineCov">          6 :         for (int i = 0; i &lt; static_cast&lt;int&gt;(num_contacts); ++i)</span>
+<span class="lineNum">     148 </span>            :         {
+<span class="lineNum">     149 </span><span class="lineCov">          4 :                 assert(character-&gt;IsValidBodyPart(i));</span>
+<span class="lineNum">     150 </span><span class="lineCov">          4 :                 out_trace.mEndContact.push_back(false);</span>
+<span class="lineNum">     151 </span>            :         }
+<a name="152"><span class="lineNum">     152 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">     153 </span>            : 
+<span class="lineNum">     154 </span><span class="lineCov">          3 : void cCharTracer::ResetTrace(tTrace&amp; out_trace) const</span>
+<span class="lineNum">     155 </span>            : {
+<span class="lineNum">     156 </span><span class="lineCov">          3 :         out_trace.mPosTraj.Clear();</span>
+<span class="lineNum">     157 </span><span class="lineCov">          3 :         out_trace.mEndEffPos.Clear();</span>
+<span class="lineNum">     158 </span>            :         
+<span class="lineNum">     159 </span><span class="lineCov">          9 :         for (size_t e = 0; e &lt; out_trace.mEndContact.size(); ++e)</span>
+<span class="lineNum">     160 </span>            :         {
+<span class="lineNum">     161 </span><span class="lineCov">          6 :                 out_trace.mEndContact[e] = false;</span>
+<span class="lineNum">     162 </span>            :         }
+<span class="lineNum">     163 </span>            : 
+<span class="lineNum">     164 </span><span class="lineCov">          3 :         SetTraceColIdx(0, out_trace);</span>
+<a name="165"><span class="lineNum">     165 </span><span class="lineCov">          3 : }</span></a>
+<span class="lineNum">     166 </span>            : 
+<span class="lineNum">     167 </span><span class="lineCov">          3 : void cCharTracer::UpdateTrace(tTrace&amp; out_trace) const</span>
+<span class="lineNum">     168 </span>            : {
+<span class="lineNum">     169 </span><span class="lineCov">          3 :         UpdateTraceTraj(out_trace);</span>
+<span class="lineNum">     170 </span><span class="lineCov">          3 :         UpdateTraceEndPos(out_trace);</span>
+<a name="171"><span class="lineNum">     171 </span><span class="lineCov">          3 : }</span></a>
+<span class="lineNum">     172 </span>            : 
+<span class="lineNum">     173 </span><span class="lineCov">          3 : void cCharTracer::UpdateTraceTraj(tTrace&amp; out_trace) const</span>
+<span class="lineNum">     174 </span>            : {
+<span class="lineNum">     175 </span><span class="lineCov">          3 :         if (mTimer &gt;= mSamplePeriod)</span>
+<span class="lineNum">     176 </span>            :         {
+<span class="lineNum">     177 </span><span class="lineCov">          3 :                 tVector pos = CalcTracePos(out_trace);</span>
+<span class="lineNum">     178 </span><span class="lineCov">          3 :                 pos[3] = out_trace.mParams.mColIdx;</span>
+<span class="lineNum">     179 </span><span class="lineCov">          3 :                 out_trace.mPosTraj.Add(pos);</span>
+<span class="lineNum">     180 </span>            :         }
+<a name="181"><span class="lineNum">     181 </span><span class="lineCov">          3 : }</span></a>
+<span class="lineNum">     182 </span>            : 
+<span class="lineNum">     183 </span><span class="lineCov">          3 : void cCharTracer::UpdateTraceEndPos(tTrace&amp; out_trace) const</span>
+<span class="lineNum">     184 </span>            : {
+<span class="lineNum">     185 </span><span class="lineCov">          3 :         const auto&amp; character = out_trace.mParams.mChar;</span>
+<span class="lineNum">     186 </span><span class="lineCov">          3 :         const std::vector&lt;int&gt;&amp; contact_list = out_trace.mParams.mContactList;</span>
+<span class="lineNum">     187 </span><span class="lineCov">          3 :         int num_contacts = static_cast&lt;int&gt;(contact_list.size());</span>
+<span class="lineNum">     188 </span>            : 
+<span class="lineNum">     189 </span><span class="lineCov">          9 :         for (int e = 0; e &lt; num_contacts; ++e)</span>
+<span class="lineNum">     190 </span>            :         {
+<span class="lineNum">     191 </span><span class="lineCov">          6 :                 int id = contact_list[e];</span>
+<span class="lineNum">     192 </span><span class="lineCov">          6 :                 bool contact = character-&gt;IsInContact(id);</span>
+<span class="lineNum">     193 </span><span class="lineCov">          6 :                 bool prev_contact = out_trace.mEndContact[e];</span>
+<span class="lineNum">     194 </span><span class="lineCov">          6 :                 if (contact &amp;&amp; !prev_contact)</span>
+<span class="lineNum">     195 </span>            :                 {
+<span class="lineNum">     196 </span><span class="lineCov">          1 :                         tVector pos = character-&gt;GetContactPt(id);</span>
+<span class="lineNum">     197 </span><span class="lineCov">          1 :                         pos[3] = out_trace.mParams.mColIdx;</span>
+<span class="lineNum">     198 </span>            : 
+<span class="lineNum">     199 </span><span class="lineCov">          1 :                         tEndEffectorPos end_eff_pos;</span>
+<span class="lineNum">     200 </span><span class="lineCov">          1 :                         end_eff_pos.mIdx = e;</span>
+<span class="lineNum">     201 </span><span class="lineCov">          1 :                         end_eff_pos.mPos = pos;</span>
+<span class="lineNum">     202 </span>            : 
+<span class="lineNum">     203 </span><span class="lineCov">          1 :                         out_trace.mEndEffPos.Add(end_eff_pos);</span>
+<span class="lineNum">     204 </span>            :                 }
+<span class="lineNum">     205 </span>            : 
+<span class="lineNum">     206 </span><span class="lineCov">          6 :                 out_trace.mEndContact[e] = contact;</span>
+<span class="lineNum">     207 </span>            :         }
+<a name="208"><span class="lineNum">     208 </span><span class="lineCov">          3 : }</span></a>
+<span class="lineNum">     209 </span>            : 
+<span class="lineNum">     210 </span><span class="lineCov">          3 : tVector cCharTracer::CalcTracePos(const tTrace&amp; trace) const</span>
+<span class="lineNum">     211 </span>            : {
+<span class="lineNum">     212 </span><span class="lineCov">          3 :         tVector pos = tVector::Zero();</span>
+<span class="lineNum">     213 </span><span class="lineCov">          3 :         const auto&amp; character = trace.mParams.mChar;</span>
+<span class="lineNum">     214 </span>            : 
+<span class="lineNum">     215 </span><span class="lineCov">          3 :         switch (trace.mParams.mType)</span>
+<span class="lineNum">     216 </span>            :         {
+<span class="lineNum">     217 </span>            :         case eTraceCOM:
+<span class="lineNum">     218 </span><span class="lineCov">          3 :                 pos = character-&gt;CalcCOM();</span>
+<span class="lineNum">     219 </span><span class="lineCov">          3 :                 break;</span>
+<span class="lineNum">     220 </span>            :         case eTraceJoint:
+<span class="lineNum">     221 </span><span class="lineNoCov">          0 :                 pos = character-&gt;CalcJointPos(trace.mParams.mTraceID);</span>
+<span class="lineNum">     222 </span><span class="lineNoCov">          0 :                 break;</span>
+<span class="lineNum">     223 </span>            :         case eTracePart:
+<span class="lineNum">     224 </span><span class="lineNoCov">          0 :                 pos = character-&gt;GetBodyPart(trace.mParams.mTraceID)-&gt;GetPos();</span>
+<span class="lineNum">     225 </span><span class="lineNoCov">          0 :                 break;</span>
+<span class="lineNum">     226 </span>            :         default:
+<span class="lineNum">     227 </span><span class="lineNoCov">          0 :                 assert(false); // unsupported trace type</span>
+<span class="lineNum">     228 </span>            :                 break;
+<span class="lineNum">     229 </span>            :         }
+<span class="lineNum">     230 </span>            : 
+<span class="lineNum">     231 </span><span class="lineCov">          3 :         return pos;</span>
+<a name="232"><span class="lineNum">     232 </span>            : }</a>
+<span class="lineNum">     233 </span>            : 
+<span class="lineNum">     234 </span><span class="lineNoCov">          0 : const cCharTracer::tTrace&amp; cCharTracer::GetTrace(int handle) const</span>
+<span class="lineNum">     235 </span>            : {
+<span class="lineNum">     236 </span><span class="lineNoCov">          0 :         assert(handle &gt;= 0 &amp;&amp; handle &lt; GetNumTraces());</span>
+<span class="lineNum">     237 </span><span class="lineNoCov">          0 :         return mTraces[handle];</span>
+<a name="238"><span class="lineNum">     238 </span>            : }</a>
+<span class="lineNum">     239 </span>            : 
+<span class="lineNum">     240 </span><span class="lineNoCov">          0 : cCharTracer::tTrace&amp; cCharTracer::GetTrace(int handle)</span>
+<span class="lineNum">     241 </span>            : {
+<span class="lineNum">     242 </span><span class="lineNoCov">          0 :         assert(handle &gt;= 0 &amp;&amp; handle &lt; GetNumTraces());</span>
+<span class="lineNum">     243 </span><span class="lineNoCov">          0 :         return mTraces[handle];</span>
+<a name="244"><span class="lineNum">     244 </span>            : }</a>
+<span class="lineNum">     245 </span>            : 
+<span class="lineNum">     246 </span><span class="lineCov">          3 : void cCharTracer::DrawTrace(const tTrace&amp; trace) const</span>
+<span class="lineNum">     247 </span>            : {
+<span class="lineNum">     248 </span><span class="lineCov">          3 :         cDrawUtil::SetLineWidth(3);</span>
+<span class="lineNum">     249 </span><span class="lineCov">          3 :         DrawTraceTraj(trace);</span>
+<span class="lineNum">     250 </span><span class="lineCov">          3 :         DrawTraceEndPos(trace);</span>
+<a name="251"><span class="lineNum">     251 </span><span class="lineCov">          3 : }</span></a>
+<span class="lineNum">     252 </span>            : 
+<span class="lineNum">     253 </span><span class="lineCov">          3 : void cCharTracer::DrawTraceTraj(const tTrace&amp; trace) const</span>
+<span class="lineNum">     254 </span>            : {
+<span class="lineNum">     255 </span><span class="lineCov">          3 :         if (trace.mPosTraj.GetSize() &gt; 1)</span>
+<span class="lineNum">     256 </span>            :         {
+<span class="lineNum">     257 </span><span class="lineCov">          5 :                 for (size_t i = 0; i &lt; trace.mPosTraj.GetSize() - 1; ++i)</span>
+<span class="lineNum">     258 </span>            :                 {
+<span class="lineNum">     259 </span><span class="lineCov">          3 :                         const tVector&amp; vert0 = trace.mPosTraj[i];</span>
+<span class="lineNum">     260 </span><span class="lineCov">          3 :                         const tVector&amp; vert1 = trace.mPosTraj[i + 1];</span>
+<span class="lineNum">     261 </span><span class="lineCov">          3 :                         int curr_col_idx = static_cast&lt;int&gt;(vert0[3]);</span>
+<span class="lineNum">     262 </span>            : 
+<span class="lineNum">     263 </span><span class="lineCov">          3 :                         assert(curr_col_idx &lt; trace.mParams.mColors.size());</span>
+<span class="lineNum">     264 </span><span class="lineCov">          3 :                         const tVector&amp; col = trace.mParams.mColors[curr_col_idx];</span>
+<span class="lineNum">     265 </span><span class="lineCov">          3 :                         cDrawUtil::SetColor(col);</span>
+<span class="lineNum">     266 </span><span class="lineCov">          3 :                         cDrawUtil::DrawLine(vert0, vert1);</span>
+<span class="lineNum">     267 </span>            :                 }
+<span class="lineNum">     268 </span>            :         }
+<a name="269"><span class="lineNum">     269 </span><span class="lineCov">          3 : }</span></a>
+<span class="lineNum">     270 </span>            : 
+<span class="lineNum">     271 </span><span class="lineCov">          3 : void cCharTracer::DrawTraceEndPos(const tTrace&amp; trace) const</span>
+<span class="lineNum">     272 </span>            : {
+<span class="lineNum">     273 </span><span class="lineCov">          3 :         const double marker_size = gMarkerSize;</span>
+<span class="lineNum">     274 </span>            : 
+<span class="lineNum">     275 </span><span class="lineCov">          6 :         for (int i = 0; i &lt; static_cast&lt;int&gt;(trace.mEndEffPos.GetSize()); ++i)</span>
+<span class="lineNum">     276 </span>            :         {
+<span class="lineNum">     277 </span><span class="lineCov">          3 :                 const tEndEffectorPos&amp; end_pos = trace.mEndEffPos[i];</span>
+<span class="lineNum">     278 </span><span class="lineCov">          3 :                 int idx = end_pos.mIdx;</span>
+<span class="lineNum">     279 </span><span class="lineCov">          3 :                 const tVector &amp; pos = end_pos.mPos;</span>
+<span class="lineNum">     280 </span>            : 
+<span class="lineNum">     281 </span><span class="lineCov">          3 :                 int curr_col_idx = static_cast&lt;int&gt;(pos[3]);</span>
+<span class="lineNum">     282 </span><span class="lineCov">          3 :                 assert(curr_col_idx &lt; trace.mParams.mColors.size());</span>
+<span class="lineNum">     283 </span><span class="lineCov">          3 :                 const tVector&amp; col = trace.mParams.mColors[curr_col_idx];</span>
+<span class="lineNum">     284 </span><span class="lineCov">          3 :                 cDrawUtil::SetColor(col);</span>
+<span class="lineNum">     285 </span>            : 
+<span class="lineNum">     286 </span><span class="lineCov">          3 :                 int draw_idx = idx % gNumEndEffMarkers;</span>
+<span class="lineNum">     287 </span>            : 
+<span class="lineNum">     288 </span><span class="lineCov">          3 :                 switch (draw_idx)</span>
+<span class="lineNum">     289 </span>            :                 {
+<span class="lineNum">     290 </span>            :                 case 0:
+<span class="lineNum">     291 </span><span class="lineCov">          3 :                         cDrawUtil::DrawRect(pos, tVector(marker_size, marker_size, 0, 0));</span>
+<span class="lineNum">     292 </span><span class="lineCov">          3 :                         break;</span>
+<span class="lineNum">     293 </span>            :                 case 1:
+<span class="lineNum">     294 </span><span class="lineNoCov">          0 :                         cDrawUtil::DrawTriangle(pos, marker_size);</span>
+<span class="lineNum">     295 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     296 </span>            :                 case 2:
+<span class="lineNum">     297 </span><span class="lineNoCov">          0 :                         cDrawUtil::DrawCross(pos, marker_size);</span>
+<span class="lineNum">     298 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     299 </span>            :                 case 3:
+<span class="lineNum">     300 </span><span class="lineNoCov">          0 :                         cDrawUtil::DrawDisk(pos, marker_size, 16);</span>
+<span class="lineNum">     301 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     302 </span>            :                 default:
+<span class="lineNum">     303 </span><span class="lineNoCov">          0 :                         assert(false);</span>
+<span class="lineNum">     304 </span>            :                         break;
+<span class="lineNum">     305 </span>            :                 }
+<span class="lineNum">     306 </span>            :         }
+<a name="307"><span class="lineNum">     307 </span><span class="lineCov">          3 : }</span></a>
+<span class="lineNum">     308 </span>            : 
+<span class="lineNum">     309 </span><span class="lineCov">          3 : void cCharTracer::SetTraceColIdx(int idx, tTrace&amp; out_trace) const</span>
+<span class="lineNum">     310 </span>            : {
+<span class="lineNum">     311 </span><span class="lineCov">          3 :         int num_cols = static_cast&lt;int&gt;(out_trace.mParams.mColors.size());</span>
+<a name="312"><span class="lineNum">     312 </span><span class="lineCov">          3 :         idx = idx % num_cols;</span></a>
+<span class="lineNum">     313 </span><span class="lineCov">          3 :         out_trace.mParams.mColIdx = idx;</span>
+<span class="lineNum">     314 </span><span class="lineCov">          6 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

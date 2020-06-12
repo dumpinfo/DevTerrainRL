@@ -1,0 +1,674 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/external/Eigen/src/Core/Assign.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/external/Eigen/src/Core</a> - Assign.h<span style="font-size: 80%;"> (source / <a href="Assign.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">97</td>
+            <td class="headerCovTableEntry">100</td>
+            <td class="headerCovTableEntryHi">97.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">1041</td>
+            <td class="headerCovTableEntry">1756</td>
+            <td class="headerCovTableEntryLo">59.3 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : // This file is part of Eigen, a lightweight C++ template library</a>
+<span class="lineNum">       2 </span>            : // for linear algebra.
+<span class="lineNum">       3 </span>            : //
+<span class="lineNum">       4 </span>            : // Copyright (C) 2007 Michael Olbrich &lt;michael.olbrich@gmx.net&gt;
+<span class="lineNum">       5 </span>            : // Copyright (C) 2006-2010 Benoit Jacob &lt;jacob.benoit.1@gmail.com&gt;
+<span class="lineNum">       6 </span>            : // Copyright (C) 2008 Gael Guennebaud &lt;gael.guennebaud@inria.fr&gt;
+<span class="lineNum">       7 </span>            : //
+<span class="lineNum">       8 </span>            : // This Source Code Form is subject to the terms of the Mozilla
+<span class="lineNum">       9 </span>            : // Public License v. 2.0. If a copy of the MPL was not distributed
+<span class="lineNum">      10 </span>            : // with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : #ifndef EIGEN_ASSIGN_H
+<span class="lineNum">      13 </span>            : #define EIGEN_ASSIGN_H
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            : namespace Eigen {
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span>            : namespace internal {
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            : /***************************************************************************
+<span class="lineNum">      20 </span>            : * Part 1 : the logic deciding a strategy for traversal and unrolling       *
+<span class="lineNum">      21 </span>            : ***************************************************************************/
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            : template &lt;typename Derived, typename OtherDerived&gt;
+<span class="lineNum">      24 </span>            : struct assign_traits
+<span class="lineNum">      25 </span>            : {
+<span class="lineNum">      26 </span>            : public:
+<span class="lineNum">      27 </span>            :   enum {
+<span class="lineNum">      28 </span>            :     DstIsAligned = Derived::Flags &amp; AlignedBit,
+<span class="lineNum">      29 </span>            :     DstHasDirectAccess = Derived::Flags &amp; DirectAccessBit,
+<span class="lineNum">      30 </span>            :     SrcIsAligned = OtherDerived::Flags &amp; AlignedBit,
+<span class="lineNum">      31 </span>            :     JointAlignment = bool(DstIsAligned) &amp;&amp; bool(SrcIsAligned) ? Aligned : Unaligned
+<span class="lineNum">      32 </span>            :   };
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span>            : private:
+<span class="lineNum">      35 </span>            :   enum {
+<span class="lineNum">      36 </span>            :     InnerSize = int(Derived::IsVectorAtCompileTime) ? int(Derived::SizeAtCompileTime)
+<span class="lineNum">      37 </span>            :               : int(Derived::Flags)&amp;RowMajorBit ? int(Derived::ColsAtCompileTime)
+<span class="lineNum">      38 </span>            :               : int(Derived::RowsAtCompileTime),
+<span class="lineNum">      39 </span>            :     InnerMaxSize = int(Derived::IsVectorAtCompileTime) ? int(Derived::MaxSizeAtCompileTime)
+<span class="lineNum">      40 </span>            :               : int(Derived::Flags)&amp;RowMajorBit ? int(Derived::MaxColsAtCompileTime)
+<span class="lineNum">      41 </span>            :               : int(Derived::MaxRowsAtCompileTime),
+<span class="lineNum">      42 </span>            :     MaxSizeAtCompileTime = Derived::SizeAtCompileTime,
+<span class="lineNum">      43 </span>            :     PacketSize = packet_traits&lt;typename Derived::Scalar&gt;::size
+<span class="lineNum">      44 </span>            :   };
+<span class="lineNum">      45 </span>            : 
+<span class="lineNum">      46 </span>            :   enum {
+<span class="lineNum">      47 </span>            :     StorageOrdersAgree = (int(Derived::IsRowMajor) == int(OtherDerived::IsRowMajor)),
+<span class="lineNum">      48 </span>            :     MightVectorize = StorageOrdersAgree
+<span class="lineNum">      49 </span>            :                   &amp;&amp; (int(Derived::Flags) &amp; int(OtherDerived::Flags) &amp; ActualPacketAccessBit),
+<span class="lineNum">      50 </span>            :     MayInnerVectorize  = MightVectorize &amp;&amp; int(InnerSize)!=Dynamic &amp;&amp; int(InnerSize)%int(PacketSize)==0
+<span class="lineNum">      51 </span>            :                        &amp;&amp; int(DstIsAligned) &amp;&amp; int(SrcIsAligned),
+<span class="lineNum">      52 </span>            :     MayLinearize = StorageOrdersAgree &amp;&amp; (int(Derived::Flags) &amp; int(OtherDerived::Flags) &amp; LinearAccessBit),
+<span class="lineNum">      53 </span>            :     MayLinearVectorize = MightVectorize &amp;&amp; MayLinearize &amp;&amp; DstHasDirectAccess
+<span class="lineNum">      54 </span>            :                        &amp;&amp; (DstIsAligned || MaxSizeAtCompileTime == Dynamic),
+<span class="lineNum">      55 </span>            :       /* If the destination isn't aligned, we have to do runtime checks and we don't unroll,
+<span class="lineNum">      56 </span>            :          so it's only good for large enough sizes. */
+<span class="lineNum">      57 </span>            :     MaySliceVectorize  = MightVectorize &amp;&amp; DstHasDirectAccess
+<span class="lineNum">      58 </span>            :                        &amp;&amp; (int(InnerMaxSize)==Dynamic || int(InnerMaxSize)&gt;=3*PacketSize)
+<span class="lineNum">      59 </span>            :       /* slice vectorization can be slow, so we only want it if the slices are big, which is
+<span class="lineNum">      60 </span>            :          indicated by InnerMaxSize rather than InnerSize, think of the case of a dynamic block
+<span class="lineNum">      61 </span>            :          in a fixed-size matrix */
+<span class="lineNum">      62 </span>            :   };
+<span class="lineNum">      63 </span>            : 
+<span class="lineNum">      64 </span>            : public:
+<span class="lineNum">      65 </span>            :   enum {
+<span class="lineNum">      66 </span>            :     Traversal = int(MayInnerVectorize)  ? int(InnerVectorizedTraversal)
+<span class="lineNum">      67 </span>            :               : int(MayLinearVectorize) ? int(LinearVectorizedTraversal)
+<span class="lineNum">      68 </span>            :               : int(MaySliceVectorize)  ? int(SliceVectorizedTraversal)
+<span class="lineNum">      69 </span>            :               : int(MayLinearize)       ? int(LinearTraversal)
+<span class="lineNum">      70 </span>            :                                         : int(DefaultTraversal),
+<span class="lineNum">      71 </span>            :     Vectorized = int(Traversal) == InnerVectorizedTraversal
+<span class="lineNum">      72 </span>            :               || int(Traversal) == LinearVectorizedTraversal
+<span class="lineNum">      73 </span>            :               || int(Traversal) == SliceVectorizedTraversal
+<span class="lineNum">      74 </span>            :   };
+<span class="lineNum">      75 </span>            : 
+<span class="lineNum">      76 </span>            : private:
+<span class="lineNum">      77 </span>            :   enum {
+<span class="lineNum">      78 </span>            :     UnrollingLimit      = EIGEN_UNROLLING_LIMIT * (Vectorized ? int(PacketSize) : 1),
+<span class="lineNum">      79 </span>            :     MayUnrollCompletely = int(Derived::SizeAtCompileTime) != Dynamic
+<span class="lineNum">      80 </span>            :                        &amp;&amp; int(OtherDerived::CoeffReadCost) != Dynamic
+<span class="lineNum">      81 </span>            :                        &amp;&amp; int(Derived::SizeAtCompileTime) * int(OtherDerived::CoeffReadCost) &lt;= int(UnrollingLimit),
+<span class="lineNum">      82 </span>            :     MayUnrollInner      = int(InnerSize) != Dynamic
+<span class="lineNum">      83 </span>            :                        &amp;&amp; int(OtherDerived::CoeffReadCost) != Dynamic
+<span class="lineNum">      84 </span>            :                        &amp;&amp; int(InnerSize) * int(OtherDerived::CoeffReadCost) &lt;= int(UnrollingLimit)
+<span class="lineNum">      85 </span>            :   };
+<span class="lineNum">      86 </span>            : 
+<span class="lineNum">      87 </span>            : public:
+<span class="lineNum">      88 </span>            :   enum {
+<span class="lineNum">      89 </span>            :     Unrolling = (int(Traversal) == int(InnerVectorizedTraversal) || int(Traversal) == int(DefaultTraversal))
+<span class="lineNum">      90 </span>            :                 ? (
+<span class="lineNum">      91 </span>            :                     int(MayUnrollCompletely) ? int(CompleteUnrolling)
+<span class="lineNum">      92 </span>            :                   : int(MayUnrollInner)      ? int(InnerUnrolling)
+<span class="lineNum">      93 </span>            :                                              : int(NoUnrolling)
+<span class="lineNum">      94 </span>            :                   )
+<span class="lineNum">      95 </span>            :               : int(Traversal) == int(LinearVectorizedTraversal)
+<span class="lineNum">      96 </span>            :                 ? ( bool(MayUnrollCompletely) &amp;&amp; bool(DstIsAligned) ? int(CompleteUnrolling) : int(NoUnrolling) )
+<span class="lineNum">      97 </span>            :               : int(Traversal) == int(LinearTraversal)
+<span class="lineNum">      98 </span>            :                 ? ( bool(MayUnrollCompletely) ? int(CompleteUnrolling) : int(NoUnrolling) )
+<span class="lineNum">      99 </span>            :               : int(NoUnrolling)
+<span class="lineNum">     100 </span>            :   };
+<span class="lineNum">     101 </span>            : 
+<span class="lineNum">     102 </span>            : #ifdef EIGEN_DEBUG_ASSIGN
+<span class="lineNum">     103 </span>            :   static void debug()
+<span class="lineNum">     104 </span>            :   {
+<span class="lineNum">     105 </span>            :     EIGEN_DEBUG_VAR(DstIsAligned)
+<span class="lineNum">     106 </span>            :     EIGEN_DEBUG_VAR(SrcIsAligned)
+<span class="lineNum">     107 </span>            :     EIGEN_DEBUG_VAR(JointAlignment)
+<span class="lineNum">     108 </span>            :     EIGEN_DEBUG_VAR(InnerSize)
+<span class="lineNum">     109 </span>            :     EIGEN_DEBUG_VAR(InnerMaxSize)
+<span class="lineNum">     110 </span>            :     EIGEN_DEBUG_VAR(PacketSize)
+<span class="lineNum">     111 </span>            :     EIGEN_DEBUG_VAR(StorageOrdersAgree)
+<span class="lineNum">     112 </span>            :     EIGEN_DEBUG_VAR(MightVectorize)
+<span class="lineNum">     113 </span>            :     EIGEN_DEBUG_VAR(MayLinearize)
+<span class="lineNum">     114 </span>            :     EIGEN_DEBUG_VAR(MayInnerVectorize)
+<span class="lineNum">     115 </span>            :     EIGEN_DEBUG_VAR(MayLinearVectorize)
+<span class="lineNum">     116 </span>            :     EIGEN_DEBUG_VAR(MaySliceVectorize)
+<span class="lineNum">     117 </span>            :     EIGEN_DEBUG_VAR(Traversal)
+<span class="lineNum">     118 </span>            :     EIGEN_DEBUG_VAR(UnrollingLimit)
+<span class="lineNum">     119 </span>            :     EIGEN_DEBUG_VAR(MayUnrollCompletely)
+<span class="lineNum">     120 </span>            :     EIGEN_DEBUG_VAR(MayUnrollInner)
+<span class="lineNum">     121 </span>            :     EIGEN_DEBUG_VAR(Unrolling)
+<span class="lineNum">     122 </span>            :   }
+<span class="lineNum">     123 </span>            : #endif
+<span class="lineNum">     124 </span>            : };
+<span class="lineNum">     125 </span>            : 
+<span class="lineNum">     126 </span>            : /***************************************************************************
+<span class="lineNum">     127 </span>            : * Part 2 : meta-unrollers
+<span class="lineNum">     128 </span>            : ***************************************************************************/
+<span class="lineNum">     129 </span>            : 
+<span class="lineNum">     130 </span>            : /************************
+<span class="lineNum">     131 </span>            : *** Default traversal ***
+<span class="lineNum">     132 </span>            : ************************/
+<span class="lineNum">     133 </span>            : 
+<span class="lineNum">     134 </span>            : template&lt;typename Derived1, typename Derived2, int Index, int Stop&gt;
+<span class="lineNum">     135 </span>            : struct assign_DefaultTraversal_CompleteUnrolling
+<span class="lineNum">     136 </span>            : {
+<span class="lineNum">     137 </span>            :   enum {
+<span class="lineNum">     138 </span>            :     outer = Index / Derived1::InnerSizeAtCompileTime,
+<span class="lineNum">     139 </span>            :     inner = Index % Derived1::InnerSizeAtCompileTime
+<a name="140"><span class="lineNum">     140 </span>            :   };</a>
+<span class="lineNum">     141 </span>            : 
+<span class="lineNum">     142 </span><span class="lineCov">   16659917 :   static EIGEN_STRONG_INLINE void run(Derived1 &amp;dst, const Derived2 &amp;src)</span>
+<span class="lineNum">     143 </span>            :   {
+<span class="lineNum">     144 </span><span class="lineCov">   16659917 :     dst.copyCoeffByOuterInner(outer, inner, src);</span>
+<span class="lineNum">     145 </span><span class="lineCov">   16659917 :     assign_DefaultTraversal_CompleteUnrolling&lt;Derived1, Derived2, Index+1, Stop&gt;::run(dst, src);</span>
+<span class="lineNum">     146 </span><span class="lineCov">   16659917 :   }</span>
+<span class="lineNum">     147 </span>            : };
+<span class="lineNum">     148 </span>            : 
+<span class="lineNum">     149 </span>            : template&lt;typename Derived1, typename Derived2, int Stop&gt;
+<a name="150"><span class="lineNum">     150 </span>            : struct assign_DefaultTraversal_CompleteUnrolling&lt;Derived1, Derived2, Stop, Stop&gt;</a>
+<span class="lineNum">     151 </span>            : {
+<span class="lineNum">     152 </span><span class="lineCov">    4910882 :   static EIGEN_STRONG_INLINE void run(Derived1 &amp;, const Derived2 &amp;) {}</span>
+<span class="lineNum">     153 </span>            : };
+<span class="lineNum">     154 </span>            : 
+<span class="lineNum">     155 </span>            : template&lt;typename Derived1, typename Derived2, int Index, int Stop&gt;
+<span class="lineNum">     156 </span>            : struct assign_DefaultTraversal_InnerUnrolling
+<span class="lineNum">     157 </span>            : {
+<span class="lineNum">     158 </span>            :   static EIGEN_STRONG_INLINE void run(Derived1 &amp;dst, const Derived2 &amp;src, typename Derived1::Index outer)
+<span class="lineNum">     159 </span>            :   {
+<span class="lineNum">     160 </span>            :     dst.copyCoeffByOuterInner(outer, Index, src);
+<span class="lineNum">     161 </span>            :     assign_DefaultTraversal_InnerUnrolling&lt;Derived1, Derived2, Index+1, Stop&gt;::run(dst, src, outer);
+<span class="lineNum">     162 </span>            :   }
+<span class="lineNum">     163 </span>            : };
+<span class="lineNum">     164 </span>            : 
+<span class="lineNum">     165 </span>            : template&lt;typename Derived1, typename Derived2, int Stop&gt;
+<span class="lineNum">     166 </span>            : struct assign_DefaultTraversal_InnerUnrolling&lt;Derived1, Derived2, Stop, Stop&gt;
+<span class="lineNum">     167 </span>            : {
+<span class="lineNum">     168 </span>            :   static EIGEN_STRONG_INLINE void run(Derived1 &amp;, const Derived2 &amp;, typename Derived1::Index) {}
+<span class="lineNum">     169 </span>            : };
+<span class="lineNum">     170 </span>            : 
+<span class="lineNum">     171 </span>            : /***********************
+<span class="lineNum">     172 </span>            : *** Linear traversal ***
+<span class="lineNum">     173 </span>            : ***********************/
+<span class="lineNum">     174 </span>            : 
+<span class="lineNum">     175 </span>            : template&lt;typename Derived1, typename Derived2, int Index, int Stop&gt;
+<a name="176"><span class="lineNum">     176 </span>            : struct assign_LinearTraversal_CompleteUnrolling</a>
+<span class="lineNum">     177 </span>            : {
+<span class="lineNum">     178 </span><span class="lineCov">    4572211 :   static EIGEN_STRONG_INLINE void run(Derived1 &amp;dst, const Derived2 &amp;src)</span>
+<span class="lineNum">     179 </span>            :   {
+<span class="lineNum">     180 </span><span class="lineCov">    4572211 :     dst.copyCoeff(Index, src);</span>
+<span class="lineNum">     181 </span><span class="lineCov">    4572211 :     assign_LinearTraversal_CompleteUnrolling&lt;Derived1, Derived2, Index+1, Stop&gt;::run(dst, src);</span>
+<span class="lineNum">     182 </span><span class="lineCov">    4572211 :   }</span>
+<span class="lineNum">     183 </span>            : };
+<span class="lineNum">     184 </span>            : 
+<span class="lineNum">     185 </span>            : template&lt;typename Derived1, typename Derived2, int Stop&gt;
+<a name="186"><span class="lineNum">     186 </span>            : struct assign_LinearTraversal_CompleteUnrolling&lt;Derived1, Derived2, Stop, Stop&gt;</a>
+<span class="lineNum">     187 </span>            : {
+<span class="lineNum">     188 </span><span class="lineCov">     591642 :   static EIGEN_STRONG_INLINE void run(Derived1 &amp;, const Derived2 &amp;) {}</span>
+<span class="lineNum">     189 </span>            : };
+<span class="lineNum">     190 </span>            : 
+<span class="lineNum">     191 </span>            : /**************************
+<span class="lineNum">     192 </span>            : *** Inner vectorization ***
+<span class="lineNum">     193 </span>            : **************************/
+<span class="lineNum">     194 </span>            : 
+<span class="lineNum">     195 </span>            : template&lt;typename Derived1, typename Derived2, int Index, int Stop&gt;
+<span class="lineNum">     196 </span>            : struct assign_innervec_CompleteUnrolling
+<span class="lineNum">     197 </span>            : {
+<span class="lineNum">     198 </span>            :   enum {
+<span class="lineNum">     199 </span>            :     outer = Index / Derived1::InnerSizeAtCompileTime,
+<span class="lineNum">     200 </span>            :     inner = Index % Derived1::InnerSizeAtCompileTime,
+<span class="lineNum">     201 </span>            :     JointAlignment = assign_traits&lt;Derived1,Derived2&gt;::JointAlignment
+<a name="202"><span class="lineNum">     202 </span>            :   };</a>
+<span class="lineNum">     203 </span>            : 
+<span class="lineNum">     204 </span><span class="lineCov">   37632901 :   static EIGEN_STRONG_INLINE void run(Derived1 &amp;dst, const Derived2 &amp;src)</span>
+<span class="lineNum">     205 </span>            :   {
+<span class="lineNum">     206 </span><span class="lineCov">   37632901 :     dst.template copyPacketByOuterInner&lt;Derived2, Aligned, JointAlignment&gt;(outer, inner, src);</span>
+<span class="lineNum">     207 </span><span class="lineCov">   37632901 :     assign_innervec_CompleteUnrolling&lt;Derived1, Derived2,</span>
+<span class="lineNum">     208 </span>            :       Index+packet_traits&lt;typename Derived1::Scalar&gt;::size, Stop&gt;::run(dst, src);
+<span class="lineNum">     209 </span><span class="lineCov">   37632901 :   }</span>
+<span class="lineNum">     210 </span>            : };
+<span class="lineNum">     211 </span>            : 
+<span class="lineNum">     212 </span>            : template&lt;typename Derived1, typename Derived2, int Stop&gt;
+<a name="213"><span class="lineNum">     213 </span>            : struct assign_innervec_CompleteUnrolling&lt;Derived1, Derived2, Stop, Stop&gt;</a>
+<span class="lineNum">     214 </span>            : {
+<span class="lineNum">     215 </span><span class="lineCov">    8122782 :   static EIGEN_STRONG_INLINE void run(Derived1 &amp;, const Derived2 &amp;) {}</span>
+<span class="lineNum">     216 </span>            : };
+<span class="lineNum">     217 </span>            : 
+<span class="lineNum">     218 </span>            : template&lt;typename Derived1, typename Derived2, int Index, int Stop&gt;
+<a name="219"><span class="lineNum">     219 </span>            : struct assign_innervec_InnerUnrolling</a>
+<span class="lineNum">     220 </span>            : {
+<span class="lineNum">     221 </span><span class="lineCov">    9320708 :   static EIGEN_STRONG_INLINE void run(Derived1 &amp;dst, const Derived2 &amp;src, typename Derived1::Index outer)</span>
+<span class="lineNum">     222 </span>            :   {
+<span class="lineNum">     223 </span><span class="lineCov">    9320708 :     dst.template copyPacketByOuterInner&lt;Derived2, Aligned, Aligned&gt;(outer, Index, src);</span>
+<span class="lineNum">     224 </span><span class="lineCov">    9320708 :     assign_innervec_InnerUnrolling&lt;Derived1, Derived2,</span>
+<span class="lineNum">     225 </span>            :       Index+packet_traits&lt;typename Derived1::Scalar&gt;::size, Stop&gt;::run(dst, src, outer);
+<span class="lineNum">     226 </span><span class="lineCov">    9320708 :   }</span>
+<span class="lineNum">     227 </span>            : };
+<span class="lineNum">     228 </span>            : 
+<span class="lineNum">     229 </span>            : template&lt;typename Derived1, typename Derived2, int Stop&gt;
+<a name="230"><span class="lineNum">     230 </span>            : struct assign_innervec_InnerUnrolling&lt;Derived1, Derived2, Stop, Stop&gt;</a>
+<span class="lineNum">     231 </span>            : {
+<span class="lineNum">     232 </span><span class="lineCov">    3847012 :   static EIGEN_STRONG_INLINE void run(Derived1 &amp;, const Derived2 &amp;, typename Derived1::Index) {}</span>
+<span class="lineNum">     233 </span>            : };
+<span class="lineNum">     234 </span>            : 
+<span class="lineNum">     235 </span>            : /***************************************************************************
+<span class="lineNum">     236 </span>            : * Part 3 : implementation of all cases
+<span class="lineNum">     237 </span>            : ***************************************************************************/
+<span class="lineNum">     238 </span>            : 
+<span class="lineNum">     239 </span>            : template&lt;typename Derived1, typename Derived2,
+<span class="lineNum">     240 </span>            :          int Traversal = assign_traits&lt;Derived1, Derived2&gt;::Traversal,
+<span class="lineNum">     241 </span>            :          int Unrolling = assign_traits&lt;Derived1, Derived2&gt;::Unrolling,
+<span class="lineNum">     242 </span>            :          int Version = Specialized&gt;
+<span class="lineNum">     243 </span>            : struct assign_impl;
+<span class="lineNum">     244 </span>            : 
+<span class="lineNum">     245 </span>            : /************************
+<span class="lineNum">     246 </span>            : *** Default traversal ***
+<span class="lineNum">     247 </span>            : ************************/
+<span class="lineNum">     248 </span>            : 
+<span class="lineNum">     249 </span>            : template&lt;typename Derived1, typename Derived2, int Unrolling, int Version&gt;
+<span class="lineNum">     250 </span>            : struct assign_impl&lt;Derived1, Derived2, InvalidTraversal, Unrolling, Version&gt;
+<span class="lineNum">     251 </span>            : {
+<span class="lineNum">     252 </span>            :   static inline void run(Derived1 &amp;, const Derived2 &amp;) { }
+<span class="lineNum">     253 </span>            : };
+<span class="lineNum">     254 </span>            : 
+<span class="lineNum">     255 </span>            : template&lt;typename Derived1, typename Derived2, int Version&gt;
+<span class="lineNum">     256 </span>            : struct assign_impl&lt;Derived1, Derived2, DefaultTraversal, NoUnrolling, Version&gt;
+<a name="257"><span class="lineNum">     257 </span>            : {</a>
+<span class="lineNum">     258 </span>            :   typedef typename Derived1::Index Index;
+<span class="lineNum">     259 </span><span class="lineCov">    4088388 :   static inline void run(Derived1 &amp;dst, const Derived2 &amp;src)</span>
+<span class="lineNum">     260 </span>            :   {
+<span class="lineNum">     261 </span><span class="lineCov">    4088388 :     const Index innerSize = dst.innerSize();</span>
+<span class="lineNum">     262 </span><span class="lineCov">    4088388 :     const Index outerSize = dst.outerSize();</span>
+<span class="lineNum">     263 </span><span class="lineCov">   11215858 :     for(Index outer = 0; outer &lt; outerSize; ++outer)</span>
+<span class="lineNum">     264 </span><span class="lineCov">   28278465 :       for(Index inner = 0; inner &lt; innerSize; ++inner)</span>
+<span class="lineNum">     265 </span><span class="lineCov">   21150995 :         dst.copyCoeffByOuterInner(outer, inner, src);</span>
+<span class="lineNum">     266 </span><span class="lineCov">    4088388 :   }</span>
+<span class="lineNum">     267 </span>            : };
+<span class="lineNum">     268 </span>            : 
+<span class="lineNum">     269 </span>            : template&lt;typename Derived1, typename Derived2, int Version&gt;
+<a name="270"><span class="lineNum">     270 </span>            : struct assign_impl&lt;Derived1, Derived2, DefaultTraversal, CompleteUnrolling, Version&gt;</a>
+<span class="lineNum">     271 </span>            : {
+<span class="lineNum">     272 </span><span class="lineCov">    1492192 :   static EIGEN_STRONG_INLINE void run(Derived1 &amp;dst, const Derived2 &amp;src)</span>
+<span class="lineNum">     273 </span>            :   {
+<span class="lineNum">     274 </span><span class="lineCov">    1492192 :     assign_DefaultTraversal_CompleteUnrolling&lt;Derived1, Derived2, 0, Derived1::SizeAtCompileTime&gt;</span>
+<span class="lineNum">     275 </span>            :       ::run(dst, src);
+<span class="lineNum">     276 </span><span class="lineCov">    1492192 :   }</span>
+<span class="lineNum">     277 </span>            : };
+<span class="lineNum">     278 </span>            : 
+<span class="lineNum">     279 </span>            : template&lt;typename Derived1, typename Derived2, int Version&gt;
+<span class="lineNum">     280 </span>            : struct assign_impl&lt;Derived1, Derived2, DefaultTraversal, InnerUnrolling, Version&gt;
+<span class="lineNum">     281 </span>            : {
+<span class="lineNum">     282 </span>            :   typedef typename Derived1::Index Index;
+<span class="lineNum">     283 </span>            :   static EIGEN_STRONG_INLINE void run(Derived1 &amp;dst, const Derived2 &amp;src)
+<span class="lineNum">     284 </span>            :   {
+<span class="lineNum">     285 </span>            :     const Index outerSize = dst.outerSize();
+<span class="lineNum">     286 </span>            :     for(Index outer = 0; outer &lt; outerSize; ++outer)
+<span class="lineNum">     287 </span>            :       assign_DefaultTraversal_InnerUnrolling&lt;Derived1, Derived2, 0, Derived1::InnerSizeAtCompileTime&gt;
+<span class="lineNum">     288 </span>            :         ::run(dst, src, outer);
+<span class="lineNum">     289 </span>            :   }
+<span class="lineNum">     290 </span>            : };
+<span class="lineNum">     291 </span>            : 
+<span class="lineNum">     292 </span>            : /***********************
+<span class="lineNum">     293 </span>            : *** Linear traversal ***
+<span class="lineNum">     294 </span>            : ***********************/
+<span class="lineNum">     295 </span>            : 
+<span class="lineNum">     296 </span>            : template&lt;typename Derived1, typename Derived2, int Version&gt;
+<span class="lineNum">     297 </span>            : struct assign_impl&lt;Derived1, Derived2, LinearTraversal, NoUnrolling, Version&gt;
+<a name="298"><span class="lineNum">     298 </span>            : {</a>
+<span class="lineNum">     299 </span>            :   typedef typename Derived1::Index Index;
+<span class="lineNum">     300 </span><span class="lineCov">     247709 :   static inline void run(Derived1 &amp;dst, const Derived2 &amp;src)</span>
+<span class="lineNum">     301 </span>            :   {
+<span class="lineNum">     302 </span><span class="lineCov">     247709 :     const Index size = dst.size();</span>
+<span class="lineNum">     303 </span><span class="lineCov">    2230162 :     for(Index i = 0; i &lt; size; ++i)</span>
+<span class="lineNum">     304 </span><span class="lineCov">    1982453 :       dst.copyCoeff(i, src);</span>
+<span class="lineNum">     305 </span><span class="lineCov">     247709 :   }</span>
+<span class="lineNum">     306 </span>            : };
+<span class="lineNum">     307 </span>            : 
+<span class="lineNum">     308 </span>            : template&lt;typename Derived1, typename Derived2, int Version&gt;
+<a name="309"><span class="lineNum">     309 </span>            : struct assign_impl&lt;Derived1, Derived2, LinearTraversal, CompleteUnrolling, Version&gt;</a>
+<span class="lineNum">     310 </span>            : {
+<span class="lineNum">     311 </span><span class="lineCov">     591642 :   static EIGEN_STRONG_INLINE void run(Derived1 &amp;dst, const Derived2 &amp;src)</span>
+<span class="lineNum">     312 </span>            :   {
+<span class="lineNum">     313 </span><span class="lineCov">     591642 :     assign_LinearTraversal_CompleteUnrolling&lt;Derived1, Derived2, 0, Derived1::SizeAtCompileTime&gt;</span>
+<span class="lineNum">     314 </span>            :       ::run(dst, src);
+<span class="lineNum">     315 </span><span class="lineCov">     591642 :   }</span>
+<span class="lineNum">     316 </span>            : };
+<span class="lineNum">     317 </span>            : 
+<span class="lineNum">     318 </span>            : /**************************
+<span class="lineNum">     319 </span>            : *** Inner vectorization ***
+<span class="lineNum">     320 </span>            : **************************/
+<span class="lineNum">     321 </span>            : 
+<span class="lineNum">     322 </span>            : template&lt;typename Derived1, typename Derived2, int Version&gt;
+<span class="lineNum">     323 </span>            : struct assign_impl&lt;Derived1, Derived2, InnerVectorizedTraversal, NoUnrolling, Version&gt;
+<span class="lineNum">     324 </span>            : {
+<span class="lineNum">     325 </span>            :   typedef typename Derived1::Index Index;
+<span class="lineNum">     326 </span>            :   static inline void run(Derived1 &amp;dst, const Derived2 &amp;src)
+<span class="lineNum">     327 </span>            :   {
+<span class="lineNum">     328 </span>            :     const Index innerSize = dst.innerSize();
+<span class="lineNum">     329 </span>            :     const Index outerSize = dst.outerSize();
+<span class="lineNum">     330 </span>            :     const Index packetSize = packet_traits&lt;typename Derived1::Scalar&gt;::size;
+<span class="lineNum">     331 </span>            :     for(Index outer = 0; outer &lt; outerSize; ++outer)
+<span class="lineNum">     332 </span>            :       for(Index inner = 0; inner &lt; innerSize; inner+=packetSize)
+<span class="lineNum">     333 </span>            :         dst.template copyPacketByOuterInner&lt;Derived2, Aligned, Aligned&gt;(outer, inner, src);
+<span class="lineNum">     334 </span>            :   }
+<span class="lineNum">     335 </span>            : };
+<span class="lineNum">     336 </span>            : 
+<span class="lineNum">     337 </span>            : template&lt;typename Derived1, typename Derived2, int Version&gt;
+<a name="338"><span class="lineNum">     338 </span>            : struct assign_impl&lt;Derived1, Derived2, InnerVectorizedTraversal, CompleteUnrolling, Version&gt;</a>
+<span class="lineNum">     339 </span>            : {
+<span class="lineNum">     340 </span><span class="lineCov">    4704092 :   static EIGEN_STRONG_INLINE void run(Derived1 &amp;dst, const Derived2 &amp;src)</span>
+<span class="lineNum">     341 </span>            :   {
+<span class="lineNum">     342 </span><span class="lineCov">    4704092 :     assign_innervec_CompleteUnrolling&lt;Derived1, Derived2, 0, Derived1::SizeAtCompileTime&gt;</span>
+<span class="lineNum">     343 </span>            :       ::run(dst, src);
+<span class="lineNum">     344 </span><span class="lineCov">    4704092 :   }</span>
+<span class="lineNum">     345 </span>            : };
+<span class="lineNum">     346 </span>            : 
+<span class="lineNum">     347 </span>            : template&lt;typename Derived1, typename Derived2, int Version&gt;
+<span class="lineNum">     348 </span>            : struct assign_impl&lt;Derived1, Derived2, InnerVectorizedTraversal, InnerUnrolling, Version&gt;
+<a name="349"><span class="lineNum">     349 </span>            : {</a>
+<span class="lineNum">     350 </span>            :   typedef typename Derived1::Index Index;
+<span class="lineNum">     351 </span><span class="lineCov">     826196 :   static EIGEN_STRONG_INLINE void run(Derived1 &amp;dst, const Derived2 &amp;src)</span>
+<span class="lineNum">     352 </span>            :   {
+<span class="lineNum">     353 </span><span class="lineCov">     826196 :     const Index outerSize = dst.outerSize();</span>
+<span class="lineNum">     354 </span><span class="lineCov">    4673208 :     for(Index outer = 0; outer &lt; outerSize; ++outer)</span>
+<span class="lineNum">     355 </span><span class="lineCov">    3847012 :       assign_innervec_InnerUnrolling&lt;Derived1, Derived2, 0, Derived1::InnerSizeAtCompileTime&gt;</span>
+<span class="lineNum">     356 </span>            :         ::run(dst, src, outer);
+<span class="lineNum">     357 </span><span class="lineCov">     826196 :   }</span>
+<span class="lineNum">     358 </span>            : };
+<span class="lineNum">     359 </span>            : 
+<span class="lineNum">     360 </span>            : /***************************
+<span class="lineNum">     361 </span>            : *** Linear vectorization ***
+<span class="lineNum">     362 </span>            : ***************************/
+<span class="lineNum">     363 </span>            : 
+<span class="lineNum">     364 </span>            : template &lt;bool IsAligned = false&gt;
+<span class="lineNum">     365 </span>            : struct unaligned_assign_impl
+<a name="366"><span class="lineNum">     366 </span>            : {</a>
+<span class="lineNum">     367 </span>            :   template &lt;typename Derived, typename OtherDerived&gt;
+<span class="lineNum">     368 </span><span class="lineCov">     930790 :   static EIGEN_STRONG_INLINE void run(const Derived&amp;, OtherDerived&amp;, typename Derived::Index, typename Derived::Index) {}</span>
+<span class="lineNum">     369 </span>            : };
+<span class="lineNum">     370 </span>            : 
+<span class="lineNum">     371 </span>            : template &lt;&gt;
+<span class="lineNum">     372 </span>            : struct unaligned_assign_impl&lt;false&gt;
+<span class="lineNum">     373 </span>            : {
+<span class="lineNum">     374 </span>            :   // MSVC must not inline this functions. If it does, it fails to optimize the
+<span class="lineNum">     375 </span>            :   // packet access path.
+<span class="lineNum">     376 </span>            : #ifdef _MSC_VER
+<span class="lineNum">     377 </span>            :   template &lt;typename Derived, typename OtherDerived&gt;
+<span class="lineNum">     378 </span>            :   static EIGEN_DONT_INLINE void run(const Derived&amp; src, OtherDerived&amp; dst, typename Derived::Index start, typename Derived::Index end)
+<a name="379"><span class="lineNum">     379 </span>            : #else</a>
+<span class="lineNum">     380 </span>            :   template &lt;typename Derived, typename OtherDerived&gt;
+<span class="lineNum">     381 </span><span class="lineCov">    1521184 :   static EIGEN_STRONG_INLINE void run(const Derived&amp; src, OtherDerived&amp; dst, typename Derived::Index start, typename Derived::Index end)</span>
+<span class="lineNum">     382 </span>            : #endif
+<span class="lineNum">     383 </span>            :   {
+<span class="lineNum">     384 </span><span class="lineCov">    2117012 :     for (typename Derived::Index index = start; index &lt; end; ++index)</span>
+<span class="lineNum">     385 </span><span class="lineCov">     595828 :       dst.copyCoeff(index, src);</span>
+<span class="lineNum">     386 </span><span class="lineCov">    1521184 :   }</span>
+<span class="lineNum">     387 </span>            : };
+<span class="lineNum">     388 </span>            : 
+<span class="lineNum">     389 </span>            : template&lt;typename Derived1, typename Derived2, int Version&gt;
+<span class="lineNum">     390 </span>            : struct assign_impl&lt;Derived1, Derived2, LinearVectorizedTraversal, NoUnrolling, Version&gt;
+<a name="391"><span class="lineNum">     391 </span>            : {</a>
+<span class="lineNum">     392 </span>            :   typedef typename Derived1::Index Index;
+<span class="lineNum">     393 </span><span class="lineCov">    1225987 :   static EIGEN_STRONG_INLINE void run(Derived1 &amp;dst, const Derived2 &amp;src)</span>
+<span class="lineNum">     394 </span>            :   {
+<span class="lineNum">     395 </span><span class="lineCov">    1225987 :     const Index size = dst.size();</span>
+<span class="lineNum">     396 </span>            :     typedef packet_traits&lt;typename Derived1::Scalar&gt; PacketTraits;
+<span class="lineNum">     397 </span>            :     enum {
+<span class="lineNum">     398 </span>            :       packetSize = PacketTraits::size,
+<span class="lineNum">     399 </span>            :       dstAlignment = PacketTraits::AlignedOnScalar ? Aligned : int(assign_traits&lt;Derived1,Derived2&gt;::DstIsAligned) ,
+<span class="lineNum">     400 </span>            :       srcAlignment = assign_traits&lt;Derived1,Derived2&gt;::JointAlignment
+<span class="lineNum">     401 </span>            :     };
+<span class="lineNum">     402 </span>            :     const Index alignedStart = assign_traits&lt;Derived1,Derived2&gt;::DstIsAligned ? 0
+<span class="lineNum">     403 </span><span class="lineCov">    1225987 :                              : internal::first_aligned(&amp;dst.coeffRef(0), size);</span>
+<span class="lineNum">     404 </span><span class="lineCov">    1225987 :     const Index alignedEnd = alignedStart + ((size-alignedStart)/packetSize)*packetSize;</span>
+<span class="lineNum">     405 </span>            : 
+<span class="lineNum">     406 </span><span class="lineCov">    1225987 :     unaligned_assign_impl&lt;assign_traits&lt;Derived1,Derived2&gt;::DstIsAligned!=0&gt;::run(src,dst,0,alignedStart);</span>
+<span class="lineNum">     407 </span>            : 
+<span class="lineNum">     408 </span><span class="lineCov">    6707614 :     for(Index index = alignedStart; index &lt; alignedEnd; index += packetSize)</span>
+<span class="lineNum">     409 </span>            :     {
+<span class="lineNum">     410 </span><span class="lineCov">    5481627 :       dst.template copyPacket&lt;Derived2, dstAlignment, srcAlignment&gt;(index, src);</span>
+<span class="lineNum">     411 </span>            :     }
+<span class="lineNum">     412 </span>            : 
+<span class="lineNum">     413 </span><span class="lineCov">    1225987 :     unaligned_assign_impl&lt;&gt;::run(src,dst,alignedEnd,size);</span>
+<span class="lineNum">     414 </span><span class="lineCov">    1225987 :   }</span>
+<span class="lineNum">     415 </span>            : };
+<span class="lineNum">     416 </span>            : 
+<span class="lineNum">     417 </span>            : template&lt;typename Derived1, typename Derived2, int Version&gt;
+<span class="lineNum">     418 </span>            : struct assign_impl&lt;Derived1, Derived2, LinearVectorizedTraversal, CompleteUnrolling, Version&gt;
+<a name="419"><span class="lineNum">     419 </span>            : {</a>
+<span class="lineNum">     420 </span>            :   typedef typename Derived1::Index Index;
+<span class="lineNum">     421 </span><span class="lineCov">    3418690 :   static EIGEN_STRONG_INLINE void run(Derived1 &amp;dst, const Derived2 &amp;src)</span>
+<span class="lineNum">     422 </span>            :   {
+<span class="lineNum">     423 </span>            :     enum { size = Derived1::SizeAtCompileTime,
+<span class="lineNum">     424 </span>            :            packetSize = packet_traits&lt;typename Derived1::Scalar&gt;::size,
+<span class="lineNum">     425 </span>            :            alignedSize = (size/packetSize)*packetSize };
+<span class="lineNum">     426 </span>            : 
+<span class="lineNum">     427 </span><span class="lineCov">    3418690 :     assign_innervec_CompleteUnrolling&lt;Derived1, Derived2, 0, alignedSize&gt;::run(dst, src);</span>
+<span class="lineNum">     428 </span><span class="lineCov">    3418690 :     assign_DefaultTraversal_CompleteUnrolling&lt;Derived1, Derived2, alignedSize, size&gt;::run(dst, src);</span>
+<span class="lineNum">     429 </span><span class="lineCov">    3418690 :   }</span>
+<span class="lineNum">     430 </span>            : };
+<span class="lineNum">     431 </span>            : 
+<span class="lineNum">     432 </span>            : /**************************
+<span class="lineNum">     433 </span>            : *** Slice vectorization ***
+<span class="lineNum">     434 </span>            : ***************************/
+<span class="lineNum">     435 </span>            : 
+<span class="lineNum">     436 </span>            : template&lt;typename Derived1, typename Derived2, int Version&gt;
+<span class="lineNum">     437 </span>            : struct assign_impl&lt;Derived1, Derived2, SliceVectorizedTraversal, NoUnrolling, Version&gt;
+<a name="438"><span class="lineNum">     438 </span>            : {</a>
+<span class="lineNum">     439 </span>            :   typedef typename Derived1::Index Index;
+<span class="lineNum">     440 </span><span class="lineCov">    2764166 :   static inline void run(Derived1 &amp;dst, const Derived2 &amp;src)</span>
+<span class="lineNum">     441 </span>            :   {
+<span class="lineNum">     442 </span>            :     typedef typename Derived1::Scalar Scalar;
+<span class="lineNum">     443 </span>            :     typedef packet_traits&lt;Scalar&gt; PacketTraits;
+<span class="lineNum">     444 </span>            :     enum {
+<span class="lineNum">     445 </span>            :       packetSize = PacketTraits::size,
+<span class="lineNum">     446 </span>            :       alignable = PacketTraits::AlignedOnScalar,
+<span class="lineNum">     447 </span>            :       dstIsAligned = assign_traits&lt;Derived1,Derived2&gt;::DstIsAligned,
+<span class="lineNum">     448 </span>            :       dstAlignment = alignable ? Aligned : int(dstIsAligned),
+<span class="lineNum">     449 </span>            :       srcAlignment = assign_traits&lt;Derived1,Derived2&gt;::JointAlignment
+<span class="lineNum">     450 </span>            :     };
+<span class="lineNum">     451 </span><span class="lineCov">    2764166 :     const Scalar *dst_ptr = &amp;dst.coeffRef(0,0);</span>
+<span class="lineNum">     452 </span><span class="lineCov">    2253331 :     if((!bool(dstIsAligned)) &amp;&amp; (Index(dst_ptr) % sizeof(Scalar))&gt;0)</span>
+<span class="lineNum">     453 </span>            :     {
+<span class="lineNum">     454 </span>            :       // the pointer is not aligend-on scalar, so alignment is not possible
+<span class="lineNum">     455 </span><span class="lineNoCov">          0 :       return assign_impl&lt;Derived1,Derived2,DefaultTraversal,NoUnrolling&gt;::run(dst, src);</span>
+<span class="lineNum">     456 </span>            :     }
+<span class="lineNum">     457 </span><span class="lineCov">    2764166 :     const Index packetAlignedMask = packetSize - 1;</span>
+<span class="lineNum">     458 </span><span class="lineCov">    2764166 :     const Index innerSize = dst.innerSize();</span>
+<span class="lineNum">     459 </span><span class="lineCov">    2764166 :     const Index outerSize = dst.outerSize();</span>
+<span class="lineNum">     460 </span><span class="lineCov">    2764166 :     const Index alignedStep = alignable ? (packetSize - dst.outerStride() % packetSize) &amp; packetAlignedMask : 0;</span>
+<span class="lineNum">     461 </span><span class="lineCov">    2764166 :     Index alignedStart = ((!alignable) || bool(dstIsAligned)) ? 0 : internal::first_aligned(dst_ptr, innerSize);</span>
+<span class="lineNum">     462 </span>            : 
+<span class="lineNum">     463 </span><span class="lineCov">   10111611 :     for(Index outer = 0; outer &lt; outerSize; ++outer)</span>
+<span class="lineNum">     464 </span>            :     {
+<span class="lineNum">     465 </span><span class="lineCov">    7347445 :       const Index alignedEnd = alignedStart + ((innerSize-alignedStart) &amp; ~packetAlignedMask);</span>
+<span class="lineNum">     466 </span>            :       // do the non-vectorizable part of the assignment
+<span class="lineNum">     467 </span><span class="lineCov">    9398867 :       for(Index inner = 0; inner&lt;alignedStart ; ++inner)</span>
+<span class="lineNum">     468 </span><span class="lineCov">    2051422 :         dst.copyCoeffByOuterInner(outer, inner, src);</span>
+<span class="lineNum">     469 </span>            : 
+<span class="lineNum">     470 </span>            :       // do the vectorizable part of the assignment
+<span class="lineNum">     471 </span><span class="lineCov">   19983866 :       for(Index inner = alignedStart; inner&lt;alignedEnd; inner+=packetSize)</span>
+<span class="lineNum">     472 </span><span class="lineCov">   12636421 :         dst.template copyPacketByOuterInner&lt;Derived2, dstAlignment, Unaligned&gt;(outer, inner, src);</span>
+<span class="lineNum">     473 </span>            : 
+<span class="lineNum">     474 </span>            :       // do the non-vectorizable part of the assignment
+<span class="lineNum">     475 </span><span class="lineCov">    9615402 :       for(Index inner = alignedEnd; inner&lt;innerSize ; ++inner)</span>
+<span class="lineNum">     476 </span><span class="lineCov">    2267957 :         dst.copyCoeffByOuterInner(outer, inner, src);</span>
+<span class="lineNum">     477 </span>            : 
+<span class="lineNum">     478 </span><span class="lineCov">    7347445 :       alignedStart = std::min&lt;Index&gt;((alignedStart+alignedStep)%packetSize, innerSize);</span>
+<span class="lineNum">     479 </span>            :     }
+<span class="lineNum">     480 </span>            :   }
+<span class="lineNum">     481 </span>            : };
+<span class="lineNum">     482 </span>            : 
+<span class="lineNum">     483 </span>            : } // end namespace internal
+<span class="lineNum">     484 </span>            : 
+<span class="lineNum">     485 </span>            : /***************************************************************************
+<span class="lineNum">     486 </span>            : * Part 4 : implementation of DenseBase methods
+<span class="lineNum">     487 </span>            : ***************************************************************************/
+<span class="lineNum">     488 </span>            : 
+<a name="489"><span class="lineNum">     489 </span>            : template&lt;typename Derived&gt;</a>
+<span class="lineNum">     490 </span>            : template&lt;typename OtherDerived&gt;
+<span class="lineNum">     491 </span><span class="lineCov">   18886147 : EIGEN_STRONG_INLINE Derived&amp; DenseBase&lt;Derived&gt;</span>
+<span class="lineNum">     492 </span>            :   ::lazyAssign(const DenseBase&lt;OtherDerived&gt;&amp; other)
+<span class="lineNum">     493 </span>            : {
+<span class="lineNum">     494 </span>            :   enum{
+<span class="lineNum">     495 </span>            :     SameType = internal::is_same&lt;typename Derived::Scalar,typename OtherDerived::Scalar&gt;::value
+<span class="lineNum">     496 </span>            :   };
+<span class="lineNum">     497 </span>            : 
+<span class="lineNum">     498 </span>            :   EIGEN_STATIC_ASSERT_LVALUE(Derived)
+<span class="lineNum">     499 </span>            :   EIGEN_STATIC_ASSERT_SAME_MATRIX_SIZE(Derived,OtherDerived)
+<span class="lineNum">     500 </span>            :   EIGEN_STATIC_ASSERT(SameType,YOU_MIXED_DIFFERENT_NUMERIC_TYPES__YOU_NEED_TO_USE_THE_CAST_METHOD_OF_MATRIXBASE_TO_CAST_NUMERIC_TYPES_EXPLICITLY)
+<span class="lineNum">     501 </span>            : 
+<span class="lineNum">     502 </span>            : #ifdef EIGEN_DEBUG_ASSIGN
+<span class="lineNum">     503 </span>            :   internal::assign_traits&lt;Derived, OtherDerived&gt;::debug();
+<span class="lineNum">     504 </span>            : #endif
+<span class="lineNum">     505 </span><span class="lineCov">   18886147 :   eigen_assert(rows() == other.rows() &amp;&amp; cols() == other.cols());</span>
+<span class="lineNum">     506 </span><span class="lineCov">   18886147 :   internal::assign_impl&lt;Derived, OtherDerived, int(SameType) ? int(internal::assign_traits&lt;Derived, OtherDerived&gt;::Traversal)</span>
+<span class="lineNum">     507 </span><span class="lineCov">   18886147 :                                                        : int(InvalidTraversal)&gt;::run(derived(),other.derived());</span>
+<span class="lineNum">     508 </span>            : #ifndef EIGEN_NO_DEBUG
+<span class="lineNum">     509 </span><span class="lineCov">   18886147 :   checkTransposeAliasing(other.derived());</span>
+<span class="lineNum">     510 </span>            : #endif
+<span class="lineNum">     511 </span><span class="lineCov">   18886147 :   return derived();</span>
+<span class="lineNum">     512 </span>            : }
+<span class="lineNum">     513 </span>            : 
+<span class="lineNum">     514 </span>            : namespace internal {
+<span class="lineNum">     515 </span>            : 
+<span class="lineNum">     516 </span>            : template&lt;typename Derived, typename OtherDerived,
+<span class="lineNum">     517 </span>            :          bool EvalBeforeAssigning = (int(internal::traits&lt;OtherDerived&gt;::Flags) &amp; EvalBeforeAssigningBit) != 0,
+<span class="lineNum">     518 </span>            :          bool NeedToTranspose = ((int(Derived::RowsAtCompileTime) == 1 &amp;&amp; int(OtherDerived::ColsAtCompileTime) == 1)
+<span class="lineNum">     519 </span>            :                               |   // FIXME | instead of || to please GCC 4.4.0 stupid warning &quot;suggest parentheses around &amp;&amp;&quot;.
+<span class="lineNum">     520 </span>            :                                   // revert to || as soon as not needed anymore.
+<span class="lineNum">     521 </span>            :                                   (int(Derived::ColsAtCompileTime) == 1 &amp;&amp; int(OtherDerived::RowsAtCompileTime) == 1))
+<span class="lineNum">     522 </span>            :                               &amp;&amp; int(Derived::SizeAtCompileTime) != 1&gt;
+<span class="lineNum">     523 </span>            : struct assign_selector;
+<span class="lineNum">     524 </span>            : 
+<a name="525"><span class="lineNum">     525 </span>            : template&lt;typename Derived, typename OtherDerived&gt;</a>
+<span class="lineNum">     526 </span>            : struct assign_selector&lt;Derived,OtherDerived,false,false&gt; {
+<a name="527"><span class="lineNum">     527 </span><span class="lineCov">   17550697 :   static EIGEN_STRONG_INLINE Derived&amp; run(Derived&amp; dst, const OtherDerived&amp; other) { return dst.lazyAssign(other.derived()); }</span></a>
+<span class="lineNum">     528 </span>            :   template&lt;typename ActualDerived, typename ActualOtherDerived&gt;
+<span class="lineNum">     529 </span><span class="lineCov">       6540 :   static EIGEN_STRONG_INLINE Derived&amp; evalTo(ActualDerived&amp; dst, const ActualOtherDerived&amp; other) { other.evalTo(dst); return dst; }</span>
+<span class="lineNum">     530 </span>            : };
+<a name="531"><span class="lineNum">     531 </span>            : template&lt;typename Derived, typename OtherDerived&gt;</a>
+<span class="lineNum">     532 </span>            : struct assign_selector&lt;Derived,OtherDerived,true,false&gt; {
+<span class="lineNum">     533 </span><span class="lineCov">     340945 :   static EIGEN_STRONG_INLINE Derived&amp; run(Derived&amp; dst, const OtherDerived&amp; other) { return dst.lazyAssign(other.eval()); }</span>
+<span class="lineNum">     534 </span>            : };
+<a name="535"><span class="lineNum">     535 </span>            : template&lt;typename Derived, typename OtherDerived&gt;</a>
+<span class="lineNum">     536 </span>            : struct assign_selector&lt;Derived,OtherDerived,false,true&gt; {
+<span class="lineNum">     537 </span><span class="lineCov">     379782 :   static EIGEN_STRONG_INLINE Derived&amp; run(Derived&amp; dst, const OtherDerived&amp; other) { return dst.lazyAssign(other.transpose()); }</span>
+<span class="lineNum">     538 </span>            :   template&lt;typename ActualDerived, typename ActualOtherDerived&gt;
+<span class="lineNum">     539 </span>            :   static EIGEN_STRONG_INLINE Derived&amp; evalTo(ActualDerived&amp; dst, const ActualOtherDerived&amp; other) { Transpose&lt;ActualDerived&gt; dstTrans(dst); other.evalTo(dstTrans); return dst; }
+<span class="lineNum">     540 </span>            : };
+<span class="lineNum">     541 </span>            : template&lt;typename Derived, typename OtherDerived&gt;
+<span class="lineNum">     542 </span>            : struct assign_selector&lt;Derived,OtherDerived,true,true&gt; {
+<span class="lineNum">     543 </span>            :   static EIGEN_STRONG_INLINE Derived&amp; run(Derived&amp; dst, const OtherDerived&amp; other) { return dst.lazyAssign(other.transpose().eval()); }
+<span class="lineNum">     544 </span>            : };
+<span class="lineNum">     545 </span>            : 
+<span class="lineNum">     546 </span>            : } // end namespace internal
+<span class="lineNum">     547 </span>            : 
+<span class="lineNum">     548 </span>            : template&lt;typename Derived&gt;
+<span class="lineNum">     549 </span>            : template&lt;typename OtherDerived&gt;
+<span class="lineNum">     550 </span>            : EIGEN_STRONG_INLINE Derived&amp; DenseBase&lt;Derived&gt;::operator=(const DenseBase&lt;OtherDerived&gt;&amp; other)
+<span class="lineNum">     551 </span>            : {
+<span class="lineNum">     552 </span>            :   return internal::assign_selector&lt;Derived,OtherDerived&gt;::run(derived(), other.derived());
+<span class="lineNum">     553 </span>            : }
+<span class="lineNum">     554 </span>            : 
+<span class="lineNum">     555 </span>            : template&lt;typename Derived&gt;
+<span class="lineNum">     556 </span>            : EIGEN_STRONG_INLINE Derived&amp; DenseBase&lt;Derived&gt;::operator=(const DenseBase&amp; other)
+<span class="lineNum">     557 </span>            : {
+<span class="lineNum">     558 </span>            :   return internal::assign_selector&lt;Derived,Derived&gt;::run(derived(), other.derived());
+<span class="lineNum">     559 </span>            : }
+<a name="560"><span class="lineNum">     560 </span>            : </a>
+<span class="lineNum">     561 </span>            : template&lt;typename Derived&gt;
+<span class="lineNum">     562 </span><span class="lineCov">       1171 : EIGEN_STRONG_INLINE Derived&amp; MatrixBase&lt;Derived&gt;::operator=(const MatrixBase&amp; other)</span>
+<span class="lineNum">     563 </span>            : {
+<span class="lineNum">     564 </span><span class="lineCov">       1171 :   return internal::assign_selector&lt;Derived,Derived&gt;::run(derived(), other.derived());</span>
+<span class="lineNum">     565 </span>            : }
+<span class="lineNum">     566 </span>            : 
+<a name="567"><span class="lineNum">     567 </span>            : template&lt;typename Derived&gt;</a>
+<span class="lineNum">     568 </span>            : template &lt;typename OtherDerived&gt;
+<span class="lineNum">     569 </span><span class="lineCov">    7087295 : EIGEN_STRONG_INLINE Derived&amp; MatrixBase&lt;Derived&gt;::operator=(const DenseBase&lt;OtherDerived&gt;&amp; other)</span>
+<span class="lineNum">     570 </span>            : {
+<span class="lineNum">     571 </span><span class="lineCov">    7087295 :   return internal::assign_selector&lt;Derived,OtherDerived&gt;::run(derived(), other.derived());</span>
+<span class="lineNum">     572 </span>            : }
+<span class="lineNum">     573 </span>            : 
+<a name="574"><span class="lineNum">     574 </span>            : template&lt;typename Derived&gt;</a>
+<span class="lineNum">     575 </span>            : template &lt;typename OtherDerived&gt;
+<span class="lineNum">     576 </span><span class="lineNoCov">          0 : EIGEN_STRONG_INLINE Derived&amp; MatrixBase&lt;Derived&gt;::operator=(const EigenBase&lt;OtherDerived&gt;&amp; other)</span>
+<span class="lineNum">     577 </span>            : {
+<span class="lineNum">     578 </span><span class="lineNoCov">          0 :   return internal::assign_selector&lt;Derived,OtherDerived,false&gt;::evalTo(derived(), other.derived());</span>
+<span class="lineNum">     579 </span>            : }
+<span class="lineNum">     580 </span>            : 
+<a name="581"><span class="lineNum">     581 </span>            : template&lt;typename Derived&gt;</a>
+<span class="lineNum">     582 </span>            : template&lt;typename OtherDerived&gt;
+<span class="lineNum">     583 </span><span class="lineCov">       6540 : EIGEN_STRONG_INLINE Derived&amp; MatrixBase&lt;Derived&gt;::operator=(const ReturnByValue&lt;OtherDerived&gt;&amp; other)</span>
+<span class="lineNum">     584 </span>            : {
+<span class="lineNum">     585 </span><span class="lineCov">       6540 :   return internal::assign_selector&lt;Derived,OtherDerived,false&gt;::evalTo(derived(), other.derived());</span>
+<span class="lineNum">     586 </span>            : }
+<span class="lineNum">     587 </span>            : 
+<span class="lineNum">     588 </span>            : } // end namespace Eigen
+<span class="lineNum">     589 </span>            : 
+<span class="lineNum">     590 </span>            : #endif // EIGEN_ASSIGN_H
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

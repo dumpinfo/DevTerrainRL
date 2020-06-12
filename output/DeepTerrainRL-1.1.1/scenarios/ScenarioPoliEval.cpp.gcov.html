@@ -1,0 +1,494 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/scenarios/ScenarioPoliEval.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/scenarios</a> - ScenarioPoliEval.cpp<span style="font-size: 80%;"> (source / <a href="ScenarioPoliEval.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">229</td>
+            <td class="headerCovTableEntryLo">0.4 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">36</td>
+            <td class="headerCovTableEntryLo">5.6 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;ScenarioPoliEval.h&quot;</a>
+<span class="lineNum">       2 </span>            : #include &quot;sim/NNController.h&quot;
+<span class="lineNum">       3 </span>            : #include &quot;sim/GroundVar2D.h&quot;
+<span class="lineNum">       4 </span>            : #include &quot;sim/DogControllerCacla.h&quot;
+<span class="lineNum">       5 </span>            : #include &quot;util/FileUtil.h&quot;
+<span class="lineNum">       6 </span>            : 
+<a name="7"><span class="lineNum">       7 </span>            : const int gNumWarmupCycles = 1;</a>
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span><span class="lineNoCov">          0 : cScenarioPoliEval::cScenarioPoliEval()</span>
+<span class="lineNum">      10 </span>            : {
+<span class="lineNum">      11 </span><span class="lineNoCov">          0 :         mPosStart.setZero();</span>
+<span class="lineNum">      12 </span><span class="lineNoCov">          0 :         mAvgDist = 0;</span>
+<span class="lineNum">      13 </span><span class="lineNoCov">          0 :         mEpisodeCount = 0;</span>
+<span class="lineNum">      14 </span><span class="lineNoCov">          0 :         mCycleCount = 0;</span>
+<span class="lineNum">      15 </span>            :         
+<span class="lineNum">      16 </span>            :         // analysis stuff
+<span class="lineNum">      17 </span><span class="lineNoCov">          0 :         mRecordNNActivation = false;</span>
+<span class="lineNum">      18 </span><span class="lineNoCov">          0 :         mNNActivationOutputFile = &quot;&quot;;</span>
+<span class="lineNum">      19 </span><span class="lineNoCov">          0 :         mNNActivationLayer = &quot;&quot;;</span>
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span><span class="lineNoCov">          0 :         mRecordActions = false;;</span>
+<span class="lineNum">      22 </span><span class="lineNoCov">          0 :         mActionOutputFile = &quot;&quot;;</span>
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span><span class="lineNoCov">          0 :         mRecordVel = false;</span>
+<span class="lineNum">      25 </span><span class="lineNoCov">          0 :         mVelOutputFile = &quot;&quot;;</span>
+<span class="lineNum">      26 </span>            : 
+<span class="lineNum">      27 </span><span class="lineNoCov">          0 :         mRecordActionIDState = false;</span>
+<span class="lineNum">      28 </span><span class="lineNoCov">          0 :         mActionIDStateOutputFile = &quot;&quot;;</span>
+<span class="lineNum">      29 </span>            : 
+<span class="lineNum">      30 </span><span class="lineNoCov">          0 :         mPrevCOMPos.setZero();</span>
+<span class="lineNum">      31 </span><span class="lineNoCov">          0 :         mPrevTime = 0;</span>
+<a name="32"><span class="lineNum">      32 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span><span class="lineNoCov">          0 : cScenarioPoliEval::~cScenarioPoliEval()</span>
+<span class="lineNum">      35 </span>            : {
+<a name="36"><span class="lineNum">      36 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">      37 </span>            : 
+<span class="lineNum">      38 </span><span class="lineNoCov">          0 : void cScenarioPoliEval::ParseArgs(const cArgParser&amp; parser)</span>
+<span class="lineNum">      39 </span>            : {
+<span class="lineNum">      40 </span><span class="lineNoCov">          0 :         cScenarioSimChar::ParseArgs(parser);</span>
+<span class="lineNum">      41 </span><span class="lineNoCov">          0 :         parser.ParseString(&quot;policy_net&quot;, mPoliNetFile);</span>
+<span class="lineNum">      42 </span><span class="lineNoCov">          0 :         parser.ParseString(&quot;policy_model&quot;, mPoliModelFile);</span>
+<span class="lineNum">      43 </span><span class="lineNoCov">          0 :         parser.ParseString(&quot;critic_net&quot;, mCriticNetFile);</span>
+<span class="lineNum">      44 </span><span class="lineNoCov">          0 :         parser.ParseString(&quot;critic_model&quot;, mCriticModelFile);</span>
+<span class="lineNum">      45 </span>            : 
+<span class="lineNum">      46 </span><span class="lineNoCov">          0 :         parser.ParseBool(&quot;record_nn_activation&quot;, mRecordNNActivation);</span>
+<span class="lineNum">      47 </span><span class="lineNoCov">          0 :         parser.ParseString(&quot;nn_activation_output_file&quot;, mNNActivationOutputFile);</span>
+<span class="lineNum">      48 </span><span class="lineNoCov">          0 :         parser.ParseString(&quot;nn_activation_layer&quot;, mNNActivationLayer);</span>
+<span class="lineNum">      49 </span>            : 
+<span class="lineNum">      50 </span><span class="lineNoCov">          0 :         parser.ParseBool(&quot;record_actions&quot;, mRecordActions);</span>
+<span class="lineNum">      51 </span><span class="lineNoCov">          0 :         parser.ParseString(&quot;action_output_file&quot;, mActionOutputFile);</span>
+<span class="lineNum">      52 </span>            : 
+<span class="lineNum">      53 </span><span class="lineNoCov">          0 :         parser.ParseBool(&quot;record_vel&quot;, mRecordVel);</span>
+<span class="lineNum">      54 </span><span class="lineNoCov">          0 :         parser.ParseString(&quot;vel_output_file&quot;, mVelOutputFile);</span>
+<span class="lineNum">      55 </span>            : 
+<span class="lineNum">      56 </span><span class="lineNoCov">          0 :         parser.ParseBool(&quot;record_action_id_state&quot;, mRecordActionIDState);</span>
+<span class="lineNum">      57 </span><span class="lineNoCov">          0 :         parser.ParseString(&quot;action_id_state_output_file&quot;, mActionIDStateOutputFile);</span>
+<a name="58"><span class="lineNum">      58 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span><span class="lineNoCov">          0 : void cScenarioPoliEval::Init()</span>
+<span class="lineNum">      61 </span>            : {
+<span class="lineNum">      62 </span><span class="lineNoCov">          0 :         cScenarioSimChar::Init();</span>
+<span class="lineNum">      63 </span><span class="lineNoCov">          0 :         mAvgDist = 0;</span>
+<span class="lineNum">      64 </span><span class="lineNoCov">          0 :         mEpisodeCount = 0;</span>
+<span class="lineNum">      65 </span><span class="lineNoCov">          0 :         mCycleCount = 0;</span>
+<span class="lineNum">      66 </span><span class="lineNoCov">          0 :         mDistLog.clear();</span>
+<span class="lineNum">      67 </span>            : 
+<span class="lineNum">      68 </span><span class="lineNoCov">          0 :         mPrevCOMPos = mChar-&gt;CalcCOM();</span>
+<span class="lineNum">      69 </span><span class="lineNoCov">          0 :         mPrevTime = mTime;</span>
+<span class="lineNum">      70 </span>            : 
+<span class="lineNum">      71 </span><span class="lineNoCov">          0 :         if (EnableRecordNNActivation())</span>
+<span class="lineNum">      72 </span>            :         {
+<span class="lineNum">      73 </span><span class="lineNoCov">          0 :                 InitNNActivation(mNNActivationOutputFile);</span>
+<span class="lineNum">      74 </span>            :         }
+<span class="lineNum">      75 </span>            : 
+<span class="lineNum">      76 </span><span class="lineNoCov">          0 :         if (EnableRecordActions())</span>
+<span class="lineNum">      77 </span>            :         {
+<span class="lineNum">      78 </span><span class="lineNoCov">          0 :                 InitActionRecord(mActionOutputFile);</span>
+<span class="lineNum">      79 </span>            :         }
+<span class="lineNum">      80 </span>            : 
+<span class="lineNum">      81 </span><span class="lineNoCov">          0 :         if (EnableRecordVel())</span>
+<span class="lineNum">      82 </span>            :         {
+<span class="lineNum">      83 </span><span class="lineNoCov">          0 :                 InitVelRecord(mVelOutputFile);</span>
+<span class="lineNum">      84 </span>            :         }
+<span class="lineNum">      85 </span>            : 
+<span class="lineNum">      86 </span><span class="lineNoCov">          0 :         if (EnableRecordActionIDState())</span>
+<span class="lineNum">      87 </span>            :         {
+<span class="lineNum">      88 </span><span class="lineNoCov">          0 :                 InitActionIDState(mActionIDStateOutputFile);</span>
+<span class="lineNum">      89 </span>            :         }
+<a name="90"><span class="lineNum">      90 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">      91 </span>            : 
+<span class="lineNum">      92 </span><span class="lineNoCov">          0 : void cScenarioPoliEval::Reset()</span>
+<span class="lineNum">      93 </span>            : {
+<span class="lineNum">      94 </span><span class="lineNoCov">          0 :         cScenarioSimChar::Reset();</span>
+<span class="lineNum">      95 </span><span class="lineNoCov">          0 :         mPosStart = mChar-&gt;GetRootPos();</span>
+<span class="lineNum">      96 </span>            : 
+<span class="lineNum">      97 </span><span class="lineNoCov">          0 :         mPrevCOMPos = mChar-&gt;CalcCOM();</span>
+<span class="lineNum">      98 </span><span class="lineNoCov">          0 :         mPrevTime = mTime;</span>
+<a name="99"><span class="lineNum">      99 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     100 </span>            : 
+<span class="lineNum">     101 </span><span class="lineNoCov">          0 : void cScenarioPoliEval::Clear()</span>
+<span class="lineNum">     102 </span>            : {
+<span class="lineNum">     103 </span><span class="lineNoCov">          0 :         cScenarioSimChar::Clear();</span>
+<span class="lineNum">     104 </span><span class="lineNoCov">          0 :         mAvgDist = 0;</span>
+<span class="lineNum">     105 </span><span class="lineNoCov">          0 :         mEpisodeCount = 0;</span>
+<span class="lineNum">     106 </span><span class="lineNoCov">          0 :         mCycleCount = 0;</span>
+<span class="lineNum">     107 </span><span class="lineNoCov">          0 :         mDistLog.clear();</span>
+<a name="108"><span class="lineNum">     108 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     109 </span>            : 
+<span class="lineNum">     110 </span><span class="lineNoCov">          0 : void cScenarioPoliEval::Update(double time_elapsed)</span>
+<span class="lineNum">     111 </span>            : {
+<span class="lineNum">     112 </span><span class="lineNoCov">          0 :         cScenarioSimChar::Update(time_elapsed);</span>
+<span class="lineNum">     113 </span>            : 
+<span class="lineNum">     114 </span><span class="lineNoCov">          0 :         if (time_elapsed &gt; 0)</span>
+<span class="lineNum">     115 </span>            :         {
+<span class="lineNum">     116 </span><span class="lineNoCov">          0 :                 if (HasFallen())</span>
+<span class="lineNum">     117 </span>            :                 {
+<span class="lineNum">     118 </span><span class="lineNoCov">          0 :                         if (IsValidCycle())</span>
+<span class="lineNum">     119 </span>            :                         {
+<span class="lineNum">     120 </span><span class="lineNoCov">          0 :                                 RecordDistTraveled();</span>
+<span class="lineNum">     121 </span>            :                         }
+<span class="lineNum">     122 </span><span class="lineNoCov">          0 :                         Reset();</span>
+<span class="lineNum">     123 </span>            :                 }
+<span class="lineNum">     124 </span>            :         }
+<a name="125"><span class="lineNum">     125 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     126 </span>            : 
+<span class="lineNum">     127 </span><span class="lineNoCov">          0 : double cScenarioPoliEval::GetAvgDist() const</span>
+<span class="lineNum">     128 </span>            : {
+<span class="lineNum">     129 </span><span class="lineNoCov">          0 :         return mAvgDist;</span>
+<a name="130"><span class="lineNum">     130 </span>            : }</a>
+<span class="lineNum">     131 </span>            : 
+<span class="lineNum">     132 </span><span class="lineNoCov">          0 : void cScenarioPoliEval::ResetAvgDist()</span>
+<span class="lineNum">     133 </span>            : {
+<span class="lineNum">     134 </span><span class="lineNoCov">          0 :         mAvgDist = 0;</span>
+<span class="lineNum">     135 </span><span class="lineNoCov">          0 :         mEpisodeCount = 0;</span>
+<a name="136"><span class="lineNum">     136 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     137 </span>            : 
+<span class="lineNum">     138 </span><span class="lineNoCov">          0 : int cScenarioPoliEval::GetNumEpisodes() const</span>
+<span class="lineNum">     139 </span>            : {
+<span class="lineNum">     140 </span><span class="lineNoCov">          0 :         return mEpisodeCount;</span>
+<a name="141"><span class="lineNum">     141 </span>            : }</a>
+<span class="lineNum">     142 </span>            : 
+<span class="lineNum">     143 </span><span class="lineNoCov">          0 : int cScenarioPoliEval::GetNumCycles() const</span>
+<span class="lineNum">     144 </span>            : {
+<span class="lineNum">     145 </span><span class="lineNoCov">          0 :         return mCycleCount;</span>
+<a name="146"><span class="lineNum">     146 </span>            : }</a>
+<span class="lineNum">     147 </span>            : 
+<span class="lineNum">     148 </span><span class="lineNoCov">          0 : const std::vector&lt;double&gt;&amp; cScenarioPoliEval::GetDistLog() const</span>
+<span class="lineNum">     149 </span>            : {
+<span class="lineNum">     150 </span><span class="lineNoCov">          0 :         return mDistLog;</span>
+<a name="151"><span class="lineNum">     151 </span>            : }</a>
+<span class="lineNum">     152 </span>            : 
+<span class="lineNum">     153 </span><span class="lineNoCov">          0 : void cScenarioPoliEval::SetRandSeed(unsigned long seed)</span>
+<span class="lineNum">     154 </span>            : {
+<span class="lineNum">     155 </span><span class="lineNoCov">          0 :         if ((typeid(*mGround.get()).hash_code() == typeid(cGroundVar2D).hash_code()))</span>
+<span class="lineNum">     156 </span>            :         {
+<span class="lineNum">     157 </span><span class="lineNoCov">          0 :                 std::shared_ptr&lt;cGroundVar2D&gt; ground = std::static_pointer_cast&lt;cGroundVar2D&gt;(mGround);</span>
+<span class="lineNum">     158 </span><span class="lineNoCov">          0 :                 ground-&gt;SeedRand(seed);</span>
+<span class="lineNum">     159 </span>            :         }
+<a name="160"><span class="lineNum">     160 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     161 </span>            : 
+<span class="lineNum">     162 </span><span class="lineNoCov">          0 : std::string cScenarioPoliEval::GetName() const</span>
+<span class="lineNum">     163 </span>            : {
+<span class="lineNum">     164 </span><span class="lineNoCov">          0 :         return &quot;Policy Evaluation&quot;;</span>
+<a name="165"><span class="lineNum">     165 </span>            : }</a>
+<span class="lineNum">     166 </span>            : 
+<span class="lineNum">     167 </span><span class="lineNoCov">          0 : bool cScenarioPoliEval::BuildController(std::shared_ptr&lt;cCharController&gt;&amp; out_ctrl)</span>
+<span class="lineNum">     168 </span>            : {
+<span class="lineNum">     169 </span><span class="lineNoCov">          0 :         bool succ = cScenarioSimChar::BuildController(out_ctrl);</span>
+<span class="lineNum">     170 </span>            : 
+<span class="lineNum">     171 </span><span class="lineNoCov">          0 :         if (mPoliNetFile != &quot;&quot;)</span>
+<span class="lineNum">     172 </span>            :         {
+<span class="lineNum">     173 </span><span class="lineNoCov">          0 :                 std::shared_ptr&lt;cNNController&gt; nn_ctrl = std::static_pointer_cast&lt;cNNController&gt;(out_ctrl);</span>
+<span class="lineNum">     174 </span><span class="lineNoCov">          0 :                 succ &amp;= nn_ctrl-&gt;LoadNet(mPoliNetFile);</span>
+<span class="lineNum">     175 </span>            : 
+<span class="lineNum">     176 </span><span class="lineNoCov">          0 :                 if (succ &amp;&amp; mPoliModelFile != &quot;&quot;)</span>
+<span class="lineNum">     177 </span>            :                 {
+<span class="lineNum">     178 </span><span class="lineNoCov">          0 :                         nn_ctrl-&gt;LoadModel(mPoliModelFile);</span>
+<span class="lineNum">     179 </span>            :                 }
+<span class="lineNum">     180 </span>            :         }
+<span class="lineNum">     181 </span>            : 
+<span class="lineNum">     182 </span><span class="lineNoCov">          0 :         return succ;</span>
+<a name="183"><span class="lineNum">     183 </span>            : }</a>
+<span class="lineNum">     184 </span>            : 
+<span class="lineNum">     185 </span><span class="lineNoCov">          0 : bool cScenarioPoliEval::BuildDogControllerCacla(std::shared_ptr&lt;cCharController&gt;&amp; out_ctrl) const</span>
+<span class="lineNum">     186 </span>            : {
+<span class="lineNum">     187 </span><span class="lineNoCov">          0 :         bool succ = cScenarioSimChar::BuildDogControllerCacla(out_ctrl);</span>
+<span class="lineNum">     188 </span><span class="lineNoCov">          0 :         std::shared_ptr&lt;cDogControllerCacla&gt; dog_ctrl = std::dynamic_pointer_cast&lt;cDogControllerCacla&gt;(out_ctrl);</span>
+<span class="lineNum">     189 </span>            :         
+<span class="lineNum">     190 </span><span class="lineNoCov">          0 :         if (mCriticNetFile != &quot;&quot;)</span>
+<span class="lineNum">     191 </span>            :         {
+<span class="lineNum">     192 </span><span class="lineNoCov">          0 :                 bool critic_succ = dog_ctrl-&gt;LoadCriticNet(mCriticNetFile);</span>
+<span class="lineNum">     193 </span><span class="lineNoCov">          0 :                 if (critic_succ &amp;&amp; mCriticModelFile != &quot;&quot;)</span>
+<span class="lineNum">     194 </span>            :                 {
+<span class="lineNum">     195 </span><span class="lineNoCov">          0 :                         dog_ctrl-&gt;LoadCriticModel(mCriticModelFile);</span>
+<span class="lineNum">     196 </span>            :                 }
+<span class="lineNum">     197 </span>            :         }
+<span class="lineNum">     198 </span>            : 
+<span class="lineNum">     199 </span><span class="lineNoCov">          0 :         return succ;</span>
+<a name="200"><span class="lineNum">     200 </span>            : }</a>
+<span class="lineNum">     201 </span>            : 
+<span class="lineNum">     202 </span><span class="lineNoCov">          0 : void cScenarioPoliEval::RecordDistTraveled()</span>
+<span class="lineNum">     203 </span>            : {
+<span class="lineNum">     204 </span><span class="lineNoCov">          0 :         tVector curr_pos = mChar-&gt;GetRootPos();</span>
+<span class="lineNum">     205 </span><span class="lineNoCov">          0 :         tVector delta = curr_pos - mPosStart;</span>
+<span class="lineNum">     206 </span><span class="lineNoCov">          0 :         double dist = delta[0];</span>
+<span class="lineNum">     207 </span>            : 
+<span class="lineNum">     208 </span><span class="lineNoCov">          0 :         mAvgDist = cMathUtil::AddAverage(mAvgDist, mEpisodeCount, dist, 1);</span>
+<span class="lineNum">     209 </span><span class="lineNoCov">          0 :         ++mEpisodeCount;</span>
+<span class="lineNum">     210 </span>            : 
+<span class="lineNum">     211 </span><span class="lineNoCov">          0 :         mDistLog.push_back(dist);</span>
+<span class="lineNum">     212 </span>            : 
+<span class="lineNum">     213 </span>            : #if defined (ENABLE_DEBUG_PRINT)
+<span class="lineNum">     214 </span><span class="lineNoCov">          0 :         printf(&quot;\nEpisodes: %i\n&quot;, mEpisodeCount);</span>
+<span class="lineNum">     215 </span><span class="lineNoCov">          0 :         printf(&quot;Avg dist: %.5f\n&quot;, mAvgDist);</span>
+<span class="lineNum">     216 </span>            : #endif
+<a name="217"><span class="lineNum">     217 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     218 </span>            : 
+<span class="lineNum">     219 </span><span class="lineNoCov">          0 : bool cScenarioPoliEval::IsNewCycle() const</span>
+<span class="lineNum">     220 </span>            : {
+<span class="lineNum">     221 </span><span class="lineNoCov">          0 :         const auto&amp; ctrl = mChar-&gt;GetController();</span>
+<span class="lineNum">     222 </span><span class="lineNoCov">          0 :         return ctrl-&gt;IsNewCycle();</span>
+<a name="223"><span class="lineNum">     223 </span>            : }</a>
+<span class="lineNum">     224 </span>            : 
+<span class="lineNum">     225 </span><span class="lineNoCov">          0 : void cScenarioPoliEval::PostSubstepUpdate(double time_step)</span>
+<span class="lineNum">     226 </span>            : {
+<span class="lineNum">     227 </span><span class="lineNoCov">          0 :         bool new_cycle = IsNewCycle();</span>
+<span class="lineNum">     228 </span><span class="lineNoCov">          0 :         if (new_cycle)</span>
+<span class="lineNum">     229 </span>            :         {
+<span class="lineNum">     230 </span><span class="lineNoCov">          0 :                 NewCycleUpdate();</span>
+<span class="lineNum">     231 </span>            :         }
+<a name="232"><span class="lineNum">     232 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     233 </span>            : 
+<span class="lineNum">     234 </span><span class="lineNoCov">          0 : void cScenarioPoliEval::NewCycleUpdate()</span>
+<span class="lineNum">     235 </span>            : {
+<span class="lineNum">     236 </span><span class="lineNoCov">          0 :         if (IsValidCycle())</span>
+<span class="lineNum">     237 </span>            :         {
+<span class="lineNum">     238 </span><span class="lineNoCov">          0 :                 if (EnableRecordNNActivation())</span>
+<span class="lineNum">     239 </span>            :                 {
+<span class="lineNum">     240 </span><span class="lineNoCov">          0 :                         RecordNNActivation(mNNActivationLayer, mNNActivationOutputFile);</span>
+<span class="lineNum">     241 </span>            :                 }
+<span class="lineNum">     242 </span>            : 
+<span class="lineNum">     243 </span><span class="lineNoCov">          0 :                 if (EnableRecordActions())</span>
+<span class="lineNum">     244 </span>            :                 {
+<span class="lineNum">     245 </span><span class="lineNoCov">          0 :                         RecordAction(mActionOutputFile);</span>
+<span class="lineNum">     246 </span>            :                 }
+<span class="lineNum">     247 </span>            : 
+<span class="lineNum">     248 </span><span class="lineNoCov">          0 :                 if (EnableRecordVel())</span>
+<span class="lineNum">     249 </span>            :                 {
+<span class="lineNum">     250 </span><span class="lineNoCov">          0 :                         RecordVel(mVelOutputFile);</span>
+<span class="lineNum">     251 </span>            :                 }
+<span class="lineNum">     252 </span>            : 
+<span class="lineNum">     253 </span><span class="lineNoCov">          0 :                 if (EnableRecordActionIDState())</span>
+<span class="lineNum">     254 </span>            :                 {
+<span class="lineNum">     255 </span><span class="lineNoCov">          0 :                         RecordActionIDState(mActionIDStateOutputFile);</span>
+<span class="lineNum">     256 </span>            :                 }
+<span class="lineNum">     257 </span>            :         }
+<span class="lineNum">     258 </span><span class="lineNoCov">          0 :         ++mCycleCount;</span>
+<a name="259"><span class="lineNum">     259 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     260 </span>            : 
+<span class="lineNum">     261 </span><span class="lineNoCov">          0 : void cScenarioPoliEval::InitNNActivation(const std::string&amp; out_file)</span>
+<span class="lineNum">     262 </span>            : {
+<span class="lineNum">     263 </span><span class="lineNoCov">          0 :         cFileUtil::ClearFile(out_file);</span>
+<a name="264"><span class="lineNum">     264 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     265 </span>            : 
+<span class="lineNum">     266 </span><span class="lineNoCov">          0 : bool cScenarioPoliEval::EnableRecordNNActivation() const</span>
+<span class="lineNum">     267 </span>            : {
+<span class="lineNum">     268 </span><span class="lineNoCov">          0 :         return mRecordNNActivation &amp;&amp; mNNActivationLayer != &quot;&quot; &amp;&amp; mNNActivationOutputFile != &quot;&quot;;</span>
+<a name="269"><span class="lineNum">     269 </span>            : }</a>
+<span class="lineNum">     270 </span>            : 
+<span class="lineNum">     271 </span><span class="lineNoCov">          0 : void cScenarioPoliEval::RecordNNActivation(const std::string&amp; layer_name, const std::string&amp; out_file)</span>
+<span class="lineNum">     272 </span>            : {
+<span class="lineNum">     273 </span><span class="lineNoCov">          0 :         const auto&amp; ctrl = mChar-&gt;GetController();</span>
+<span class="lineNum">     274 </span><span class="lineNoCov">          0 :         const auto&amp; nn_ctrl = std::static_pointer_cast&lt;cNNController const&gt;(ctrl);</span>
+<span class="lineNum">     275 </span><span class="lineNoCov">          0 :         const cNeuralNet&amp; net = nn_ctrl-&gt;GetNet();</span>
+<span class="lineNum">     276 </span>            : 
+<span class="lineNum">     277 </span><span class="lineNoCov">          0 :         Eigen::VectorXd data;</span>
+<span class="lineNum">     278 </span><span class="lineNoCov">          0 :         net.GetLayerState(layer_name, data);</span>
+<span class="lineNum">     279 </span>            : 
+<span class="lineNum">     280 </span><span class="lineNoCov">          0 :         int data_size = static_cast&lt;int&gt;(data.size());</span>
+<span class="lineNum">     281 </span><span class="lineNoCov">          0 :         if (data_size &gt; 0)</span>
+<span class="lineNum">     282 </span>            :         {
+<span class="lineNum">     283 </span><span class="lineNoCov">          0 :                 std::string data_str = &quot;&quot;;</span>
+<span class="lineNum">     284 </span><span class="lineNoCov">          0 :                 int action_id = ctrl-&gt;GetCurrActionID();</span>
+<span class="lineNum">     285 </span><span class="lineNoCov">          0 :                 data_str += std::to_string(action_id);</span>
+<span class="lineNum">     286 </span>            : 
+<span class="lineNum">     287 </span><span class="lineNoCov">          0 :                 for (int i = 0; i &lt; data_size; ++i)</span>
+<span class="lineNum">     288 </span>            :                 {
+<span class="lineNum">     289 </span><span class="lineNoCov">          0 :                         data_str += &quot;,\t&quot;;</span>
+<span class="lineNum">     290 </span><span class="lineNoCov">          0 :                         data_str += std::to_string(data[i]);</span>
+<span class="lineNum">     291 </span>            :                 }
+<span class="lineNum">     292 </span><span class="lineNoCov">          0 :                 data_str += &quot;\n&quot;;</span>
+<span class="lineNum">     293 </span>            : 
+<span class="lineNum">     294 </span><span class="lineNoCov">          0 :                 cFileUtil::AppendText(data_str, out_file);</span>
+<span class="lineNum">     295 </span>            :         }
+<a name="296"><span class="lineNum">     296 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     297 </span>            : 
+<span class="lineNum">     298 </span><span class="lineNoCov">          0 : void cScenarioPoliEval::InitActionRecord(const std::string&amp; out_file) const</span>
+<span class="lineNum">     299 </span>            : {
+<span class="lineNum">     300 </span><span class="lineNoCov">          0 :         FILE* file = cFileUtil::OpenFile(out_file, &quot;w&quot;);</span>
+<span class="lineNum">     301 </span><span class="lineNoCov">          0 :         const auto&amp; ctrl = mChar-&gt;GetController();</span>
+<span class="lineNum">     302 </span>            : 
+<span class="lineNum">     303 </span><span class="lineNoCov">          0 :         int num_actions = ctrl-&gt;GetNumActions();</span>
+<span class="lineNum">     304 </span><span class="lineNoCov">          0 :         Eigen::VectorXd params;</span>
+<span class="lineNum">     305 </span><span class="lineNoCov">          0 :         for (int a = 0; a &lt; num_actions; ++a)</span>
+<span class="lineNum">     306 </span>            :         {
+<span class="lineNum">     307 </span><span class="lineNoCov">          0 :                 ctrl-&gt;BuildActionOptParams(a, params);</span>
+<span class="lineNum">     308 </span><span class="lineNoCov">          0 :                 fprintf(file, &quot;%i&quot;, a);</span>
+<span class="lineNum">     309 </span>            : 
+<span class="lineNum">     310 </span><span class="lineNoCov">          0 :                 int param_size = static_cast&lt;int&gt;(params.size());</span>
+<span class="lineNum">     311 </span><span class="lineNoCov">          0 :                 for (int i = 0; i &lt; param_size; ++i)</span>
+<span class="lineNum">     312 </span>            :                 {
+<span class="lineNum">     313 </span><span class="lineNoCov">          0 :                         fprintf(file, &quot;, %.5f&quot;, params[i]);</span>
+<span class="lineNum">     314 </span>            :                 }
+<span class="lineNum">     315 </span><span class="lineNoCov">          0 :                 fprintf(file, &quot;\n&quot;);</span>
+<span class="lineNum">     316 </span>            :         }
+<span class="lineNum">     317 </span>            : 
+<span class="lineNum">     318 </span><span class="lineNoCov">          0 :         cFileUtil::CloseFile(file);</span>
+<a name="319"><span class="lineNum">     319 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     320 </span>            : 
+<span class="lineNum">     321 </span><span class="lineNoCov">          0 : bool cScenarioPoliEval::EnableRecordActions() const</span>
+<span class="lineNum">     322 </span>            : {
+<span class="lineNum">     323 </span><span class="lineNoCov">          0 :         return mRecordActions &amp;&amp; mActionOutputFile != &quot;&quot;;</span>
+<a name="324"><span class="lineNum">     324 </span>            : }</a>
+<span class="lineNum">     325 </span>            : 
+<span class="lineNum">     326 </span><span class="lineNoCov">          0 : void cScenarioPoliEval::RecordAction(const std::string&amp; out_file)</span>
+<span class="lineNum">     327 </span>            : {
+<span class="lineNum">     328 </span><span class="lineNoCov">          0 :         const auto&amp; ctrl = mChar-&gt;GetController();</span>
+<span class="lineNum">     329 </span>            :         
+<span class="lineNum">     330 </span><span class="lineNoCov">          0 :         std::string data_str = &quot;&quot;;</span>
+<span class="lineNum">     331 </span><span class="lineNoCov">          0 :         int action_id = ctrl-&gt;GetCurrActionID();</span>
+<span class="lineNum">     332 </span><span class="lineNoCov">          0 :         data_str += std::to_string(action_id);</span>
+<span class="lineNum">     333 </span>            : 
+<span class="lineNum">     334 </span><span class="lineNoCov">          0 :         Eigen::VectorXd params;</span>
+<span class="lineNum">     335 </span><span class="lineNoCov">          0 :         ctrl-&gt;BuildOptParams(params);</span>
+<span class="lineNum">     336 </span>            : 
+<span class="lineNum">     337 </span><span class="lineNoCov">          0 :         int data_size = static_cast&lt;int&gt;(params.size());</span>
+<span class="lineNum">     338 </span><span class="lineNoCov">          0 :         for (int i = 0; i &lt; data_size; ++i)</span>
+<span class="lineNum">     339 </span>            :         {
+<span class="lineNum">     340 </span><span class="lineNoCov">          0 :                 data_str += &quot;,\t&quot;;</span>
+<span class="lineNum">     341 </span><span class="lineNoCov">          0 :                 data_str += std::to_string(params[i]);</span>
+<span class="lineNum">     342 </span>            :         }
+<span class="lineNum">     343 </span><span class="lineNoCov">          0 :         data_str += &quot;\n&quot;;</span>
+<span class="lineNum">     344 </span>            : 
+<span class="lineNum">     345 </span><span class="lineNoCov">          0 :         cFileUtil::AppendText(data_str, out_file);</span>
+<a name="346"><span class="lineNum">     346 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     347 </span>            : 
+<span class="lineNum">     348 </span><span class="lineNoCov">          0 : void cScenarioPoliEval::InitVelRecord(const std::string&amp; out_file) const</span>
+<span class="lineNum">     349 </span>            : {
+<span class="lineNum">     350 </span><span class="lineNoCov">          0 :         cFileUtil::ClearFile(out_file);</span>
+<a name="351"><span class="lineNum">     351 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     352 </span>            : 
+<span class="lineNum">     353 </span><span class="lineNoCov">          0 : bool cScenarioPoliEval::EnableRecordVel() const</span>
+<span class="lineNum">     354 </span>            : {
+<span class="lineNum">     355 </span><span class="lineNoCov">          0 :         return mRecordVel &amp;&amp; mVelOutputFile != &quot;&quot;;</span>
+<a name="356"><span class="lineNum">     356 </span>            : }</a>
+<span class="lineNum">     357 </span>            : 
+<span class="lineNum">     358 </span><span class="lineNoCov">          0 : void cScenarioPoliEval::RecordVel(const std::string&amp; out_file)</span>
+<span class="lineNum">     359 </span>            : {
+<span class="lineNum">     360 </span><span class="lineNoCov">          0 :         tVector curr_com = mChar-&gt;CalcCOM();</span>
+<span class="lineNum">     361 </span><span class="lineNoCov">          0 :         double curr_time = mTime;</span>
+<span class="lineNum">     362 </span>            : 
+<span class="lineNum">     363 </span><span class="lineNoCov">          0 :         tVector vel = curr_com - mPrevCOMPos;</span>
+<span class="lineNum">     364 </span><span class="lineNoCov">          0 :         double dt = curr_time - mPrevTime;</span>
+<span class="lineNum">     365 </span><span class="lineNoCov">          0 :         vel /= dt;</span>
+<span class="lineNum">     366 </span>            :         
+<span class="lineNum">     367 </span><span class="lineNoCov">          0 :         std::string str = std::to_string(vel[0]) + &quot;\n&quot;;</span>
+<span class="lineNum">     368 </span><span class="lineNoCov">          0 :         cFileUtil::AppendText(str, out_file);</span>
+<span class="lineNum">     369 </span>            : 
+<span class="lineNum">     370 </span><span class="lineNoCov">          0 :         mPrevCOMPos = curr_com;</span>
+<span class="lineNum">     371 </span><span class="lineNoCov">          0 :         mPrevTime = curr_time;</span>
+<a name="372"><span class="lineNum">     372 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     373 </span>            : 
+<span class="lineNum">     374 </span><span class="lineNoCov">          0 : void cScenarioPoliEval::InitActionIDState(const std::string&amp; out_file) const</span>
+<span class="lineNum">     375 </span>            : {
+<span class="lineNum">     376 </span><span class="lineNoCov">          0 :         cFileUtil::ClearFile(out_file);</span>
+<a name="377"><span class="lineNum">     377 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     378 </span>            : 
+<span class="lineNum">     379 </span><span class="lineNoCov">          0 : bool cScenarioPoliEval::EnableRecordActionIDState() const</span>
+<span class="lineNum">     380 </span>            : {
+<span class="lineNum">     381 </span><span class="lineNoCov">          0 :         return mRecordActionIDState &amp;&amp; mActionIDStateOutputFile != &quot;&quot;;</span>
+<a name="382"><span class="lineNum">     382 </span>            : }</a>
+<span class="lineNum">     383 </span>            : 
+<span class="lineNum">     384 </span><span class="lineNoCov">          0 : void cScenarioPoliEval::RecordActionIDState(const std::string&amp; out_file)</span>
+<span class="lineNum">     385 </span>            : {
+<span class="lineNum">     386 </span><span class="lineNoCov">          0 :         const auto&amp; ctrl = mChar-&gt;GetController();</span>
+<span class="lineNum">     387 </span><span class="lineNoCov">          0 :         auto nn_ctrl = std::static_pointer_cast&lt;const cNNController&gt;(mChar-&gt;GetController());</span>
+<span class="lineNum">     388 </span>            : 
+<span class="lineNum">     389 </span><span class="lineNoCov">          0 :         Eigen::VectorXd state;</span>
+<span class="lineNum">     390 </span><span class="lineNoCov">          0 :         nn_ctrl-&gt;RecordPoliState(state);</span>
+<span class="lineNum">     391 </span>            : 
+<span class="lineNum">     392 </span><span class="lineNoCov">          0 :         std::string data_str = &quot;&quot;;</span>
+<span class="lineNum">     393 </span><span class="lineNoCov">          0 :         int action_id = ctrl-&gt;GetCurrActionID();</span>
+<span class="lineNum">     394 </span><span class="lineNoCov">          0 :         data_str += std::to_string(action_id);</span>
+<span class="lineNum">     395 </span>            : 
+<span class="lineNum">     396 </span><span class="lineNoCov">          0 :         for (int i = 0; i &lt; static_cast&lt;int&gt;(state.size()); ++i)</span>
+<span class="lineNum">     397 </span>            :         {
+<span class="lineNum">     398 </span><span class="lineNoCov">          0 :                 data_str += &quot;,\t&quot;;</span>
+<span class="lineNum">     399 </span><span class="lineNoCov">          0 :                 data_str += std::to_string(state[i]);</span>
+<span class="lineNum">     400 </span>            :         }
+<span class="lineNum">     401 </span><span class="lineNoCov">          0 :         data_str += &quot;\n&quot;;</span>
+<span class="lineNum">     402 </span>            : 
+<span class="lineNum">     403 </span><span class="lineNoCov">          0 :         cFileUtil::AppendText(data_str, out_file);</span>
+<a name="404"><span class="lineNum">     404 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     405 </span>            : 
+<span class="lineNum">     406 </span><span class="lineNoCov">          0 : bool cScenarioPoliEval::IsValidCycle() const</span>
+<span class="lineNum">     407 </span>            : {
+<a name="408"><span class="lineNum">     408 </span><span class="lineNoCov">          0 :         bool valid = mCycleCount &gt;= gNumWarmupCycles;</span></a>
+<span class="lineNum">     409 </span><span class="lineNoCov">          0 :         return valid;</span>
+<span class="lineNum">     410 </span><span class="lineCov">          3 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

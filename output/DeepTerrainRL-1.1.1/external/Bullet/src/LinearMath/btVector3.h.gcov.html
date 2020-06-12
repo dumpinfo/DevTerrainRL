@@ -1,0 +1,1437 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/external/Bullet/src/LinearMath/btVector3.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/external/Bullet/src/LinearMath</a> - btVector3.h<span style="font-size: 80%;"> (source / <a href="btVector3.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">64</td>
+            <td class="headerCovTableEntry">70</td>
+            <td class="headerCovTableEntryHi">91.4 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">23</td>
+            <td class="headerCovTableEntry">24</td>
+            <td class="headerCovTableEntryHi">95.8 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            : Copyright (c) 2003-2006 Gino van den Bergen / Erwin Coumans  http://continuousphysics.com/Bullet/
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : This software is provided 'as-is', without any express or implied warranty.
+<span class="lineNum">       5 </span>            : In no event will the authors be held liable for any damages arising from the use of this software.
+<span class="lineNum">       6 </span>            : Permission is granted to anyone to use this software for any purpose, 
+<span class="lineNum">       7 </span>            : including commercial applications, and to alter it and redistribute it freely, 
+<span class="lineNum">       8 </span>            : subject to the following restrictions:
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            : 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
+<span class="lineNum">      11 </span>            : 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
+<span class="lineNum">      12 </span>            : 3. This notice may not be removed or altered from any source distribution.
+<span class="lineNum">      13 </span>            : */
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span>            : #ifndef BT_VECTOR3_H
+<span class="lineNum">      18 </span>            : #define BT_VECTOR3_H
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            : //#include &lt;stdint.h&gt;
+<span class="lineNum">      21 </span>            : #include &quot;btScalar.h&quot;
+<span class="lineNum">      22 </span>            : #include &quot;btMinMax.h&quot;
+<span class="lineNum">      23 </span>            : #include &quot;btAlignedAllocator.h&quot;
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span>            : #ifdef BT_USE_DOUBLE_PRECISION
+<span class="lineNum">      26 </span>            : #define btVector3Data btVector3DoubleData
+<span class="lineNum">      27 </span>            : #define btVector3DataName &quot;btVector3DoubleData&quot;
+<span class="lineNum">      28 </span>            : #else
+<span class="lineNum">      29 </span>            : #define btVector3Data btVector3FloatData
+<span class="lineNum">      30 </span>            : #define btVector3DataName &quot;btVector3FloatData&quot;
+<span class="lineNum">      31 </span>            : #endif //BT_USE_DOUBLE_PRECISION
+<span class="lineNum">      32 </span>            : 
+<span class="lineNum">      33 </span>            : #if defined BT_USE_SSE
+<span class="lineNum">      34 </span>            : 
+<span class="lineNum">      35 </span>            : //typedef  uint32_t __m128i __attribute__ ((vector_size(16)));
+<span class="lineNum">      36 </span>            : 
+<span class="lineNum">      37 </span>            : #ifdef _MSC_VER
+<span class="lineNum">      38 </span>            : #pragma warning(disable: 4556) // value of intrinsic immediate argument '4294967239' is out of range '0 - 255'
+<span class="lineNum">      39 </span>            : #endif
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span>            : 
+<span class="lineNum">      42 </span>            : #define BT_SHUFFLE(x,y,z,w) ((w)&lt;&lt;6 | (z)&lt;&lt;4 | (y)&lt;&lt;2 | (x))
+<span class="lineNum">      43 </span>            : //#define bt_pshufd_ps( _a, _mask ) (__m128) _mm_shuffle_epi32((__m128i)(_a), (_mask) )
+<span class="lineNum">      44 </span>            : #define bt_pshufd_ps( _a, _mask ) _mm_shuffle_ps((_a), (_a), (_mask) )
+<span class="lineNum">      45 </span>            : #define bt_splat3_ps( _a, _i ) bt_pshufd_ps((_a), BT_SHUFFLE(_i,_i,_i, 3) )
+<span class="lineNum">      46 </span>            : #define bt_splat_ps( _a, _i )  bt_pshufd_ps((_a), BT_SHUFFLE(_i,_i,_i,_i) )
+<span class="lineNum">      47 </span>            : 
+<span class="lineNum">      48 </span>            : #define btv3AbsiMask (_mm_set_epi32(0x00000000, 0x7FFFFFFF, 0x7FFFFFFF, 0x7FFFFFFF))
+<span class="lineNum">      49 </span>            : #define btvAbsMask (_mm_set_epi32( 0x7FFFFFFF, 0x7FFFFFFF, 0x7FFFFFFF, 0x7FFFFFFF))
+<span class="lineNum">      50 </span>            : #define btvFFF0Mask (_mm_set_epi32(0x00000000, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF))
+<span class="lineNum">      51 </span>            : #define btv3AbsfMask btCastiTo128f(btv3AbsiMask)
+<span class="lineNum">      52 </span>            : #define btvFFF0fMask btCastiTo128f(btvFFF0Mask)
+<span class="lineNum">      53 </span>            : #define btvxyzMaskf btvFFF0fMask
+<span class="lineNum">      54 </span>            : #define btvAbsfMask btCastiTo128f(btvAbsMask)
+<span class="lineNum">      55 </span>            : 
+<span class="lineNum">      56 </span>            : //there is an issue with XCode 3.2 (LCx errors)
+<span class="lineNum">      57 </span>            : #define btvMzeroMask (_mm_set_ps(-0.0f, -0.0f, -0.0f, -0.0f))
+<span class="lineNum">      58 </span>            : #define v1110            (_mm_set_ps(0.0f, 1.0f, 1.0f, 1.0f))
+<span class="lineNum">      59 </span>            : #define vHalf            (_mm_set_ps(0.5f, 0.5f, 0.5f, 0.5f))
+<span class="lineNum">      60 </span>            : #define v1_5             (_mm_set_ps(1.5f, 1.5f, 1.5f, 1.5f))
+<span class="lineNum">      61 </span>            : 
+<span class="lineNum">      62 </span>            : //const __m128 ATTRIBUTE_ALIGNED16(btvMzeroMask) = {-0.0f, -0.0f, -0.0f, -0.0f};
+<span class="lineNum">      63 </span>            : //const __m128 ATTRIBUTE_ALIGNED16(v1110) = {1.0f, 1.0f, 1.0f, 0.0f};
+<span class="lineNum">      64 </span>            : //const __m128 ATTRIBUTE_ALIGNED16(vHalf) = {0.5f, 0.5f, 0.5f, 0.5f};
+<span class="lineNum">      65 </span>            : //const __m128 ATTRIBUTE_ALIGNED16(v1_5)  = {1.5f, 1.5f, 1.5f, 1.5f};
+<span class="lineNum">      66 </span>            : 
+<span class="lineNum">      67 </span>            : #endif
+<span class="lineNum">      68 </span>            : 
+<span class="lineNum">      69 </span>            : #ifdef BT_USE_NEON
+<span class="lineNum">      70 </span>            : 
+<span class="lineNum">      71 </span>            : const float32x4_t ATTRIBUTE_ALIGNED16(btvMzeroMask) = (float32x4_t){-0.0f, -0.0f, -0.0f, -0.0f};
+<span class="lineNum">      72 </span>            : const int32x4_t ATTRIBUTE_ALIGNED16(btvFFF0Mask) = (int32x4_t){static_cast&lt;int32_t&gt;(0xFFFFFFFF),
+<span class="lineNum">      73 </span>            :         static_cast&lt;int32_t&gt;(0xFFFFFFFF), static_cast&lt;int32_t&gt;(0xFFFFFFFF), 0x0};
+<span class="lineNum">      74 </span>            : const int32x4_t ATTRIBUTE_ALIGNED16(btvAbsMask) = (int32x4_t){0x7FFFFFFF, 0x7FFFFFFF, 0x7FFFFFFF, 0x7FFFFFFF};
+<span class="lineNum">      75 </span>            : const int32x4_t ATTRIBUTE_ALIGNED16(btv3AbsMask) = (int32x4_t){0x7FFFFFFF, 0x7FFFFFFF, 0x7FFFFFFF, 0x0};
+<span class="lineNum">      76 </span>            : 
+<span class="lineNum">      77 </span>            : #endif
+<span class="lineNum">      78 </span>            : 
+<span class="lineNum">      79 </span>            : /**@brief btVector3 can be used to represent 3D points and vectors.
+<span class="lineNum">      80 </span>            :  * It has an un-used w component to suit 16-byte alignment when btVector3 is stored in containers. This extra component can be used by derived classes (Quaternion?) or by user
+<span class="lineNum">      81 </span>            :  * Ideally, this class should be replaced by a platform optimized SIMD version that keeps the data in registers
+<span class="lineNum">      82 </span>            :  */
+<span class="lineNum">      83 </span>            : ATTRIBUTE_ALIGNED16(class) btVector3
+<span class="lineNum">      84 </span>            : {
+<span class="lineNum">      85 </span>            : public:
+<span class="lineNum">      86 </span>            : 
+<span class="lineNum">      87 </span>            :         BT_DECLARE_ALIGNED_ALLOCATOR();
+<span class="lineNum">      88 </span>            : 
+<span class="lineNum">      89 </span>            : #if defined (__SPU__) &amp;&amp; defined (__CELLOS_LV2__)
+<span class="lineNum">      90 </span>            :                 btScalar        m_floats[4];
+<span class="lineNum">      91 </span>            : public:
+<span class="lineNum">      92 </span>            :         SIMD_FORCE_INLINE const vec_float4&amp; get128() const
+<span class="lineNum">      93 </span>            :         {
+<span class="lineNum">      94 </span>            :                 return *((const vec_float4*)&amp;m_floats[0]);
+<span class="lineNum">      95 </span>            :         }
+<span class="lineNum">      96 </span>            : public:
+<span class="lineNum">      97 </span>            : #else //__CELLOS_LV2__ __SPU__
+<span class="lineNum">      98 </span>            :     #if defined (BT_USE_SSE) || defined(BT_USE_NEON) // _WIN32 || ARM
+<span class="lineNum">      99 </span>            :         union {
+<span class="lineNum">     100 </span>            :             btSimdFloat4      mVec128;
+<span class="lineNum">     101 </span>            :             btScalar    m_floats[4];
+<span class="lineNum">     102 </span>            :         };
+<span class="lineNum">     103 </span>            :         SIMD_FORCE_INLINE       btSimdFloat4    get128() const
+<span class="lineNum">     104 </span>            :         {
+<span class="lineNum">     105 </span>            :             return mVec128;
+<span class="lineNum">     106 </span>            :         }
+<span class="lineNum">     107 </span>            :         SIMD_FORCE_INLINE       void    set128(btSimdFloat4 v128)
+<span class="lineNum">     108 </span>            :         {
+<span class="lineNum">     109 </span>            :             mVec128 = v128;
+<span class="lineNum">     110 </span>            :         }
+<span class="lineNum">     111 </span>            :     #else
+<span class="lineNum">     112 </span>            :         btScalar        m_floats[4];
+<span class="lineNum">     113 </span>            :     #endif
+<span class="lineNum">     114 </span>            : #endif //__CELLOS_LV2__ __SPU__
+<span class="lineNum">     115 </span>            : 
+<span class="lineNum">     116 </span>            :         public:
+<a name="117"><span class="lineNum">     117 </span>            : </a>
+<span class="lineNum">     118 </span>            :   /**@brief No initialization constructor */
+<span class="lineNum">     119 </span><span class="lineCov">   31024159 :         SIMD_FORCE_INLINE btVector3() </span>
+<span class="lineNum">     120 </span>            :         {
+<span class="lineNum">     121 </span>            : 
+<span class="lineNum">     122 </span><span class="lineCov">   31024159 :         }</span>
+<span class="lineNum">     123 </span>            : 
+<span class="lineNum">     124 </span>            :  
+<span class="lineNum">     125 </span>            :         
+<span class="lineNum">     126 </span>            :   /**@brief Constructor from scalars 
+<span class="lineNum">     127 </span>            :    * @param x X value
+<span class="lineNum">     128 </span>            :    * @param y Y value 
+<a name="129"><span class="lineNum">     129 </span>            :    * @param z Z value </a>
+<span class="lineNum">     130 </span>            :    */
+<span class="lineNum">     131 </span><span class="lineCov">  158131129 :         SIMD_FORCE_INLINE btVector3(const btScalar&amp; _x, const btScalar&amp; _y, const btScalar&amp; _z)</span>
+<span class="lineNum">     132 </span>            :         {
+<span class="lineNum">     133 </span><span class="lineCov">  158131129 :                 m_floats[0] = _x;</span>
+<span class="lineNum">     134 </span><span class="lineCov">  158131129 :                 m_floats[1] = _y;</span>
+<span class="lineNum">     135 </span><span class="lineCov">  158131129 :                 m_floats[2] = _z;</span>
+<span class="lineNum">     136 </span><span class="lineCov">  158131129 :                 m_floats[3] = btScalar(0.f);</span>
+<span class="lineNum">     137 </span><span class="lineCov">  158131129 :         }</span>
+<span class="lineNum">     138 </span>            : 
+<span class="lineNum">     139 </span>            : #if (defined (BT_USE_SSE_IN_API) &amp;&amp; defined (BT_USE_SSE) )|| defined (BT_USE_NEON)
+<span class="lineNum">     140 </span>            :         // Set Vector 
+<span class="lineNum">     141 </span>            :         SIMD_FORCE_INLINE btVector3( btSimdFloat4 v)
+<span class="lineNum">     142 </span>            :         {
+<span class="lineNum">     143 </span>            :                 mVec128 = v;
+<span class="lineNum">     144 </span>            :         }
+<span class="lineNum">     145 </span>            : 
+<span class="lineNum">     146 </span>            :         // Copy constructor
+<span class="lineNum">     147 </span>            :         SIMD_FORCE_INLINE btVector3(const btVector3&amp; rhs)
+<span class="lineNum">     148 </span>            :         {
+<span class="lineNum">     149 </span>            :                 mVec128 = rhs.mVec128;
+<span class="lineNum">     150 </span>            :         }
+<span class="lineNum">     151 </span>            : 
+<span class="lineNum">     152 </span>            :         // Assignment Operator
+<span class="lineNum">     153 </span>            :         SIMD_FORCE_INLINE btVector3&amp; 
+<span class="lineNum">     154 </span>            :         operator=(const btVector3&amp; v) 
+<span class="lineNum">     155 </span>            :         {
+<span class="lineNum">     156 </span>            :                 mVec128 = v.mVec128;
+<span class="lineNum">     157 </span>            :                 
+<span class="lineNum">     158 </span>            :                 return *this;
+<span class="lineNum">     159 </span>            :         }
+<span class="lineNum">     160 </span>            : #endif // #if defined (BT_USE_SSE_IN_API) || defined (BT_USE_NEON) 
+<span class="lineNum">     161 </span>            :     
+<a name="162"><span class="lineNum">     162 </span>            : /**@brief Add a vector to this one </a>
+<span class="lineNum">     163 </span>            :  * @param The vector to add to this one */
+<span class="lineNum">     164 </span><span class="lineCov">   47085983 :         SIMD_FORCE_INLINE btVector3&amp; operator+=(const btVector3&amp; v)</span>
+<span class="lineNum">     165 </span>            :         {
+<span class="lineNum">     166 </span>            : #if defined(BT_USE_SSE_IN_API) &amp;&amp; defined (BT_USE_SSE)
+<span class="lineNum">     167 </span>            :                 mVec128 = _mm_add_ps(mVec128, v.mVec128);
+<span class="lineNum">     168 </span>            : #elif defined(BT_USE_NEON)
+<span class="lineNum">     169 </span>            :                 mVec128 = vaddq_f32(mVec128, v.mVec128);
+<span class="lineNum">     170 </span>            : #else
+<span class="lineNum">     171 </span><span class="lineCov">   47085983 :                 m_floats[0] += v.m_floats[0]; </span>
+<span class="lineNum">     172 </span><span class="lineCov">   47085983 :                 m_floats[1] += v.m_floats[1];</span>
+<span class="lineNum">     173 </span><span class="lineCov">   47085983 :                 m_floats[2] += v.m_floats[2];</span>
+<span class="lineNum">     174 </span>            : #endif
+<span class="lineNum">     175 </span><span class="lineCov">   47085983 :                 return *this;</span>
+<span class="lineNum">     176 </span>            :         }
+<span class="lineNum">     177 </span>            : 
+<span class="lineNum">     178 </span>            : 
+<span class="lineNum">     179 </span>            :   /**@brief Subtract a vector from this one
+<span class="lineNum">     180 </span>            :    * @param The vector to subtract */
+<span class="lineNum">     181 </span>            :         SIMD_FORCE_INLINE btVector3&amp; operator-=(const btVector3&amp; v) 
+<span class="lineNum">     182 </span>            :         {
+<span class="lineNum">     183 </span>            : #if defined(BT_USE_SSE_IN_API) &amp;&amp; defined (BT_USE_SSE)
+<span class="lineNum">     184 </span>            :                 mVec128 = _mm_sub_ps(mVec128, v.mVec128);
+<span class="lineNum">     185 </span>            : #elif defined(BT_USE_NEON)
+<span class="lineNum">     186 </span>            :                 mVec128 = vsubq_f32(mVec128, v.mVec128);
+<span class="lineNum">     187 </span>            : #else
+<span class="lineNum">     188 </span>            :                 m_floats[0] -= v.m_floats[0]; 
+<span class="lineNum">     189 </span>            :                 m_floats[1] -= v.m_floats[1];
+<span class="lineNum">     190 </span>            :                 m_floats[2] -= v.m_floats[2];
+<span class="lineNum">     191 </span>            : #endif
+<span class="lineNum">     192 </span>            :                 return *this;
+<span class="lineNum">     193 </span>            :         }
+<span class="lineNum">     194 </span>            :         
+<a name="195"><span class="lineNum">     195 </span>            :   /**@brief Scale the vector</a>
+<span class="lineNum">     196 </span>            :    * @param s Scale factor */
+<span class="lineNum">     197 </span><span class="lineCov">    1076640 :         SIMD_FORCE_INLINE btVector3&amp; operator*=(const btScalar&amp; s)</span>
+<span class="lineNum">     198 </span>            :         {
+<span class="lineNum">     199 </span>            : #if defined(BT_USE_SSE_IN_API) &amp;&amp; defined (BT_USE_SSE)
+<span class="lineNum">     200 </span>            :                 __m128  vs = _mm_load_ss(&amp;s);       //      (S 0 0 0)
+<span class="lineNum">     201 </span>            :                 vs = bt_pshufd_ps(vs, 0x80);    //      (S S S 0.0)
+<span class="lineNum">     202 </span>            :                 mVec128 = _mm_mul_ps(mVec128, vs);
+<span class="lineNum">     203 </span>            : #elif defined(BT_USE_NEON)
+<span class="lineNum">     204 </span>            :                 mVec128 = vmulq_n_f32(mVec128, s);
+<span class="lineNum">     205 </span>            : #else
+<span class="lineNum">     206 </span><span class="lineCov">    1076640 :                 m_floats[0] *= s; </span>
+<span class="lineNum">     207 </span><span class="lineCov">    1076640 :                 m_floats[1] *= s;</span>
+<span class="lineNum">     208 </span><span class="lineCov">    1076640 :                 m_floats[2] *= s;</span>
+<span class="lineNum">     209 </span>            : #endif
+<span class="lineNum">     210 </span><span class="lineCov">    1076640 :                 return *this;</span>
+<span class="lineNum">     211 </span>            :         }
+<span class="lineNum">     212 </span>            : 
+<a name="213"><span class="lineNum">     213 </span>            :   /**@brief Inversely scale the vector </a>
+<span class="lineNum">     214 </span>            :    * @param s Scale factor to divide by */
+<span class="lineNum">     215 </span><span class="lineCov">     566498 :         SIMD_FORCE_INLINE btVector3&amp; operator/=(const btScalar&amp; s) </span>
+<span class="lineNum">     216 </span>            :         {
+<span class="lineNum">     217 </span>            :                 btFullAssert(s != btScalar(0.0));
+<span class="lineNum">     218 </span>            : 
+<span class="lineNum">     219 </span>            : #if 0 //defined(BT_USE_SSE_IN_API)
+<span class="lineNum">     220 </span>            : // this code is not faster !
+<span class="lineNum">     221 </span>            :                 __m128 vs = _mm_load_ss(&amp;s);
+<span class="lineNum">     222 </span>            :                 vs = _mm_div_ss(v1110, vs);
+<span class="lineNum">     223 </span>            :                 vs = bt_pshufd_ps(vs, 0x00);    //      (S S S S)
+<span class="lineNum">     224 </span>            : 
+<span class="lineNum">     225 </span>            :                 mVec128 = _mm_mul_ps(mVec128, vs);
+<span class="lineNum">     226 </span>            :                 
+<span class="lineNum">     227 </span>            :                 return *this;
+<span class="lineNum">     228 </span>            : #else
+<span class="lineNum">     229 </span><span class="lineCov">     566498 :                 return *this *= btScalar(1.0) / s;</span>
+<span class="lineNum">     230 </span>            : #endif
+<span class="lineNum">     231 </span>            :         }
+<span class="lineNum">     232 </span>            : 
+<a name="233"><span class="lineNum">     233 </span>            :   /**@brief Return the dot product</a>
+<span class="lineNum">     234 </span>            :    * @param v The other vector in the dot product */
+<span class="lineNum">     235 </span><span class="lineCov">   85967720 :         SIMD_FORCE_INLINE btScalar dot(const btVector3&amp; v) const</span>
+<span class="lineNum">     236 </span>            :         {
+<span class="lineNum">     237 </span>            : #if defined BT_USE_SIMD_VECTOR3 &amp;&amp; defined (BT_USE_SSE_IN_API) &amp;&amp; defined (BT_USE_SSE)
+<span class="lineNum">     238 </span>            :                 __m128 vd = _mm_mul_ps(mVec128, v.mVec128);
+<span class="lineNum">     239 </span>            :                 __m128 z = _mm_movehl_ps(vd, vd);
+<span class="lineNum">     240 </span>            :                 __m128 y = _mm_shuffle_ps(vd, vd, 0x55);
+<span class="lineNum">     241 </span>            :                 vd = _mm_add_ss(vd, y);
+<span class="lineNum">     242 </span>            :                 vd = _mm_add_ss(vd, z);
+<span class="lineNum">     243 </span>            :                 return _mm_cvtss_f32(vd);
+<span class="lineNum">     244 </span>            : #elif defined(BT_USE_NEON)
+<span class="lineNum">     245 </span>            :                 float32x4_t vd = vmulq_f32(mVec128, v.mVec128);
+<span class="lineNum">     246 </span>            :                 float32x2_t x = vpadd_f32(vget_low_f32(vd), vget_low_f32(vd));  
+<span class="lineNum">     247 </span>            :                 x = vadd_f32(x, vget_high_f32(vd));
+<span class="lineNum">     248 </span>            :                 return vget_lane_f32(x, 0);
+<span class="lineNum">     249 </span>            : #else   
+<span class="lineNum">     250 </span><span class="lineCov">  171935440 :                 return  m_floats[0] * v.m_floats[0] + </span>
+<span class="lineNum">     251 </span><span class="lineCov">   85967720 :                                 m_floats[1] * v.m_floats[1] + </span>
+<span class="lineNum">     252 </span><span class="lineCov">   85967720 :                                 m_floats[2] * v.m_floats[2];</span>
+<span class="lineNum">     253 </span>            : #endif
+<span class="lineNum">     254 </span>            :         }
+<a name="255"><span class="lineNum">     255 </span>            : </a>
+<span class="lineNum">     256 </span>            :   /**@brief Return the length of the vector squared */
+<span class="lineNum">     257 </span><span class="lineCov">    3399727 :         SIMD_FORCE_INLINE btScalar length2() const</span>
+<span class="lineNum">     258 </span>            :         {
+<span class="lineNum">     259 </span><span class="lineCov">    3399727 :                 return dot(*this);</span>
+<span class="lineNum">     260 </span>            :         }
+<a name="261"><span class="lineNum">     261 </span>            : </a>
+<span class="lineNum">     262 </span>            :   /**@brief Return the length of the vector */
+<span class="lineNum">     263 </span><span class="lineCov">    1404819 :         SIMD_FORCE_INLINE btScalar length() const</span>
+<span class="lineNum">     264 </span>            :         {
+<span class="lineNum">     265 </span><span class="lineCov">    1404819 :                 return btSqrt(length2());</span>
+<span class="lineNum">     266 </span>            :         }
+<span class="lineNum">     267 </span>            : 
+<span class="lineNum">     268 </span>            :         /**@brief Return the norm (length) of the vector */
+<span class="lineNum">     269 </span>            :         SIMD_FORCE_INLINE btScalar norm() const
+<span class="lineNum">     270 </span>            :         {
+<span class="lineNum">     271 </span>            :                 return length();
+<span class="lineNum">     272 </span>            :         }
+<span class="lineNum">     273 </span>            : 
+<span class="lineNum">     274 </span>            :   /**@brief Return the distance squared between the ends of this and another vector
+<span class="lineNum">     275 </span>            :    * This is symantically treating the vector like a point */
+<span class="lineNum">     276 </span>            :         SIMD_FORCE_INLINE btScalar distance2(const btVector3&amp; v) const;
+<span class="lineNum">     277 </span>            : 
+<span class="lineNum">     278 </span>            :   /**@brief Return the distance between the ends of this and another vector
+<span class="lineNum">     279 </span>            :    * This is symantically treating the vector like a point */
+<span class="lineNum">     280 </span>            :         SIMD_FORCE_INLINE btScalar distance(const btVector3&amp; v) const;
+<span class="lineNum">     281 </span>            : 
+<span class="lineNum">     282 </span>            :         SIMD_FORCE_INLINE btVector3&amp; safeNormalize() 
+<span class="lineNum">     283 </span>            :         {
+<span class="lineNum">     284 </span>            :                 btVector3 absVec = this-&gt;absolute();
+<span class="lineNum">     285 </span>            :                 int maxIndex = absVec.maxAxis();
+<span class="lineNum">     286 </span>            :                 if (absVec[maxIndex]&gt;0)
+<span class="lineNum">     287 </span>            :                 {
+<span class="lineNum">     288 </span>            :                         *this /= absVec[maxIndex];
+<span class="lineNum">     289 </span>            :                         return *this /= length();
+<span class="lineNum">     290 </span>            :                 }
+<span class="lineNum">     291 </span>            :                 setValue(1,0,0);
+<span class="lineNum">     292 </span>            :                 return *this;
+<span class="lineNum">     293 </span>            :         }
+<span class="lineNum">     294 </span>            : 
+<a name="295"><span class="lineNum">     295 </span>            :   /**@brief Normalize this vector </a>
+<span class="lineNum">     296 </span>            :    * x^2 + y^2 + z^2 = 1 */
+<span class="lineNum">     297 </span><span class="lineCov">     319078 :         SIMD_FORCE_INLINE btVector3&amp; normalize() </span>
+<span class="lineNum">     298 </span>            :         {
+<span class="lineNum">     299 </span>            :                 
+<span class="lineNum">     300 </span><span class="lineCov">     319078 :                 btAssert(!fuzzyZero());</span>
+<span class="lineNum">     301 </span>            : 
+<span class="lineNum">     302 </span>            : #if defined(BT_USE_SSE_IN_API) &amp;&amp; defined (BT_USE_SSE)          
+<span class="lineNum">     303 </span>            :         // dot product first
+<span class="lineNum">     304 </span>            :                 __m128 vd = _mm_mul_ps(mVec128, mVec128);
+<span class="lineNum">     305 </span>            :                 __m128 z = _mm_movehl_ps(vd, vd);
+<span class="lineNum">     306 </span>            :                 __m128 y = _mm_shuffle_ps(vd, vd, 0x55);
+<span class="lineNum">     307 </span>            :                 vd = _mm_add_ss(vd, y);
+<span class="lineNum">     308 </span>            :                 vd = _mm_add_ss(vd, z);
+<span class="lineNum">     309 </span>            :                 
+<span class="lineNum">     310 </span>            :         #if 0
+<span class="lineNum">     311 </span>            :         vd = _mm_sqrt_ss(vd);
+<span class="lineNum">     312 </span>            :                 vd = _mm_div_ss(v1110, vd);
+<span class="lineNum">     313 </span>            :                 vd = bt_splat_ps(vd, 0x80);
+<span class="lineNum">     314 </span>            :                 mVec128 = _mm_mul_ps(mVec128, vd);
+<span class="lineNum">     315 </span>            :         #else
+<span class="lineNum">     316 </span>            :         
+<span class="lineNum">     317 </span>            :         // NR step 1/sqrt(x) - vd is x, y is output 
+<span class="lineNum">     318 </span>            :         y = _mm_rsqrt_ss(vd); // estimate 
+<span class="lineNum">     319 </span>            :         
+<span class="lineNum">     320 </span>            :         //  one step NR 
+<span class="lineNum">     321 </span>            :         z = v1_5;
+<span class="lineNum">     322 </span>            :         vd = _mm_mul_ss(vd, vHalf); // vd * 0.5 
+<span class="lineNum">     323 </span>            :         //x2 = vd;
+<span class="lineNum">     324 </span>            :         vd = _mm_mul_ss(vd, y); // vd * 0.5 * y0
+<span class="lineNum">     325 </span>            :         vd = _mm_mul_ss(vd, y); // vd * 0.5 * y0 * y0
+<span class="lineNum">     326 </span>            :         z = _mm_sub_ss(z, vd);  // 1.5 - vd * 0.5 * y0 * y0 
+<span class="lineNum">     327 </span>            : 
+<span class="lineNum">     328 </span>            :         y = _mm_mul_ss(y, z);   // y0 * (1.5 - vd * 0.5 * y0 * y0)
+<span class="lineNum">     329 </span>            : 
+<span class="lineNum">     330 </span>            :                 y = bt_splat_ps(y, 0x80);
+<span class="lineNum">     331 </span>            :                 mVec128 = _mm_mul_ps(mVec128, y);
+<span class="lineNum">     332 </span>            : 
+<span class="lineNum">     333 </span>            :         #endif
+<span class="lineNum">     334 </span>            : 
+<span class="lineNum">     335 </span>            :                 
+<span class="lineNum">     336 </span>            :                 return *this;
+<span class="lineNum">     337 </span>            : #else   
+<span class="lineNum">     338 </span><span class="lineCov">     319078 :                 return *this /= length();</span>
+<span class="lineNum">     339 </span>            : #endif
+<span class="lineNum">     340 </span>            :         }
+<span class="lineNum">     341 </span>            : 
+<span class="lineNum">     342 </span>            :   /**@brief Return a normalized version of this vector */
+<span class="lineNum">     343 </span>            :         SIMD_FORCE_INLINE btVector3 normalized() const;
+<span class="lineNum">     344 </span>            : 
+<span class="lineNum">     345 </span>            :   /**@brief Return a rotated version of this vector
+<span class="lineNum">     346 </span>            :    * @param wAxis The axis to rotate about 
+<span class="lineNum">     347 </span>            :    * @param angle The angle to rotate by */
+<span class="lineNum">     348 </span>            :         SIMD_FORCE_INLINE btVector3 rotate( const btVector3&amp; wAxis, const btScalar angle ) const;
+<span class="lineNum">     349 </span>            : 
+<span class="lineNum">     350 </span>            :   /**@brief Return the angle between this and another vector
+<span class="lineNum">     351 </span>            :    * @param v The other vector */
+<span class="lineNum">     352 </span>            :         SIMD_FORCE_INLINE btScalar angle(const btVector3&amp; v) const 
+<span class="lineNum">     353 </span>            :         {
+<span class="lineNum">     354 </span>            :                 btScalar s = btSqrt(length2() * v.length2());
+<span class="lineNum">     355 </span>            :                 btFullAssert(s != btScalar(0.0));
+<span class="lineNum">     356 </span>            :                 return btAcos(dot(v) / s);
+<span class="lineNum">     357 </span>            :         }
+<span class="lineNum">     358 </span>            :         
+<span class="lineNum">     359 </span>            :   /**@brief Return a vector will the absolute values of each element */
+<span class="lineNum">     360 </span>            :         SIMD_FORCE_INLINE btVector3 absolute() const 
+<span class="lineNum">     361 </span>            :         {
+<span class="lineNum">     362 </span>            : 
+<span class="lineNum">     363 </span>            : #if defined BT_USE_SIMD_VECTOR3 &amp;&amp; defined (BT_USE_SSE_IN_API) &amp;&amp; defined (BT_USE_SSE) 
+<span class="lineNum">     364 </span>            :                 return btVector3(_mm_and_ps(mVec128, btv3AbsfMask));
+<span class="lineNum">     365 </span>            : #elif defined(BT_USE_NEON)
+<span class="lineNum">     366 </span>            :                 return btVector3(vabsq_f32(mVec128));
+<span class="lineNum">     367 </span>            : #else   
+<span class="lineNum">     368 </span>            :                 return btVector3(
+<span class="lineNum">     369 </span>            :                         btFabs(m_floats[0]), 
+<span class="lineNum">     370 </span>            :                         btFabs(m_floats[1]), 
+<span class="lineNum">     371 </span>            :                         btFabs(m_floats[2]));
+<span class="lineNum">     372 </span>            : #endif
+<span class="lineNum">     373 </span>            :         }
+<span class="lineNum">     374 </span>            :         
+<a name="375"><span class="lineNum">     375 </span>            :   /**@brief Return the cross product between this and another vector </a>
+<span class="lineNum">     376 </span>            :    * @param v The other vector */
+<span class="lineNum">     377 </span><span class="lineCov">    3547635 :         SIMD_FORCE_INLINE btVector3 cross(const btVector3&amp; v) const</span>
+<span class="lineNum">     378 </span>            :         {
+<span class="lineNum">     379 </span>            : #if defined(BT_USE_SSE_IN_API) &amp;&amp; defined (BT_USE_SSE)
+<span class="lineNum">     380 </span>            :                 __m128  T, V;
+<span class="lineNum">     381 </span>            :                 
+<span class="lineNum">     382 </span>            :                 T = bt_pshufd_ps(mVec128, BT_SHUFFLE(1, 2, 0, 3));      //      (Y Z X 0)
+<span class="lineNum">     383 </span>            :                 V = bt_pshufd_ps(v.mVec128, BT_SHUFFLE(1, 2, 0, 3));    //      (Y Z X 0)
+<span class="lineNum">     384 </span>            :                 
+<span class="lineNum">     385 </span>            :                 V = _mm_mul_ps(V, mVec128);
+<span class="lineNum">     386 </span>            :                 T = _mm_mul_ps(T, v.mVec128);
+<span class="lineNum">     387 </span>            :                 V = _mm_sub_ps(V, T);
+<span class="lineNum">     388 </span>            :                 
+<span class="lineNum">     389 </span>            :                 V = bt_pshufd_ps(V, BT_SHUFFLE(1, 2, 0, 3));
+<span class="lineNum">     390 </span>            :                 return btVector3(V);
+<span class="lineNum">     391 </span>            : #elif defined(BT_USE_NEON)
+<span class="lineNum">     392 </span>            :                 float32x4_t T, V;
+<span class="lineNum">     393 </span>            :                 // form (Y, Z, X, _) of mVec128 and v.mVec128
+<span class="lineNum">     394 </span>            :                 float32x2_t Tlow = vget_low_f32(mVec128);
+<span class="lineNum">     395 </span>            :                 float32x2_t Vlow = vget_low_f32(v.mVec128);
+<span class="lineNum">     396 </span>            :                 T = vcombine_f32(vext_f32(Tlow, vget_high_f32(mVec128), 1), Tlow);
+<span class="lineNum">     397 </span>            :                 V = vcombine_f32(vext_f32(Vlow, vget_high_f32(v.mVec128), 1), Vlow);
+<span class="lineNum">     398 </span>            :                 
+<span class="lineNum">     399 </span>            :                 V = vmulq_f32(V, mVec128);
+<span class="lineNum">     400 </span>            :                 T = vmulq_f32(T, v.mVec128);
+<span class="lineNum">     401 </span>            :                 V = vsubq_f32(V, T);
+<span class="lineNum">     402 </span>            :                 Vlow = vget_low_f32(V);
+<span class="lineNum">     403 </span>            :                 // form (Y, Z, X, _);
+<span class="lineNum">     404 </span>            :                 V = vcombine_f32(vext_f32(Vlow, vget_high_f32(V), 1), Vlow);
+<span class="lineNum">     405 </span>            :                 V = (float32x4_t)vandq_s32((int32x4_t)V, btvFFF0Mask);
+<span class="lineNum">     406 </span>            :                 
+<span class="lineNum">     407 </span>            :                 return btVector3(V);
+<span class="lineNum">     408 </span>            : #else
+<span class="lineNum">     409 </span>            :                 return btVector3(
+<span class="lineNum">     410 </span><span class="lineCov">    3547635 :                         m_floats[1] * v.m_floats[2] - m_floats[2] * v.m_floats[1],</span>
+<span class="lineNum">     411 </span><span class="lineCov">    3547635 :                         m_floats[2] * v.m_floats[0] - m_floats[0] * v.m_floats[2],</span>
+<span class="lineNum">     412 </span><span class="lineCov">   10642905 :                         m_floats[0] * v.m_floats[1] - m_floats[1] * v.m_floats[0]);</span>
+<span class="lineNum">     413 </span>            : #endif
+<span class="lineNum">     414 </span>            :         }
+<span class="lineNum">     415 </span>            : 
+<span class="lineNum">     416 </span>            :         SIMD_FORCE_INLINE btScalar triple(const btVector3&amp; v1, const btVector3&amp; v2) const
+<span class="lineNum">     417 </span>            :         {
+<span class="lineNum">     418 </span>            : #if defined BT_USE_SIMD_VECTOR3 &amp;&amp; defined (BT_USE_SSE_IN_API) &amp;&amp; defined (BT_USE_SSE)
+<span class="lineNum">     419 </span>            :                 // cross:
+<span class="lineNum">     420 </span>            :                 __m128 T = _mm_shuffle_ps(v1.mVec128, v1.mVec128, BT_SHUFFLE(1, 2, 0, 3));      //      (Y Z X 0)
+<span class="lineNum">     421 </span>            :                 __m128 V = _mm_shuffle_ps(v2.mVec128, v2.mVec128, BT_SHUFFLE(1, 2, 0, 3));      //      (Y Z X 0)
+<span class="lineNum">     422 </span>            :                 
+<span class="lineNum">     423 </span>            :                 V = _mm_mul_ps(V, v1.mVec128);
+<span class="lineNum">     424 </span>            :                 T = _mm_mul_ps(T, v2.mVec128);
+<span class="lineNum">     425 </span>            :                 V = _mm_sub_ps(V, T);
+<span class="lineNum">     426 </span>            :                 
+<span class="lineNum">     427 </span>            :                 V = _mm_shuffle_ps(V, V, BT_SHUFFLE(1, 2, 0, 3));
+<span class="lineNum">     428 </span>            : 
+<span class="lineNum">     429 </span>            :                 // dot: 
+<span class="lineNum">     430 </span>            :                 V = _mm_mul_ps(V, mVec128);
+<span class="lineNum">     431 </span>            :                 __m128 z = _mm_movehl_ps(V, V);
+<span class="lineNum">     432 </span>            :                 __m128 y = _mm_shuffle_ps(V, V, 0x55);
+<span class="lineNum">     433 </span>            :                 V = _mm_add_ss(V, y);
+<span class="lineNum">     434 </span>            :                 V = _mm_add_ss(V, z);
+<span class="lineNum">     435 </span>            :                 return _mm_cvtss_f32(V);
+<span class="lineNum">     436 </span>            : 
+<span class="lineNum">     437 </span>            : #elif defined(BT_USE_NEON)
+<span class="lineNum">     438 </span>            :                 // cross:
+<span class="lineNum">     439 </span>            :                 float32x4_t T, V;
+<span class="lineNum">     440 </span>            :                 // form (Y, Z, X, _) of mVec128 and v.mVec128
+<span class="lineNum">     441 </span>            :                 float32x2_t Tlow = vget_low_f32(v1.mVec128);
+<span class="lineNum">     442 </span>            :                 float32x2_t Vlow = vget_low_f32(v2.mVec128);
+<span class="lineNum">     443 </span>            :                 T = vcombine_f32(vext_f32(Tlow, vget_high_f32(v1.mVec128), 1), Tlow);
+<span class="lineNum">     444 </span>            :                 V = vcombine_f32(vext_f32(Vlow, vget_high_f32(v2.mVec128), 1), Vlow);
+<span class="lineNum">     445 </span>            :                 
+<span class="lineNum">     446 </span>            :                 V = vmulq_f32(V, v1.mVec128);
+<span class="lineNum">     447 </span>            :                 T = vmulq_f32(T, v2.mVec128);
+<span class="lineNum">     448 </span>            :                 V = vsubq_f32(V, T);
+<span class="lineNum">     449 </span>            :                 Vlow = vget_low_f32(V);
+<span class="lineNum">     450 </span>            :                 // form (Y, Z, X, _);
+<span class="lineNum">     451 </span>            :                 V = vcombine_f32(vext_f32(Vlow, vget_high_f32(V), 1), Vlow);
+<span class="lineNum">     452 </span>            : 
+<span class="lineNum">     453 </span>            :                 // dot: 
+<span class="lineNum">     454 </span>            :                 V = vmulq_f32(mVec128, V);
+<span class="lineNum">     455 </span>            :                 float32x2_t x = vpadd_f32(vget_low_f32(V), vget_low_f32(V));  
+<span class="lineNum">     456 </span>            :                 x = vadd_f32(x, vget_high_f32(V));
+<span class="lineNum">     457 </span>            :                 return vget_lane_f32(x, 0);
+<span class="lineNum">     458 </span>            : #else
+<span class="lineNum">     459 </span>            :                 return 
+<span class="lineNum">     460 </span>            :                         m_floats[0] * (v1.m_floats[1] * v2.m_floats[2] - v1.m_floats[2] * v2.m_floats[1]) + 
+<span class="lineNum">     461 </span>            :                         m_floats[1] * (v1.m_floats[2] * v2.m_floats[0] - v1.m_floats[0] * v2.m_floats[2]) + 
+<span class="lineNum">     462 </span>            :                         m_floats[2] * (v1.m_floats[0] * v2.m_floats[1] - v1.m_floats[1] * v2.m_floats[0]);
+<span class="lineNum">     463 </span>            : #endif
+<span class="lineNum">     464 </span>            :         }
+<span class="lineNum">     465 </span>            : 
+<span class="lineNum">     466 </span>            :   /**@brief Return the axis with the smallest value 
+<span class="lineNum">     467 </span>            :    * Note return values are 0,1,2 for x, y, or z */
+<span class="lineNum">     468 </span>            :         SIMD_FORCE_INLINE int minAxis() const
+<span class="lineNum">     469 </span>            :         {
+<span class="lineNum">     470 </span>            :                 return m_floats[0] &lt; m_floats[1] ? (m_floats[0] &lt;m_floats[2] ? 0 : 2) : (m_floats[1] &lt;m_floats[2] ? 1 : 2);
+<span class="lineNum">     471 </span>            :         }
+<span class="lineNum">     472 </span>            : 
+<span class="lineNum">     473 </span>            :   /**@brief Return the axis with the largest value 
+<span class="lineNum">     474 </span>            :    * Note return values are 0,1,2 for x, y, or z */
+<span class="lineNum">     475 </span>            :         SIMD_FORCE_INLINE int maxAxis() const 
+<span class="lineNum">     476 </span>            :         {
+<span class="lineNum">     477 </span>            :                 return m_floats[0] &lt; m_floats[1] ? (m_floats[1] &lt;m_floats[2] ? 2 : 1) : (m_floats[0] &lt;m_floats[2] ? 2 : 0);
+<span class="lineNum">     478 </span>            :         }
+<span class="lineNum">     479 </span>            : 
+<span class="lineNum">     480 </span>            :         SIMD_FORCE_INLINE int furthestAxis() const
+<span class="lineNum">     481 </span>            :         {
+<span class="lineNum">     482 </span>            :                 return absolute().minAxis();
+<span class="lineNum">     483 </span>            :         }
+<span class="lineNum">     484 </span>            : 
+<span class="lineNum">     485 </span>            :         SIMD_FORCE_INLINE int closestAxis() const 
+<span class="lineNum">     486 </span>            :         {
+<span class="lineNum">     487 </span>            :                 return absolute().maxAxis();
+<span class="lineNum">     488 </span>            :         }
+<a name="489"><span class="lineNum">     489 </span>            : </a>
+<span class="lineNum">     490 </span>            :         
+<span class="lineNum">     491 </span><span class="lineNoCov">          0 :         SIMD_FORCE_INLINE void setInterpolate3(const btVector3&amp; v0, const btVector3&amp; v1, btScalar rt)</span>
+<span class="lineNum">     492 </span>            :         {
+<span class="lineNum">     493 </span>            : #if defined(BT_USE_SSE_IN_API) &amp;&amp; defined (BT_USE_SSE)
+<span class="lineNum">     494 </span>            :                 __m128  vrt = _mm_load_ss(&amp;rt);     //      (rt 0 0 0)
+<span class="lineNum">     495 </span>            :                 btScalar s = btScalar(1.0) - rt;
+<span class="lineNum">     496 </span>            :                 __m128  vs = _mm_load_ss(&amp;s);       //      (S 0 0 0)
+<span class="lineNum">     497 </span>            :                 vs = bt_pshufd_ps(vs, 0x80);    //      (S S S 0.0)
+<span class="lineNum">     498 </span>            :                 __m128 r0 = _mm_mul_ps(v0.mVec128, vs);
+<span class="lineNum">     499 </span>            :                 vrt = bt_pshufd_ps(vrt, 0x80);  //      (rt rt rt 0.0)
+<span class="lineNum">     500 </span>            :                 __m128 r1 = _mm_mul_ps(v1.mVec128, vrt);
+<span class="lineNum">     501 </span>            :                 __m128 tmp3 = _mm_add_ps(r0,r1);
+<span class="lineNum">     502 </span>            :                 mVec128 = tmp3;
+<span class="lineNum">     503 </span>            : #elif defined(BT_USE_NEON)
+<span class="lineNum">     504 </span>            :                 float32x4_t vl = vsubq_f32(v1.mVec128, v0.mVec128);
+<span class="lineNum">     505 </span>            :                 vl = vmulq_n_f32(vl, rt);
+<span class="lineNum">     506 </span>            :                 mVec128 = vaddq_f32(vl, v0.mVec128);
+<span class="lineNum">     507 </span>            : #else
+<span class="lineNum">     508 </span><span class="lineNoCov">          0 :                 btScalar s = btScalar(1.0) - rt;</span>
+<span class="lineNum">     509 </span><span class="lineNoCov">          0 :                 m_floats[0] = s * v0.m_floats[0] + rt * v1.m_floats[0];</span>
+<span class="lineNum">     510 </span><span class="lineNoCov">          0 :                 m_floats[1] = s * v0.m_floats[1] + rt * v1.m_floats[1];</span>
+<span class="lineNum">     511 </span><span class="lineNoCov">          0 :                 m_floats[2] = s * v0.m_floats[2] + rt * v1.m_floats[2];</span>
+<span class="lineNum">     512 </span>            :                 //don't do the unused w component
+<span class="lineNum">     513 </span>            :                 //              m_co[3] = s * v0[3] + rt * v1[3];
+<span class="lineNum">     514 </span>            : #endif
+<span class="lineNum">     515 </span><span class="lineNoCov">          0 :         }</span>
+<span class="lineNum">     516 </span>            : 
+<span class="lineNum">     517 </span>            :   /**@brief Return the linear interpolation between this and another vector 
+<span class="lineNum">     518 </span>            :    * @param v The other vector 
+<span class="lineNum">     519 </span>            :    * @param t The ration of this to v (t = 0 =&gt; return this, t=1 =&gt; return other) */
+<span class="lineNum">     520 </span>            :         SIMD_FORCE_INLINE btVector3 lerp(const btVector3&amp; v, const btScalar&amp; t) const 
+<span class="lineNum">     521 </span>            :         {
+<span class="lineNum">     522 </span>            : #if defined(BT_USE_SSE_IN_API) &amp;&amp; defined (BT_USE_SSE)
+<span class="lineNum">     523 </span>            :                 __m128  vt = _mm_load_ss(&amp;t);       //      (t 0 0 0)
+<span class="lineNum">     524 </span>            :                 vt = bt_pshufd_ps(vt, 0x80);    //      (rt rt rt 0.0)
+<span class="lineNum">     525 </span>            :                 __m128 vl = _mm_sub_ps(v.mVec128, mVec128);
+<span class="lineNum">     526 </span>            :                 vl = _mm_mul_ps(vl, vt);
+<span class="lineNum">     527 </span>            :                 vl = _mm_add_ps(vl, mVec128);
+<span class="lineNum">     528 </span>            :                 
+<span class="lineNum">     529 </span>            :                 return btVector3(vl);
+<span class="lineNum">     530 </span>            : #elif defined(BT_USE_NEON)
+<span class="lineNum">     531 </span>            :                 float32x4_t vl = vsubq_f32(v.mVec128, mVec128);
+<span class="lineNum">     532 </span>            :                 vl = vmulq_n_f32(vl, t);
+<span class="lineNum">     533 </span>            :                 vl = vaddq_f32(vl, mVec128);
+<span class="lineNum">     534 </span>            :                 
+<span class="lineNum">     535 </span>            :                 return btVector3(vl);
+<span class="lineNum">     536 </span>            : #else   
+<span class="lineNum">     537 </span>            :                 return 
+<span class="lineNum">     538 </span>            :                         btVector3(      m_floats[0] + (v.m_floats[0] - m_floats[0]) * t,
+<span class="lineNum">     539 </span>            :                                                 m_floats[1] + (v.m_floats[1] - m_floats[1]) * t,
+<span class="lineNum">     540 </span>            :                                                 m_floats[2] + (v.m_floats[2] - m_floats[2]) * t);
+<span class="lineNum">     541 </span>            : #endif
+<span class="lineNum">     542 </span>            :         }
+<span class="lineNum">     543 </span>            : 
+<span class="lineNum">     544 </span>            :   /**@brief Elementwise multiply this vector by the other 
+<span class="lineNum">     545 </span>            :    * @param v The other vector */
+<span class="lineNum">     546 </span>            :         SIMD_FORCE_INLINE btVector3&amp; operator*=(const btVector3&amp; v)
+<span class="lineNum">     547 </span>            :         {
+<span class="lineNum">     548 </span>            : #if defined(BT_USE_SSE_IN_API) &amp;&amp; defined (BT_USE_SSE)
+<span class="lineNum">     549 </span>            :                 mVec128 = _mm_mul_ps(mVec128, v.mVec128);
+<span class="lineNum">     550 </span>            : #elif defined(BT_USE_NEON)
+<span class="lineNum">     551 </span>            :                 mVec128 = vmulq_f32(mVec128, v.mVec128);
+<span class="lineNum">     552 </span>            : #else   
+<span class="lineNum">     553 </span>            :                 m_floats[0] *= v.m_floats[0]; 
+<span class="lineNum">     554 </span>            :                 m_floats[1] *= v.m_floats[1];
+<span class="lineNum">     555 </span>            :                 m_floats[2] *= v.m_floats[2];
+<span class="lineNum">     556 </span>            : #endif
+<span class="lineNum">     557 </span>            :                 return *this;
+<span class="lineNum">     558 </span>            :         }
+<span class="lineNum">     559 </span>            : 
+<span class="lineNum">     560 </span>            :          /**@brief Return the x value */
+<span class="lineNum">     561 </span>            :                 SIMD_FORCE_INLINE const btScalar&amp; getX() const { return m_floats[0]; }
+<span class="lineNum">     562 </span>            :   /**@brief Return the y value */
+<span class="lineNum">     563 </span>            :                 SIMD_FORCE_INLINE const btScalar&amp; getY() const { return m_floats[1]; }
+<span class="lineNum">     564 </span>            :   /**@brief Return the z value */
+<span class="lineNum">     565 </span>            :                 SIMD_FORCE_INLINE const btScalar&amp; getZ() const { return m_floats[2]; }
+<span class="lineNum">     566 </span>            :   /**@brief Set the x value */
+<span class="lineNum">     567 </span>            :                 SIMD_FORCE_INLINE void  setX(btScalar _x) { m_floats[0] = _x;};
+<span class="lineNum">     568 </span>            :   /**@brief Set the y value */
+<span class="lineNum">     569 </span>            :                 SIMD_FORCE_INLINE void  setY(btScalar _y) { m_floats[1] = _y;};
+<span class="lineNum">     570 </span>            :   /**@brief Set the z value */
+<span class="lineNum">     571 </span>            :                 SIMD_FORCE_INLINE void  setZ(btScalar _z) { m_floats[2] = _z;};
+<span class="lineNum">     572 </span>            :   /**@brief Set the w value */
+<a name="573"><span class="lineNum">     573 </span>            :                 SIMD_FORCE_INLINE void  setW(btScalar _w) { m_floats[3] = _w;};</a>
+<span class="lineNum">     574 </span>            :   /**@brief Return the x value */
+<a name="575"><span class="lineNum">     575 </span><span class="lineCov">   42556861 :                 SIMD_FORCE_INLINE const btScalar&amp; x() const { return m_floats[0]; }</span></a>
+<span class="lineNum">     576 </span>            :   /**@brief Return the y value */
+<a name="577"><span class="lineNum">     577 </span><span class="lineCov">   41887593 :                 SIMD_FORCE_INLINE const btScalar&amp; y() const { return m_floats[1]; }</span></a>
+<span class="lineNum">     578 </span>            :   /**@brief Return the z value */
+<span class="lineNum">     579 </span><span class="lineCov">   41630177 :                 SIMD_FORCE_INLINE const btScalar&amp; z() const { return m_floats[2]; }</span>
+<span class="lineNum">     580 </span>            :   /**@brief Return the w value */
+<span class="lineNum">     581 </span>            :                 SIMD_FORCE_INLINE const btScalar&amp; w() const { return m_floats[3]; }
+<span class="lineNum">     582 </span>            : 
+<span class="lineNum">     583 </span>            :         //SIMD_FORCE_INLINE btScalar&amp;       operator[](int i)       { return (&amp;m_floats[0])[i]; }      
+<a name="584"><span class="lineNum">     584 </span>            :         //SIMD_FORCE_INLINE const btScalar&amp; operator[](int i) const { return (&amp;m_floats[0])[i]; }</a>
+<a name="585"><span class="lineNum">     585 </span>            :         ///operator btScalar*() replaces operator[], using implicit conversion. We added operator != and operator == to avoid pointer comparisons.</a>
+<span class="lineNum">     586 </span><span class="lineCov">   17249171 :         SIMD_FORCE_INLINE       operator       btScalar *()       { return &amp;m_floats[0]; }</span>
+<span class="lineNum">     587 </span><span class="lineCov">   26900626 :         SIMD_FORCE_INLINE       operator const btScalar *() const { return &amp;m_floats[0]; }</span>
+<span class="lineNum">     588 </span>            : 
+<span class="lineNum">     589 </span>            :         SIMD_FORCE_INLINE       bool    operator==(const btVector3&amp; other) const
+<span class="lineNum">     590 </span>            :         {
+<span class="lineNum">     591 </span>            : #if defined(BT_USE_SSE_IN_API) &amp;&amp; defined (BT_USE_SSE)
+<span class="lineNum">     592 </span>            :         return (0xf == _mm_movemask_ps((__m128)_mm_cmpeq_ps(mVec128, other.mVec128)));
+<span class="lineNum">     593 </span>            : #else 
+<span class="lineNum">     594 </span>            :                 return ((m_floats[3]==other.m_floats[3]) &amp;&amp; 
+<span class="lineNum">     595 </span>            :                 (m_floats[2]==other.m_floats[2]) &amp;&amp; 
+<span class="lineNum">     596 </span>            :                 (m_floats[1]==other.m_floats[1]) &amp;&amp; 
+<span class="lineNum">     597 </span>            :                 (m_floats[0]==other.m_floats[0]));
+<span class="lineNum">     598 </span>            : #endif
+<span class="lineNum">     599 </span>            :         }
+<span class="lineNum">     600 </span>            : 
+<span class="lineNum">     601 </span>            :         SIMD_FORCE_INLINE       bool    operator!=(const btVector3&amp; other) const
+<span class="lineNum">     602 </span>            :         {
+<span class="lineNum">     603 </span>            :                 return !(*this == other);
+<span class="lineNum">     604 </span>            :         }
+<span class="lineNum">     605 </span>            : 
+<span class="lineNum">     606 </span>            :   /**@brief Set each element to the max of the current values and the values of another btVector3
+<span class="lineNum">     607 </span>            :    * @param other The other btVector3 to compare with 
+<span class="lineNum">     608 </span>            :    */
+<span class="lineNum">     609 </span>            :         SIMD_FORCE_INLINE void  setMax(const btVector3&amp; other)
+<span class="lineNum">     610 </span>            :         {
+<span class="lineNum">     611 </span>            : #if defined(BT_USE_SSE_IN_API) &amp;&amp; defined (BT_USE_SSE)
+<span class="lineNum">     612 </span>            :                 mVec128 = _mm_max_ps(mVec128, other.mVec128);
+<span class="lineNum">     613 </span>            : #elif defined(BT_USE_NEON)
+<span class="lineNum">     614 </span>            :                 mVec128 = vmaxq_f32(mVec128, other.mVec128);
+<span class="lineNum">     615 </span>            : #else
+<span class="lineNum">     616 </span>            :                 btSetMax(m_floats[0], other.m_floats[0]);
+<span class="lineNum">     617 </span>            :                 btSetMax(m_floats[1], other.m_floats[1]);
+<span class="lineNum">     618 </span>            :                 btSetMax(m_floats[2], other.m_floats[2]);
+<span class="lineNum">     619 </span>            :                 btSetMax(m_floats[3], other.w());
+<span class="lineNum">     620 </span>            : #endif
+<span class="lineNum">     621 </span>            :         }
+<span class="lineNum">     622 </span>            : 
+<span class="lineNum">     623 </span>            :   /**@brief Set each element to the min of the current values and the values of another btVector3
+<span class="lineNum">     624 </span>            :    * @param other The other btVector3 to compare with 
+<span class="lineNum">     625 </span>            :    */
+<span class="lineNum">     626 </span>            :         SIMD_FORCE_INLINE void  setMin(const btVector3&amp; other)
+<span class="lineNum">     627 </span>            :         {
+<span class="lineNum">     628 </span>            : #if defined(BT_USE_SSE_IN_API) &amp;&amp; defined (BT_USE_SSE)
+<span class="lineNum">     629 </span>            :                 mVec128 = _mm_min_ps(mVec128, other.mVec128);
+<span class="lineNum">     630 </span>            : #elif defined(BT_USE_NEON)
+<span class="lineNum">     631 </span>            :                 mVec128 = vminq_f32(mVec128, other.mVec128);
+<span class="lineNum">     632 </span>            : #else
+<span class="lineNum">     633 </span>            :                 btSetMin(m_floats[0], other.m_floats[0]);
+<span class="lineNum">     634 </span>            :                 btSetMin(m_floats[1], other.m_floats[1]);
+<span class="lineNum">     635 </span>            :                 btSetMin(m_floats[2], other.m_floats[2]);
+<span class="lineNum">     636 </span>            :                 btSetMin(m_floats[3], other.w());
+<span class="lineNum">     637 </span>            : #endif
+<a name="638"><span class="lineNum">     638 </span>            :         }</a>
+<span class="lineNum">     639 </span>            : 
+<span class="lineNum">     640 </span><span class="lineCov">   17499943 :         SIMD_FORCE_INLINE void  setValue(const btScalar&amp; _x, const btScalar&amp; _y, const btScalar&amp; _z)</span>
+<span class="lineNum">     641 </span>            :         {
+<span class="lineNum">     642 </span><span class="lineCov">   17499943 :                 m_floats[0]=_x;</span>
+<span class="lineNum">     643 </span><span class="lineCov">   17499943 :                 m_floats[1]=_y;</span>
+<span class="lineNum">     644 </span><span class="lineCov">   17499943 :                 m_floats[2]=_z;</span>
+<span class="lineNum">     645 </span><span class="lineCov">   17499943 :                 m_floats[3] = btScalar(0.f);</span>
+<span class="lineNum">     646 </span><span class="lineCov">   17499943 :         }</span>
+<span class="lineNum">     647 </span>            : 
+<span class="lineNum">     648 </span>            :         void    getSkewSymmetricMatrix(btVector3* v0,btVector3* v1,btVector3* v2) const
+<span class="lineNum">     649 </span>            :         {
+<span class="lineNum">     650 </span>            : #if defined BT_USE_SIMD_VECTOR3 &amp;&amp; defined (BT_USE_SSE_IN_API) &amp;&amp; defined (BT_USE_SSE)
+<span class="lineNum">     651 </span>            :  
+<span class="lineNum">     652 </span>            :                 __m128 V  = _mm_and_ps(mVec128, btvFFF0fMask);
+<span class="lineNum">     653 </span>            :                 __m128 V0 = _mm_xor_ps(btvMzeroMask, V);
+<span class="lineNum">     654 </span>            :                 __m128 V2 = _mm_movelh_ps(V0, V);
+<span class="lineNum">     655 </span>            :                 
+<span class="lineNum">     656 </span>            :                 __m128 V1 = _mm_shuffle_ps(V, V0, 0xCE);
+<span class="lineNum">     657 </span>            :                 
+<span class="lineNum">     658 </span>            :         V0 = _mm_shuffle_ps(V0, V, 0xDB);
+<span class="lineNum">     659 </span>            :                 V2 = _mm_shuffle_ps(V2, V, 0xF9);
+<span class="lineNum">     660 </span>            :                 
+<span class="lineNum">     661 </span>            :                 v0-&gt;mVec128 = V0;
+<span class="lineNum">     662 </span>            :                 v1-&gt;mVec128 = V1;
+<span class="lineNum">     663 </span>            :                 v2-&gt;mVec128 = V2;
+<span class="lineNum">     664 </span>            : #else
+<span class="lineNum">     665 </span>            :                 v0-&gt;setValue(0.              ,-z()           ,y());
+<span class="lineNum">     666 </span>            :                 v1-&gt;setValue(z()     ,0.                     ,-x());
+<span class="lineNum">     667 </span>            :                 v2-&gt;setValue(-y()    ,x()    ,0.);
+<span class="lineNum">     668 </span>            : #endif
+<span class="lineNum">     669 </span>            :         }
+<span class="lineNum">     670 </span>            : 
+<span class="lineNum">     671 </span>            :         void setZero()
+<span class="lineNum">     672 </span>            :         {
+<span class="lineNum">     673 </span>            : #if defined(BT_USE_SSE_IN_API) &amp;&amp; defined (BT_USE_SSE)
+<span class="lineNum">     674 </span>            :                 mVec128 = (__m128)_mm_xor_ps(mVec128, mVec128);
+<span class="lineNum">     675 </span>            : #elif defined(BT_USE_NEON)
+<span class="lineNum">     676 </span>            :                 int32x4_t vi = vdupq_n_s32(0); 
+<span class="lineNum">     677 </span>            :                 mVec128 = vreinterpretq_f32_s32(vi);
+<span class="lineNum">     678 </span>            : #else   
+<span class="lineNum">     679 </span>            :                 setValue(btScalar(0.),btScalar(0.),btScalar(0.));
+<span class="lineNum">     680 </span>            : #endif
+<span class="lineNum">     681 </span>            :         }
+<span class="lineNum">     682 </span>            : 
+<span class="lineNum">     683 </span>            :         SIMD_FORCE_INLINE bool isZero() const 
+<span class="lineNum">     684 </span>            :         {
+<span class="lineNum">     685 </span>            :                 return m_floats[0] == btScalar(0) &amp;&amp; m_floats[1] == btScalar(0) &amp;&amp; m_floats[2] == btScalar(0);
+<span class="lineNum">     686 </span>            :         }
+<a name="687"><span class="lineNum">     687 </span>            : </a>
+<span class="lineNum">     688 </span>            : 
+<span class="lineNum">     689 </span><span class="lineCov">     410287 :         SIMD_FORCE_INLINE bool fuzzyZero() const </span>
+<span class="lineNum">     690 </span>            :         {
+<span class="lineNum">     691 </span><span class="lineCov">     410287 :                 return length2() &lt; SIMD_EPSILON*SIMD_EPSILON;</span>
+<span class="lineNum">     692 </span>            :         }
+<span class="lineNum">     693 </span>            : 
+<span class="lineNum">     694 </span>            :         SIMD_FORCE_INLINE       void    serialize(struct        btVector3Data&amp; dataOut) const;
+<span class="lineNum">     695 </span>            : 
+<span class="lineNum">     696 </span>            :         SIMD_FORCE_INLINE       void    deSerialize(const struct        btVector3Data&amp; dataIn);
+<span class="lineNum">     697 </span>            : 
+<span class="lineNum">     698 </span>            :         SIMD_FORCE_INLINE       void    serializeFloat(struct   btVector3FloatData&amp; dataOut) const;
+<span class="lineNum">     699 </span>            : 
+<span class="lineNum">     700 </span>            :         SIMD_FORCE_INLINE       void    deSerializeFloat(const struct   btVector3FloatData&amp; dataIn);
+<span class="lineNum">     701 </span>            : 
+<span class="lineNum">     702 </span>            :         SIMD_FORCE_INLINE       void    serializeDouble(struct  btVector3DoubleData&amp; dataOut) const;
+<span class="lineNum">     703 </span>            : 
+<span class="lineNum">     704 </span>            :         SIMD_FORCE_INLINE       void    deSerializeDouble(const struct  btVector3DoubleData&amp; dataIn);
+<span class="lineNum">     705 </span>            :     
+<span class="lineNum">     706 </span>            :         /**@brief returns index of maximum dot product between this and vectors in array[]
+<span class="lineNum">     707 </span>            :          * @param array The other vectors 
+<span class="lineNum">     708 </span>            :          * @param array_count The number of other vectors 
+<span class="lineNum">     709 </span>            :          * @param dotOut The maximum dot product */
+<span class="lineNum">     710 </span>            :         SIMD_FORCE_INLINE   long    maxDot( const btVector3 *array, long array_count, btScalar &amp;dotOut ) const; 
+<span class="lineNum">     711 </span>            : 
+<span class="lineNum">     712 </span>            :         /**@brief returns index of minimum dot product between this and vectors in array[]
+<span class="lineNum">     713 </span>            :          * @param array The other vectors 
+<span class="lineNum">     714 </span>            :          * @param array_count The number of other vectors 
+<span class="lineNum">     715 </span>            :          * @param dotOut The minimum dot product */    
+<span class="lineNum">     716 </span>            :         SIMD_FORCE_INLINE   long    minDot( const btVector3 *array, long array_count, btScalar &amp;dotOut ) const; 
+<a name="717"><span class="lineNum">     717 </span>            : </a>
+<span class="lineNum">     718 </span>            :     /* create a vector as  btVector3( this-&gt;dot( btVector3 v0 ), this-&gt;dot( btVector3 v1), this-&gt;dot( btVector3 v2 ))  */
+<span class="lineNum">     719 </span><span class="lineCov">    1669550 :     SIMD_FORCE_INLINE btVector3  dot3( const btVector3 &amp;v0, const btVector3 &amp;v1, const btVector3 &amp;v2 ) const</span>
+<span class="lineNum">     720 </span>            :     {
+<span class="lineNum">     721 </span>            : #if defined BT_USE_SIMD_VECTOR3 &amp;&amp; defined (BT_USE_SSE_IN_API) &amp;&amp; defined (BT_USE_SSE)
+<span class="lineNum">     722 </span>            : 
+<span class="lineNum">     723 </span>            :         __m128 a0 = _mm_mul_ps( v0.mVec128, this-&gt;mVec128 );
+<span class="lineNum">     724 </span>            :         __m128 a1 = _mm_mul_ps( v1.mVec128, this-&gt;mVec128 );
+<span class="lineNum">     725 </span>            :         __m128 a2 = _mm_mul_ps( v2.mVec128, this-&gt;mVec128 );
+<span class="lineNum">     726 </span>            :         __m128 b0 = _mm_unpacklo_ps( a0, a1 );
+<span class="lineNum">     727 </span>            :         __m128 b1 = _mm_unpackhi_ps( a0, a1 );
+<span class="lineNum">     728 </span>            :         __m128 b2 = _mm_unpacklo_ps( a2, _mm_setzero_ps() );
+<span class="lineNum">     729 </span>            :         __m128 r = _mm_movelh_ps( b0, b2 );
+<span class="lineNum">     730 </span>            :         r = _mm_add_ps( r, _mm_movehl_ps( b2, b0 ));
+<span class="lineNum">     731 </span>            :         a2 = _mm_and_ps( a2, btvxyzMaskf);
+<span class="lineNum">     732 </span>            :         r = _mm_add_ps( r, btCastdTo128f (_mm_move_sd( btCastfTo128d(a2), btCastfTo128d(b1) )));
+<span class="lineNum">     733 </span>            :         return btVector3(r);
+<span class="lineNum">     734 </span>            :         
+<span class="lineNum">     735 </span>            : #elif defined(BT_USE_NEON)
+<span class="lineNum">     736 </span>            :         static const uint32x4_t xyzMask = (const uint32x4_t){ static_cast&lt;uint32_t&gt;(-1), static_cast&lt;uint32_t&gt;(-1), static_cast&lt;uint32_t&gt;(-1), 0 };
+<span class="lineNum">     737 </span>            :         float32x4_t a0 = vmulq_f32( v0.mVec128, this-&gt;mVec128);
+<span class="lineNum">     738 </span>            :         float32x4_t a1 = vmulq_f32( v1.mVec128, this-&gt;mVec128);
+<span class="lineNum">     739 </span>            :         float32x4_t a2 = vmulq_f32( v2.mVec128, this-&gt;mVec128);
+<span class="lineNum">     740 </span>            :         float32x2x2_t zLo = vtrn_f32( vget_high_f32(a0), vget_high_f32(a1));
+<span class="lineNum">     741 </span>            :         a2 = (float32x4_t) vandq_u32((uint32x4_t) a2, xyzMask );
+<span class="lineNum">     742 </span>            :         float32x2_t b0 = vadd_f32( vpadd_f32( vget_low_f32(a0), vget_low_f32(a1)), zLo.val[0] );
+<span class="lineNum">     743 </span>            :         float32x2_t b1 = vpadd_f32( vpadd_f32( vget_low_f32(a2), vget_high_f32(a2)), vdup_n_f32(0.0f));
+<span class="lineNum">     744 </span>            :         return btVector3( vcombine_f32(b0, b1) );
+<span class="lineNum">     745 </span>            : #else   
+<span class="lineNum">     746 </span><span class="lineCov">    1669550 :                 return btVector3( dot(v0), dot(v1), dot(v2));</span>
+<span class="lineNum">     747 </span>            : #endif
+<span class="lineNum">     748 </span>            :     }
+<span class="lineNum">     749 </span>            : };
+<span class="lineNum">     750 </span>            : 
+<a name="751"><span class="lineNum">     751 </span>            : /**@brief Return the sum of two vectors (Point symantics)*/</a>
+<span class="lineNum">     752 </span>            : SIMD_FORCE_INLINE btVector3 
+<span class="lineNum">     753 </span><span class="lineCov">    9919299 : operator+(const btVector3&amp; v1, const btVector3&amp; v2) </span>
+<span class="lineNum">     754 </span>            : {
+<span class="lineNum">     755 </span>            : #if defined(BT_USE_SSE_IN_API) &amp;&amp; defined (BT_USE_SSE)
+<span class="lineNum">     756 </span>            :         return btVector3(_mm_add_ps(v1.mVec128, v2.mVec128));
+<span class="lineNum">     757 </span>            : #elif defined(BT_USE_NEON)
+<span class="lineNum">     758 </span>            :         return btVector3(vaddq_f32(v1.mVec128, v2.mVec128));
+<span class="lineNum">     759 </span>            : #else
+<span class="lineNum">     760 </span>            :         return btVector3(
+<span class="lineNum">     761 </span><span class="lineCov">    9919299 :                         v1.m_floats[0] + v2.m_floats[0], </span>
+<span class="lineNum">     762 </span><span class="lineCov">    9919299 :                         v1.m_floats[1] + v2.m_floats[1], </span>
+<span class="lineNum">     763 </span><span class="lineCov">   29757897 :                         v1.m_floats[2] + v2.m_floats[2]);</span>
+<span class="lineNum">     764 </span>            : #endif
+<span class="lineNum">     765 </span>            : }
+<span class="lineNum">     766 </span>            : 
+<a name="767"><span class="lineNum">     767 </span>            : /**@brief Return the elementwise product of two vectors */</a>
+<span class="lineNum">     768 </span>            : SIMD_FORCE_INLINE btVector3 
+<span class="lineNum">     769 </span><span class="lineCov">   71083702 : operator*(const btVector3&amp; v1, const btVector3&amp; v2) </span>
+<span class="lineNum">     770 </span>            : {
+<span class="lineNum">     771 </span>            : #if defined(BT_USE_SSE_IN_API) &amp;&amp; defined (BT_USE_SSE)
+<span class="lineNum">     772 </span>            :         return btVector3(_mm_mul_ps(v1.mVec128, v2.mVec128));
+<span class="lineNum">     773 </span>            : #elif defined(BT_USE_NEON)
+<span class="lineNum">     774 </span>            :         return btVector3(vmulq_f32(v1.mVec128, v2.mVec128));
+<span class="lineNum">     775 </span>            : #else
+<span class="lineNum">     776 </span>            :         return btVector3(
+<span class="lineNum">     777 </span><span class="lineCov">   71083702 :                         v1.m_floats[0] * v2.m_floats[0], </span>
+<span class="lineNum">     778 </span><span class="lineCov">   71083702 :                         v1.m_floats[1] * v2.m_floats[1], </span>
+<span class="lineNum">     779 </span><span class="lineCov">  213251106 :                         v1.m_floats[2] * v2.m_floats[2]);</span>
+<span class="lineNum">     780 </span>            : #endif
+<span class="lineNum">     781 </span>            : }
+<span class="lineNum">     782 </span>            : 
+<span class="lineNum">     783 </span>            : /**@brief Return the difference between two vectors */
+<span class="lineNum">     784 </span>            : SIMD_FORCE_INLINE btVector3 
+<span class="lineNum">     785 </span>            : operator-(const btVector3&amp; v1, const btVector3&amp; v2)
+<span class="lineNum">     786 </span>            : {
+<span class="lineNum">     787 </span>            : #if defined BT_USE_SIMD_VECTOR3 &amp;&amp; (defined(BT_USE_SSE_IN_API)  &amp;&amp; defined(BT_USE_SSE))
+<span class="lineNum">     788 </span>            : 
+<span class="lineNum">     789 </span>            :         //      without _mm_and_ps this code causes slowdown in Concave moving
+<span class="lineNum">     790 </span>            :         __m128 r = _mm_sub_ps(v1.mVec128, v2.mVec128);
+<span class="lineNum">     791 </span>            :         return btVector3(_mm_and_ps(r, btvFFF0fMask));
+<span class="lineNum">     792 </span>            : #elif defined(BT_USE_NEON)
+<span class="lineNum">     793 </span>            :         float32x4_t r = vsubq_f32(v1.mVec128, v2.mVec128);
+<span class="lineNum">     794 </span>            :         return btVector3((float32x4_t)vandq_s32((int32x4_t)r, btvFFF0Mask));
+<span class="lineNum">     795 </span>            : #else
+<span class="lineNum">     796 </span>            :         return btVector3(
+<span class="lineNum">     797 </span>            :                         v1.m_floats[0] - v2.m_floats[0], 
+<span class="lineNum">     798 </span>            :                         v1.m_floats[1] - v2.m_floats[1], 
+<span class="lineNum">     799 </span>            :                         v1.m_floats[2] - v2.m_floats[2]);
+<span class="lineNum">     800 </span>            : #endif
+<span class="lineNum">     801 </span>            : }
+<span class="lineNum">     802 </span>            : 
+<a name="803"><span class="lineNum">     803 </span>            : /**@brief Return the negative of the vector */</a>
+<span class="lineNum">     804 </span>            : SIMD_FORCE_INLINE btVector3 
+<span class="lineNum">     805 </span><span class="lineCov">     371677 : operator-(const btVector3&amp; v)</span>
+<span class="lineNum">     806 </span>            : {
+<span class="lineNum">     807 </span>            : #if defined BT_USE_SIMD_VECTOR3 &amp;&amp; (defined(BT_USE_SSE_IN_API) &amp;&amp; defined (BT_USE_SSE))
+<span class="lineNum">     808 </span>            :         __m128 r = _mm_xor_ps(v.mVec128, btvMzeroMask);
+<span class="lineNum">     809 </span>            :         return btVector3(_mm_and_ps(r, btvFFF0fMask)); 
+<span class="lineNum">     810 </span>            : #elif defined(BT_USE_NEON)
+<span class="lineNum">     811 </span>            :         return btVector3((btSimdFloat4)veorq_s32((int32x4_t)v.mVec128, (int32x4_t)btvMzeroMask));
+<span class="lineNum">     812 </span>            : #else   
+<span class="lineNum">     813 </span><span class="lineCov">     371677 :         return btVector3(-v.m_floats[0], -v.m_floats[1], -v.m_floats[2]);</span>
+<span class="lineNum">     814 </span>            : #endif
+<span class="lineNum">     815 </span>            : }
+<span class="lineNum">     816 </span>            : 
+<a name="817"><span class="lineNum">     817 </span>            : /**@brief Return the vector scaled by s */</a>
+<span class="lineNum">     818 </span>            : SIMD_FORCE_INLINE btVector3 
+<span class="lineNum">     819 </span><span class="lineCov">   53681166 : operator*(const btVector3&amp; v, const btScalar&amp; s)</span>
+<span class="lineNum">     820 </span>            : {
+<span class="lineNum">     821 </span>            : #if defined(BT_USE_SSE_IN_API) &amp;&amp; defined (BT_USE_SSE)
+<span class="lineNum">     822 </span>            :         __m128  vs = _mm_load_ss(&amp;s);       //      (S 0 0 0)
+<span class="lineNum">     823 </span>            :         vs = bt_pshufd_ps(vs, 0x80);    //      (S S S 0.0)
+<span class="lineNum">     824 </span>            :         return btVector3(_mm_mul_ps(v.mVec128, vs));
+<span class="lineNum">     825 </span>            : #elif defined(BT_USE_NEON)
+<span class="lineNum">     826 </span>            :         float32x4_t r = vmulq_n_f32(v.mVec128, s);
+<span class="lineNum">     827 </span>            :         return btVector3((float32x4_t)vandq_s32((int32x4_t)r, btvFFF0Mask));
+<span class="lineNum">     828 </span>            : #else
+<span class="lineNum">     829 </span><span class="lineCov">   53681166 :         return btVector3(v.m_floats[0] * s, v.m_floats[1] * s, v.m_floats[2] * s);</span>
+<span class="lineNum">     830 </span>            : #endif
+<span class="lineNum">     831 </span>            : }
+<span class="lineNum">     832 </span>            : 
+<a name="833"><span class="lineNum">     833 </span>            : /**@brief Return the vector scaled by s */</a>
+<span class="lineNum">     834 </span>            : SIMD_FORCE_INLINE btVector3 
+<span class="lineNum">     835 </span><span class="lineCov">   23356197 : operator*(const btScalar&amp; s, const btVector3&amp; v)</span>
+<span class="lineNum">     836 </span>            : { 
+<span class="lineNum">     837 </span><span class="lineCov">   23356197 :         return v * s; </span>
+<span class="lineNum">     838 </span>            : }
+<span class="lineNum">     839 </span>            : 
+<span class="lineNum">     840 </span>            : /**@brief Return the vector inversely scaled by s */
+<span class="lineNum">     841 </span>            : SIMD_FORCE_INLINE btVector3
+<span class="lineNum">     842 </span>            : operator/(const btVector3&amp; v, const btScalar&amp; s)
+<span class="lineNum">     843 </span>            : {
+<span class="lineNum">     844 </span>            :         btFullAssert(s != btScalar(0.0));
+<span class="lineNum">     845 </span>            : #if 0 //defined(BT_USE_SSE_IN_API)
+<span class="lineNum">     846 </span>            : // this code is not faster !
+<span class="lineNum">     847 </span>            :         __m128 vs = _mm_load_ss(&amp;s);
+<span class="lineNum">     848 </span>            :     vs = _mm_div_ss(v1110, vs);
+<span class="lineNum">     849 </span>            :         vs = bt_pshufd_ps(vs, 0x00);    //      (S S S S)
+<span class="lineNum">     850 </span>            : 
+<span class="lineNum">     851 </span>            :         return btVector3(_mm_mul_ps(v.mVec128, vs));
+<span class="lineNum">     852 </span>            : #else
+<span class="lineNum">     853 </span>            :         return v * (btScalar(1.0) / s);
+<span class="lineNum">     854 </span>            : #endif
+<span class="lineNum">     855 </span>            : }
+<span class="lineNum">     856 </span>            : 
+<span class="lineNum">     857 </span>            : /**@brief Return the vector inversely scaled by s */
+<span class="lineNum">     858 </span>            : SIMD_FORCE_INLINE btVector3
+<span class="lineNum">     859 </span>            : operator/(const btVector3&amp; v1, const btVector3&amp; v2)
+<span class="lineNum">     860 </span>            : {
+<span class="lineNum">     861 </span>            : #if defined BT_USE_SIMD_VECTOR3 &amp;&amp; (defined(BT_USE_SSE_IN_API)&amp;&amp; defined (BT_USE_SSE))
+<span class="lineNum">     862 </span>            :         __m128 vec = _mm_div_ps(v1.mVec128, v2.mVec128);
+<span class="lineNum">     863 </span>            :         vec = _mm_and_ps(vec, btvFFF0fMask);
+<span class="lineNum">     864 </span>            :         return btVector3(vec); 
+<span class="lineNum">     865 </span>            : #elif defined(BT_USE_NEON)
+<span class="lineNum">     866 </span>            :         float32x4_t x, y, v, m;
+<span class="lineNum">     867 </span>            : 
+<span class="lineNum">     868 </span>            :         x = v1.mVec128;
+<span class="lineNum">     869 </span>            :         y = v2.mVec128;
+<span class="lineNum">     870 </span>            :         
+<span class="lineNum">     871 </span>            :         v = vrecpeq_f32(y);                     // v ~ 1/y
+<span class="lineNum">     872 </span>            :         m = vrecpsq_f32(y, v);          // m = (2-v*y)
+<span class="lineNum">     873 </span>            :         v = vmulq_f32(v, m);            // vv = v*m ~~ 1/y
+<span class="lineNum">     874 </span>            :         m = vrecpsq_f32(y, v);          // mm = (2-vv*y)
+<span class="lineNum">     875 </span>            :         v = vmulq_f32(v, x);            // x*vv
+<span class="lineNum">     876 </span>            :         v = vmulq_f32(v, m);            // (x*vv)*(2-vv*y) = x*(vv(2-vv*y)) ~~~ x/y
+<span class="lineNum">     877 </span>            : 
+<span class="lineNum">     878 </span>            :         return btVector3(v);
+<span class="lineNum">     879 </span>            : #else
+<span class="lineNum">     880 </span>            :         return btVector3(
+<span class="lineNum">     881 </span>            :                         v1.m_floats[0] / v2.m_floats[0], 
+<span class="lineNum">     882 </span>            :                         v1.m_floats[1] / v2.m_floats[1],
+<span class="lineNum">     883 </span>            :                         v1.m_floats[2] / v2.m_floats[2]);
+<span class="lineNum">     884 </span>            : #endif
+<span class="lineNum">     885 </span>            : }
+<span class="lineNum">     886 </span>            : 
+<span class="lineNum">     887 </span>            : /**@brief Return the dot product between two vectors */
+<span class="lineNum">     888 </span>            : SIMD_FORCE_INLINE btScalar 
+<span class="lineNum">     889 </span>            : btDot(const btVector3&amp; v1, const btVector3&amp; v2) 
+<span class="lineNum">     890 </span>            : { 
+<span class="lineNum">     891 </span>            :         return v1.dot(v2); 
+<span class="lineNum">     892 </span>            : }
+<span class="lineNum">     893 </span>            : 
+<span class="lineNum">     894 </span>            : 
+<span class="lineNum">     895 </span>            : /**@brief Return the distance squared between two vectors */
+<span class="lineNum">     896 </span>            : SIMD_FORCE_INLINE btScalar
+<span class="lineNum">     897 </span>            : btDistance2(const btVector3&amp; v1, const btVector3&amp; v2) 
+<span class="lineNum">     898 </span>            : { 
+<span class="lineNum">     899 </span>            :         return v1.distance2(v2); 
+<span class="lineNum">     900 </span>            : }
+<span class="lineNum">     901 </span>            : 
+<span class="lineNum">     902 </span>            : 
+<span class="lineNum">     903 </span>            : /**@brief Return the distance between two vectors */
+<span class="lineNum">     904 </span>            : SIMD_FORCE_INLINE btScalar
+<span class="lineNum">     905 </span>            : btDistance(const btVector3&amp; v1, const btVector3&amp; v2) 
+<span class="lineNum">     906 </span>            : { 
+<span class="lineNum">     907 </span>            :         return v1.distance(v2); 
+<span class="lineNum">     908 </span>            : }
+<span class="lineNum">     909 </span>            : 
+<span class="lineNum">     910 </span>            : /**@brief Return the angle between two vectors */
+<span class="lineNum">     911 </span>            : SIMD_FORCE_INLINE btScalar
+<span class="lineNum">     912 </span>            : btAngle(const btVector3&amp; v1, const btVector3&amp; v2) 
+<span class="lineNum">     913 </span>            : { 
+<span class="lineNum">     914 </span>            :         return v1.angle(v2); 
+<span class="lineNum">     915 </span>            : }
+<span class="lineNum">     916 </span>            : 
+<span class="lineNum">     917 </span>            : /**@brief Return the cross product of two vectors */
+<span class="lineNum">     918 </span>            : SIMD_FORCE_INLINE btVector3 
+<span class="lineNum">     919 </span>            : btCross(const btVector3&amp; v1, const btVector3&amp; v2) 
+<span class="lineNum">     920 </span>            : { 
+<span class="lineNum">     921 </span>            :         return v1.cross(v2); 
+<span class="lineNum">     922 </span>            : }
+<span class="lineNum">     923 </span>            : 
+<span class="lineNum">     924 </span>            : SIMD_FORCE_INLINE btScalar
+<span class="lineNum">     925 </span>            : btTriple(const btVector3&amp; v1, const btVector3&amp; v2, const btVector3&amp; v3)
+<span class="lineNum">     926 </span>            : {
+<span class="lineNum">     927 </span>            :         return v1.triple(v2, v3);
+<span class="lineNum">     928 </span>            : }
+<span class="lineNum">     929 </span>            : 
+<span class="lineNum">     930 </span>            : /**@brief Return the linear interpolation between two vectors
+<span class="lineNum">     931 </span>            :  * @param v1 One vector 
+<span class="lineNum">     932 </span>            :  * @param v2 The other vector 
+<span class="lineNum">     933 </span>            :  * @param t The ration of this to v (t = 0 =&gt; return v1, t=1 =&gt; return v2) */
+<span class="lineNum">     934 </span>            : SIMD_FORCE_INLINE btVector3 
+<span class="lineNum">     935 </span>            : lerp(const btVector3&amp; v1, const btVector3&amp; v2, const btScalar&amp; t)
+<span class="lineNum">     936 </span>            : {
+<span class="lineNum">     937 </span>            :         return v1.lerp(v2, t);
+<span class="lineNum">     938 </span>            : }
+<span class="lineNum">     939 </span>            : 
+<span class="lineNum">     940 </span>            : 
+<span class="lineNum">     941 </span>            : 
+<span class="lineNum">     942 </span>            : SIMD_FORCE_INLINE btScalar btVector3::distance2(const btVector3&amp; v) const
+<span class="lineNum">     943 </span>            : {
+<span class="lineNum">     944 </span>            :         return (v - *this).length2();
+<span class="lineNum">     945 </span>            : }
+<span class="lineNum">     946 </span>            : 
+<span class="lineNum">     947 </span>            : SIMD_FORCE_INLINE btScalar btVector3::distance(const btVector3&amp; v) const
+<span class="lineNum">     948 </span>            : {
+<span class="lineNum">     949 </span>            :         return (v - *this).length();
+<span class="lineNum">     950 </span>            : }
+<span class="lineNum">     951 </span>            : 
+<span class="lineNum">     952 </span>            : SIMD_FORCE_INLINE btVector3 btVector3::normalized() const
+<span class="lineNum">     953 </span>            : {
+<span class="lineNum">     954 </span>            :         btVector3 nrm = *this;
+<span class="lineNum">     955 </span>            : 
+<span class="lineNum">     956 </span>            :         return nrm.normalize();
+<span class="lineNum">     957 </span>            : } 
+<span class="lineNum">     958 </span>            : 
+<span class="lineNum">     959 </span>            : SIMD_FORCE_INLINE btVector3 btVector3::rotate( const btVector3&amp; wAxis, const btScalar _angle ) const
+<span class="lineNum">     960 </span>            : {
+<span class="lineNum">     961 </span>            :         // wAxis must be a unit lenght vector
+<span class="lineNum">     962 </span>            : 
+<span class="lineNum">     963 </span>            : #if defined BT_USE_SIMD_VECTOR3 &amp;&amp; defined (BT_USE_SSE_IN_API) &amp;&amp; defined (BT_USE_SSE)
+<span class="lineNum">     964 </span>            : 
+<span class="lineNum">     965 </span>            :     __m128 O = _mm_mul_ps(wAxis.mVec128, mVec128);
+<span class="lineNum">     966 </span>            :         btScalar ssin = btSin( _angle );
+<span class="lineNum">     967 </span>            :     __m128 C = wAxis.cross( mVec128 ).mVec128;
+<span class="lineNum">     968 </span>            :         O = _mm_and_ps(O, btvFFF0fMask);
+<span class="lineNum">     969 </span>            :     btScalar scos = btCos( _angle );
+<span class="lineNum">     970 </span>            :         
+<span class="lineNum">     971 </span>            :         __m128 vsin = _mm_load_ss(&amp;ssin);   //      (S 0 0 0)
+<span class="lineNum">     972 </span>            :     __m128 vcos = _mm_load_ss(&amp;scos);       //      (S 0 0 0)
+<span class="lineNum">     973 </span>            :         
+<span class="lineNum">     974 </span>            :         __m128 Y = bt_pshufd_ps(O, 0xC9);       //      (Y Z X 0)
+<span class="lineNum">     975 </span>            :         __m128 Z = bt_pshufd_ps(O, 0xD2);       //      (Z X Y 0)
+<span class="lineNum">     976 </span>            :         O = _mm_add_ps(O, Y);
+<span class="lineNum">     977 </span>            :         vsin = bt_pshufd_ps(vsin, 0x80);        //      (S S S 0)
+<span class="lineNum">     978 </span>            :         O = _mm_add_ps(O, Z);
+<span class="lineNum">     979 </span>            :     vcos = bt_pshufd_ps(vcos, 0x80);    //      (S S S 0)
+<span class="lineNum">     980 </span>            :         
+<span class="lineNum">     981 </span>            :     vsin = vsin * C; 
+<span class="lineNum">     982 </span>            :         O = O * wAxis.mVec128; 
+<span class="lineNum">     983 </span>            :         __m128 X = mVec128 - O; 
+<span class="lineNum">     984 </span>            :         
+<span class="lineNum">     985 </span>            :     O = O + vsin;
+<span class="lineNum">     986 </span>            :         vcos = vcos * X;
+<span class="lineNum">     987 </span>            :         O = O + vcos;   
+<span class="lineNum">     988 </span>            :         
+<span class="lineNum">     989 </span>            :         return btVector3(O);
+<span class="lineNum">     990 </span>            : #else
+<span class="lineNum">     991 </span>            :         btVector3 o = wAxis * wAxis.dot( *this );
+<span class="lineNum">     992 </span>            :         btVector3 _x = *this - o;
+<span class="lineNum">     993 </span>            :         btVector3 _y;
+<span class="lineNum">     994 </span>            : 
+<span class="lineNum">     995 </span>            :         _y = wAxis.cross( *this );
+<span class="lineNum">     996 </span>            : 
+<span class="lineNum">     997 </span>            :         return ( o + _x * btCos( _angle ) + _y * btSin( _angle ) );
+<span class="lineNum">     998 </span>            : #endif
+<span class="lineNum">     999 </span>            : }
+<span class="lineNum">    1000 </span>            : 
+<span class="lineNum">    1001 </span>            : SIMD_FORCE_INLINE   long    btVector3::maxDot( const btVector3 *array, long array_count, btScalar &amp;dotOut ) const
+<span class="lineNum">    1002 </span>            : {
+<span class="lineNum">    1003 </span>            : #if (defined BT_USE_SSE &amp;&amp; defined BT_USE_SIMD_VECTOR3 &amp;&amp; defined BT_USE_SSE_IN_API) || defined (BT_USE_NEON)
+<span class="lineNum">    1004 </span>            :     #if defined _WIN32 || defined (BT_USE_SSE)
+<span class="lineNum">    1005 </span>            :         const long scalar_cutoff = 10;
+<span class="lineNum">    1006 </span>            :         long _maxdot_large( const float *array, const float *vec, unsigned long array_count, float *dotOut );
+<span class="lineNum">    1007 </span>            :     #elif defined BT_USE_NEON
+<span class="lineNum">    1008 </span>            :         const long scalar_cutoff = 4;
+<span class="lineNum">    1009 </span>            :         extern long (*_maxdot_large)( const float *array, const float *vec, unsigned long array_count, float *dotOut );
+<span class="lineNum">    1010 </span>            :     #endif
+<span class="lineNum">    1011 </span>            :     if( array_count &lt; scalar_cutoff )        
+<span class="lineNum">    1012 </span>            : #endif
+<span class="lineNum">    1013 </span>            :     {
+<span class="lineNum">    1014 </span>            :         btScalar maxDot1 = -SIMD_INFINITY;
+<span class="lineNum">    1015 </span>            :         int i = 0;
+<span class="lineNum">    1016 </span>            :         int ptIndex = -1;
+<span class="lineNum">    1017 </span>            :         for( i = 0; i &lt; array_count; i++ )
+<span class="lineNum">    1018 </span>            :         {
+<span class="lineNum">    1019 </span>            :             btScalar dot = array[i].dot(*this);
+<span class="lineNum">    1020 </span>            :             
+<span class="lineNum">    1021 </span>            :             if( dot &gt; maxDot1 )
+<span class="lineNum">    1022 </span>            :             {
+<span class="lineNum">    1023 </span>            :                 maxDot1 = dot;
+<span class="lineNum">    1024 </span>            :                 ptIndex = i;
+<span class="lineNum">    1025 </span>            :             }
+<span class="lineNum">    1026 </span>            :         }
+<span class="lineNum">    1027 </span>            :         
+<span class="lineNum">    1028 </span>            :         dotOut = maxDot1;
+<span class="lineNum">    1029 </span>            :         return ptIndex;
+<span class="lineNum">    1030 </span>            :     }
+<span class="lineNum">    1031 </span>            : #if (defined BT_USE_SSE &amp;&amp; defined BT_USE_SIMD_VECTOR3 &amp;&amp; defined BT_USE_SSE_IN_API) || defined (BT_USE_NEON)
+<span class="lineNum">    1032 </span>            :     return _maxdot_large( (float*) array, (float*) &amp;m_floats[0], array_count, &amp;dotOut );
+<span class="lineNum">    1033 </span>            : #endif
+<span class="lineNum">    1034 </span>            : }
+<span class="lineNum">    1035 </span>            : 
+<span class="lineNum">    1036 </span>            : SIMD_FORCE_INLINE   long    btVector3::minDot( const btVector3 *array, long array_count, btScalar &amp;dotOut ) const
+<span class="lineNum">    1037 </span>            : {
+<span class="lineNum">    1038 </span>            : #if (defined BT_USE_SSE &amp;&amp; defined BT_USE_SIMD_VECTOR3 &amp;&amp; defined BT_USE_SSE_IN_API) || defined (BT_USE_NEON)
+<span class="lineNum">    1039 </span>            :     #if defined BT_USE_SSE
+<span class="lineNum">    1040 </span>            :         const long scalar_cutoff = 10;
+<span class="lineNum">    1041 </span>            :         long _mindot_large( const float *array, const float *vec, unsigned long array_count, float *dotOut );
+<span class="lineNum">    1042 </span>            :     #elif defined BT_USE_NEON
+<span class="lineNum">    1043 </span>            :         const long scalar_cutoff = 4;
+<span class="lineNum">    1044 </span>            :         extern long (*_mindot_large)( const float *array, const float *vec, unsigned long array_count, float *dotOut );
+<span class="lineNum">    1045 </span>            :     #else
+<span class="lineNum">    1046 </span>            :         #error unhandled arch!
+<span class="lineNum">    1047 </span>            :     #endif
+<span class="lineNum">    1048 </span>            :     
+<span class="lineNum">    1049 </span>            :     if( array_count &lt; scalar_cutoff )
+<span class="lineNum">    1050 </span>            : #endif
+<span class="lineNum">    1051 </span>            :     {
+<span class="lineNum">    1052 </span>            :         btScalar  minDot = SIMD_INFINITY;
+<span class="lineNum">    1053 </span>            :         int i = 0;
+<span class="lineNum">    1054 </span>            :         int ptIndex = -1;
+<span class="lineNum">    1055 </span>            :         
+<span class="lineNum">    1056 </span>            :         for( i = 0; i &lt; array_count; i++ )
+<span class="lineNum">    1057 </span>            :         {
+<span class="lineNum">    1058 </span>            :             btScalar dot = array[i].dot(*this);
+<span class="lineNum">    1059 </span>            :             
+<span class="lineNum">    1060 </span>            :             if( dot &lt; minDot )
+<span class="lineNum">    1061 </span>            :             {
+<span class="lineNum">    1062 </span>            :                 minDot = dot;
+<span class="lineNum">    1063 </span>            :                 ptIndex = i;
+<span class="lineNum">    1064 </span>            :             }
+<span class="lineNum">    1065 </span>            :         }
+<span class="lineNum">    1066 </span>            :         
+<span class="lineNum">    1067 </span>            :         dotOut = minDot;
+<span class="lineNum">    1068 </span>            :         
+<span class="lineNum">    1069 </span>            :         return ptIndex;
+<span class="lineNum">    1070 </span>            :     }
+<span class="lineNum">    1071 </span>            : #if (defined BT_USE_SSE &amp;&amp; defined BT_USE_SIMD_VECTOR3 &amp;&amp; defined BT_USE_SSE_IN_API) || defined (BT_USE_NEON)
+<span class="lineNum">    1072 </span>            :     return _mindot_large( (float*) array, (float*) &amp;m_floats[0], array_count, &amp;dotOut );
+<span class="lineNum">    1073 </span>            : #endif//BT_USE_SIMD_VECTOR3
+<span class="lineNum">    1074 </span>            : }
+<span class="lineNum">    1075 </span>            : 
+<span class="lineNum">    1076 </span>            : 
+<span class="lineNum">    1077 </span>            : class btVector4 : public btVector3
+<span class="lineNum">    1078 </span>            : {
+<span class="lineNum">    1079 </span>            : public:
+<span class="lineNum">    1080 </span>            : 
+<span class="lineNum">    1081 </span>            :         SIMD_FORCE_INLINE btVector4() {}
+<span class="lineNum">    1082 </span>            : 
+<span class="lineNum">    1083 </span>            : 
+<span class="lineNum">    1084 </span>            :         SIMD_FORCE_INLINE btVector4(const btScalar&amp; _x, const btScalar&amp; _y, const btScalar&amp; _z,const btScalar&amp; _w) 
+<span class="lineNum">    1085 </span>            :                 : btVector3(_x,_y,_z)
+<span class="lineNum">    1086 </span>            :         {
+<span class="lineNum">    1087 </span>            :                 m_floats[3] = _w;
+<span class="lineNum">    1088 </span>            :         }
+<span class="lineNum">    1089 </span>            : 
+<span class="lineNum">    1090 </span>            : #if (defined (BT_USE_SSE_IN_API)&amp;&amp; defined (BT_USE_SSE)) || defined (BT_USE_NEON) 
+<span class="lineNum">    1091 </span>            :         SIMD_FORCE_INLINE btVector4(const btSimdFloat4 vec)
+<span class="lineNum">    1092 </span>            :         {
+<span class="lineNum">    1093 </span>            :                 mVec128 = vec;
+<span class="lineNum">    1094 </span>            :         }
+<span class="lineNum">    1095 </span>            : 
+<span class="lineNum">    1096 </span>            :         SIMD_FORCE_INLINE btVector4(const btVector3&amp; rhs)
+<span class="lineNum">    1097 </span>            :         {
+<span class="lineNum">    1098 </span>            :                 mVec128 = rhs.mVec128;
+<span class="lineNum">    1099 </span>            :         }
+<span class="lineNum">    1100 </span>            : 
+<span class="lineNum">    1101 </span>            :         SIMD_FORCE_INLINE btVector4&amp; 
+<span class="lineNum">    1102 </span>            :         operator=(const btVector4&amp; v) 
+<span class="lineNum">    1103 </span>            :         {
+<span class="lineNum">    1104 </span>            :                 mVec128 = v.mVec128;
+<span class="lineNum">    1105 </span>            :                 return *this;
+<span class="lineNum">    1106 </span>            :         }
+<span class="lineNum">    1107 </span>            : #endif // #if defined (BT_USE_SSE_IN_API) || defined (BT_USE_NEON) 
+<span class="lineNum">    1108 </span>            : 
+<span class="lineNum">    1109 </span>            :         SIMD_FORCE_INLINE btVector4 absolute4() const 
+<span class="lineNum">    1110 </span>            :         {
+<span class="lineNum">    1111 </span>            : #if defined BT_USE_SIMD_VECTOR3 &amp;&amp; defined(BT_USE_SSE_IN_API) &amp;&amp; defined (BT_USE_SSE) 
+<span class="lineNum">    1112 </span>            :                 return btVector4(_mm_and_ps(mVec128, btvAbsfMask));
+<span class="lineNum">    1113 </span>            : #elif defined(BT_USE_NEON)
+<span class="lineNum">    1114 </span>            :                 return btVector4(vabsq_f32(mVec128));
+<span class="lineNum">    1115 </span>            : #else   
+<span class="lineNum">    1116 </span>            :                 return btVector4(
+<span class="lineNum">    1117 </span>            :                         btFabs(m_floats[0]), 
+<span class="lineNum">    1118 </span>            :                         btFabs(m_floats[1]), 
+<span class="lineNum">    1119 </span>            :                         btFabs(m_floats[2]),
+<span class="lineNum">    1120 </span>            :                         btFabs(m_floats[3]));
+<span class="lineNum">    1121 </span>            : #endif
+<span class="lineNum">    1122 </span>            :         }
+<span class="lineNum">    1123 </span>            : 
+<span class="lineNum">    1124 </span>            : 
+<span class="lineNum">    1125 </span>            :         btScalar        getW() const { return m_floats[3];}
+<span class="lineNum">    1126 </span>            : 
+<span class="lineNum">    1127 </span>            : 
+<span class="lineNum">    1128 </span>            :                 SIMD_FORCE_INLINE int maxAxis4() const
+<span class="lineNum">    1129 </span>            :         {
+<span class="lineNum">    1130 </span>            :                 int maxIndex = -1;
+<span class="lineNum">    1131 </span>            :                 btScalar maxVal = btScalar(-BT_LARGE_FLOAT);
+<span class="lineNum">    1132 </span>            :                 if (m_floats[0] &gt; maxVal)
+<span class="lineNum">    1133 </span>            :                 {
+<span class="lineNum">    1134 </span>            :                         maxIndex = 0;
+<span class="lineNum">    1135 </span>            :                         maxVal = m_floats[0];
+<span class="lineNum">    1136 </span>            :                 }
+<span class="lineNum">    1137 </span>            :                 if (m_floats[1] &gt; maxVal)
+<span class="lineNum">    1138 </span>            :                 {
+<span class="lineNum">    1139 </span>            :                         maxIndex = 1;
+<span class="lineNum">    1140 </span>            :                         maxVal = m_floats[1];
+<span class="lineNum">    1141 </span>            :                 }
+<span class="lineNum">    1142 </span>            :                 if (m_floats[2] &gt; maxVal)
+<span class="lineNum">    1143 </span>            :                 {
+<span class="lineNum">    1144 </span>            :                         maxIndex = 2;
+<span class="lineNum">    1145 </span>            :                         maxVal =m_floats[2];
+<span class="lineNum">    1146 </span>            :                 }
+<span class="lineNum">    1147 </span>            :                 if (m_floats[3] &gt; maxVal)
+<span class="lineNum">    1148 </span>            :                 {
+<span class="lineNum">    1149 </span>            :                         maxIndex = 3;
+<span class="lineNum">    1150 </span>            :                         maxVal = m_floats[3];
+<span class="lineNum">    1151 </span>            :                 }
+<span class="lineNum">    1152 </span>            : 
+<span class="lineNum">    1153 </span>            :                 return maxIndex;
+<span class="lineNum">    1154 </span>            :         }
+<span class="lineNum">    1155 </span>            : 
+<span class="lineNum">    1156 </span>            : 
+<span class="lineNum">    1157 </span>            :         SIMD_FORCE_INLINE int minAxis4() const
+<span class="lineNum">    1158 </span>            :         {
+<span class="lineNum">    1159 </span>            :                 int minIndex = -1;
+<span class="lineNum">    1160 </span>            :                 btScalar minVal = btScalar(BT_LARGE_FLOAT);
+<span class="lineNum">    1161 </span>            :                 if (m_floats[0] &lt; minVal)
+<span class="lineNum">    1162 </span>            :                 {
+<span class="lineNum">    1163 </span>            :                         minIndex = 0;
+<span class="lineNum">    1164 </span>            :                         minVal = m_floats[0];
+<span class="lineNum">    1165 </span>            :                 }
+<span class="lineNum">    1166 </span>            :                 if (m_floats[1] &lt; minVal)
+<span class="lineNum">    1167 </span>            :                 {
+<span class="lineNum">    1168 </span>            :                         minIndex = 1;
+<span class="lineNum">    1169 </span>            :                         minVal = m_floats[1];
+<span class="lineNum">    1170 </span>            :                 }
+<span class="lineNum">    1171 </span>            :                 if (m_floats[2] &lt; minVal)
+<span class="lineNum">    1172 </span>            :                 {
+<span class="lineNum">    1173 </span>            :                         minIndex = 2;
+<span class="lineNum">    1174 </span>            :                         minVal =m_floats[2];
+<span class="lineNum">    1175 </span>            :                 }
+<span class="lineNum">    1176 </span>            :                 if (m_floats[3] &lt; minVal)
+<span class="lineNum">    1177 </span>            :                 {
+<span class="lineNum">    1178 </span>            :                         minIndex = 3;
+<span class="lineNum">    1179 </span>            :                         minVal = m_floats[3];
+<span class="lineNum">    1180 </span>            :                 }
+<span class="lineNum">    1181 </span>            :                 
+<span class="lineNum">    1182 </span>            :                 return minIndex;
+<span class="lineNum">    1183 </span>            :         }
+<span class="lineNum">    1184 </span>            : 
+<span class="lineNum">    1185 </span>            : 
+<span class="lineNum">    1186 </span>            :         SIMD_FORCE_INLINE int closestAxis4() const 
+<span class="lineNum">    1187 </span>            :         {
+<span class="lineNum">    1188 </span>            :                 return absolute4().maxAxis4();
+<span class="lineNum">    1189 </span>            :         }
+<span class="lineNum">    1190 </span>            : 
+<span class="lineNum">    1191 </span>            :         
+<span class="lineNum">    1192 </span>            :  
+<span class="lineNum">    1193 </span>            : 
+<span class="lineNum">    1194 </span>            :   /**@brief Set x,y,z and zero w 
+<span class="lineNum">    1195 </span>            :    * @param x Value of x
+<span class="lineNum">    1196 </span>            :    * @param y Value of y
+<span class="lineNum">    1197 </span>            :    * @param z Value of z
+<span class="lineNum">    1198 </span>            :    */
+<span class="lineNum">    1199 </span>            :                 
+<span class="lineNum">    1200 </span>            : 
+<span class="lineNum">    1201 </span>            : /*              void getValue(btScalar *m) const 
+<span class="lineNum">    1202 </span>            :                 {
+<span class="lineNum">    1203 </span>            :                         m[0] = m_floats[0];
+<span class="lineNum">    1204 </span>            :                         m[1] = m_floats[1];
+<span class="lineNum">    1205 </span>            :                         m[2] =m_floats[2];
+<span class="lineNum">    1206 </span>            :                 }
+<span class="lineNum">    1207 </span>            : */
+<span class="lineNum">    1208 </span>            : /**@brief Set the values 
+<span class="lineNum">    1209 </span>            :    * @param x Value of x
+<span class="lineNum">    1210 </span>            :    * @param y Value of y
+<span class="lineNum">    1211 </span>            :    * @param z Value of z
+<span class="lineNum">    1212 </span>            :    * @param w Value of w
+<span class="lineNum">    1213 </span>            :    */
+<span class="lineNum">    1214 </span>            :                 SIMD_FORCE_INLINE void  setValue(const btScalar&amp; _x, const btScalar&amp; _y, const btScalar&amp; _z,const btScalar&amp; _w)
+<span class="lineNum">    1215 </span>            :                 {
+<span class="lineNum">    1216 </span>            :                         m_floats[0]=_x;
+<span class="lineNum">    1217 </span>            :                         m_floats[1]=_y;
+<span class="lineNum">    1218 </span>            :                         m_floats[2]=_z;
+<span class="lineNum">    1219 </span>            :                         m_floats[3]=_w;
+<span class="lineNum">    1220 </span>            :                 }
+<span class="lineNum">    1221 </span>            : 
+<span class="lineNum">    1222 </span>            : 
+<span class="lineNum">    1223 </span>            : };
+<span class="lineNum">    1224 </span>            : 
+<span class="lineNum">    1225 </span>            : 
+<span class="lineNum">    1226 </span>            : ///btSwapVector3Endian swaps vector endianness, useful for network and cross-platform serialization
+<span class="lineNum">    1227 </span>            : SIMD_FORCE_INLINE void  btSwapScalarEndian(const btScalar&amp; sourceVal, btScalar&amp; destVal)
+<span class="lineNum">    1228 </span>            : {
+<span class="lineNum">    1229 </span>            :         #ifdef BT_USE_DOUBLE_PRECISION
+<span class="lineNum">    1230 </span>            :         unsigned char* dest = (unsigned char*) &amp;destVal;
+<span class="lineNum">    1231 </span>            :         unsigned char* src  = (unsigned char*) &amp;sourceVal;
+<span class="lineNum">    1232 </span>            :         dest[0] = src[7];
+<span class="lineNum">    1233 </span>            :     dest[1] = src[6];
+<span class="lineNum">    1234 </span>            :     dest[2] = src[5];
+<span class="lineNum">    1235 </span>            :     dest[3] = src[4];
+<span class="lineNum">    1236 </span>            :     dest[4] = src[3];
+<span class="lineNum">    1237 </span>            :     dest[5] = src[2];
+<span class="lineNum">    1238 </span>            :     dest[6] = src[1];
+<span class="lineNum">    1239 </span>            :     dest[7] = src[0];
+<span class="lineNum">    1240 </span>            : #else
+<span class="lineNum">    1241 </span>            :         unsigned char* dest = (unsigned char*) &amp;destVal;
+<span class="lineNum">    1242 </span>            :         unsigned char* src  = (unsigned char*) &amp;sourceVal;
+<span class="lineNum">    1243 </span>            :         dest[0] = src[3];
+<span class="lineNum">    1244 </span>            :     dest[1] = src[2];
+<span class="lineNum">    1245 </span>            :     dest[2] = src[1];
+<span class="lineNum">    1246 </span>            :     dest[3] = src[0];
+<span class="lineNum">    1247 </span>            : #endif //BT_USE_DOUBLE_PRECISION
+<span class="lineNum">    1248 </span>            : }
+<span class="lineNum">    1249 </span>            : ///btSwapVector3Endian swaps vector endianness, useful for network and cross-platform serialization
+<span class="lineNum">    1250 </span>            : SIMD_FORCE_INLINE void  btSwapVector3Endian(const btVector3&amp; sourceVec, btVector3&amp; destVec)
+<span class="lineNum">    1251 </span>            : {
+<span class="lineNum">    1252 </span>            :         for (int i=0;i&lt;4;i++)
+<span class="lineNum">    1253 </span>            :         {
+<span class="lineNum">    1254 </span>            :                 btSwapScalarEndian(sourceVec[i],destVec[i]);
+<span class="lineNum">    1255 </span>            :         }
+<span class="lineNum">    1256 </span>            : 
+<span class="lineNum">    1257 </span>            : }
+<span class="lineNum">    1258 </span>            : 
+<span class="lineNum">    1259 </span>            : ///btUnSwapVector3Endian swaps vector endianness, useful for network and cross-platform serialization
+<span class="lineNum">    1260 </span>            : SIMD_FORCE_INLINE void  btUnSwapVector3Endian(btVector3&amp; vector)
+<span class="lineNum">    1261 </span>            : {
+<span class="lineNum">    1262 </span>            : 
+<span class="lineNum">    1263 </span>            :         btVector3       swappedVec;
+<span class="lineNum">    1264 </span>            :         for (int i=0;i&lt;4;i++)
+<span class="lineNum">    1265 </span>            :         {
+<span class="lineNum">    1266 </span>            :                 btSwapScalarEndian(vector[i],swappedVec[i]);
+<span class="lineNum">    1267 </span>            :         }
+<span class="lineNum">    1268 </span>            :         vector = swappedVec;
+<span class="lineNum">    1269 </span>            : }
+<span class="lineNum">    1270 </span>            : 
+<span class="lineNum">    1271 </span>            : template &lt;class T&gt;
+<span class="lineNum">    1272 </span>            : SIMD_FORCE_INLINE void btPlaneSpace1 (const T&amp; n, T&amp; p, T&amp; q)
+<span class="lineNum">    1273 </span>            : {
+<span class="lineNum">    1274 </span>            :   if (btFabs(n[2]) &gt; SIMDSQRT12) {
+<span class="lineNum">    1275 </span>            :     // choose p in y-z plane
+<span class="lineNum">    1276 </span>            :     btScalar a = n[1]*n[1] + n[2]*n[2];
+<span class="lineNum">    1277 </span>            :     btScalar k = btRecipSqrt (a);
+<span class="lineNum">    1278 </span>            :     p[0] = 0;
+<span class="lineNum">    1279 </span>            :         p[1] = -n[2]*k;
+<span class="lineNum">    1280 </span>            :         p[2] = n[1]*k;
+<span class="lineNum">    1281 </span>            :     // set q = n x p
+<span class="lineNum">    1282 </span>            :     q[0] = a*k;
+<span class="lineNum">    1283 </span>            :         q[1] = -n[0]*p[2];
+<span class="lineNum">    1284 </span>            :         q[2] = n[0]*p[1];
+<span class="lineNum">    1285 </span>            :   }
+<span class="lineNum">    1286 </span>            :   else {
+<span class="lineNum">    1287 </span>            :     // choose p in x-y plane
+<span class="lineNum">    1288 </span>            :     btScalar a = n[0]*n[0] + n[1]*n[1];
+<span class="lineNum">    1289 </span>            :     btScalar k = btRecipSqrt (a);
+<span class="lineNum">    1290 </span>            :     p[0] = -n[1]*k;
+<span class="lineNum">    1291 </span>            :         p[1] = n[0]*k;
+<span class="lineNum">    1292 </span>            :         p[2] = 0;
+<span class="lineNum">    1293 </span>            :     // set q = n x p
+<span class="lineNum">    1294 </span>            :     q[0] = -n[2]*p[1];
+<span class="lineNum">    1295 </span>            :         q[1] = n[2]*p[0];
+<span class="lineNum">    1296 </span>            :         q[2] = a*k;
+<span class="lineNum">    1297 </span>            :   }
+<span class="lineNum">    1298 </span>            : }
+<span class="lineNum">    1299 </span>            : 
+<span class="lineNum">    1300 </span>            : 
+<span class="lineNum">    1301 </span>            : struct  btVector3FloatData
+<span class="lineNum">    1302 </span>            : {
+<span class="lineNum">    1303 </span>            :         float   m_floats[4];
+<span class="lineNum">    1304 </span>            : };
+<span class="lineNum">    1305 </span>            : 
+<span class="lineNum">    1306 </span>            : struct  btVector3DoubleData
+<span class="lineNum">    1307 </span>            : {
+<span class="lineNum">    1308 </span>            :         double  m_floats[4];
+<span class="lineNum">    1309 </span>            : 
+<span class="lineNum">    1310 </span>            : };
+<span class="lineNum">    1311 </span>            : 
+<span class="lineNum">    1312 </span>            : SIMD_FORCE_INLINE       void    btVector3::serializeFloat(struct        btVector3FloatData&amp; dataOut) const
+<span class="lineNum">    1313 </span>            : {
+<span class="lineNum">    1314 </span>            :         ///could also do a memcpy, check if it is worth it
+<span class="lineNum">    1315 </span>            :         for (int i=0;i&lt;4;i++)
+<span class="lineNum">    1316 </span>            :                 dataOut.m_floats[i] = float(m_floats[i]);
+<span class="lineNum">    1317 </span>            : }
+<span class="lineNum">    1318 </span>            : 
+<span class="lineNum">    1319 </span>            : SIMD_FORCE_INLINE void  btVector3::deSerializeFloat(const struct        btVector3FloatData&amp; dataIn)
+<span class="lineNum">    1320 </span>            : {
+<span class="lineNum">    1321 </span>            :         for (int i=0;i&lt;4;i++)
+<span class="lineNum">    1322 </span>            :                 m_floats[i] = btScalar(dataIn.m_floats[i]);
+<span class="lineNum">    1323 </span>            : }
+<span class="lineNum">    1324 </span>            : 
+<span class="lineNum">    1325 </span>            : 
+<span class="lineNum">    1326 </span>            : SIMD_FORCE_INLINE       void    btVector3::serializeDouble(struct       btVector3DoubleData&amp; dataOut) const
+<span class="lineNum">    1327 </span>            : {
+<span class="lineNum">    1328 </span>            :         ///could also do a memcpy, check if it is worth it
+<span class="lineNum">    1329 </span>            :         for (int i=0;i&lt;4;i++)
+<span class="lineNum">    1330 </span>            :                 dataOut.m_floats[i] = double(m_floats[i]);
+<span class="lineNum">    1331 </span>            : }
+<span class="lineNum">    1332 </span>            : 
+<span class="lineNum">    1333 </span>            : SIMD_FORCE_INLINE void  btVector3::deSerializeDouble(const struct       btVector3DoubleData&amp; dataIn)
+<span class="lineNum">    1334 </span>            : {
+<span class="lineNum">    1335 </span>            :         for (int i=0;i&lt;4;i++)
+<span class="lineNum">    1336 </span>            :                 m_floats[i] = btScalar(dataIn.m_floats[i]);
+<span class="lineNum">    1337 </span>            : }
+<span class="lineNum">    1338 </span>            : 
+<span class="lineNum">    1339 </span>            : 
+<span class="lineNum">    1340 </span>            : SIMD_FORCE_INLINE       void    btVector3::serialize(struct     btVector3Data&amp; dataOut) const
+<span class="lineNum">    1341 </span>            : {
+<span class="lineNum">    1342 </span>            :         ///could also do a memcpy, check if it is worth it
+<span class="lineNum">    1343 </span>            :         for (int i=0;i&lt;4;i++)
+<span class="lineNum">    1344 </span>            :                 dataOut.m_floats[i] = m_floats[i];
+<span class="lineNum">    1345 </span>            : }
+<span class="lineNum">    1346 </span>            : 
+<span class="lineNum">    1347 </span>            : SIMD_FORCE_INLINE void  btVector3::deSerialize(const struct     btVector3Data&amp; dataIn)
+<span class="lineNum">    1348 </span>            : {
+<span class="lineNum">    1349 </span>            :         for (int i=0;i&lt;4;i++)
+<span class="lineNum">    1350 </span>            :                 m_floats[i] = dataIn.m_floats[i];
+<span class="lineNum">    1351 </span>            : }
+<span class="lineNum">    1352 </span>            : 
+<span class="lineNum">    1353 </span>            : #endif //BT_VECTOR3_H
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

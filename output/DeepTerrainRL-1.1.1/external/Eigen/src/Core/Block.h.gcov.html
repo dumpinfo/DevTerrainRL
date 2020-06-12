@@ -1,0 +1,490 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/external/Eigen/src/Core/Block.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/external/Eigen/src/Core</a> - Block.h<span style="font-size: 80%;"> (source / <a href="Block.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">36</td>
+            <td class="headerCovTableEntry">44</td>
+            <td class="headerCovTableEntryMed">81.8 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">345</td>
+            <td class="headerCovTableEntry">532</td>
+            <td class="headerCovTableEntryLo">64.8 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : // This file is part of Eigen, a lightweight C++ template library</a>
+<span class="lineNum">       2 </span>            : // for linear algebra.
+<span class="lineNum">       3 </span>            : //
+<span class="lineNum">       4 </span>            : // Copyright (C) 2008 Gael Guennebaud &lt;gael.guennebaud@inria.fr&gt;
+<span class="lineNum">       5 </span>            : // Copyright (C) 2006-2010 Benoit Jacob &lt;jacob.benoit.1@gmail.com&gt;
+<span class="lineNum">       6 </span>            : //
+<span class="lineNum">       7 </span>            : // This Source Code Form is subject to the terms of the Mozilla
+<span class="lineNum">       8 </span>            : // Public License v. 2.0. If a copy of the MPL was not distributed
+<span class="lineNum">       9 </span>            : // with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : #ifndef EIGEN_BLOCK_H
+<span class="lineNum">      12 </span>            : #define EIGEN_BLOCK_H
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span>            : namespace Eigen { 
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : /** \class Block
+<span class="lineNum">      17 </span>            :   * \ingroup Core_Module
+<span class="lineNum">      18 </span>            :   *
+<span class="lineNum">      19 </span>            :   * \brief Expression of a fixed-size or dynamic-size block
+<span class="lineNum">      20 </span>            :   *
+<span class="lineNum">      21 </span>            :   * \param XprType the type of the expression in which we are taking a block
+<span class="lineNum">      22 </span>            :   * \param BlockRows the number of rows of the block we are taking at compile time (optional)
+<span class="lineNum">      23 </span>            :   * \param BlockCols the number of columns of the block we are taking at compile time (optional)
+<span class="lineNum">      24 </span>            :   *
+<span class="lineNum">      25 </span>            :   * This class represents an expression of either a fixed-size or dynamic-size block. It is the return
+<span class="lineNum">      26 </span>            :   * type of DenseBase::block(Index,Index,Index,Index) and DenseBase::block&lt;int,int&gt;(Index,Index) and
+<span class="lineNum">      27 </span>            :   * most of the time this is the only way it is used.
+<span class="lineNum">      28 </span>            :   *
+<span class="lineNum">      29 </span>            :   * However, if you want to directly maniputate block expressions,
+<span class="lineNum">      30 </span>            :   * for instance if you want to write a function returning such an expression, you
+<span class="lineNum">      31 </span>            :   * will need to use this class.
+<span class="lineNum">      32 </span>            :   *
+<span class="lineNum">      33 </span>            :   * Here is an example illustrating the dynamic case:
+<span class="lineNum">      34 </span>            :   * \include class_Block.cpp
+<span class="lineNum">      35 </span>            :   * Output: \verbinclude class_Block.out
+<span class="lineNum">      36 </span>            :   *
+<span class="lineNum">      37 </span>            :   * \note Even though this expression has dynamic size, in the case where \a XprType
+<span class="lineNum">      38 </span>            :   * has fixed size, this expression inherits a fixed maximal size which means that evaluating
+<span class="lineNum">      39 </span>            :   * it does not cause a dynamic memory allocation.
+<span class="lineNum">      40 </span>            :   *
+<span class="lineNum">      41 </span>            :   * Here is an example illustrating the fixed-size case:
+<span class="lineNum">      42 </span>            :   * \include class_FixedBlock.cpp
+<span class="lineNum">      43 </span>            :   * Output: \verbinclude class_FixedBlock.out
+<span class="lineNum">      44 </span>            :   *
+<span class="lineNum">      45 </span>            :   * \sa DenseBase::block(Index,Index,Index,Index), DenseBase::block(Index,Index), class VectorBlock
+<span class="lineNum">      46 </span>            :   */
+<span class="lineNum">      47 </span>            : 
+<span class="lineNum">      48 </span>            : namespace internal {
+<span class="lineNum">      49 </span>            : template&lt;typename XprType, int BlockRows, int BlockCols, bool InnerPanel&gt;
+<span class="lineNum">      50 </span>            : struct traits&lt;Block&lt;XprType, BlockRows, BlockCols, InnerPanel&gt; &gt; : traits&lt;XprType&gt;
+<span class="lineNum">      51 </span>            : {
+<span class="lineNum">      52 </span>            :   typedef typename traits&lt;XprType&gt;::Scalar Scalar;
+<span class="lineNum">      53 </span>            :   typedef typename traits&lt;XprType&gt;::StorageKind StorageKind;
+<span class="lineNum">      54 </span>            :   typedef typename traits&lt;XprType&gt;::XprKind XprKind;
+<span class="lineNum">      55 </span>            :   typedef typename nested&lt;XprType&gt;::type XprTypeNested;
+<span class="lineNum">      56 </span>            :   typedef typename remove_reference&lt;XprTypeNested&gt;::type _XprTypeNested;
+<span class="lineNum">      57 </span>            :   enum{
+<span class="lineNum">      58 </span>            :     MatrixRows = traits&lt;XprType&gt;::RowsAtCompileTime,
+<span class="lineNum">      59 </span>            :     MatrixCols = traits&lt;XprType&gt;::ColsAtCompileTime,
+<span class="lineNum">      60 </span>            :     RowsAtCompileTime = MatrixRows == 0 ? 0 : BlockRows,
+<span class="lineNum">      61 </span>            :     ColsAtCompileTime = MatrixCols == 0 ? 0 : BlockCols,
+<span class="lineNum">      62 </span>            :     MaxRowsAtCompileTime = BlockRows==0 ? 0
+<span class="lineNum">      63 </span>            :                          : RowsAtCompileTime != Dynamic ? int(RowsAtCompileTime)
+<span class="lineNum">      64 </span>            :                          : int(traits&lt;XprType&gt;::MaxRowsAtCompileTime),
+<span class="lineNum">      65 </span>            :     MaxColsAtCompileTime = BlockCols==0 ? 0
+<span class="lineNum">      66 </span>            :                          : ColsAtCompileTime != Dynamic ? int(ColsAtCompileTime)
+<span class="lineNum">      67 </span>            :                          : int(traits&lt;XprType&gt;::MaxColsAtCompileTime),
+<span class="lineNum">      68 </span>            :     XprTypeIsRowMajor = (int(traits&lt;XprType&gt;::Flags)&amp;RowMajorBit) != 0,
+<span class="lineNum">      69 </span>            :     IsDense = is_same&lt;StorageKind,Dense&gt;::value,
+<span class="lineNum">      70 </span>            :     IsRowMajor = (IsDense&amp;&amp;MaxRowsAtCompileTime==1&amp;&amp;MaxColsAtCompileTime!=1) ? 1
+<span class="lineNum">      71 </span>            :                : (IsDense&amp;&amp;MaxColsAtCompileTime==1&amp;&amp;MaxRowsAtCompileTime!=1) ? 0
+<span class="lineNum">      72 </span>            :                : XprTypeIsRowMajor,
+<span class="lineNum">      73 </span>            :     HasSameStorageOrderAsXprType = (IsRowMajor == XprTypeIsRowMajor),
+<span class="lineNum">      74 </span>            :     InnerSize = IsRowMajor ? int(ColsAtCompileTime) : int(RowsAtCompileTime),
+<span class="lineNum">      75 </span>            :     InnerStrideAtCompileTime = HasSameStorageOrderAsXprType
+<span class="lineNum">      76 </span>            :                              ? int(inner_stride_at_compile_time&lt;XprType&gt;::ret)
+<span class="lineNum">      77 </span>            :                              : int(outer_stride_at_compile_time&lt;XprType&gt;::ret),
+<span class="lineNum">      78 </span>            :     OuterStrideAtCompileTime = HasSameStorageOrderAsXprType
+<span class="lineNum">      79 </span>            :                              ? int(outer_stride_at_compile_time&lt;XprType&gt;::ret)
+<span class="lineNum">      80 </span>            :                              : int(inner_stride_at_compile_time&lt;XprType&gt;::ret),
+<span class="lineNum">      81 </span>            :     MaskPacketAccessBit = (InnerSize == Dynamic || (InnerSize % packet_traits&lt;Scalar&gt;::size) == 0)
+<span class="lineNum">      82 </span>            :                        &amp;&amp; (InnerStrideAtCompileTime == 1)
+<span class="lineNum">      83 </span>            :                         ? PacketAccessBit : 0,
+<span class="lineNum">      84 </span>            :     MaskAlignedBit = (InnerPanel &amp;&amp; (OuterStrideAtCompileTime!=Dynamic) &amp;&amp; (((OuterStrideAtCompileTime * int(sizeof(Scalar))) % 16) == 0)) ? AlignedBit : 0,
+<span class="lineNum">      85 </span>            :     FlagsLinearAccessBit = (RowsAtCompileTime == 1 || ColsAtCompileTime == 1 || (InnerPanel &amp;&amp; (traits&lt;XprType&gt;::Flags&amp;LinearAccessBit))) ? LinearAccessBit : 0,
+<span class="lineNum">      86 </span>            :     FlagsLvalueBit = is_lvalue&lt;XprType&gt;::value ? LvalueBit : 0,
+<span class="lineNum">      87 </span>            :     FlagsRowMajorBit = IsRowMajor ? RowMajorBit : 0,
+<span class="lineNum">      88 </span>            :     Flags0 = traits&lt;XprType&gt;::Flags &amp; ( (HereditaryBits &amp; ~RowMajorBit) |
+<span class="lineNum">      89 </span>            :                                         DirectAccessBit |
+<span class="lineNum">      90 </span>            :                                         MaskPacketAccessBit |
+<span class="lineNum">      91 </span>            :                                         MaskAlignedBit),
+<span class="lineNum">      92 </span>            :     Flags = Flags0 | FlagsLinearAccessBit | FlagsLvalueBit | FlagsRowMajorBit
+<span class="lineNum">      93 </span>            :   };
+<span class="lineNum">      94 </span>            : };
+<span class="lineNum">      95 </span>            : 
+<span class="lineNum">      96 </span>            : template&lt;typename XprType, int BlockRows=Dynamic, int BlockCols=Dynamic, bool InnerPanel = false,
+<span class="lineNum">      97 </span>            :          bool HasDirectAccess = internal::has_direct_access&lt;XprType&gt;::ret&gt; class BlockImpl_dense;
+<span class="lineNum">      98 </span>            :          
+<span class="lineNum">      99 </span>            : } // end namespace internal
+<span class="lineNum">     100 </span>            : 
+<a name="101"><span class="lineNum">     101 </span>            : template&lt;typename XprType, int BlockRows, int BlockCols, bool InnerPanel, typename StorageKind&gt; class BlockImpl;</a>
+<span class="lineNum">     102 </span>            : 
+<span class="lineNum">     103 </span><span class="lineCov">    1572884 : template&lt;typename XprType, int BlockRows, int BlockCols, bool InnerPanel&gt; class Block</span>
+<span class="lineNum">     104 </span>            :   : public BlockImpl&lt;XprType, BlockRows, BlockCols, InnerPanel, typename internal::traits&lt;XprType&gt;::StorageKind&gt;
+<span class="lineNum">     105 </span>            : {
+<span class="lineNum">     106 </span>            :     typedef BlockImpl&lt;XprType, BlockRows, BlockCols, InnerPanel, typename internal::traits&lt;XprType&gt;::StorageKind&gt; Impl;
+<span class="lineNum">     107 </span>            :   public:
+<span class="lineNum">     108 </span>            :     //typedef typename Impl::Base Base;
+<a name="109"><span class="lineNum">     109 </span>            :     typedef Impl Base;</a>
+<span class="lineNum">     110 </span>            :     EIGEN_GENERIC_PUBLIC_INTERFACE(Block)
+<span class="lineNum">     111 </span><span class="lineCov">       1171 :     EIGEN_INHERIT_ASSIGNMENT_OPERATORS(Block)</span>
+<span class="lineNum">     112 </span>            :   
+<a name="113"><span class="lineNum">     113 </span>            :     /** Column or Row constructor</a>
+<span class="lineNum">     114 </span>            :       */
+<span class="lineNum">     115 </span><span class="lineCov">    2037327 :     inline Block(XprType&amp; xpr, Index i) : Impl(xpr,i)</span>
+<span class="lineNum">     116 </span>            :     {
+<span class="lineNum">     117 </span><span class="lineCov">    2037327 :       eigen_assert( (i&gt;=0) &amp;&amp; (</span>
+<span class="lineNum">     118 </span>            :           ((BlockRows==1) &amp;&amp; (BlockCols==XprType::ColsAtCompileTime) &amp;&amp; i&lt;xpr.rows())
+<span class="lineNum">     119 </span>            :         ||((BlockRows==XprType::RowsAtCompileTime) &amp;&amp; (BlockCols==1) &amp;&amp; i&lt;xpr.cols())));
+<span class="lineNum">     120 </span><span class="lineCov">    2037327 :     }</span>
+<span class="lineNum">     121 </span>            : 
+<span class="lineNum">     122 </span>            :     /** Fixed-size constructor
+<span class="lineNum">     123 </span>            :       */
+<span class="lineNum">     124 </span>            :     inline Block(XprType&amp; xpr, Index a_startRow, Index a_startCol)
+<span class="lineNum">     125 </span>            :       : Impl(xpr, a_startRow, a_startCol)
+<span class="lineNum">     126 </span>            :     {
+<span class="lineNum">     127 </span>            :       EIGEN_STATIC_ASSERT(RowsAtCompileTime!=Dynamic &amp;&amp; ColsAtCompileTime!=Dynamic,THIS_METHOD_IS_ONLY_FOR_FIXED_SIZE)
+<span class="lineNum">     128 </span>            :       eigen_assert(a_startRow &gt;= 0 &amp;&amp; BlockRows &gt;= 1 &amp;&amp; a_startRow + BlockRows &lt;= xpr.rows()
+<span class="lineNum">     129 </span>            :              &amp;&amp; a_startCol &gt;= 0 &amp;&amp; BlockCols &gt;= 1 &amp;&amp; a_startCol + BlockCols &lt;= xpr.cols());
+<span class="lineNum">     130 </span>            :     }
+<span class="lineNum">     131 </span>            : 
+<a name="132"><span class="lineNum">     132 </span>            :     /** Dynamic-size constructor</a>
+<span class="lineNum">     133 </span>            :       */
+<span class="lineNum">     134 </span><span class="lineCov">   13894894 :     inline Block(XprType&amp; xpr,</span>
+<span class="lineNum">     135 </span>            :           Index a_startRow, Index a_startCol,
+<span class="lineNum">     136 </span>            :           Index blockRows, Index blockCols)
+<span class="lineNum">     137 </span><span class="lineCov">   13894894 :       : Impl(xpr, a_startRow, a_startCol, blockRows, blockCols)</span>
+<span class="lineNum">     138 </span>            :     {
+<span class="lineNum">     139 </span><span class="lineCov">     737497 :       eigen_assert((RowsAtCompileTime==Dynamic || RowsAtCompileTime==blockRows)</span>
+<span class="lineNum">     140 </span>            :           &amp;&amp; (ColsAtCompileTime==Dynamic || ColsAtCompileTime==blockCols));
+<span class="lineNum">     141 </span><span class="lineCov">   13894894 :       eigen_assert(a_startRow &gt;= 0 &amp;&amp; blockRows &gt;= 0 &amp;&amp; a_startRow  &lt;= xpr.rows() - blockRows</span>
+<span class="lineNum">     142 </span>            :           &amp;&amp; a_startCol &gt;= 0 &amp;&amp; blockCols &gt;= 0 &amp;&amp; a_startCol &lt;= xpr.cols() - blockCols);
+<span class="lineNum">     143 </span><span class="lineCov">   13894894 :     }</span>
+<span class="lineNum">     144 </span>            : };
+<span class="lineNum">     145 </span>            :          
+<span class="lineNum">     146 </span>            : // The generic default implementation for dense block simplu forward to the internal::BlockImpl_dense
+<a name="147"><span class="lineNum">     147 </span>            : // that must be specialized for direct and non-direct access...</a>
+<span class="lineNum">     148 </span>            : template&lt;typename XprType, int BlockRows, int BlockCols, bool InnerPanel&gt;
+<span class="lineNum">     149 </span><span class="lineCov">    1572884 : class BlockImpl&lt;XprType, BlockRows, BlockCols, InnerPanel, Dense&gt;</span>
+<span class="lineNum">     150 </span>            :   : public internal::BlockImpl_dense&lt;XprType, BlockRows, BlockCols, InnerPanel&gt;
+<span class="lineNum">     151 </span>            : {
+<span class="lineNum">     152 </span>            :     typedef internal::BlockImpl_dense&lt;XprType, BlockRows, BlockCols, InnerPanel&gt; Impl;
+<span class="lineNum">     153 </span>            :     typedef typename XprType::Index Index;
+<a name="154"><span class="lineNum">     154 </span>            :   public:</a>
+<a name="155"><span class="lineNum">     155 </span>            :     typedef Impl Base;</a>
+<span class="lineNum">     156 </span><span class="lineCov">       1171 :     EIGEN_INHERIT_ASSIGNMENT_OPERATORS(BlockImpl)</span>
+<a name="157"><span class="lineNum">     157 </span><span class="lineCov">    2037327 :     inline BlockImpl(XprType&amp; xpr, Index i) : Impl(xpr,i) {}</span></a>
+<span class="lineNum">     158 </span>            :     inline BlockImpl(XprType&amp; xpr, Index a_startRow, Index a_startCol) : Impl(xpr, a_startRow, a_startCol) {}
+<span class="lineNum">     159 </span><span class="lineCov">   13894894 :     inline BlockImpl(XprType&amp; xpr, Index a_startRow, Index a_startCol, Index blockRows, Index blockCols)</span>
+<span class="lineNum">     160 </span><span class="lineCov">   13894894 :       : Impl(xpr, a_startRow, a_startCol, blockRows, blockCols) {}</span>
+<span class="lineNum">     161 </span>            : };
+<span class="lineNum">     162 </span>            : 
+<span class="lineNum">     163 </span>            : namespace internal {
+<a name="164"><span class="lineNum">     164 </span>            : </a>
+<span class="lineNum">     165 </span>            : /** \internal Internal implementation of dense Blocks in the general case. */
+<span class="lineNum">     166 </span><span class="lineNoCov">          0 : template&lt;typename XprType, int BlockRows, int BlockCols, bool InnerPanel, bool HasDirectAccess&gt; class BlockImpl_dense</span>
+<span class="lineNum">     167 </span>            :   : public internal::dense_xpr_base&lt;Block&lt;XprType, BlockRows, BlockCols, InnerPanel&gt; &gt;::type
+<span class="lineNum">     168 </span>            : {
+<span class="lineNum">     169 </span>            :     typedef Block&lt;XprType, BlockRows, BlockCols, InnerPanel&gt; BlockType;
+<span class="lineNum">     170 </span>            :   public:
+<span class="lineNum">     171 </span>            : 
+<span class="lineNum">     172 </span>            :     typedef typename internal::dense_xpr_base&lt;BlockType&gt;::type Base;
+<span class="lineNum">     173 </span>            :     EIGEN_DENSE_PUBLIC_INTERFACE(BlockType)
+<span class="lineNum">     174 </span>            :     EIGEN_INHERIT_ASSIGNMENT_OPERATORS(BlockImpl_dense)
+<span class="lineNum">     175 </span>            : 
+<span class="lineNum">     176 </span>            :     class InnerIterator;
+<span class="lineNum">     177 </span>            : 
+<a name="178"><span class="lineNum">     178 </span>            :     /** Column or Row constructor</a>
+<span class="lineNum">     179 </span>            :       */
+<span class="lineNum">     180 </span><span class="lineNoCov">          0 :     inline BlockImpl_dense(XprType&amp; xpr, Index i)</span>
+<span class="lineNum">     181 </span>            :       : m_xpr(xpr),
+<span class="lineNum">     182 </span>            :         // It is a row if and only if BlockRows==1 and BlockCols==XprType::ColsAtCompileTime,
+<span class="lineNum">     183 </span>            :         // and it is a column if and only if BlockRows==XprType::RowsAtCompileTime and BlockCols==1,
+<span class="lineNum">     184 </span>            :         // all other cases are invalid.
+<span class="lineNum">     185 </span>            :         // The case a 1x1 matrix seems ambiguous, but the result is the same anyway.
+<span class="lineNum">     186 </span>            :         m_startRow( (BlockRows==1) &amp;&amp; (BlockCols==XprType::ColsAtCompileTime) ? i : 0),
+<span class="lineNum">     187 </span>            :         m_startCol( (BlockRows==XprType::RowsAtCompileTime) &amp;&amp; (BlockCols==1) ? i : 0),
+<span class="lineNum">     188 </span>            :         m_blockRows(BlockRows==1 ? 1 : xpr.rows()),
+<span class="lineNum">     189 </span><span class="lineNoCov">          0 :         m_blockCols(BlockCols==1 ? 1 : xpr.cols())</span>
+<span class="lineNum">     190 </span><span class="lineNoCov">          0 :     {}</span>
+<span class="lineNum">     191 </span>            : 
+<span class="lineNum">     192 </span>            :     /** Fixed-size constructor
+<span class="lineNum">     193 </span>            :       */
+<span class="lineNum">     194 </span>            :     inline BlockImpl_dense(XprType&amp; xpr, Index a_startRow, Index a_startCol)
+<span class="lineNum">     195 </span>            :       : m_xpr(xpr), m_startRow(a_startRow), m_startCol(a_startCol),
+<span class="lineNum">     196 </span>            :                     m_blockRows(BlockRows), m_blockCols(BlockCols)
+<span class="lineNum">     197 </span>            :     {}
+<span class="lineNum">     198 </span>            : 
+<span class="lineNum">     199 </span>            :     /** Dynamic-size constructor
+<span class="lineNum">     200 </span>            :       */
+<span class="lineNum">     201 </span>            :     inline BlockImpl_dense(XprType&amp; xpr,
+<span class="lineNum">     202 </span>            :           Index a_startRow, Index a_startCol,
+<span class="lineNum">     203 </span>            :           Index blockRows, Index blockCols)
+<span class="lineNum">     204 </span>            :       : m_xpr(xpr), m_startRow(a_startRow), m_startCol(a_startCol),
+<span class="lineNum">     205 </span>            :                     m_blockRows(blockRows), m_blockCols(blockCols)
+<a name="206"><span class="lineNum">     206 </span>            :     {}</a>
+<a name="207"><span class="lineNum">     207 </span>            : </a>
+<span class="lineNum">     208 </span><span class="lineNoCov">          0 :     inline Index rows() const { return m_blockRows.value(); }</span>
+<span class="lineNum">     209 </span><span class="lineNoCov">          0 :     inline Index cols() const { return m_blockCols.value(); }</span>
+<span class="lineNum">     210 </span>            : 
+<span class="lineNum">     211 </span>            :     inline Scalar&amp; coeffRef(Index rowId, Index colId)
+<span class="lineNum">     212 </span>            :     {
+<span class="lineNum">     213 </span>            :       EIGEN_STATIC_ASSERT_LVALUE(XprType)
+<span class="lineNum">     214 </span>            :       return m_xpr.const_cast_derived()
+<span class="lineNum">     215 </span>            :                .coeffRef(rowId + m_startRow.value(), colId + m_startCol.value());
+<span class="lineNum">     216 </span>            :     }
+<span class="lineNum">     217 </span>            : 
+<span class="lineNum">     218 </span>            :     inline const Scalar&amp; coeffRef(Index rowId, Index colId) const
+<span class="lineNum">     219 </span>            :     {
+<span class="lineNum">     220 </span>            :       return m_xpr.derived()
+<span class="lineNum">     221 </span>            :                .coeffRef(rowId + m_startRow.value(), colId + m_startCol.value());
+<a name="222"><span class="lineNum">     222 </span>            :     }</a>
+<span class="lineNum">     223 </span>            : 
+<span class="lineNum">     224 </span><span class="lineNoCov">          0 :     EIGEN_STRONG_INLINE const CoeffReturnType coeff(Index rowId, Index colId) const</span>
+<span class="lineNum">     225 </span>            :     {
+<span class="lineNum">     226 </span><span class="lineNoCov">          0 :       return m_xpr.coeff(rowId + m_startRow.value(), colId + m_startCol.value());</span>
+<span class="lineNum">     227 </span>            :     }
+<span class="lineNum">     228 </span>            : 
+<span class="lineNum">     229 </span>            :     inline Scalar&amp; coeffRef(Index index)
+<span class="lineNum">     230 </span>            :     {
+<span class="lineNum">     231 </span>            :       EIGEN_STATIC_ASSERT_LVALUE(XprType)
+<span class="lineNum">     232 </span>            :       return m_xpr.const_cast_derived()
+<span class="lineNum">     233 </span>            :              .coeffRef(m_startRow.value() + (RowsAtCompileTime == 1 ? 0 : index),
+<span class="lineNum">     234 </span>            :                        m_startCol.value() + (RowsAtCompileTime == 1 ? index : 0));
+<span class="lineNum">     235 </span>            :     }
+<span class="lineNum">     236 </span>            : 
+<span class="lineNum">     237 </span>            :     inline const Scalar&amp; coeffRef(Index index) const
+<span class="lineNum">     238 </span>            :     {
+<span class="lineNum">     239 </span>            :       return m_xpr.const_cast_derived()
+<span class="lineNum">     240 </span>            :              .coeffRef(m_startRow.value() + (RowsAtCompileTime == 1 ? 0 : index),
+<span class="lineNum">     241 </span>            :                        m_startCol.value() + (RowsAtCompileTime == 1 ? index : 0));
+<span class="lineNum">     242 </span>            :     }
+<span class="lineNum">     243 </span>            : 
+<span class="lineNum">     244 </span>            :     inline const CoeffReturnType coeff(Index index) const
+<span class="lineNum">     245 </span>            :     {
+<span class="lineNum">     246 </span>            :       return m_xpr
+<span class="lineNum">     247 </span>            :              .coeff(m_startRow.value() + (RowsAtCompileTime == 1 ? 0 : index),
+<span class="lineNum">     248 </span>            :                     m_startCol.value() + (RowsAtCompileTime == 1 ? index : 0));
+<span class="lineNum">     249 </span>            :     }
+<span class="lineNum">     250 </span>            : 
+<span class="lineNum">     251 </span>            :     template&lt;int LoadMode&gt;
+<span class="lineNum">     252 </span>            :     inline PacketScalar packet(Index rowId, Index colId) const
+<span class="lineNum">     253 </span>            :     {
+<span class="lineNum">     254 </span>            :       return m_xpr.template packet&lt;Unaligned&gt;
+<span class="lineNum">     255 </span>            :               (rowId + m_startRow.value(), colId + m_startCol.value());
+<span class="lineNum">     256 </span>            :     }
+<span class="lineNum">     257 </span>            : 
+<span class="lineNum">     258 </span>            :     template&lt;int LoadMode&gt;
+<span class="lineNum">     259 </span>            :     inline void writePacket(Index rowId, Index colId, const PacketScalar&amp; val)
+<span class="lineNum">     260 </span>            :     {
+<span class="lineNum">     261 </span>            :       m_xpr.const_cast_derived().template writePacket&lt;Unaligned&gt;
+<span class="lineNum">     262 </span>            :               (rowId + m_startRow.value(), colId + m_startCol.value(), val);
+<span class="lineNum">     263 </span>            :     }
+<span class="lineNum">     264 </span>            : 
+<span class="lineNum">     265 </span>            :     template&lt;int LoadMode&gt;
+<span class="lineNum">     266 </span>            :     inline PacketScalar packet(Index index) const
+<span class="lineNum">     267 </span>            :     {
+<span class="lineNum">     268 </span>            :       return m_xpr.template packet&lt;Unaligned&gt;
+<span class="lineNum">     269 </span>            :               (m_startRow.value() + (RowsAtCompileTime == 1 ? 0 : index),
+<span class="lineNum">     270 </span>            :                m_startCol.value() + (RowsAtCompileTime == 1 ? index : 0));
+<span class="lineNum">     271 </span>            :     }
+<span class="lineNum">     272 </span>            : 
+<span class="lineNum">     273 </span>            :     template&lt;int LoadMode&gt;
+<span class="lineNum">     274 </span>            :     inline void writePacket(Index index, const PacketScalar&amp; val)
+<span class="lineNum">     275 </span>            :     {
+<span class="lineNum">     276 </span>            :       m_xpr.const_cast_derived().template writePacket&lt;Unaligned&gt;
+<span class="lineNum">     277 </span>            :          (m_startRow.value() + (RowsAtCompileTime == 1 ? 0 : index),
+<span class="lineNum">     278 </span>            :           m_startCol.value() + (RowsAtCompileTime == 1 ? index : 0), val);
+<span class="lineNum">     279 </span>            :     }
+<span class="lineNum">     280 </span>            : 
+<span class="lineNum">     281 </span>            :     #ifdef EIGEN_PARSED_BY_DOXYGEN
+<span class="lineNum">     282 </span>            :     /** \sa MapBase::data() */
+<span class="lineNum">     283 </span>            :     inline const Scalar* data() const;
+<span class="lineNum">     284 </span>            :     inline Index innerStride() const;
+<span class="lineNum">     285 </span>            :     inline Index outerStride() const;
+<span class="lineNum">     286 </span>            :     #endif
+<span class="lineNum">     287 </span>            : 
+<span class="lineNum">     288 </span>            :     const typename internal::remove_all&lt;typename XprType::Nested&gt;::type&amp; nestedExpression() const 
+<span class="lineNum">     289 </span>            :     { 
+<span class="lineNum">     290 </span>            :       return m_xpr; 
+<span class="lineNum">     291 </span>            :     }
+<span class="lineNum">     292 </span>            :       
+<span class="lineNum">     293 </span>            :     Index startRow() const 
+<span class="lineNum">     294 </span>            :     { 
+<span class="lineNum">     295 </span>            :       return m_startRow.value(); 
+<span class="lineNum">     296 </span>            :     }
+<span class="lineNum">     297 </span>            :       
+<span class="lineNum">     298 </span>            :     Index startCol() const 
+<span class="lineNum">     299 </span>            :     { 
+<span class="lineNum">     300 </span>            :       return m_startCol.value(); 
+<span class="lineNum">     301 </span>            :     }
+<span class="lineNum">     302 </span>            : 
+<span class="lineNum">     303 </span>            :   protected:
+<span class="lineNum">     304 </span>            : 
+<span class="lineNum">     305 </span>            :     const typename XprType::Nested m_xpr;
+<span class="lineNum">     306 </span>            :     const internal::variable_if_dynamic&lt;Index, XprType::RowsAtCompileTime == 1 ? 0 : Dynamic&gt; m_startRow;
+<span class="lineNum">     307 </span>            :     const internal::variable_if_dynamic&lt;Index, XprType::ColsAtCompileTime == 1 ? 0 : Dynamic&gt; m_startCol;
+<span class="lineNum">     308 </span>            :     const internal::variable_if_dynamic&lt;Index, RowsAtCompileTime&gt; m_blockRows;
+<span class="lineNum">     309 </span>            :     const internal::variable_if_dynamic&lt;Index, ColsAtCompileTime&gt; m_blockCols;
+<span class="lineNum">     310 </span>            : };
+<span class="lineNum">     311 </span>            : 
+<a name="312"><span class="lineNum">     312 </span>            : /** \internal Internal implementation of dense Blocks in the direct access case.*/</a>
+<span class="lineNum">     313 </span>            : template&lt;typename XprType, int BlockRows, int BlockCols, bool InnerPanel&gt;
+<span class="lineNum">     314 </span><span class="lineCov">    1572884 : class BlockImpl_dense&lt;XprType,BlockRows,BlockCols, InnerPanel,true&gt;</span>
+<span class="lineNum">     315 </span>            :   : public MapBase&lt;Block&lt;XprType, BlockRows, BlockCols, InnerPanel&gt; &gt;
+<span class="lineNum">     316 </span>            : {
+<span class="lineNum">     317 </span>            :     typedef Block&lt;XprType, BlockRows, BlockCols, InnerPanel&gt; BlockType;
+<span class="lineNum">     318 </span>            :   public:
+<span class="lineNum">     319 </span>            : 
+<a name="320"><span class="lineNum">     320 </span>            :     typedef MapBase&lt;BlockType&gt; Base;</a>
+<span class="lineNum">     321 </span>            :     EIGEN_DENSE_PUBLIC_INTERFACE(BlockType)
+<span class="lineNum">     322 </span><span class="lineCov">       1171 :     EIGEN_INHERIT_ASSIGNMENT_OPERATORS(BlockImpl_dense)</span>
+<span class="lineNum">     323 </span>            : 
+<a name="324"><span class="lineNum">     324 </span>            :     /** Column or Row constructor</a>
+<span class="lineNum">     325 </span>            :       */
+<span class="lineNum">     326 </span><span class="lineCov">    2037327 :     inline BlockImpl_dense(XprType&amp; xpr, Index i)</span>
+<span class="lineNum">     327 </span><span class="lineCov">    2037327 :       : Base(internal::const_cast_ptr(&amp;xpr.coeffRef(</span>
+<span class="lineNum">     328 </span>            :               (BlockRows==1) &amp;&amp; (BlockCols==XprType::ColsAtCompileTime) ? i : 0,
+<span class="lineNum">     329 </span>            :               (BlockRows==XprType::RowsAtCompileTime) &amp;&amp; (BlockCols==1) ? i : 0)),
+<span class="lineNum">     330 </span>            :              BlockRows==1 ? 1 : xpr.rows(),
+<span class="lineNum">     331 </span>            :              BlockCols==1 ? 1 : xpr.cols()),
+<span class="lineNum">     332 </span><span class="lineCov">    3905776 :         m_xpr(xpr)</span>
+<span class="lineNum">     333 </span>            :     {
+<span class="lineNum">     334 </span><span class="lineCov">    2037327 :       init();</span>
+<span class="lineNum">     335 </span><span class="lineCov">    2037327 :     }</span>
+<span class="lineNum">     336 </span>            : 
+<span class="lineNum">     337 </span>            :     /** Fixed-size constructor
+<span class="lineNum">     338 </span>            :       */
+<span class="lineNum">     339 </span>            :     inline BlockImpl_dense(XprType&amp; xpr, Index startRow, Index startCol)
+<span class="lineNum">     340 </span>            :       : Base(internal::const_cast_ptr(&amp;xpr.coeffRef(startRow,startCol))), m_xpr(xpr)
+<span class="lineNum">     341 </span>            :     {
+<span class="lineNum">     342 </span>            :       init();
+<span class="lineNum">     343 </span>            :     }
+<span class="lineNum">     344 </span>            : 
+<a name="345"><span class="lineNum">     345 </span>            :     /** Dynamic-size constructor</a>
+<span class="lineNum">     346 </span>            :       */
+<span class="lineNum">     347 </span><span class="lineCov">   13894894 :     inline BlockImpl_dense(XprType&amp; xpr,</span>
+<span class="lineNum">     348 </span>            :           Index startRow, Index startCol,
+<span class="lineNum">     349 </span>            :           Index blockRows, Index blockCols)
+<span class="lineNum">     350 </span><span class="lineCov">   13894894 :       : Base(internal::const_cast_ptr(&amp;xpr.coeffRef(startRow,startCol)), blockRows, blockCols),</span>
+<span class="lineNum">     351 </span><span class="lineCov">   13894894 :         m_xpr(xpr)</span>
+<span class="lineNum">     352 </span>            :     {
+<span class="lineNum">     353 </span><span class="lineCov">   13894894 :       init();</span>
+<span class="lineNum">     354 </span><span class="lineCov">   13894894 :     }</span>
+<span class="lineNum">     355 </span>            : 
+<span class="lineNum">     356 </span>            :     const typename internal::remove_all&lt;typename XprType::Nested&gt;::type&amp; nestedExpression() const 
+<span class="lineNum">     357 </span>            :     { 
+<span class="lineNum">     358 </span>            :       return m_xpr; 
+<span class="lineNum">     359 </span>            :     }
+<a name="360"><span class="lineNum">     360 </span>            :       </a>
+<span class="lineNum">     361 </span>            :     /** \sa MapBase::innerStride() */
+<span class="lineNum">     362 </span><span class="lineCov">   93688048 :     inline Index innerStride() const</span>
+<span class="lineNum">     363 </span>            :     {
+<span class="lineNum">     364 </span>            :       return internal::traits&lt;BlockType&gt;::HasSameStorageOrderAsXprType
+<span class="lineNum">     365 </span><span class="lineCov">   89925794 :              ? m_xpr.innerStride()</span>
+<span class="lineNum">     366 </span><span class="lineCov">   93688048 :              : m_xpr.outerStride();</span>
+<span class="lineNum">     367 </span>            :     }
+<a name="368"><span class="lineNum">     368 </span>            : </a>
+<span class="lineNum">     369 </span>            :     /** \sa MapBase::outerStride() */
+<span class="lineNum">     370 </span><span class="lineCov">   82758653 :     inline Index outerStride() const</span>
+<span class="lineNum">     371 </span>            :     {
+<span class="lineNum">     372 </span><span class="lineCov">   82758653 :       return m_outerStride;</span>
+<span class="lineNum">     373 </span>            :     }
+<span class="lineNum">     374 </span>            : 
+<span class="lineNum">     375 </span>            :   #ifndef __SUNPRO_CC
+<span class="lineNum">     376 </span>            :   // FIXME sunstudio is not friendly with the above friend...
+<span class="lineNum">     377 </span>            :   // META-FIXME there is no 'friend' keyword around here. Is this obsolete?
+<span class="lineNum">     378 </span>            :   protected:
+<span class="lineNum">     379 </span>            :   #endif
+<span class="lineNum">     380 </span>            : 
+<span class="lineNum">     381 </span>            :     #ifndef EIGEN_PARSED_BY_DOXYGEN
+<span class="lineNum">     382 </span>            :     /** \internal used by allowAligned() */
+<span class="lineNum">     383 </span>            :     inline BlockImpl_dense(XprType&amp; xpr, const Scalar* data, Index blockRows, Index blockCols)
+<span class="lineNum">     384 </span>            :       : Base(data, blockRows, blockCols), m_xpr(xpr)
+<span class="lineNum">     385 </span>            :     {
+<span class="lineNum">     386 </span>            :       init();
+<span class="lineNum">     387 </span>            :     }
+<span class="lineNum">     388 </span>            :     #endif
+<a name="389"><span class="lineNum">     389 </span>            : </a>
+<span class="lineNum">     390 </span>            :   protected:
+<span class="lineNum">     391 </span><span class="lineCov">   15932221 :     void init()</span>
+<span class="lineNum">     392 </span>            :     {
+<span class="lineNum">     393 </span><span class="lineCov">   15932221 :       m_outerStride = internal::traits&lt;BlockType&gt;::HasSameStorageOrderAsXprType</span>
+<span class="lineNum">     394 </span><span class="lineCov">   15471505 :                     ? m_xpr.outerStride()</span>
+<span class="lineNum">     395 </span>            :                     : m_xpr.innerStride();
+<span class="lineNum">     396 </span><span class="lineCov">   15932221 :     }</span>
+<span class="lineNum">     397 </span>            : 
+<span class="lineNum">     398 </span>            :     typename XprType::Nested m_xpr;
+<span class="lineNum">     399 </span>            :     Index m_outerStride;
+<span class="lineNum">     400 </span>            : };
+<span class="lineNum">     401 </span>            : 
+<span class="lineNum">     402 </span>            : } // end namespace internal
+<span class="lineNum">     403 </span>            : 
+<span class="lineNum">     404 </span>            : } // end namespace Eigen
+<span class="lineNum">     405 </span>            : 
+<span class="lineNum">     406 </span>            : #endif // EIGEN_BLOCK_H
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

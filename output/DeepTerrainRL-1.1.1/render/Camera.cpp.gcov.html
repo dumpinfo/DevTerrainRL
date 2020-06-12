@@ -1,0 +1,442 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/render/Camera.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/render</a> - Camera.cpp<span style="font-size: 80%;"> (source / <a href="Camera.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">139</td>
+            <td class="headerCovTableEntry">214</td>
+            <td class="headerCovTableEntryLo">65.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">27</td>
+            <td class="headerCovTableEntry">38</td>
+            <td class="headerCovTableEntryLo">71.1 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;Camera.h&quot;</a>
+<span class="lineNum">       2 </span>            : #include &lt;iostream&gt;
+<span class="lineNum">       3 </span>            : // TODO: pull out into some util/platform header file.
+<span class="lineNum">       4 </span>            : #ifdef __APPLE__
+<span class="lineNum">       5 </span>            : #include &lt;GLUT/glut.h&gt;
+<span class="lineNum">       6 </span>            : #else
+<span class="lineNum">       7 </span>            : #include &lt;GL/glut.h&gt;
+<a name="8"><span class="lineNum">       8 </span>            : #endif</a>
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span><span class="lineCov">          1 : cCamera::cCamera()</span>
+<span class="lineNum">      11 </span>            : {
+<span class="lineNum">      12 </span><span class="lineCov">          1 :         mPosition = tVector(0, 0, 1, 0);</span>
+<span class="lineNum">      13 </span><span class="lineCov">          1 :         mFocus = tVector(0, 0, 0, 0);</span>
+<span class="lineNum">      14 </span><span class="lineCov">          1 :         mUp = tVector(0, 1, 0, 0);</span>
+<span class="lineNum">      15 </span><span class="lineCov">          1 :         mNearZ = 0;</span>
+<span class="lineNum">      16 </span><span class="lineCov">          1 :         mFarZ = 1;</span>
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span><span class="lineCov">          1 :         mProj = eProjPerspecctive;</span>
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span><span class="lineCov">          1 :         mMouseDown = 0;</span>
+<span class="lineNum">      21 </span><span class="lineCov">          1 :         mMousePos = tVector::Zero();</span>
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span><span class="lineCov">          1 :         Resize(1, 1);</span>
+<span class="lineNum">      24 </span><span class="lineCov">          1 :         SetProjFocalLen((mFocus - mPosition).norm());</span>
+<a name="25"><span class="lineNum">      25 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">      26 </span>            : 
+<span class="lineNum">      27 </span><span class="lineCov">          3 : cCamera::~cCamera()</span>
+<span class="lineNum">      28 </span>            : {
+<a name="29"><span class="lineNum">      29 </span><span class="lineCov">          3 : }</span></a>
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span><span class="lineCov">          2 : cCamera::cCamera(const tVector&amp; pos, const tVector&amp; focus, const tVector&amp; up,</span>
+<span class="lineNum">      32 </span><span class="lineCov">          2 :                                 double w, double h, double near_z, double far_z)</span>
+<span class="lineNum">      33 </span>            : {
+<span class="lineNum">      34 </span><span class="lineCov">          2 :         mPosition = pos;</span>
+<span class="lineNum">      35 </span><span class="lineCov">          2 :         mFocus = focus;</span>
+<span class="lineNum">      36 </span><span class="lineCov">          2 :         mUp = up;</span>
+<span class="lineNum">      37 </span><span class="lineCov">          2 :         mNearZ = near_z;</span>
+<span class="lineNum">      38 </span><span class="lineCov">          2 :         mFarZ = far_z;</span>
+<span class="lineNum">      39 </span>            :         
+<span class="lineNum">      40 </span><span class="lineCov">          2 :         Resize(w, h);</span>
+<span class="lineNum">      41 </span>            : 
+<span class="lineNum">      42 </span><span class="lineCov">          2 :         mMouseDown = 0;</span>
+<span class="lineNum">      43 </span><span class="lineCov">          2 :         mMousePos = tVector::Zero();</span>
+<span class="lineNum">      44 </span><span class="lineCov">          2 :         SetProjFocalLen((mFocus - mPosition).norm());</span>
+<a name="45"><span class="lineNum">      45 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">      46 </span>            : 
+<span class="lineNum">      47 </span><span class="lineCov">        177 : const tVector&amp; cCamera::GetPosition() const</span>
+<span class="lineNum">      48 </span>            : {
+<span class="lineNum">      49 </span><span class="lineCov">        177 :         return mPosition;</span>
+<a name="50"><span class="lineNum">      50 </span>            : }</a>
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span><span class="lineCov">        478 : const tVector&amp; cCamera::GetFocus() const</span>
+<span class="lineNum">      53 </span>            : {
+<span class="lineNum">      54 </span><span class="lineCov">        478 :         return mFocus;</span>
+<a name="55"><span class="lineNum">      55 </span>            : }</a>
+<span class="lineNum">      56 </span>            : 
+<span class="lineNum">      57 </span><span class="lineCov">         88 : const tVector&amp; cCamera::GetUp() const</span>
+<span class="lineNum">      58 </span>            : {
+<span class="lineNum">      59 </span><span class="lineCov">         88 :         return mUp;</span>
+<a name="60"><span class="lineNum">      60 </span>            : }</a>
+<span class="lineNum">      61 </span>            : 
+<span class="lineNum">      62 </span><span class="lineCov">         88 : tVector cCamera::GetViewDir() const</span>
+<span class="lineNum">      63 </span>            : {
+<span class="lineNum">      64 </span><span class="lineCov">         88 :         tVector dir = mFocus - mPosition;</span>
+<span class="lineNum">      65 </span><span class="lineCov">         88 :         dir[3] = 0;</span>
+<span class="lineNum">      66 </span><span class="lineCov">         88 :         dir = dir.normalized();</span>
+<span class="lineNum">      67 </span><span class="lineCov">         88 :         return dir;</span>
+<span class="lineNum">      68 </span>            : }
+<a name="69"><span class="lineNum">      69 </span>            : </a>
+<span class="lineNum">      70 </span>            : 
+<span class="lineNum">      71 </span><span class="lineCov">        566 : double cCamera::GetWidth() const</span>
+<span class="lineNum">      72 </span>            : {
+<a name="73"><span class="lineNum">      73 </span><span class="lineCov">        566 :         return mWidth;</span></a>
+<span class="lineNum">      74 </span>            : }
+<span class="lineNum">      75 </span><span class="lineCov">        566 : double cCamera::GetHeight() const</span>
+<span class="lineNum">      76 </span>            : {
+<span class="lineNum">      77 </span><span class="lineCov">        566 :         return mWidth / mAspectRatio;</span>
+<a name="78"><span class="lineNum">      78 </span>            : }</a>
+<span class="lineNum">      79 </span>            : 
+<span class="lineNum">      80 </span><span class="lineCov">        230 : double cCamera::GetAspectRatio() const</span>
+<span class="lineNum">      81 </span>            : {
+<span class="lineNum">      82 </span><span class="lineCov">        230 :         return mAspectRatio;</span>
+<span class="lineNum">      83 </span>            : }
+<a name="84"><span class="lineNum">      84 </span>            : </a>
+<span class="lineNum">      85 </span>            : 
+<span class="lineNum">      86 </span><span class="lineCov">         86 : double cCamera::GetNearZ() const</span>
+<span class="lineNum">      87 </span>            : {
+<span class="lineNum">      88 </span><span class="lineCov">         86 :         return mNearZ;</span>
+<a name="89"><span class="lineNum">      89 </span>            : }</a>
+<span class="lineNum">      90 </span>            : 
+<span class="lineNum">      91 </span><span class="lineCov">         86 : double cCamera::GetFarZ() const</span>
+<span class="lineNum">      92 </span>            : {
+<span class="lineNum">      93 </span><span class="lineCov">         86 :         return mFarZ;</span>
+<a name="94"><span class="lineNum">      94 </span>            : }</a>
+<span class="lineNum">      95 </span>            : 
+<span class="lineNum">      96 </span><span class="lineNoCov">          0 : double cCamera::CalcFOV() const</span>
+<span class="lineNum">      97 </span>            : {
+<span class="lineNum">      98 </span><span class="lineNoCov">          0 :         double focal_len = mProjFocalLen;</span>
+<span class="lineNum">      99 </span><span class="lineNoCov">          0 :         double h = GetHeight();</span>
+<span class="lineNum">     100 </span><span class="lineNoCov">          0 :         double fov = std::atan(h * 0.5 / focal_len) * 2;</span>
+<span class="lineNum">     101 </span><span class="lineNoCov">          0 :         return fov;</span>
+<span class="lineNum">     102 </span>            : }
+<a name="103"><span class="lineNum">     103 </span>            : </a>
+<span class="lineNum">     104 </span>            : 
+<span class="lineNum">     105 </span><span class="lineNoCov">          0 : void cCamera::SetPosition(const tVector&amp; pos)</span>
+<span class="lineNum">     106 </span>            : {
+<span class="lineNum">     107 </span><span class="lineNoCov">          0 :         mPosition = pos;</span>
+<a name="108"><span class="lineNum">     108 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     109 </span>            : 
+<span class="lineNum">     110 </span><span class="lineNoCov">          0 : void cCamera::SetFocus(const tVector&amp; focus)</span>
+<span class="lineNum">     111 </span>            : {
+<span class="lineNum">     112 </span><span class="lineNoCov">          0 :         mFocus = focus;</span>
+<a name="113"><span class="lineNum">     113 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     114 </span>            : 
+<span class="lineNum">     115 </span><span class="lineNoCov">          0 : void cCamera::SetUp(const tVector&amp; up)</span>
+<span class="lineNum">     116 </span>            : {
+<span class="lineNum">     117 </span><span class="lineNoCov">          0 :         mUp = up;</span>
+<a name="118"><span class="lineNum">     118 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     119 </span>            : 
+<span class="lineNum">     120 </span><span class="lineCov">          7 : void cCamera::Resize(double w, double h)</span>
+<span class="lineNum">     121 </span>            : {
+<span class="lineNum">     122 </span><span class="lineCov">          7 :         mWidth = w;</span>
+<span class="lineNum">     123 </span><span class="lineCov">          7 :         mAspectRatio = w / h;</span>
+<a name="124"><span class="lineNum">     124 </span><span class="lineCov">          7 : }</span></a>
+<span class="lineNum">     125 </span>            : 
+<span class="lineNum">     126 </span><span class="lineCov">          3 : void cCamera::SetProjFocalLen(double len)</span>
+<span class="lineNum">     127 </span>            : {
+<span class="lineNum">     128 </span><span class="lineCov">          3 :         mProjFocalLen = len;</span>
+<a name="129"><span class="lineNum">     129 </span><span class="lineCov">          3 : }</span></a>
+<span class="lineNum">     130 </span>            : 
+<span class="lineNum">     131 </span><span class="lineNoCov">          0 : void cCamera::TranslatePos(const tVector&amp; pos)</span>
+<span class="lineNum">     132 </span>            : {
+<span class="lineNum">     133 </span><span class="lineNoCov">          0 :         tVector delta = pos - mPosition;</span>
+<span class="lineNum">     134 </span><span class="lineNoCov">          0 :         mFocus += delta;</span>
+<span class="lineNum">     135 </span><span class="lineNoCov">          0 :         mPosition = pos;</span>
+<a name="136"><span class="lineNum">     136 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     137 </span>            : 
+<span class="lineNum">     138 </span><span class="lineCov">        225 : void cCamera::TranslateFocus(const tVector&amp; focus)</span>
+<span class="lineNum">     139 </span>            : {
+<span class="lineNum">     140 </span><span class="lineCov">        225 :         tVector delta = focus - mFocus;</span>
+<span class="lineNum">     141 </span><span class="lineCov">        225 :         mPosition += delta;</span>
+<span class="lineNum">     142 </span><span class="lineCov">        225 :         mFocus = focus;</span>
+<span class="lineNum">     143 </span><span class="lineCov">        225 : }</span>
+<a name="144"><span class="lineNum">     144 </span>            : </a>
+<span class="lineNum">     145 </span>            : // screent pos normalized between [-1, 1] with positive y pointing up
+<span class="lineNum">     146 </span><span class="lineCov">          4 : tVector cCamera::ScreenToWorldPos(const tVector&amp; screen_pos) const</span>
+<span class="lineNum">     147 </span>            : {
+<span class="lineNum">     148 </span><span class="lineCov">          4 :         tMatrix T = BuildViewWorldMatrix();</span>
+<span class="lineNum">     149 </span><span class="lineCov">          4 :         double w = GetWidth();</span>
+<span class="lineNum">     150 </span><span class="lineCov">          4 :         double h = GetHeight();</span>
+<span class="lineNum">     151 </span>            : 
+<span class="lineNum">     152 </span><span class="lineCov">          4 :         double focal_len = CalcFocalLen();</span>
+<span class="lineNum">     153 </span><span class="lineCov">          4 :         tVector view_pos = tVector(0.5 * screen_pos[0] * w,</span>
+<span class="lineNum">     154 </span><span class="lineCov">          4 :                                                                 0.5 * screen_pos[1] * h,</span>
+<span class="lineNum">     155 </span><span class="lineCov">         12 :                                                                 -focal_len, 1);</span>
+<span class="lineNum">     156 </span><span class="lineCov">          4 :         tVector world_pos = T * view_pos;</span>
+<span class="lineNum">     157 </span>            : 
+<span class="lineNum">     158 </span><span class="lineCov">          4 :         tVector dir = GetRayCastDir(world_pos);</span>
+<span class="lineNum">     159 </span><span class="lineCov">          4 :         world_pos += -dir * (focal_len - mNearZ);</span>
+<span class="lineNum">     160 </span><span class="lineCov">          4 :         world_pos[3] = 0;</span>
+<span class="lineNum">     161 </span><span class="lineCov">          4 :         return world_pos;</span>
+<a name="162"><span class="lineNum">     162 </span>            : }</a>
+<span class="lineNum">     163 </span>            : 
+<span class="lineNum">     164 </span><span class="lineNoCov">          0 : tVector cCamera::ProjectToFocalPlane(const tVector&amp; world_pos) const</span>
+<span class="lineNum">     165 </span>            : {
+<span class="lineNum">     166 </span><span class="lineNoCov">          0 :         tVector dir = GetRayCastDir(world_pos);</span>
+<span class="lineNum">     167 </span><span class="lineNoCov">          0 :         tVector origin = mFocus;</span>
+<span class="lineNum">     168 </span><span class="lineNoCov">          0 :         tVector norm = GetViewDir();</span>
+<span class="lineNum">     169 </span><span class="lineNoCov">          0 :         tVector delta = world_pos - origin;</span>
+<span class="lineNum">     170 </span><span class="lineNoCov">          0 :         double t = (origin - world_pos).dot(norm) / dir.dot(norm);</span>
+<span class="lineNum">     171 </span><span class="lineNoCov">          0 :         tVector proj_pos = t * dir + world_pos;</span>
+<span class="lineNum">     172 </span><span class="lineNoCov">          0 :         return proj_pos;</span>
+<a name="173"><span class="lineNum">     173 </span>            : }</a>
+<span class="lineNum">     174 </span>            : 
+<span class="lineNum">     175 </span><span class="lineCov">         88 : tMatrix cCamera::BuildViewWorldMatrix() const</span>
+<span class="lineNum">     176 </span>            : {
+<span class="lineNum">     177 </span><span class="lineCov">         88 :         tVector up = GetUp();</span>
+<span class="lineNum">     178 </span><span class="lineCov">         88 :         const tVector&amp; forward = GetViewDir();</span>
+<span class="lineNum">     179 </span><span class="lineCov">         88 :         tVector left = up.cross3(forward).normalized();</span>
+<span class="lineNum">     180 </span><span class="lineCov">         88 :         up = -left.cross3(forward).normalized();</span>
+<span class="lineNum">     181 </span><span class="lineCov">         88 :         const tVector&amp; pos = GetPosition();</span>
+<span class="lineNum">     182 </span>            : 
+<span class="lineNum">     183 </span><span class="lineCov">         88 :         tMatrix T;</span>
+<span class="lineNum">     184 </span><span class="lineCov">         88 :         T.col(0) = -left;</span>
+<span class="lineNum">     185 </span><span class="lineCov">         88 :         T.col(1) = up;</span>
+<span class="lineNum">     186 </span><span class="lineCov">         88 :         T.col(2) = -forward;</span>
+<span class="lineNum">     187 </span><span class="lineCov">         88 :         T.col(3) = pos;</span>
+<span class="lineNum">     188 </span><span class="lineCov">         88 :         T(3, 3) = 1;</span>
+<span class="lineNum">     189 </span>            : 
+<span class="lineNum">     190 </span><span class="lineCov">         88 :         return T;</span>
+<a name="191"><span class="lineNum">     191 </span>            : }</a>
+<span class="lineNum">     192 </span>            : 
+<span class="lineNum">     193 </span><span class="lineCov">         84 : tMatrix cCamera::BuildWorldViewMatrix() const</span>
+<span class="lineNum">     194 </span>            : {
+<span class="lineNum">     195 </span><span class="lineCov">         84 :         tMatrix view_world = BuildViewWorldMatrix();</span>
+<span class="lineNum">     196 </span><span class="lineCov">         84 :         tMatrix world_view = cMathUtil::InvRigidMat(view_world);</span>
+<span class="lineNum">     197 </span><span class="lineCov">         84 :         return world_view;</span>
+<a name="198"><span class="lineNum">     198 </span>            : }</a>
+<span class="lineNum">     199 </span>            : 
+<span class="lineNum">     200 </span><span class="lineCov">         86 : tMatrix cCamera::BuildProjMatrix() const</span>
+<span class="lineNum">     201 </span>            : {
+<span class="lineNum">     202 </span><span class="lineCov">         86 :         tVector cam_focus = GetFocus();</span>
+<span class="lineNum">     203 </span><span class="lineCov">         86 :         tVector cam_pos = GetPosition();</span>
+<span class="lineNum">     204 </span><span class="lineCov">         86 :         double w = GetWidth();</span>
+<span class="lineNum">     205 </span><span class="lineCov">         86 :         double h = GetHeight();</span>
+<span class="lineNum">     206 </span><span class="lineCov">         86 :         double near_z = GetNearZ();</span>
+<span class="lineNum">     207 </span><span class="lineCov">         86 :         double far_z = GetFarZ();</span>
+<span class="lineNum">     208 </span><span class="lineCov">         86 :         double aspect = GetAspectRatio();</span>
+<span class="lineNum">     209 </span>            : 
+<span class="lineNum">     210 </span><span class="lineCov">         86 :         tMatrix proj_mat;</span>
+<span class="lineNum">     211 </span><span class="lineCov">         86 :         switch (mProj)</span>
+<span class="lineNum">     212 </span>            :         {
+<span class="lineNum">     213 </span>            :         case eProjPerspecctive:
+<span class="lineNum">     214 </span><span class="lineNoCov">          0 :                 proj_mat = BuildProjMatrixProj();</span>
+<span class="lineNum">     215 </span><span class="lineNoCov">          0 :                 break;</span>
+<span class="lineNum">     216 </span>            :         case eProjOrtho:
+<span class="lineNum">     217 </span><span class="lineCov">         86 :                 proj_mat = BuildProjMatrixOrtho();</span>
+<span class="lineNum">     218 </span><span class="lineCov">         86 :                 break;</span>
+<span class="lineNum">     219 </span>            :         default:
+<span class="lineNum">     220 </span><span class="lineNoCov">          0 :                 assert(false); // unsupported projection</span>
+<span class="lineNum">     221 </span>            :                 break;
+<span class="lineNum">     222 </span>            :         }
+<span class="lineNum">     223 </span><span class="lineCov">         86 :         return proj_mat;</span>
+<a name="224"><span class="lineNum">     224 </span>            : }</a>
+<span class="lineNum">     225 </span>            : 
+<span class="lineNum">     226 </span><span class="lineCov">          2 : void cCamera::SetProj(eProj proj)</span>
+<span class="lineNum">     227 </span>            : {
+<span class="lineNum">     228 </span><span class="lineCov">          2 :         mProj = proj;</span>
+<a name="229"><span class="lineNum">     229 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">     230 </span>            : 
+<span class="lineNum">     231 </span><span class="lineNoCov">          0 : cCamera::eProj cCamera::GetProj() const</span>
+<span class="lineNum">     232 </span>            : {
+<span class="lineNum">     233 </span><span class="lineNoCov">          0 :         return mProj;</span>
+<a name="234"><span class="lineNum">     234 </span>            : }</a>
+<span class="lineNum">     235 </span>            : 
+<span class="lineNum">     236 </span><span class="lineCov">         84 : void cCamera::SetupGLView() const</span>
+<span class="lineNum">     237 </span>            : {
+<span class="lineNum">     238 </span>            :         GLint prev_mode;
+<span class="lineNum">     239 </span><span class="lineCov">         84 :         glGetIntegerv(GL_MATRIX_MODE, &amp;prev_mode);</span>
+<span class="lineNum">     240 </span><span class="lineCov">         84 :         glMatrixMode(GL_MODELVIEW);</span>
+<span class="lineNum">     241 </span>            : 
+<span class="lineNum">     242 </span><span class="lineCov">         84 :         tMatrix world_view = BuildWorldViewMatrix();</span>
+<span class="lineNum">     243 </span><span class="lineCov">         84 :         glLoadMatrixd(world_view.data());</span>
+<span class="lineNum">     244 </span>            : 
+<span class="lineNum">     245 </span><span class="lineCov">         84 :         glMatrixMode(prev_mode);</span>
+<a name="246"><span class="lineNum">     246 </span><span class="lineCov">         84 : }</span></a>
+<span class="lineNum">     247 </span>            : 
+<span class="lineNum">     248 </span><span class="lineCov">         86 : void cCamera::SetupGLProj() const</span>
+<span class="lineNum">     249 </span>            : {
+<span class="lineNum">     250 </span>            :         GLint prev_mode;
+<span class="lineNum">     251 </span><span class="lineCov">         86 :         glGetIntegerv(GL_MATRIX_MODE, &amp;prev_mode);</span>
+<span class="lineNum">     252 </span><span class="lineCov">         86 :         glMatrixMode(GL_PROJECTION);</span>
+<span class="lineNum">     253 </span>            : 
+<span class="lineNum">     254 </span><span class="lineCov">         86 :         tMatrix proj_mat = BuildProjMatrix();</span>
+<span class="lineNum">     255 </span><span class="lineCov">         86 :         glLoadMatrixd(proj_mat.data());</span>
+<span class="lineNum">     256 </span>            : 
+<span class="lineNum">     257 </span><span class="lineCov">         86 :         glMatrixMode(prev_mode);</span>
+<a name="258"><span class="lineNum">     258 </span><span class="lineCov">         86 : }</span></a>
+<span class="lineNum">     259 </span>            : 
+<span class="lineNum">     260 </span><span class="lineCov">          8 : tVector cCamera::GetRayCastDir(const tVector&amp; pos) const</span>
+<span class="lineNum">     261 </span>            : {
+<span class="lineNum">     262 </span><span class="lineCov">          8 :         tVector dir = tVector::Zero();</span>
+<span class="lineNum">     263 </span><span class="lineCov">          8 :         switch (mProj)</span>
+<span class="lineNum">     264 </span>            :         {
+<span class="lineNum">     265 </span>            :         case eProjPerspecctive:
+<span class="lineNum">     266 </span><span class="lineNoCov">          0 :                 dir = pos - mPosition;</span>
+<span class="lineNum">     267 </span><span class="lineNoCov">          0 :                 break;</span>
+<span class="lineNum">     268 </span>            :         case eProjOrtho:
+<span class="lineNum">     269 </span><span class="lineCov">          8 :                 dir = mFocus - mPosition;</span>
+<span class="lineNum">     270 </span><span class="lineCov">          8 :                 break;</span>
+<span class="lineNum">     271 </span>            :         default:
+<span class="lineNum">     272 </span><span class="lineNoCov">          0 :                 assert(false); // unsupported projection</span>
+<span class="lineNum">     273 </span>            :                 break;
+<span class="lineNum">     274 </span>            :         }
+<span class="lineNum">     275 </span><span class="lineCov">          8 :         dir[3] = 0;</span>
+<span class="lineNum">     276 </span><span class="lineCov">          8 :         dir = dir.normalized();</span>
+<span class="lineNum">     277 </span><span class="lineCov">          8 :         return dir;</span>
+<a name="278"><span class="lineNum">     278 </span>            : }</a>
+<span class="lineNum">     279 </span>            : 
+<span class="lineNum">     280 </span><span class="lineNoCov">          0 : void cCamera::MouseClick(int button, int state, double x, double y)</span>
+<span class="lineNum">     281 </span>            : {
+<span class="lineNum">     282 </span><span class="lineNoCov">          0 :         mMouseDown = (button == GLUT_RIGHT_BUTTON) &amp;&amp; (state == GLUT_DOWN);</span>
+<span class="lineNum">     283 </span><span class="lineNoCov">          0 :         mMousePos[0] = x;</span>
+<span class="lineNum">     284 </span><span class="lineNoCov">          0 :         mMousePos[1] = y;</span>
+<a name="285"><span class="lineNum">     285 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     286 </span>            : 
+<span class="lineNum">     287 </span><span class="lineNoCov">          0 : void cCamera::MouseMove(double x, double y)</span>
+<span class="lineNum">     288 </span>            : {
+<span class="lineNum">     289 </span><span class="lineNoCov">          0 :         if (mMouseDown)</span>
+<span class="lineNum">     290 </span>            :         {
+<span class="lineNum">     291 </span><span class="lineNoCov">          0 :                 int mouse_mod = glutGetModifiers();</span>
+<span class="lineNum">     292 </span><span class="lineNoCov">          0 :                 double w = GetWidth();</span>
+<span class="lineNum">     293 </span><span class="lineNoCov">          0 :                 double h = GetHeight();</span>
+<span class="lineNum">     294 </span>            : 
+<span class="lineNum">     295 </span><span class="lineNoCov">          0 :                 double dx = x - mMousePos[0];</span>
+<span class="lineNum">     296 </span><span class="lineNoCov">          0 :                 double dy = y - mMousePos[1];</span>
+<span class="lineNum">     297 </span>            : 
+<span class="lineNum">     298 </span><span class="lineNoCov">          0 :                 tVector cam_offset = mPosition - mFocus;</span>
+<span class="lineNum">     299 </span><span class="lineNoCov">          0 :                 tVector cam_dir = -cam_offset.normalized();</span>
+<span class="lineNum">     300 </span><span class="lineNoCov">          0 :                 tVector right = -tVector(0, 1, 0, 0).cross3(cam_dir).normalized();</span>
+<span class="lineNum">     301 </span><span class="lineNoCov">          0 :                 tVector up = right.cross3(cam_dir).normalized();</span>
+<span class="lineNum">     302 </span>            : 
+<span class="lineNum">     303 </span><span class="lineNoCov">          0 :                 if (mouse_mod &amp; GLUT_ACTIVE_ALT) {</span>
+<span class="lineNum">     304 </span><span class="lineNoCov">          0 :                         tVector delta = cam_offset * (1 - dx);</span>
+<span class="lineNum">     305 </span><span class="lineNoCov">          0 :                         mPosition = mFocus + delta;</span>
+<span class="lineNum">     306 </span>            :                 }
+<span class="lineNum">     307 </span><span class="lineNoCov">          0 :                 else if (mouse_mod &amp; GLUT_ACTIVE_SHIFT) {</span>
+<span class="lineNum">     308 </span><span class="lineNoCov">          0 :                         tVector delta = 0.5 * (-w * right * dx - h * up * dy);</span>
+<span class="lineNum">     309 </span><span class="lineNoCov">          0 :                         mPosition += delta;</span>
+<span class="lineNum">     310 </span><span class="lineNoCov">          0 :                         mFocus += delta;</span>
+<span class="lineNum">     311 </span>            :                 }
+<span class="lineNum">     312 </span>            :                 else
+<span class="lineNum">     313 </span>            :                 {
+<span class="lineNum">     314 </span><span class="lineNoCov">          0 :                         cam_offset = cMathUtil::RotateMat(tVector(0, 1, 0, 0), -M_PI * dx) * cam_offset;</span>
+<span class="lineNum">     315 </span><span class="lineNoCov">          0 :                         cam_offset = cMathUtil::RotateMat(right, M_PI * dy) * cam_offset;</span>
+<span class="lineNum">     316 </span><span class="lineNoCov">          0 :                         mPosition = mFocus + cam_offset;</span>
+<span class="lineNum">     317 </span>            :                 }
+<span class="lineNum">     318 </span>            : 
+<span class="lineNum">     319 </span>            :                 // Remember mouse coords for next time.
+<span class="lineNum">     320 </span><span class="lineNoCov">          0 :                 mMousePos[0] = x;</span>
+<span class="lineNum">     321 </span><span class="lineNoCov">          0 :                 mMousePos[1] = y;</span>
+<span class="lineNum">     322 </span>            :         }
+<a name="323"><span class="lineNum">     323 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     324 </span>            : 
+<span class="lineNum">     325 </span><span class="lineCov">          4 : double cCamera::CalcFocalLen() const</span>
+<span class="lineNum">     326 </span>            : {
+<span class="lineNum">     327 </span><span class="lineCov">          4 :         return (mFocus - mPosition).norm();</span>
+<a name="328"><span class="lineNum">     328 </span>            : }</a>
+<span class="lineNum">     329 </span>            : 
+<span class="lineNum">     330 </span><span class="lineCov">         86 : tMatrix cCamera::BuildProjMatrixOrtho() const</span>
+<span class="lineNum">     331 </span>            : {
+<span class="lineNum">     332 </span><span class="lineCov">         86 :         tMatrix mat = tMatrix::Identity();</span>
+<span class="lineNum">     333 </span><span class="lineCov">         86 :         double w = GetWidth();</span>
+<span class="lineNum">     334 </span><span class="lineCov">         86 :         double h = GetHeight();</span>
+<span class="lineNum">     335 </span>            : 
+<span class="lineNum">     336 </span><span class="lineCov">         86 :         mat(0, 0) = 2 / w;</span>
+<span class="lineNum">     337 </span><span class="lineCov">         86 :         mat(1, 1) = 2 / h;</span>
+<span class="lineNum">     338 </span><span class="lineCov">         86 :         mat(2, 2) = -2 / (mFarZ - mNearZ);</span>
+<span class="lineNum">     339 </span><span class="lineCov">         86 :         mat(2, 3) = -(mFarZ + mNearZ) / (mFarZ - mNearZ);</span>
+<span class="lineNum">     340 </span>            : 
+<span class="lineNum">     341 </span><span class="lineCov">         86 :         return mat;</span>
+<a name="342"><span class="lineNum">     342 </span>            : }</a>
+<span class="lineNum">     343 </span>            : 
+<span class="lineNum">     344 </span><span class="lineNoCov">          0 : tMatrix cCamera::BuildProjMatrixProj() const</span>
+<span class="lineNum">     345 </span>            : {
+<span class="lineNum">     346 </span><span class="lineNoCov">          0 :         tMatrix mat = tMatrix::Zero();</span>
+<span class="lineNum">     347 </span><span class="lineNoCov">          0 :         double focal_len = mProjFocalLen;</span>
+<span class="lineNum">     348 </span><span class="lineNoCov">          0 :         double w = GetWidth();</span>
+<span class="lineNum">     349 </span><span class="lineNoCov">          0 :         double h = GetHeight();</span>
+<span class="lineNum">     350 </span>            : 
+<span class="lineNum">     351 </span><span class="lineNoCov">          0 :         mat(0, 0) = 2 * focal_len / w;</span>
+<span class="lineNum">     352 </span><span class="lineNoCov">          0 :         mat(1, 1) = 2 * focal_len / h;</span>
+<span class="lineNum">     353 </span><span class="lineNoCov">          0 :         mat(2, 2) = -(mFarZ + mNearZ) / (mFarZ - mNearZ);</span>
+<span class="lineNum">     354 </span><span class="lineNoCov">          0 :         mat(2, 3) = -2 * mFarZ * mNearZ / (mFarZ - mNearZ);</span>
+<span class="lineNum">     355 </span><span class="lineNoCov">          0 :         mat(3, 2) = -1;</span>
+<a name="356"><span class="lineNum">     356 </span>            : </a>
+<span class="lineNum">     357 </span><span class="lineNoCov">          0 :         return mat;</span>
+<span class="lineNum">     358 </span><span class="lineCov">          3 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

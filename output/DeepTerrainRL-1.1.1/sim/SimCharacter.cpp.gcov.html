@@ -1,0 +1,1143 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/sim/SimCharacter.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/sim</a> - SimCharacter.cpp<span style="font-size: 80%;"> (source / <a href="SimCharacter.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">419</td>
+            <td class="headerCovTableEntry">585</td>
+            <td class="headerCovTableEntryLo">71.6 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">52</td>
+            <td class="headerCovTableEntry">75</td>
+            <td class="headerCovTableEntryLo">69.3 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;SimCharacter.h&quot;</a>
+<span class="lineNum">       2 </span>            : #include &lt;iostream&gt;
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;SimBox.h&quot;
+<a name="5"><span class="lineNum">       5 </span>            : #include &quot;SimCapsule.h&quot;</a>
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span><span class="lineCov">          2 : cSimCharacter::tParams::tParams()</span>
+<span class="lineNum">       8 </span>            : {
+<span class="lineNum">       9 </span><span class="lineCov">          2 :         mCharFile = &quot;&quot;;</span>
+<span class="lineNum">      10 </span><span class="lineCov">          2 :         mStateFile = &quot;&quot;;</span>
+<span class="lineNum">      11 </span><span class="lineCov">          2 :         mPos = tVector(0, 0, 0, 0);</span>
+<a name="12"><span class="lineNum">      12 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span><span class="lineCov">          2 : cSimCharacter::cSimCharacter()</span>
+<span class="lineNum">      15 </span><span class="lineCov">          2 :         : mWorld(nullptr)</span>
+<span class="lineNum">      16 </span>            : {
+<span class="lineNum">      17 </span><span class="lineCov">          2 :         mFriction = 0.9;</span>
+<span class="lineNum">      18 </span><span class="lineCov">          2 :         mRootBodyTrans = tMatrix::Identity();</span>
+<a name="19"><span class="lineNum">      19 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span><span class="lineCov">          2 : cSimCharacter::~cSimCharacter()</span>
+<span class="lineNum">      22 </span>            : {
+<a name="23"><span class="lineNum">      23 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span><span class="lineCov">          2 : bool cSimCharacter::Init(std::shared_ptr&lt;cWorld&gt; world, const tParams&amp; params)</span>
+<span class="lineNum">      26 </span>            : {
+<span class="lineNum">      27 </span><span class="lineCov">          2 :         bool succ = true;</span>
+<span class="lineNum">      28 </span><span class="lineCov">          2 :         bool succ_skeleton = cCharacter::Init(params.mCharFile);</span>
+<span class="lineNum">      29 </span><span class="lineCov">          2 :         succ &amp;= succ_skeleton;</span>
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span><span class="lineCov">          2 :         mWorld = world;</span>
+<span class="lineNum">      32 </span>            : 
+<span class="lineNum">      33 </span><span class="lineCov">          2 :         bool succ_body = true;</span>
+<span class="lineNum">      34 </span><span class="lineCov">          2 :         if (succ_skeleton)</span>
+<span class="lineNum">      35 </span>            :         {
+<span class="lineNum">      36 </span><span class="lineCov">          2 :                 const tVector&amp; root_pos = params.mPos;</span>
+<span class="lineNum">      37 </span><span class="lineCov">          2 :                 succ_body = BuildSimBody(params, root_pos);</span>
+<span class="lineNum">      38 </span><span class="lineCov">          2 :                 LoadDrawShapeDefs(params.mCharFile, mDrawShapeDefs);</span>
+<span class="lineNum">      39 </span>            :         }
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span><span class="lineCov">          2 :         if (params.mStateFile != &quot;&quot;)</span>
+<span class="lineNum">      42 </span>            :         {
+<span class="lineNum">      43 </span><span class="lineCov">          2 :                 bool succ_state = ReadState(params.mStateFile);</span>
+<span class="lineNum">      44 </span>            : 
+<span class="lineNum">      45 </span><span class="lineCov">          2 :                 if (!succ_state)</span>
+<span class="lineNum">      46 </span>            :                 {
+<span class="lineNum">      47 </span><span class="lineNoCov">          0 :                         printf(&quot;Failed to load character state from %s\n&quot;, params.mStateFile.c_str());</span>
+<span class="lineNum">      48 </span>            :                 }
+<span class="lineNum">      49 </span>            :         }
+<span class="lineNum">      50 </span>            : 
+<span class="lineNum">      51 </span><span class="lineCov">          2 :         if (succ)</span>
+<span class="lineNum">      52 </span>            :         {
+<span class="lineNum">      53 </span><span class="lineCov">          2 :                 RecordDefaultState();</span>
+<span class="lineNum">      54 </span>            :         }
+<span class="lineNum">      55 </span>            : 
+<span class="lineNum">      56 </span><span class="lineCov">          2 :         return succ;</span>
+<a name="57"><span class="lineNum">      57 </span>            : }</a>
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span><span class="lineCov">          2 : void cSimCharacter::Clear()</span>
+<span class="lineNum">      60 </span>            : {
+<span class="lineNum">      61 </span><span class="lineCov">          2 :         cCharacter::Clear();</span>
+<span class="lineNum">      62 </span><span class="lineCov">          2 :         mJoints.clear();</span>
+<span class="lineNum">      63 </span><span class="lineCov">          2 :         mBodyParts.clear();</span>
+<span class="lineNum">      64 </span><span class="lineCov">          2 :         mBodyDefs.resize(0, 0);</span>
+<span class="lineNum">      65 </span><span class="lineCov">          2 :         mDrawShapeDefs.resize(0, 0);</span>
+<span class="lineNum">      66 </span><span class="lineCov">          2 :         mWorld.reset();</span>
+<span class="lineNum">      67 </span>            : 
+<span class="lineNum">      68 </span><span class="lineCov">          2 :         if (HasController())</span>
+<span class="lineNum">      69 </span>            :         {
+<span class="lineNum">      70 </span><span class="lineNoCov">          0 :                 mController-&gt;Clear();</span>
+<span class="lineNum">      71 </span>            :         }
+<span class="lineNum">      72 </span><span class="lineCov">          2 : }</span>
+<a name="73"><span class="lineNum">      73 </span>            : </a>
+<span class="lineNum">      74 </span>            : 
+<span class="lineNum">      75 </span><span class="lineCov">          1 : void cSimCharacter::Reset()</span>
+<span class="lineNum">      76 </span>            : {
+<span class="lineNum">      77 </span><span class="lineCov">          1 :         cCharacter::Reset();</span>
+<span class="lineNum">      78 </span><span class="lineCov">          1 :         if (HasController())</span>
+<span class="lineNum">      79 </span>            :         {
+<span class="lineNum">      80 </span><span class="lineCov">          1 :                 mController-&gt;Reset();</span>
+<span class="lineNum">      81 </span>            :         }
+<span class="lineNum">      82 </span>            :         
+<span class="lineNum">      83 </span><span class="lineCov">          1 :         ClearJointTorques();</span>
+<span class="lineNum">      84 </span>            : 
+<span class="lineNum">      85 </span>            : #if defined(ENABLE_TRAINING)
+<span class="lineNum">      86 </span><span class="lineCov">          1 :         ClearEffortBuffer();</span>
+<span class="lineNum">      87 </span>            : #endif
+<span class="lineNum">      88 </span><span class="lineCov">          1 : }</span>
+<a name="89"><span class="lineNum">      89 </span>            : </a>
+<span class="lineNum">      90 </span>            : 
+<span class="lineNum">      91 </span><span class="lineCov">       2180 : void cSimCharacter::Update(double time_step)</span>
+<span class="lineNum">      92 </span>            : {
+<span class="lineNum">      93 </span><span class="lineCov">       2180 :         BuildPose(mPose);</span>
+<span class="lineNum">      94 </span><span class="lineCov">       2180 :         ClearJointTorques();</span>
+<span class="lineNum">      95 </span>            : 
+<span class="lineNum">      96 </span><span class="lineCov">       2180 :         if (HasController())</span>
+<span class="lineNum">      97 </span>            :         {
+<span class="lineNum">      98 </span><span class="lineCov">       2180 :                 mController-&gt;Update(time_step);</span>
+<span class="lineNum">      99 </span>            :         }
+<span class="lineNum">     100 </span>            : 
+<span class="lineNum">     101 </span>            :         // dont clear torques until next frame since they can be useful for visualization
+<span class="lineNum">     102 </span><span class="lineCov">       2180 :         UpdateJoints();</span>
+<span class="lineNum">     103 </span>            : 
+<span class="lineNum">     104 </span>            : #if defined(ENABLE_TRAINING)
+<span class="lineNum">     105 </span><span class="lineCov">       2180 :         UpdateEffortBuffer(time_step);</span>
+<span class="lineNum">     106 </span>            : #endif
+<a name="107"><span class="lineNum">     107 </span><span class="lineCov">       2180 : }</span></a>
+<span class="lineNum">     108 </span>            : 
+<span class="lineNum">     109 </span><span class="lineCov">      10931 : tVector cSimCharacter::GetRootPos() const</span>
+<span class="lineNum">     110 </span>            : {
+<span class="lineNum">     111 </span><span class="lineCov">      10931 :         int root_id = GetRootID();</span>
+<span class="lineNum">     112 </span><span class="lineCov">      10931 :         const std::shared_ptr&lt;cSimObj&gt;&amp; root = mBodyParts[root_id];</span>
+<span class="lineNum">     113 </span><span class="lineCov">      10931 :         tVector attach_pt = cKinTree::GetBodyAttachPt(mBodyDefs, root_id);</span>
+<span class="lineNum">     114 </span><span class="lineCov">      10931 :         tVector pos = root-&gt;LocalToWorldPos(-attach_pt);</span>
+<span class="lineNum">     115 </span><span class="lineCov">      10931 :         return pos;</span>
+<a name="116"><span class="lineNum">     116 </span>            : }</a>
+<span class="lineNum">     117 </span>            : 
+<span class="lineNum">     118 </span><span class="lineCov">       6542 : void cSimCharacter::GetRootRotation(tVector&amp; out_axis, double&amp; out_theta) const</span>
+<span class="lineNum">     119 </span>            : {
+<span class="lineNum">     120 </span><span class="lineCov">       6542 :         int root_id = GetRootID();</span>
+<span class="lineNum">     121 </span><span class="lineCov">       6542 :         const std::shared_ptr&lt;cSimObj&gt;&amp; root = mBodyParts[root_id];</span>
+<span class="lineNum">     122 </span>            :         
+<span class="lineNum">     123 </span><span class="lineCov">       6542 :         tMatrix3 root_rot_mat = root-&gt;GetLocalToWorldRotMat();</span>
+<span class="lineNum">     124 </span>            : 
+<span class="lineNum">     125 </span><span class="lineCov">       6542 :         tMatrix rot_mat = tMatrix::Identity();</span>
+<span class="lineNum">     126 </span><span class="lineCov">       6542 :         rot_mat.block(0, 0, 3, 3) = mRootBodyTrans.block(0, 0, 3, 3) * root_rot_mat;</span>
+<span class="lineNum">     127 </span><span class="lineCov">       6542 :         cMathUtil::RotMatToAxisAngle(rot_mat, out_axis, out_theta);</span>
+<a name="128"><span class="lineNum">     128 </span><span class="lineCov">       6542 : }</span></a>
+<span class="lineNum">     129 </span>            : 
+<span class="lineNum">     130 </span><span class="lineCov">       2182 : tVector cSimCharacter::GetRootVel() const</span>
+<span class="lineNum">     131 </span>            : {
+<span class="lineNum">     132 </span><span class="lineCov">       2182 :         int root_id = GetRootID();</span>
+<span class="lineNum">     133 </span><span class="lineCov">       2182 :         const std::shared_ptr&lt;cSimObj&gt;&amp; root = mBodyParts[root_id];</span>
+<span class="lineNum">     134 </span><span class="lineCov">       2182 :         tVector attach_pt = cKinTree::GetBodyAttachPt(mBodyDefs, root_id);</span>
+<span class="lineNum">     135 </span><span class="lineCov">       2182 :         tVector vel = root-&gt;GetLinearVelocity(-attach_pt);</span>
+<span class="lineNum">     136 </span><span class="lineCov">       2182 :         return vel;</span>
+<a name="137"><span class="lineNum">     137 </span>            : }</a>
+<span class="lineNum">     138 </span>            : 
+<span class="lineNum">     139 </span><span class="lineCov">       2182 : tVector cSimCharacter::GetRootAngVel() const</span>
+<span class="lineNum">     140 </span>            : {
+<span class="lineNum">     141 </span><span class="lineCov">       2182 :         const std::shared_ptr&lt;cSimObj&gt;&amp; root = mBodyParts[GetRootID()];</span>
+<span class="lineNum">     142 </span><span class="lineCov">       2182 :         return root-&gt;GetAngularVelocity();</span>
+<a name="143"><span class="lineNum">     143 </span>            : }</a>
+<span class="lineNum">     144 </span>            : 
+<span class="lineNum">     145 </span><span class="lineCov">       4288 : const Eigen::MatrixXd&amp; cSimCharacter::GetBodyDefs() const</span>
+<span class="lineNum">     146 </span>            : {
+<span class="lineNum">     147 </span><span class="lineCov">       4288 :         return mBodyDefs;</span>
+<a name="148"><span class="lineNum">     148 </span>            : }</a>
+<span class="lineNum">     149 </span>            : 
+<span class="lineNum">     150 </span><span class="lineCov">         84 : const Eigen::MatrixXd&amp; cSimCharacter::GetDrawShapeDefs() const</span>
+<span class="lineNum">     151 </span>            : {
+<span class="lineNum">     152 </span><span class="lineCov">         84 :         return mDrawShapeDefs;</span>
+<a name="153"><span class="lineNum">     153 </span>            : }</a>
+<span class="lineNum">     154 </span>            : 
+<span class="lineNum">     155 </span><span class="lineCov">          3 : void cSimCharacter::SetRootPos(const tVector&amp; pos)</span>
+<span class="lineNum">     156 </span>            : {
+<span class="lineNum">     157 </span><span class="lineCov">          3 :         cKinTree::SetRootPos(mJointMat, pos, mPose);</span>
+<span class="lineNum">     158 </span><span class="lineCov">          3 :         SetPose(mPose);</span>
+<a name="159"><span class="lineNum">     159 </span><span class="lineCov">          3 : }</span></a>
+<span class="lineNum">     160 </span>            : 
+<span class="lineNum">     161 </span><span class="lineCov">        237 : int cSimCharacter::GetNumBodyParts() const</span>
+<span class="lineNum">     162 </span>            : {
+<span class="lineNum">     163 </span><span class="lineCov">        237 :         return static_cast&lt;int&gt;(mBodyParts.size());</span>
+<a name="164"><span class="lineNum">     164 </span>            : }</a>
+<span class="lineNum">     165 </span>            : 
+<span class="lineNum">     166 </span><span class="lineCov">       6542 : void cSimCharacter::BuildPose(Eigen::VectorXd&amp; out_pose) const</span>
+<span class="lineNum">     167 </span>            : {
+<span class="lineNum">     168 </span><span class="lineCov">       6542 :         const double link_scale = 1;</span>
+<span class="lineNum">     169 </span><span class="lineCov">       6542 :         int num_joints = GetNumJoints();</span>
+<span class="lineNum">     170 </span><span class="lineCov">       6542 :         int num_dof = cKinTree::GetNumDof(mJointMat);</span>
+<span class="lineNum">     171 </span><span class="lineCov">       6542 :         out_pose = Eigen::VectorXd(num_dof);</span>
+<span class="lineNum">     172 </span>            : 
+<span class="lineNum">     173 </span><span class="lineCov">       6542 :         tVector root_pos = GetRootPos();</span>
+<span class="lineNum">     174 </span><span class="lineCov">       6542 :         out_pose.block(0, 0, cKinTree::gPosDims, 1) = root_pos.block(0, 0, cKinTree::gPosDims, 1);</span>
+<span class="lineNum">     175 </span>            : 
+<span class="lineNum">     176 </span><span class="lineCov">     143924 :         for (int j = 0; j &lt; num_joints; ++j)</span>
+<span class="lineNum">     177 </span>            :         {
+<span class="lineNum">     178 </span><span class="lineCov">     137382 :                 int idx = cKinTree::gPosDims + j;</span>
+<span class="lineNum">     179 </span><span class="lineCov">     137382 :                 double theta = 0;</span>
+<span class="lineNum">     180 </span><span class="lineCov">     137382 :                 tVector axis;</span>
+<span class="lineNum">     181 </span><span class="lineCov">     137382 :                 if (j == GetRootID())</span>
+<span class="lineNum">     182 </span>            :                 {
+<span class="lineNum">     183 </span>            :                         // note for now theta all with respect to positive z axis
+<span class="lineNum">     184 </span><span class="lineCov">       6542 :                         GetRootRotation(axis, theta);</span>
+<span class="lineNum">     185 </span><span class="lineCov">       6542 :                         theta = (axis[2] &gt;= 0) ? theta : -theta;</span>
+<span class="lineNum">     186 </span>            :                 }
+<span class="lineNum">     187 </span><span class="lineCov">     130840 :                 else if (mJoints[j].IsValid())</span>
+<span class="lineNum">     188 </span>            :                 {
+<span class="lineNum">     189 </span><span class="lineCov">     130840 :                         CalcJointRotation(j, axis, theta);</span>
+<span class="lineNum">     190 </span>            :                 }
+<span class="lineNum">     191 </span><span class="lineCov">     137382 :                 out_pose(idx) = theta;</span>
+<span class="lineNum">     192 </span>            :         }
+<a name="193"><span class="lineNum">     193 </span><span class="lineCov">       6542 : }</span></a>
+<span class="lineNum">     194 </span>            : 
+<span class="lineNum">     195 </span><span class="lineCov">       2182 : void cSimCharacter::BuildVel(Eigen::VectorXd&amp; out_vel) const</span>
+<span class="lineNum">     196 </span>            : {
+<span class="lineNum">     197 </span><span class="lineCov">       2182 :         const double link_scale_vel = 0;</span>
+<span class="lineNum">     198 </span><span class="lineCov">       2182 :         int num_joints = GetNumJoints();</span>
+<span class="lineNum">     199 </span><span class="lineCov">       2182 :         int num_dof = cKinTree::GetNumDof(mJointMat);</span>
+<span class="lineNum">     200 </span><span class="lineCov">       2182 :         out_vel = Eigen::VectorXd(num_dof);</span>
+<span class="lineNum">     201 </span>            : 
+<span class="lineNum">     202 </span><span class="lineCov">       2182 :         tVector root_vel = GetRootVel();</span>
+<span class="lineNum">     203 </span><span class="lineCov">       2182 :         out_vel.block(0, 0, cKinTree::gPosDims, 1) = root_vel.block(0, 0, cKinTree::gPosDims, 1);</span>
+<span class="lineNum">     204 </span>            : 
+<span class="lineNum">     205 </span><span class="lineCov">      48004 :         for (int j = 0; j &lt; num_joints; ++j)</span>
+<span class="lineNum">     206 </span>            :         {
+<span class="lineNum">     207 </span><span class="lineCov">      45822 :                 int idx = cKinTree::gPosDims + j;</span>
+<span class="lineNum">     208 </span><span class="lineCov">      45822 :                 double d_theta = 0;</span>
+<span class="lineNum">     209 </span><span class="lineCov">      45822 :                 if (j == GetRootID())</span>
+<span class="lineNum">     210 </span>            :                 {
+<span class="lineNum">     211 </span>            :                         // note only consider z
+<span class="lineNum">     212 </span><span class="lineCov">       2182 :                         const tVector rot_axis = tVector(0, 0, 1, 0);</span>
+<span class="lineNum">     213 </span><span class="lineCov">       2182 :                         tVector ang_vel = GetRootAngVel();</span>
+<span class="lineNum">     214 </span><span class="lineCov">       2182 :                         d_theta = rot_axis.dot(ang_vel);</span>
+<span class="lineNum">     215 </span>            :                 }
+<span class="lineNum">     216 </span><span class="lineCov">      43640 :                 else if (mJoints[j].IsValid())</span>
+<span class="lineNum">     217 </span>            :                 {
+<span class="lineNum">     218 </span><span class="lineCov">      43640 :                         const cJoint&amp; joint = mJoints[j];</span>
+<span class="lineNum">     219 </span><span class="lineCov">      43640 :                         tVector joint_vel = joint.CalcJointVelRel();</span>
+<span class="lineNum">     220 </span><span class="lineCov">      43640 :                         const tVector&amp; axis = joint.GetAxisRel();</span>
+<span class="lineNum">     221 </span><span class="lineCov">      43640 :                         d_theta = axis.dot(joint_vel);</span>
+<span class="lineNum">     222 </span>            :                 }
+<span class="lineNum">     223 </span><span class="lineCov">      45822 :                 out_vel(idx) = d_theta;</span>
+<span class="lineNum">     224 </span>            :         }
+<a name="225"><span class="lineNum">     225 </span><span class="lineCov">       2182 : }</span></a>
+<span class="lineNum">     226 </span>            : 
+<span class="lineNum">     227 </span><span class="lineCov">          3 : void cSimCharacter::SetVel(const Eigen::VectorXd&amp; vel)</span>
+<span class="lineNum">     228 </span>            : {
+<span class="lineNum">     229 </span><span class="lineCov">          3 :         assert(vel.size() == GetNumDof());</span>
+<span class="lineNum">     230 </span>            : 
+<span class="lineNum">     231 </span>            :         // uses spatial algebra to convert generalized coordinates into
+<span class="lineNum">     232 </span>            :         // velocities of each body part
+<span class="lineNum">     233 </span><span class="lineCov">          3 :         int num_joints = GetNumJoints();</span>
+<span class="lineNum">     234 </span><span class="lineCov">          6 :         Eigen::VectorXi visited = Eigen::VectorXi::Zero(num_joints);</span>
+<span class="lineNum">     235 </span>            : 
+<span class="lineNum">     236 </span>            :         // use 4d vectors just for convenience
+<span class="lineNum">     237 </span><span class="lineCov">          3 :         const int dim = 3;</span>
+<span class="lineNum">     238 </span><span class="lineCov">          6 :         Eigen::MatrixXd world_omegas = Eigen::MatrixXd(num_joints, dim);</span>
+<span class="lineNum">     239 </span><span class="lineCov">          6 :         Eigen::MatrixXd world_vels = Eigen::MatrixXd(num_joints, dim);</span>
+<span class="lineNum">     240 </span>            : 
+<span class="lineNum">     241 </span><span class="lineCov">          3 :         const int joint_vel_offset = cKinTree::gPosDims;</span>
+<span class="lineNum">     242 </span><span class="lineCov">          3 :         int root_id = GetRootID();</span>
+<span class="lineNum">     243 </span>            : 
+<span class="lineNum">     244 </span><span class="lineCov">         66 :         for (int j = 0; j &lt; num_joints; ++j)</span>
+<span class="lineNum">     245 </span>            :         {
+<span class="lineNum">     246 </span><span class="lineCov">         63 :                 if (IsValidBodyPart(j))</span>
+<span class="lineNum">     247 </span>            :                 {
+<span class="lineNum">     248 </span><span class="lineCov">         63 :                         Eigen::Vector3d world_omega = Eigen::Vector3d::Zero();</span>
+<span class="lineNum">     249 </span><span class="lineCov">         63 :                         Eigen::Vector3d world_vel = Eigen::Vector3d::Zero();</span>
+<span class="lineNum">     250 </span>            : 
+<span class="lineNum">     251 </span><span class="lineCov">         63 :                         int curr_id = j;</span>
+<span class="lineNum">     252 </span><span class="lineCov">         60 :                         while (true)</span>
+<span class="lineNum">     253 </span>            :                         {
+<span class="lineNum">     254 </span><span class="lineCov">        123 :                                 bool has_visited = (visited[curr_id] != 0);</span>
+<span class="lineNum">     255 </span><span class="lineCov">        123 :                                 if (has_visited)</span>
+<span class="lineNum">     256 </span>            :                                 {
+<span class="lineNum">     257 </span><span class="lineCov">         60 :                                         const Eigen::Vector3d&amp; curr_omega = world_omegas.row(curr_id);</span>
+<span class="lineNum">     258 </span><span class="lineCov">         60 :                                         const Eigen::Vector3d&amp; curr_vel = world_vels.row(curr_id);</span>
+<span class="lineNum">     259 </span><span class="lineCov">         60 :                                         world_omega += curr_omega;</span>
+<span class="lineNum">     260 </span><span class="lineCov">         60 :                                         world_vel += curr_vel;</span>
+<span class="lineNum">     261 </span><span class="lineCov">         60 :                                         break;</span>
+<span class="lineNum">     262 </span>            :                                 }
+<span class="lineNum">     263 </span>            :                                 else
+<span class="lineNum">     264 </span>            :                                 {
+<span class="lineNum">     265 </span><span class="lineCov">         63 :                                         int idx = joint_vel_offset + curr_id;</span>
+<span class="lineNum">     266 </span><span class="lineCov">         63 :                                         double joint_vel = vel(idx);</span>
+<span class="lineNum">     267 </span><span class="lineCov">         63 :                                         auto&amp; curr_part = GetBodyPart(curr_id);</span>
+<span class="lineNum">     268 </span>            : 
+<span class="lineNum">     269 </span><span class="lineCov">         63 :                                         tMatrix3 E = curr_part-&gt;GetLocalToWorldRotMat();</span>
+<span class="lineNum">     270 </span><span class="lineCov">         63 :                                         tMatrix3 E_inv = E.transpose();</span>
+<span class="lineNum">     271 </span>            : 
+<span class="lineNum">     272 </span><span class="lineCov">         63 :                                         Eigen::Vector3d local_omega = Eigen::Vector3d(0, 0, joint_vel);</span>
+<span class="lineNum">     273 </span><span class="lineCov">         63 :                                         Eigen::Vector3d local_vel = Eigen::Vector3d::Zero();</span>
+<span class="lineNum">     274 </span><span class="lineCov">         63 :                                         if (curr_id == root_id)</span>
+<span class="lineNum">     275 </span>            :                                         {
+<span class="lineNum">     276 </span><span class="lineCov">          3 :                                                 local_vel.block(0, 0, cKinTree::gPosDims, 1) = vel.block(0, 0, cKinTree::gPosDims, 1);</span>
+<span class="lineNum">     277 </span>            :                                         }
+<span class="lineNum">     278 </span>            :                                         // convert vel to local coordinates
+<span class="lineNum">     279 </span><span class="lineCov">         63 :                                         local_vel = E_inv * local_vel;</span>
+<span class="lineNum">     280 </span>            : 
+<span class="lineNum">     281 </span>            :                                         // convert spatial vector to world coordinates
+<span class="lineNum">     282 </span><span class="lineCov">         63 :                                         tVector joint_pos = CalcJointPos(curr_id);</span>
+<span class="lineNum">     283 </span><span class="lineCov">         63 :                                         Eigen::Vector3d r = E_inv * -Eigen::Vector3d(joint_pos[0], joint_pos[1], joint_pos[2]);</span>
+<span class="lineNum">     284 </span>            :                                         
+<span class="lineNum">     285 </span><span class="lineCov">         63 :                                         Eigen::Vector3d curr_omega = E * local_omega;</span>
+<span class="lineNum">     286 </span><span class="lineCov">         63 :                                         Eigen::Vector3d curr_vel = E * (-r.cross(local_omega) + local_vel);</span>
+<span class="lineNum">     287 </span>            : 
+<span class="lineNum">     288 </span><span class="lineCov">         63 :                                         world_omega += curr_omega;</span>
+<span class="lineNum">     289 </span><span class="lineCov">         63 :                                         world_vel += curr_vel;</span>
+<span class="lineNum">     290 </span>            :                                 }
+<span class="lineNum">     291 </span>            : 
+<span class="lineNum">     292 </span><span class="lineCov">         63 :                                 curr_id = cKinTree::GetParent(mJointMat, curr_id);</span>
+<span class="lineNum">     293 </span><span class="lineCov">         63 :                                 if (curr_id == cKinTree::gInvalidJointID)</span>
+<span class="lineNum">     294 </span>            :                                 {
+<span class="lineNum">     295 </span><span class="lineCov">          3 :                                         break;</span>
+<span class="lineNum">     296 </span>            :                                 }
+<span class="lineNum">     297 </span>            :                         }
+<span class="lineNum">     298 </span>            : 
+<span class="lineNum">     299 </span><span class="lineCov">         63 :                         auto&amp; part = GetBodyPart(j);</span>
+<span class="lineNum">     300 </span>            : 
+<span class="lineNum">     301 </span><span class="lineCov">         63 :                         visited(j) = 1;</span>
+<span class="lineNum">     302 </span><span class="lineCov">         63 :                         world_omegas.row(j) = world_omega;</span>
+<span class="lineNum">     303 </span><span class="lineCov">         63 :                         world_vels.row(j) = world_vel;</span>
+<span class="lineNum">     304 </span>            : 
+<span class="lineNum">     305 </span>            :                         // calculate the spatial velocity at the center of mass
+<span class="lineNum">     306 </span><span class="lineCov">         63 :                         tVector com_pos = part-&gt;GetPos();</span>
+<span class="lineNum">     307 </span><span class="lineCov">         63 :                         Eigen::Vector3d r = Eigen::Vector3d(com_pos[0], com_pos[1], com_pos[2]);</span>
+<span class="lineNum">     308 </span><span class="lineCov">         63 :                         Eigen::Vector3d com_omega = world_omega;</span>
+<span class="lineNum">     309 </span><span class="lineCov">         63 :                         Eigen::Vector3d com_vel = -r.cross(world_omega) + world_vel;</span>
+<span class="lineNum">     310 </span>            : 
+<span class="lineNum">     311 </span><span class="lineCov">         63 :                         part-&gt;SetAngularVelocity(tVector(com_omega[0], com_omega[1], com_omega[2], 0));</span>
+<span class="lineNum">     312 </span><span class="lineCov">         63 :                         part-&gt;SetLinearVelocity(tVector(com_vel[0], com_vel[1], com_vel[2], 0));</span>
+<span class="lineNum">     313 </span>            :                 }
+<span class="lineNum">     314 </span>            :         }
+<a name="315"><span class="lineNum">     315 </span><span class="lineCov">          3 : }</span></a>
+<span class="lineNum">     316 </span>            : 
+<span class="lineNum">     317 </span><span class="lineCov">         63 : tVector cSimCharacter::CalcJointPos(int joint_id) const</span>
+<span class="lineNum">     318 </span>            : {
+<span class="lineNum">     319 </span><span class="lineCov">         63 :         const cJoint&amp; joint = mJoints[joint_id];</span>
+<span class="lineNum">     320 </span><span class="lineCov">         63 :         tVector pos;</span>
+<span class="lineNum">     321 </span>            :         
+<span class="lineNum">     322 </span><span class="lineCov">         63 :         if (joint.IsValid())</span>
+<span class="lineNum">     323 </span>            :         {
+<span class="lineNum">     324 </span><span class="lineCov">         60 :                 pos = joint.GetPos();</span>
+<span class="lineNum">     325 </span>            :         }
+<span class="lineNum">     326 </span><span class="lineCov">          3 :         else if (joint_id == GetRootID())</span>
+<span class="lineNum">     327 </span>            :         {
+<span class="lineNum">     328 </span><span class="lineCov">          3 :                 pos = GetRootPos();</span>
+<span class="lineNum">     329 </span>            :         }
+<span class="lineNum">     330 </span>            :         else
+<span class="lineNum">     331 </span>            :         {
+<span class="lineNum">     332 </span><span class="lineNoCov">          0 :                 int parent_id = cKinTree::GetParent(mJointMat, joint_id);</span>
+<span class="lineNum">     333 </span><span class="lineNoCov">          0 :                 assert(parent_id != cKinTree::gInvalidJointID);</span>
+<span class="lineNum">     334 </span><span class="lineNoCov">          0 :                 assert(IsValidBodyPart(parent_id));</span>
+<span class="lineNum">     335 </span>            : 
+<span class="lineNum">     336 </span><span class="lineNoCov">          0 :                 tVector attach_pt = cKinTree::GetScaledAttachPt(mJointMat, joint_id);</span>
+<span class="lineNum">     337 </span><span class="lineNoCov">          0 :                 tVector part_attach_pt = cKinTree::GetBodyAttachPt(mBodyDefs, parent_id);</span>
+<span class="lineNum">     338 </span><span class="lineNoCov">          0 :                 attach_pt -= part_attach_pt;</span>
+<span class="lineNum">     339 </span>            : 
+<span class="lineNum">     340 </span><span class="lineNoCov">          0 :                 const auto&amp; parent_part = GetBodyPart(parent_id);</span>
+<span class="lineNum">     341 </span><span class="lineNoCov">          0 :                 pos = parent_part-&gt;LocalToWorldPos(attach_pt);</span>
+<span class="lineNum">     342 </span>            :         }
+<span class="lineNum">     343 </span><span class="lineCov">         63 :         return pos;</span>
+<a name="344"><span class="lineNum">     344 </span>            : }</a>
+<span class="lineNum">     345 </span>            : 
+<span class="lineNum">     346 </span><span class="lineNoCov">          0 : tVector cSimCharacter::CalcJointVel(int joint_id) const</span>
+<span class="lineNum">     347 </span>            : {
+<span class="lineNum">     348 </span><span class="lineNoCov">          0 :         const cJoint&amp; joint = mJoints[joint_id];</span>
+<span class="lineNum">     349 </span><span class="lineNoCov">          0 :         tVector vel;</span>
+<span class="lineNum">     350 </span>            : 
+<span class="lineNum">     351 </span><span class="lineNoCov">          0 :         if (joint.IsValid())</span>
+<span class="lineNum">     352 </span>            :         {
+<span class="lineNum">     353 </span><span class="lineNoCov">          0 :                 vel = joint.GetVel();</span>
+<span class="lineNum">     354 </span>            :         }
+<span class="lineNum">     355 </span><span class="lineNoCov">          0 :         else if (joint_id == GetRootID())</span>
+<span class="lineNum">     356 </span>            :         {
+<span class="lineNum">     357 </span><span class="lineNoCov">          0 :                 vel = GetRootVel();</span>
+<span class="lineNum">     358 </span>            :         }
+<span class="lineNum">     359 </span>            :         else
+<span class="lineNum">     360 </span>            :         {
+<span class="lineNum">     361 </span><span class="lineNoCov">          0 :                 int parent_id = cKinTree::GetParent(mJointMat, joint_id);</span>
+<span class="lineNum">     362 </span><span class="lineNoCov">          0 :                 assert(parent_id != cKinTree::gInvalidJointID);</span>
+<span class="lineNum">     363 </span><span class="lineNoCov">          0 :                 assert(IsValidBodyPart(parent_id));</span>
+<span class="lineNum">     364 </span>            : 
+<span class="lineNum">     365 </span><span class="lineNoCov">          0 :                 tVector attach_pt = cKinTree::GetScaledAttachPt(mJointMat, joint_id);</span>
+<span class="lineNum">     366 </span><span class="lineNoCov">          0 :                 tVector part_attach_pt = cKinTree::GetBodyAttachPt(mBodyDefs, parent_id);</span>
+<span class="lineNum">     367 </span><span class="lineNoCov">          0 :                 attach_pt -= part_attach_pt;</span>
+<span class="lineNum">     368 </span>            : 
+<span class="lineNum">     369 </span><span class="lineNoCov">          0 :                 const auto&amp; parent_part = GetBodyPart(parent_id);</span>
+<span class="lineNum">     370 </span><span class="lineNoCov">          0 :                 vel = parent_part-&gt;GetLinearVelocity(attach_pt);</span>
+<span class="lineNum">     371 </span>            :         }
+<span class="lineNum">     372 </span>            : 
+<span class="lineNum">     373 </span><span class="lineNoCov">          0 :         return vel;</span>
+<a name="374"><span class="lineNum">     374 </span>            : }</a>
+<span class="lineNum">     375 </span>            : 
+<span class="lineNum">     376 </span><span class="lineNoCov">          0 : void cSimCharacter::CalcJointWorldRotation(int joint_id, tVector&amp; out_axis, double&amp; out_theta) const</span>
+<span class="lineNum">     377 </span>            : {
+<span class="lineNum">     378 </span><span class="lineNoCov">          0 :         if (IsValidBodyPart(joint_id))</span>
+<span class="lineNum">     379 </span>            :         {
+<span class="lineNum">     380 </span><span class="lineNoCov">          0 :                 mBodyParts[joint_id]-&gt;GetRotation(out_axis, out_theta);</span>
+<span class="lineNum">     381 </span>            :         }
+<span class="lineNum">     382 </span>            :         else
+<span class="lineNum">     383 </span>            :         {
+<span class="lineNum">     384 </span><span class="lineNoCov">          0 :                 int parent_id = cKinTree::GetParent(mJointMat, joint_id);</span>
+<span class="lineNum">     385 </span><span class="lineNoCov">          0 :                 assert(parent_id != cKinTree::gInvalidJointID);</span>
+<span class="lineNum">     386 </span><span class="lineNoCov">          0 :                 assert(IsValidBodyPart(parent_id));</span>
+<span class="lineNum">     387 </span>            : 
+<span class="lineNum">     388 </span><span class="lineNoCov">          0 :                 out_axis = tVector(0, 0, 1, 0);</span>
+<span class="lineNum">     389 </span><span class="lineNoCov">          0 :                 const auto&amp; parent_part = GetBodyPart(parent_id);</span>
+<span class="lineNum">     390 </span><span class="lineNoCov">          0 :                 auto rot = parent_part-&gt;GetLocalToWorldRotMat();</span>
+<span class="lineNum">     391 </span><span class="lineNoCov">          0 :                 out_axis.block(0, 0, 3, 1) = rot * out_axis.block(0, 0, 3, 1);</span>
+<span class="lineNum">     392 </span><span class="lineNoCov">          0 :                 out_theta = 0;</span>
+<span class="lineNum">     393 </span>            :         }
+<a name="394"><span class="lineNum">     394 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     395 </span>            : 
+<span class="lineNum">     396 </span><span class="lineCov">        378 : tVector cSimCharacter::CalcCOM() const</span>
+<span class="lineNum">     397 </span>            : {
+<span class="lineNum">     398 </span><span class="lineCov">        378 :         tVector com = tVector::Zero();</span>
+<span class="lineNum">     399 </span><span class="lineCov">        378 :         double total_mass = 0;</span>
+<span class="lineNum">     400 </span><span class="lineCov">       8316 :         for (int i = 0; i &lt; static_cast&lt;int&gt;(mBodyParts.size()); ++i)</span>
+<span class="lineNum">     401 </span>            :         {
+<span class="lineNum">     402 </span><span class="lineCov">       7938 :                 if (IsValidBodyPart(i))</span>
+<span class="lineNum">     403 </span>            :                 {
+<span class="lineNum">     404 </span><span class="lineCov">       7938 :                         const auto&amp; part = mBodyParts[i];</span>
+<span class="lineNum">     405 </span><span class="lineCov">       7938 :                         double mass = part-&gt;GetMass();</span>
+<span class="lineNum">     406 </span><span class="lineCov">       7938 :                         tVector curr_com = part-&gt;GetPos();</span>
+<span class="lineNum">     407 </span>            : 
+<span class="lineNum">     408 </span><span class="lineCov">       7938 :                         com += mass * curr_com;</span>
+<span class="lineNum">     409 </span><span class="lineCov">       7938 :                         total_mass += mass;</span>
+<span class="lineNum">     410 </span>            :                 }
+<span class="lineNum">     411 </span>            :         }
+<span class="lineNum">     412 </span><span class="lineCov">        378 :         com /= total_mass;</span>
+<span class="lineNum">     413 </span><span class="lineCov">        378 :         return com;</span>
+<a name="414"><span class="lineNum">     414 </span>            : }</a>
+<span class="lineNum">     415 </span>            : 
+<span class="lineNum">     416 </span><span class="lineCov">       2305 : tVector cSimCharacter::CalcCOMVel() const</span>
+<span class="lineNum">     417 </span>            : {
+<span class="lineNum">     418 </span><span class="lineCov">       2305 :         tVector com_vel = tVector::Zero();</span>
+<span class="lineNum">     419 </span><span class="lineCov">       2305 :         double total_mass = 0;</span>
+<span class="lineNum">     420 </span><span class="lineCov">      50710 :         for (int i = 0; i &lt; static_cast&lt;int&gt;(mBodyParts.size()); ++i)</span>
+<span class="lineNum">     421 </span>            :         {
+<span class="lineNum">     422 </span><span class="lineCov">      48405 :                 if (IsValidBodyPart(i))</span>
+<span class="lineNum">     423 </span>            :                 {
+<span class="lineNum">     424 </span><span class="lineCov">      48405 :                         const auto&amp; part = mBodyParts[i];</span>
+<span class="lineNum">     425 </span><span class="lineCov">      48405 :                         double mass = part-&gt;GetMass();</span>
+<span class="lineNum">     426 </span><span class="lineCov">      48405 :                         tVector curr_vel = part-&gt;GetLinearVelocity();</span>
+<span class="lineNum">     427 </span>            : 
+<span class="lineNum">     428 </span><span class="lineCov">      48405 :                         com_vel += mass * curr_vel;</span>
+<span class="lineNum">     429 </span><span class="lineCov">      48405 :                         total_mass += mass;</span>
+<span class="lineNum">     430 </span>            :                 }
+<span class="lineNum">     431 </span>            :         }
+<span class="lineNum">     432 </span><span class="lineCov">       2305 :         com_vel /= total_mass;</span>
+<span class="lineNum">     433 </span><span class="lineCov">       2305 :         return com_vel;</span>
+<a name="434"><span class="lineNum">     434 </span>            : }</a>
+<span class="lineNum">     435 </span>            : 
+<span class="lineNum">     436 </span><span class="lineNoCov">          0 : void cSimCharacter::CalcAABB(tVector&amp; out_min, tVector&amp; out_max) const</span>
+<span class="lineNum">     437 </span>            : {
+<span class="lineNum">     438 </span><span class="lineNoCov">          0 :         out_min[0] = std::numeric_limits&lt;double&gt;::infinity();</span>
+<span class="lineNum">     439 </span><span class="lineNoCov">          0 :         out_min[1] = std::numeric_limits&lt;double&gt;::infinity();</span>
+<span class="lineNum">     440 </span><span class="lineNoCov">          0 :         out_min[2] = std::numeric_limits&lt;double&gt;::infinity();</span>
+<span class="lineNum">     441 </span>            : 
+<span class="lineNum">     442 </span><span class="lineNoCov">          0 :         out_max[0] = -std::numeric_limits&lt;double&gt;::infinity();</span>
+<span class="lineNum">     443 </span><span class="lineNoCov">          0 :         out_max[1] = -std::numeric_limits&lt;double&gt;::infinity();</span>
+<span class="lineNum">     444 </span><span class="lineNoCov">          0 :         out_max[2] = -std::numeric_limits&lt;double&gt;::infinity();</span>
+<span class="lineNum">     445 </span>            : 
+<span class="lineNum">     446 </span><span class="lineNoCov">          0 :         for (int i = 0; i &lt; GetNumBodyParts(); ++i)</span>
+<span class="lineNum">     447 </span>            :         {
+<span class="lineNum">     448 </span><span class="lineNoCov">          0 :                 if (IsValidBodyPart(i))</span>
+<span class="lineNum">     449 </span>            :                 {
+<span class="lineNum">     450 </span><span class="lineNoCov">          0 :                         const auto&amp; part = GetBodyPart(i);</span>
+<span class="lineNum">     451 </span>            : 
+<span class="lineNum">     452 </span><span class="lineNoCov">          0 :                         tVector curr_min = tVector::Zero();</span>
+<span class="lineNum">     453 </span><span class="lineNoCov">          0 :                         tVector curr_max = tVector::Zero();</span>
+<span class="lineNum">     454 </span><span class="lineNoCov">          0 :                         part-&gt;CalcAABB(curr_min, curr_max);</span>
+<span class="lineNum">     455 </span>            : 
+<span class="lineNum">     456 </span><span class="lineNoCov">          0 :                         out_min = out_min.cwiseMin(curr_min);</span>
+<span class="lineNum">     457 </span><span class="lineNoCov">          0 :                         out_max = out_max.cwiseMax(curr_max);</span>
+<span class="lineNum">     458 </span>            :                 }
+<span class="lineNum">     459 </span>            :         }
+<a name="460"><span class="lineNum">     460 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     461 </span>            : 
+<span class="lineNum">     462 </span><span class="lineCov">        903 : const cJoint&amp; cSimCharacter::GetJoint(int joint_id) const</span>
+<span class="lineNum">     463 </span>            : {
+<span class="lineNum">     464 </span><span class="lineCov">        903 :         return mJoints[joint_id];</span>
+<a name="465"><span class="lineNum">     465 </span>            : }</a>
+<span class="lineNum">     466 </span>            : 
+<span class="lineNum">     467 </span><span class="lineCov">     270423 : cJoint&amp; cSimCharacter::GetJoint(int joint_id)</span>
+<span class="lineNum">     468 </span>            : {
+<span class="lineNum">     469 </span><span class="lineCov">     270423 :         return mJoints[joint_id];</span>
+<a name="470"><span class="lineNum">     470 </span>            : }</a>
+<span class="lineNum">     471 </span>            : 
+<span class="lineNum">     472 </span><span class="lineCov">      37364 : const std::shared_ptr&lt;cSimObj&gt;&amp; cSimCharacter::GetBodyPart(int idx) const</span>
+<span class="lineNum">     473 </span>            : {
+<span class="lineNum">     474 </span><span class="lineCov">      37364 :         return mBodyParts[idx];</span>
+<a name="475"><span class="lineNum">     475 </span>            : }</a>
+<span class="lineNum">     476 </span>            : 
+<span class="lineNum">     477 </span><span class="lineCov">      14491 : std::shared_ptr&lt;cSimObj&gt;&amp; cSimCharacter::GetBodyPart(int idx)</span>
+<span class="lineNum">     478 </span>            : {
+<span class="lineNum">     479 </span><span class="lineCov">      14491 :         return mBodyParts[idx];</span>
+<a name="480"><span class="lineNum">     480 </span>            : }</a>
+<span class="lineNum">     481 </span>            : 
+<span class="lineNum">     482 </span><span class="lineNoCov">          0 : const std::shared_ptr&lt;cSimObj&gt;&amp; cSimCharacter::GetRootPart() const</span>
+<span class="lineNum">     483 </span>            : {
+<span class="lineNum">     484 </span><span class="lineNoCov">          0 :         int root_idx = GetRootID();</span>
+<span class="lineNum">     485 </span><span class="lineNoCov">          0 :         return mBodyParts[root_idx];</span>
+<a name="486"><span class="lineNum">     486 </span>            : }</a>
+<span class="lineNum">     487 </span>            : 
+<span class="lineNum">     488 </span><span class="lineNoCov">          0 : std::shared_ptr&lt;cSimObj&gt; cSimCharacter::GetRootPart()</span>
+<span class="lineNum">     489 </span>            : {
+<span class="lineNum">     490 </span><span class="lineNoCov">          0 :         int root_idx = GetRootID();</span>
+<span class="lineNum">     491 </span><span class="lineNoCov">          0 :         return mBodyParts[root_idx];</span>
+<a name="492"><span class="lineNum">     492 </span>            : }</a>
+<span class="lineNum">     493 </span>            : 
+<span class="lineNum">     494 </span><span class="lineCov">          2 : void cSimCharacter::RegisterContacts(int contact_flag, int filter_flag)</span>
+<span class="lineNum">     495 </span>            : {
+<span class="lineNum">     496 </span><span class="lineCov">         44 :         for (int i = 0; i &lt; static_cast&lt;int&gt;(mBodyParts.size()); ++i)</span>
+<span class="lineNum">     497 </span>            :         {
+<span class="lineNum">     498 </span><span class="lineCov">         42 :                 if (IsValidBodyPart(i))</span>
+<span class="lineNum">     499 </span>            :                 {
+<span class="lineNum">     500 </span><span class="lineCov">         42 :                         std::shared_ptr&lt;cSimObj&gt;&amp; part = mBodyParts[i];</span>
+<span class="lineNum">     501 </span><span class="lineCov">         42 :                         part-&gt;RegisterContact(contact_flag, filter_flag);</span>
+<span class="lineNum">     502 </span>            :                 }
+<span class="lineNum">     503 </span>            :         }
+<a name="504"><span class="lineNum">     504 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">     505 </span>            : 
+<span class="lineNum">     506 </span><span class="lineNoCov">          0 : bool cSimCharacter::HasFallen() const</span>
+<span class="lineNum">     507 </span>            : {
+<span class="lineNum">     508 </span><span class="lineNoCov">          0 :         return false;</span>
+<a name="509"><span class="lineNum">     509 </span>            : }</a>
+<span class="lineNum">     510 </span>            : 
+<span class="lineNum">     511 </span><span class="lineNoCov">          0 : bool cSimCharacter::HasStumbled() const</span>
+<span class="lineNum">     512 </span>            : {
+<span class="lineNum">     513 </span><span class="lineNoCov">          0 :         return false;</span>
+<a name="514"><span class="lineNum">     514 </span>            : }</a>
+<span class="lineNum">     515 </span>            : 
+<span class="lineNum">     516 </span><span class="lineNoCov">          0 : bool cSimCharacter::HasExploded() const</span>
+<span class="lineNum">     517 </span>            : {
+<span class="lineNum">     518 </span><span class="lineNoCov">          0 :         const double dist_threshold = 0.02 * 0.02;</span>
+<span class="lineNum">     519 </span><span class="lineNoCov">          0 :         bool exploded = false;</span>
+<span class="lineNum">     520 </span>            : 
+<span class="lineNum">     521 </span><span class="lineNoCov">          0 :         int num_joints = GetNumJoints();</span>
+<span class="lineNum">     522 </span><span class="lineNoCov">          0 :         for (int j = 0; j &lt; num_joints; ++j)</span>
+<span class="lineNum">     523 </span>            :         {
+<span class="lineNum">     524 </span><span class="lineNoCov">          0 :                 const cJoint&amp; joint = GetJoint(j);</span>
+<span class="lineNum">     525 </span><span class="lineNoCov">          0 :                 if (joint.IsValid())</span>
+<span class="lineNum">     526 </span>            :                 {
+<span class="lineNum">     527 </span><span class="lineNoCov">          0 :                         const auto&amp; parent = joint.GetParent();</span>
+<span class="lineNum">     528 </span><span class="lineNoCov">          0 :                         const auto&amp; child = joint.GetChild();</span>
+<span class="lineNum">     529 </span><span class="lineNoCov">          0 :                         const tVector&amp; anchor_parent = joint.GetParentAnchor();</span>
+<span class="lineNum">     530 </span><span class="lineNoCov">          0 :                         const tVector&amp; anchor_child = joint.GetChildAnchor();</span>
+<span class="lineNum">     531 </span>            : 
+<span class="lineNum">     532 </span><span class="lineNoCov">          0 :                         tVector parent_pos = parent-&gt;LocalToWorldPos(anchor_parent);</span>
+<span class="lineNum">     533 </span><span class="lineNoCov">          0 :                         tVector child_pos = child-&gt;LocalToWorldPos(anchor_child);</span>
+<span class="lineNum">     534 </span>            : 
+<span class="lineNum">     535 </span><span class="lineNoCov">          0 :                         tVector delta = child_pos - parent_pos;</span>
+<span class="lineNum">     536 </span><span class="lineNoCov">          0 :                         double dist = delta.squaredNorm();</span>
+<span class="lineNum">     537 </span>            : 
+<span class="lineNum">     538 </span><span class="lineNoCov">          0 :                         if (dist &gt; dist_threshold)</span>
+<span class="lineNum">     539 </span>            :                         {
+<span class="lineNum">     540 </span><span class="lineNoCov">          0 :                                 exploded = true;</span>
+<span class="lineNum">     541 </span><span class="lineNoCov">          0 :                                 break;</span>
+<span class="lineNum">     542 </span>            :                         }
+<span class="lineNum">     543 </span>            :                 }
+<span class="lineNum">     544 </span>            :         }
+<span class="lineNum">     545 </span>            : 
+<span class="lineNum">     546 </span><span class="lineNoCov">          0 :         return exploded;</span>
+<a name="547"><span class="lineNum">     547 </span>            : }</a>
+<span class="lineNum">     548 </span>            : 
+<span class="lineNum">     549 </span><span class="lineNoCov">          0 : bool cSimCharacter::IsEndEffector(int idx) const</span>
+<span class="lineNum">     550 </span>            : {
+<span class="lineNum">     551 </span><span class="lineNoCov">          0 :         return false;</span>
+<a name="552"><span class="lineNum">     552 </span>            : }</a>
+<span class="lineNum">     553 </span>            : 
+<span class="lineNum">     554 </span><span class="lineNoCov">          0 : bool cSimCharacter::IsInContact() const</span>
+<span class="lineNum">     555 </span>            : {
+<span class="lineNum">     556 </span><span class="lineNoCov">          0 :         for (int i = 0; i &lt; GetNumBodyParts(); ++i)</span>
+<span class="lineNum">     557 </span>            :         {
+<span class="lineNum">     558 </span><span class="lineNoCov">          0 :                 if (IsValidBodyPart(i))</span>
+<span class="lineNum">     559 </span>            :                 {
+<span class="lineNum">     560 </span><span class="lineNoCov">          0 :                         if (IsInContact(i))</span>
+<span class="lineNum">     561 </span>            :                         {
+<span class="lineNum">     562 </span><span class="lineNoCov">          0 :                                 return true;</span>
+<span class="lineNum">     563 </span>            :                         }
+<span class="lineNum">     564 </span>            :                 }
+<span class="lineNum">     565 </span>            :         }
+<span class="lineNum">     566 </span><span class="lineNoCov">          0 :         return false;</span>
+<a name="567"><span class="lineNum">     567 </span>            : }</a>
+<span class="lineNum">     568 </span>            : 
+<span class="lineNum">     569 </span><span class="lineCov">          6 : bool cSimCharacter::IsInContact(int idx) const</span>
+<span class="lineNum">     570 </span>            : {
+<span class="lineNum">     571 </span><span class="lineCov">          6 :         return GetBodyPart(idx)-&gt;IsInContact();</span>
+<a name="572"><span class="lineNum">     572 </span>            : }</a>
+<span class="lineNum">     573 </span>            : 
+<span class="lineNum">     574 </span><span class="lineCov">          1 : tVector cSimCharacter::GetContactPt(int idx) const</span>
+<span class="lineNum">     575 </span>            : {
+<span class="lineNum">     576 </span><span class="lineCov">          1 :         return GetBodyPart(idx)-&gt;GetContactPt();</span>
+<a name="577"><span class="lineNum">     577 </span>            : }</a>
+<span class="lineNum">     578 </span>            : 
+<span class="lineNum">     579 </span><span class="lineNoCov">          0 : int cSimCharacter::GetState() const</span>
+<span class="lineNum">     580 </span>            : {
+<span class="lineNum">     581 </span><span class="lineNoCov">          0 :         if (HasController())</span>
+<span class="lineNum">     582 </span>            :         {
+<span class="lineNum">     583 </span><span class="lineNoCov">          0 :                 return mController-&gt;GetState();</span>
+<span class="lineNum">     584 </span>            :         }
+<span class="lineNum">     585 </span><span class="lineNoCov">          0 :         assert(false);</span>
+<span class="lineNum">     586 </span>            :         return 0;
+<a name="587"><span class="lineNum">     587 </span>            : }</a>
+<span class="lineNum">     588 </span>            : 
+<span class="lineNum">     589 </span><span class="lineNoCov">          0 : double cSimCharacter::GetPhase() const</span>
+<span class="lineNum">     590 </span>            : {
+<span class="lineNum">     591 </span><span class="lineNoCov">          0 :         if (HasController())</span>
+<span class="lineNum">     592 </span>            :         {
+<span class="lineNum">     593 </span><span class="lineNoCov">          0 :                 return mController-&gt;GetPhase();</span>
+<span class="lineNum">     594 </span>            :         }
+<span class="lineNum">     595 </span><span class="lineNoCov">          0 :         assert(false);</span>
+<span class="lineNum">     596 </span>            :         return 0;
+<span class="lineNum">     597 </span>            : }
+<a name="598"><span class="lineNum">     598 </span>            : </a>
+<span class="lineNum">     599 </span>            : 
+<span class="lineNum">     600 </span><span class="lineCov">          2 : void cSimCharacter::SetController(std::shared_ptr&lt;cCharController&gt; ctrl)</span>
+<span class="lineNum">     601 </span>            : {
+<span class="lineNum">     602 </span><span class="lineCov">          2 :         RemoveController();</span>
+<span class="lineNum">     603 </span><span class="lineCov">          2 :         mController = ctrl;</span>
+<a name="604"><span class="lineNum">     604 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">     605 </span>            : 
+<span class="lineNum">     606 </span><span class="lineCov">          2 : void cSimCharacter::RemoveController()</span>
+<span class="lineNum">     607 </span>            : {
+<span class="lineNum">     608 </span><span class="lineCov">          2 :         if (HasController())</span>
+<span class="lineNum">     609 </span>            :         {
+<span class="lineNum">     610 </span><span class="lineNoCov">          0 :                 mController.reset();</span>
+<span class="lineNum">     611 </span>            :         }
+<a name="612"><span class="lineNum">     612 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">     613 </span>            : 
+<span class="lineNum">     614 </span><span class="lineCov">       2185 : bool cSimCharacter::HasController() const</span>
+<span class="lineNum">     615 </span>            : {
+<span class="lineNum">     616 </span><span class="lineCov">       2185 :         return mController != nullptr;</span>
+<a name="617"><span class="lineNum">     617 </span>            : }</a>
+<span class="lineNum">     618 </span>            : 
+<span class="lineNum">     619 </span><span class="lineCov">       2289 : const std::shared_ptr&lt;cCharController&gt;&amp; cSimCharacter::GetController()</span>
+<span class="lineNum">     620 </span>            : {
+<span class="lineNum">     621 </span><span class="lineCov">       2289 :         return mController;</span>
+<a name="622"><span class="lineNum">     622 </span>            : }</a>
+<span class="lineNum">     623 </span>            : 
+<span class="lineNum">     624 </span><span class="lineNoCov">          0 : const std::shared_ptr&lt;cCharController&gt;&amp; cSimCharacter::GetController() const</span>
+<span class="lineNum">     625 </span>            : {
+<span class="lineNum">     626 </span><span class="lineNoCov">          0 :         return mController;</span>
+<a name="627"><span class="lineNum">     627 </span>            : }</a>
+<span class="lineNum">     628 </span>            : 
+<span class="lineNum">     629 </span><span class="lineNoCov">          0 : void cSimCharacter::EnableController(bool enable)</span>
+<span class="lineNum">     630 </span>            : {
+<span class="lineNum">     631 </span><span class="lineNoCov">          0 :         if (HasController())</span>
+<span class="lineNum">     632 </span>            :         {
+<span class="lineNum">     633 </span><span class="lineNoCov">          0 :                 mController-&gt;SetActive(enable);</span>
+<span class="lineNum">     634 </span>            :         }
+<a name="635"><span class="lineNum">     635 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     636 </span>            : 
+<span class="lineNum">     637 </span><span class="lineCov">       2180 : void cSimCharacter::ApplyControlForces(const Eigen::VectorXd&amp; tau)</span>
+<span class="lineNum">     638 </span>            : {
+<span class="lineNum">     639 </span><span class="lineCov">       2180 :         assert(tau.size() == GetNumDof());</span>
+<span class="lineNum">     640 </span><span class="lineCov">      47960 :         for (int j = 0; j &lt; GetNumJoints(); ++j)</span>
+<span class="lineNum">     641 </span>            :         {
+<span class="lineNum">     642 </span><span class="lineCov">      45780 :                 cJoint&amp; joint = GetJoint(j);</span>
+<span class="lineNum">     643 </span><span class="lineCov">      45780 :                 if (joint.IsValid())</span>
+<span class="lineNum">     644 </span>            :                 {
+<span class="lineNum">     645 </span><span class="lineCov">      43600 :                         int param_offset = GetParamOffset(j);</span>
+<span class="lineNum">     646 </span><span class="lineCov">      43600 :                         int param_size = GetParamSize(j);</span>
+<span class="lineNum">     647 </span><span class="lineCov">      43600 :                         auto curr_tau = tau.segment(param_offset, param_size);</span>
+<span class="lineNum">     648 </span><span class="lineCov">      43600 :                         assert(curr_tau.size() == 1);</span>
+<span class="lineNum">     649 </span><span class="lineCov">      43600 :                         tVector torque = tVector(0, 0, curr_tau[0], 0);</span>
+<span class="lineNum">     650 </span>            : 
+<span class="lineNum">     651 </span><span class="lineCov">      43600 :                         joint.AddTorque(torque);</span>
+<span class="lineNum">     652 </span>            :                 }
+<span class="lineNum">     653 </span>            :         }
+<a name="654"><span class="lineNum">     654 </span><span class="lineCov">       2180 : }</span></a>
+<span class="lineNum">     655 </span>            : 
+<span class="lineNum">     656 </span><span class="lineNoCov">          0 : void cSimCharacter::PlayPossum()</span>
+<span class="lineNum">     657 </span>            : {
+<span class="lineNum">     658 </span><span class="lineNoCov">          0 :         if (HasController())</span>
+<span class="lineNum">     659 </span>            :         {
+<span class="lineNum">     660 </span><span class="lineNoCov">          0 :                 mController-&gt;SetMode(cController::eModePassive);</span>
+<span class="lineNum">     661 </span>            :         }
+<span class="lineNum">     662 </span><span class="lineNoCov">          0 : }</span>
+<a name="663"><span class="lineNum">     663 </span>            : </a>
+<span class="lineNum">     664 </span>            : 
+<span class="lineNum">     665 </span><span class="lineCov">          6 : void cSimCharacter::SetPose(const Eigen::VectorXd&amp; pose)</span>
+<span class="lineNum">     666 </span>            : {
+<span class="lineNum">     667 </span><span class="lineCov">          6 :         cCharacter::SetPose(pose);</span>
+<span class="lineNum">     668 </span>            : 
+<span class="lineNum">     669 </span><span class="lineCov">        132 :         for (int i = 0; i &lt; static_cast&lt;int&gt;(mBodyParts.size()); ++i)</span>
+<span class="lineNum">     670 </span>            :         {
+<span class="lineNum">     671 </span><span class="lineCov">        126 :                 if (IsValidBodyPart(i))</span>
+<span class="lineNum">     672 </span>            :                 {
+<span class="lineNum">     673 </span><span class="lineCov">        126 :                         auto&amp; curr_part = mBodyParts[i];</span>
+<span class="lineNum">     674 </span><span class="lineCov">        126 :                         tVector axis;</span>
+<span class="lineNum">     675 </span>            :                         double theta;
+<span class="lineNum">     676 </span><span class="lineCov">        126 :                         cKinTree::CalcBodyPartRotation(mJointMat, mPose, mBodyDefs, i, axis, theta);</span>
+<span class="lineNum">     677 </span><span class="lineCov">        126 :                         tVector attach_pt = cKinTree::CalcBodyPartPos(mJointMat, mPose, mBodyDefs, i);</span>
+<span class="lineNum">     678 </span>            : 
+<span class="lineNum">     679 </span><span class="lineCov">        126 :                         curr_part-&gt;SetPos(attach_pt);</span>
+<span class="lineNum">     680 </span><span class="lineCov">        126 :                         curr_part-&gt;SetRotation(axis, theta);</span>
+<span class="lineNum">     681 </span>            :                 }
+<span class="lineNum">     682 </span>            :         }
+<a name="683"><span class="lineNum">     683 </span><span class="lineCov">          6 : }</span></a>
+<span class="lineNum">     684 </span>            : 
+<span class="lineNum">     685 </span><span class="lineCov">          2 : bool cSimCharacter::BuildSimBody(const tParams&amp; params, const tVector&amp; root_pos)</span>
+<span class="lineNum">     686 </span>            : {
+<span class="lineNum">     687 </span><span class="lineCov">          2 :         bool succ = true;</span>
+<span class="lineNum">     688 </span><span class="lineCov">          2 :         succ = LoadBodyDefs(params.mCharFile, mBodyDefs);</span>
+<span class="lineNum">     689 </span>            : 
+<span class="lineNum">     690 </span><span class="lineCov">          2 :         int num_joints = GetNumJoints();</span>
+<span class="lineNum">     691 </span><span class="lineCov">          2 :         mBodyParts.resize(num_joints);</span>
+<span class="lineNum">     692 </span><span class="lineCov">         44 :         for (int j = 0; j &lt; num_joints; ++j)</span>
+<span class="lineNum">     693 </span>            :         {
+<span class="lineNum">     694 </span><span class="lineCov">         42 :                 auto&amp; curr_part = mBodyParts[j];</span>
+<span class="lineNum">     695 </span><span class="lineCov">         42 :                 BuildBodyPart(j, root_pos, mFriction, curr_part);</span>
+<span class="lineNum">     696 </span>            : 
+<span class="lineNum">     697 </span><span class="lineCov">         42 :                 if (curr_part != nullptr)</span>
+<span class="lineNum">     698 </span>            :                 {
+<span class="lineNum">     699 </span><span class="lineCov">         42 :                         curr_part-&gt;UpdateContact(cWorld::eContactFlagCharacter, cWorld::eContactFlagAll);</span>
+<span class="lineNum">     700 </span><span class="lineCov">         42 :                         curr_part-&gt;DisableDeactivation();</span>
+<span class="lineNum">     701 </span>            :                 }
+<span class="lineNum">     702 </span>            :         }
+<span class="lineNum">     703 </span>            : 
+<span class="lineNum">     704 </span><span class="lineCov">          2 :         BuildConstraints(params.mPlaneCons);</span>
+<span class="lineNum">     705 </span>            : 
+<span class="lineNum">     706 </span>            : #if defined(ENABLE_TRAINING)
+<span class="lineNum">     707 </span><span class="lineCov">          2 :         mEffortBuffer.resize(GetNumJoints());</span>
+<span class="lineNum">     708 </span><span class="lineCov">          2 :         ClearEffortBuffer();</span>
+<span class="lineNum">     709 </span>            : #endif
+<span class="lineNum">     710 </span>            : 
+<span class="lineNum">     711 </span><span class="lineCov">          2 :         int root_id = GetRootID();</span>
+<span class="lineNum">     712 </span><span class="lineCov">          2 :         mRootBodyTrans = cMathUtil::InvRigidMat(cKinTree::BodyJointTrans(mBodyDefs, root_id));</span>
+<span class="lineNum">     713 </span>            : 
+<span class="lineNum">     714 </span><span class="lineCov">          2 :         return true;</span>
+<a name="715"><span class="lineNum">     715 </span>            : }</a>
+<span class="lineNum">     716 </span>            : 
+<span class="lineNum">     717 </span><span class="lineCov">          2 : bool cSimCharacter::LoadBodyDefs(const std::string&amp; char_file, Eigen::MatrixXd&amp; out_body_defs) const</span>
+<span class="lineNum">     718 </span>            : {
+<span class="lineNum">     719 </span><span class="lineCov">          2 :         bool succ = cKinTree::LoadBodyDefs(char_file, out_body_defs);</span>
+<span class="lineNum">     720 </span><span class="lineCov">          2 :         int num_joints = GetNumJoints();</span>
+<span class="lineNum">     721 </span><span class="lineCov">          2 :         int num_body_defs = static_cast&lt;int&gt;(out_body_defs.rows());</span>
+<span class="lineNum">     722 </span><span class="lineCov">          2 :         assert(num_joints == num_body_defs);</span>
+<span class="lineNum">     723 </span><span class="lineCov">          2 :         return succ;</span>
+<a name="724"><span class="lineNum">     724 </span>            : }</a>
+<span class="lineNum">     725 </span>            : 
+<span class="lineNum">     726 </span><span class="lineCov">          2 : bool cSimCharacter::LoadDrawShapeDefs(const std::string&amp; char_file, Eigen::MatrixXd&amp; out_draw_defs) const</span>
+<span class="lineNum">     727 </span>            : {
+<span class="lineNum">     728 </span><span class="lineCov">          2 :         bool succ = cKinTree::LoadDrawShapeDefs(char_file, out_draw_defs);</span>
+<span class="lineNum">     729 </span><span class="lineCov">          2 :         return succ;</span>
+<span class="lineNum">     730 </span>            : }
+<a name="731"><span class="lineNum">     731 </span>            : </a>
+<span class="lineNum">     732 </span>            : 
+<span class="lineNum">     733 </span><span class="lineCov">         42 : void cSimCharacter::BuildBodyPart(int part_id, const tVector&amp; root_pos, double friction, std::shared_ptr&lt;cSimObj&gt;&amp; out_part)</span>
+<span class="lineNum">     734 </span>            : {
+<span class="lineNum">     735 </span><span class="lineCov">         42 :         cKinTree::eBodyShape shape = cKinTree::GetBodyShape(mBodyDefs, part_id);</span>
+<span class="lineNum">     736 </span><span class="lineCov">         42 :         switch (shape)</span>
+<span class="lineNum">     737 </span>            :         {
+<span class="lineNum">     738 </span>            :                 case cKinTree::eBodyShapeBox:
+<span class="lineNum">     739 </span>            :                 {
+<span class="lineNum">     740 </span><span class="lineCov">         42 :                         BuildBoxPart(part_id, root_pos, friction, out_part);</span>
+<span class="lineNum">     741 </span><span class="lineCov">         42 :                         break;</span>
+<span class="lineNum">     742 </span>            :                 }
+<span class="lineNum">     743 </span>            :                 case cKinTree::eBodyShapeCapsule:
+<span class="lineNum">     744 </span>            :                 {
+<span class="lineNum">     745 </span><span class="lineNoCov">          0 :                         BuildCapsulePart(part_id, root_pos, friction, out_part);</span>
+<span class="lineNum">     746 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     747 </span>            :                 }
+<span class="lineNum">     748 </span>            :                 default:
+<span class="lineNum">     749 </span><span class="lineNoCov">          0 :                         out_part = nullptr;</span>
+<span class="lineNum">     750 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     751 </span>            :         }
+<a name="752"><span class="lineNum">     752 </span><span class="lineCov">         42 : }</span></a>
+<span class="lineNum">     753 </span>            : 
+<span class="lineNum">     754 </span><span class="lineCov">         42 : void cSimCharacter::BuildBoxPart(int part_id, const tVector&amp; root_pos, double friction,</span>
+<span class="lineNum">     755 </span>            :                                                                 std::shared_ptr&lt;cSimObj&gt;&amp; out_part)
+<span class="lineNum">     756 </span>            : {
+<span class="lineNum">     757 </span><span class="lineCov">         42 :         tMatrix com_world_trans = cKinTree::BodyWorldTrans(mJointMat, mPose, mBodyDefs, part_id);</span>
+<span class="lineNum">     758 </span><span class="lineCov">         42 :         tVector pos = com_world_trans * tVector(0, 0, 0, 1);</span>
+<span class="lineNum">     759 </span><span class="lineCov">         42 :         pos += root_pos;</span>
+<span class="lineNum">     760 </span>            : 
+<span class="lineNum">     761 </span><span class="lineCov">         42 :         tVector axis;</span>
+<span class="lineNum">     762 </span>            :         double theta;
+<span class="lineNum">     763 </span><span class="lineCov">         42 :         cMathUtil::RotMatToAxisAngle(com_world_trans, axis, theta);</span>
+<span class="lineNum">     764 </span>            : 
+<span class="lineNum">     765 </span><span class="lineCov">         42 :         cSimBox::tParams params;</span>
+<span class="lineNum">     766 </span><span class="lineCov">         42 :         params.mSize = cKinTree::GetBodySize(mBodyDefs, part_id);</span>
+<span class="lineNum">     767 </span><span class="lineCov">         42 :         params.mPos = pos;</span>
+<span class="lineNum">     768 </span><span class="lineCov">         42 :         params.mAxis = axis;</span>
+<span class="lineNum">     769 </span><span class="lineCov">         42 :         params.mTheta = theta;</span>
+<span class="lineNum">     770 </span><span class="lineCov">         42 :         params.mFriction = friction;</span>
+<span class="lineNum">     771 </span><span class="lineCov">         42 :         params.mMass = cKinTree::GetBodyMass(mBodyDefs, part_id);</span>
+<span class="lineNum">     772 </span><span class="lineCov">         84 :         std::unique_ptr&lt;cSimBox&gt; box = std::unique_ptr&lt;cSimBox&gt;(new cSimBox());</span>
+<span class="lineNum">     773 </span>            : 
+<span class="lineNum">     774 </span><span class="lineCov">         42 :         short col_group = GetPartColGroup(part_id);</span>
+<span class="lineNum">     775 </span><span class="lineCov">         42 :         short col_mask = GetPartColMask(part_id);</span>
+<span class="lineNum">     776 </span><span class="lineCov">         42 :         box-&gt;SetColGroup(col_group);</span>
+<span class="lineNum">     777 </span><span class="lineCov">         42 :         box-&gt;SetColMask(col_mask);</span>
+<span class="lineNum">     778 </span>            : 
+<span class="lineNum">     779 </span><span class="lineCov">         42 :         box-&gt;Init(mWorld, params);</span>
+<span class="lineNum">     780 </span>            : 
+<span class="lineNum">     781 </span><span class="lineCov">         42 :         out_part = std::move(box);</span>
+<a name="782"><span class="lineNum">     782 </span><span class="lineCov">         42 : }</span></a>
+<span class="lineNum">     783 </span>            : 
+<span class="lineNum">     784 </span><span class="lineNoCov">          0 : void cSimCharacter::BuildCapsulePart(int part_id, const tVector&amp; root_pos, double friction,</span>
+<span class="lineNum">     785 </span>            :                                                                 std::shared_ptr&lt;cSimObj&gt;&amp; out_part)
+<span class="lineNum">     786 </span>            : {
+<span class="lineNum">     787 </span><span class="lineNoCov">          0 :         tMatrix com_world_trans = cKinTree::BodyWorldTrans(mJointMat, mPose, mBodyDefs, part_id);</span>
+<span class="lineNum">     788 </span><span class="lineNoCov">          0 :         tVector pos = com_world_trans * tVector(0, 0, 0, 1);</span>
+<span class="lineNum">     789 </span><span class="lineNoCov">          0 :         pos += root_pos;</span>
+<span class="lineNum">     790 </span>            : 
+<span class="lineNum">     791 </span><span class="lineNoCov">          0 :         tVector axis;</span>
+<span class="lineNum">     792 </span>            :         double theta;
+<span class="lineNum">     793 </span><span class="lineNoCov">          0 :         cMathUtil::RotMatToAxisAngle(com_world_trans, axis, theta);</span>
+<span class="lineNum">     794 </span>            : 
+<span class="lineNum">     795 </span><span class="lineNoCov">          0 :         cSimCapsule::tParams params;</span>
+<span class="lineNum">     796 </span><span class="lineNoCov">          0 :         tVector size_params = cKinTree::GetBodySize(mBodyDefs, part_id);</span>
+<span class="lineNum">     797 </span><span class="lineNoCov">          0 :         params.mHeight = size_params(1);</span>
+<span class="lineNum">     798 </span><span class="lineNoCov">          0 :         params.mRadius = size_params(0);</span>
+<span class="lineNum">     799 </span><span class="lineNoCov">          0 :         params.mPos = pos;</span>
+<span class="lineNum">     800 </span><span class="lineNoCov">          0 :         params.mAxis = axis;</span>
+<span class="lineNum">     801 </span><span class="lineNoCov">          0 :         params.mTheta = theta;</span>
+<span class="lineNum">     802 </span><span class="lineNoCov">          0 :         params.mFriction = friction;</span>
+<span class="lineNum">     803 </span><span class="lineNoCov">          0 :         params.mMass = cKinTree::GetBodyMass(mBodyDefs, part_id);</span>
+<span class="lineNum">     804 </span><span class="lineNoCov">          0 :         std::unique_ptr&lt;cSimCapsule&gt; box = std::unique_ptr&lt;cSimCapsule&gt;(new cSimCapsule());</span>
+<span class="lineNum">     805 </span>            : 
+<span class="lineNum">     806 </span><span class="lineNoCov">          0 :         short col_group = GetPartColGroup(part_id);</span>
+<span class="lineNum">     807 </span><span class="lineNoCov">          0 :         short col_mask = GetPartColMask(part_id);</span>
+<span class="lineNum">     808 </span><span class="lineNoCov">          0 :         box-&gt;SetColGroup(col_group);</span>
+<span class="lineNum">     809 </span><span class="lineNoCov">          0 :         box-&gt;SetColMask(col_mask);</span>
+<span class="lineNum">     810 </span>            : 
+<span class="lineNum">     811 </span><span class="lineNoCov">          0 :         box-&gt;Init(mWorld, params);</span>
+<span class="lineNum">     812 </span>            : 
+<span class="lineNum">     813 </span><span class="lineNoCov">          0 :         out_part = std::move(box);</span>
+<a name="814"><span class="lineNum">     814 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     815 </span>            : 
+<span class="lineNum">     816 </span><span class="lineCov">          2 : void cSimCharacter::BuildConstraints(cWorld::ePlaneCons plane_cons)</span>
+<span class="lineNum">     817 </span>            : {
+<span class="lineNum">     818 </span><span class="lineCov">          2 :         int num_joints = GetNumJoints();</span>
+<span class="lineNum">     819 </span><span class="lineCov">          2 :         mJoints.clear();</span>
+<span class="lineNum">     820 </span><span class="lineCov">          2 :         mJoints.resize(num_joints);</span>
+<span class="lineNum">     821 </span><span class="lineCov">          2 :         tVector root_pos = GetRootPos();</span>
+<span class="lineNum">     822 </span>            : 
+<span class="lineNum">     823 </span><span class="lineCov">          4 :         Eigen::VectorXd default_pose = Eigen::VectorXd::Zero(mPose.size());</span>
+<span class="lineNum">     824 </span>            : 
+<span class="lineNum">     825 </span><span class="lineCov">         44 :         for (int j = 0; j &lt; num_joints; ++j)</span>
+<span class="lineNum">     826 </span>            :         {
+<span class="lineNum">     827 </span><span class="lineCov">         42 :                 int parent_id = cKinTree::GetParent(mJointMat, j);</span>
+<span class="lineNum">     828 </span><span class="lineCov">         42 :                 tVector joint_pos = cCharacter::CalcJointPos(j);</span>
+<span class="lineNum">     829 </span><span class="lineCov">         42 :                 joint_pos += root_pos;</span>
+<span class="lineNum">     830 </span><span class="lineCov">         42 :                 std::shared_ptr&lt;cSimObj&gt;&amp; curr_part = mBodyParts[j];</span>
+<span class="lineNum">     831 </span>            : 
+<span class="lineNum">     832 </span><span class="lineCov">         42 :                 bool valid_part = IsValidBodyPart(j);</span>
+<span class="lineNum">     833 </span><span class="lineCov">         42 :                 if (parent_id != cKinTree::gInvalidJointID)</span>
+<span class="lineNum">     834 </span>            :                 {
+<span class="lineNum">     835 </span><span class="lineCov">         40 :                         if (valid_part)</span>
+<span class="lineNum">     836 </span>            :                         {
+<span class="lineNum">     837 </span><span class="lineCov">         40 :                                 tVector joint_axis = tVector(0, 0, 1, 0);</span>
+<span class="lineNum">     838 </span>            : 
+<span class="lineNum">     839 </span><span class="lineCov">         40 :                                 tMatrix curr_body_mat = cKinTree::BodyJointTrans(mBodyDefs, j);</span>
+<span class="lineNum">     840 </span><span class="lineCov">         40 :                                 tMatrix child_parent_mat = cKinTree::ParentChildTrans(mJointMat, default_pose, j);</span>
+<span class="lineNum">     841 </span><span class="lineCov">         40 :                                 tMatrix parent_body_mat = cMathUtil::InvRigidMat(cKinTree::BodyJointTrans(mBodyDefs, parent_id));</span>
+<span class="lineNum">     842 </span><span class="lineCov">         40 :                                 tMatrix child_parent_body_mat = cMathUtil::InvRigidMat(parent_body_mat) * child_parent_mat * curr_body_mat;</span>
+<span class="lineNum">     843 </span>            : 
+<span class="lineNum">     844 </span><span class="lineCov">         40 :                                 tVector ref_axis;</span>
+<span class="lineNum">     845 </span>            :                                 double ref_theta;
+<span class="lineNum">     846 </span><span class="lineCov">         40 :                                 cMathUtil::RotMatToAxisAngle(child_parent_body_mat, ref_axis, ref_theta);</span>
+<span class="lineNum">     847 </span><span class="lineCov">         40 :                                 ref_theta = -ref_theta;</span>
+<span class="lineNum">     848 </span>            : 
+<span class="lineNum">     849 </span><span class="lineCov">         40 :                                 const cKinTree::tJointDesc joint_desc = mJointMat.row(j);</span>
+<span class="lineNum">     850 </span><span class="lineCov">         40 :                                 std::shared_ptr&lt;cSimObj&gt;&amp; parent = mBodyParts[parent_id];</span>
+<span class="lineNum">     851 </span>            : 
+<span class="lineNum">     852 </span><span class="lineCov">         40 :                                 tVector pos_child = curr_part-&gt;WorldToLocalPos(joint_pos);</span>
+<span class="lineNum">     853 </span><span class="lineCov">         40 :                                 tVector pos_parent = parent-&gt;WorldToLocalPos(joint_pos);</span>
+<span class="lineNum">     854 </span>            : 
+<span class="lineNum">     855 </span><span class="lineCov">         40 :                                 cWorld::tJointParams cons_params;</span>
+<span class="lineNum">     856 </span>            :                                 // cons_params.mType = cWorld::eJointTypeHinge;
+<span class="lineNum">     857 </span><span class="lineCov">         40 :                                 cons_params.mType = (cWorld::eJointType) (int) joint_desc(cKinTree::eJointDescType);</span>
+<span class="lineNum">     858 </span>            :                                 // cons_params.mType = curr_part-&gt;GetType(); // wrong kind of type
+<span class="lineNum">     859 </span><span class="lineCov">         40 :                                 cons_params.mAnchor0 = pos_parent;</span>
+<span class="lineNum">     860 </span><span class="lineCov">         40 :                                 cons_params.mAnchor1 = pos_child;</span>
+<span class="lineNum">     861 </span><span class="lineCov">         40 :                                 cons_params.mAxis = joint_axis;</span>
+<span class="lineNum">     862 </span><span class="lineCov">         40 :                                 cons_params.mLimLow = joint_desc(cKinTree::eJointDescLimLow);</span>
+<span class="lineNum">     863 </span><span class="lineCov">         40 :                                 cons_params.mLimHigh = joint_desc(cKinTree::eJointDescLimHigh);</span>
+<span class="lineNum">     864 </span><span class="lineCov">         40 :                                 cons_params.mEnableAdjacentCollision = false;</span>
+<span class="lineNum">     865 </span><span class="lineCov">         40 :                                 cons_params.mRefTheta = ref_theta;</span>
+<span class="lineNum">     866 </span><span class="lineCov">         40 :                                 curr_part-&gt;GetRotation(cons_params.mAnchorAxis1, cons_params.mAnchorTheta1);</span>
+<span class="lineNum">     867 </span>            : 
+<span class="lineNum">     868 </span><span class="lineCov">         40 :                                 const double torque_lim = 300;</span>
+<span class="lineNum">     869 </span><span class="lineCov">         40 :                                 cJoint&amp; curr_joint = mJoints[j];</span>
+<span class="lineNum">     870 </span><span class="lineCov">         40 :                                 curr_joint.Init(mWorld, parent, curr_part, cons_params);</span>
+<span class="lineNum">     871 </span><span class="lineCov">         40 :                                 curr_joint.SetTorqueLimit(torque_lim);</span>
+<span class="lineNum">     872 </span>            :                         }
+<span class="lineNum">     873 </span>            :                 }
+<span class="lineNum">     874 </span>            :                 
+<span class="lineNum">     875 </span><span class="lineCov">         42 :                 if (valid_part)</span>
+<span class="lineNum">     876 </span>            :                 {
+<span class="lineNum">     877 </span><span class="lineCov">         42 :                         tVector linear_factor;</span>
+<span class="lineNum">     878 </span><span class="lineCov">         42 :                         tVector angular_factor;</span>
+<span class="lineNum">     879 </span><span class="lineCov">         42 :                         BuildConsFactor(plane_cons, j, linear_factor, angular_factor);</span>
+<span class="lineNum">     880 </span><span class="lineCov">         42 :                         curr_part-&gt;Constrain(linear_factor, angular_factor);</span>
+<span class="lineNum">     881 </span>            :                 }
+<span class="lineNum">     882 </span>            :         }
+<a name="883"><span class="lineNum">     883 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">     884 </span>            : 
+<span class="lineNum">     885 </span><span class="lineCov">         42 : void cSimCharacter::BuildConsFactor(cWorld::ePlaneCons plane_cons, int joint_id, tVector&amp; out_linear_factor, tVector&amp; out_angular_factor) const</span>
+<span class="lineNum">     886 </span>            : {
+<span class="lineNum">     887 </span><span class="lineCov">         42 :         cKinTree::eJointType joint_type = cKinTree::GetJointType(mJointMat, joint_id);</span>
+<span class="lineNum">     888 </span><span class="lineCov">         42 :         bool is_root = cKinTree::IsRoot(mJointMat, joint_id);</span>
+<span class="lineNum">     889 </span>            : 
+<span class="lineNum">     890 </span><span class="lineCov">         42 :         mWorld-&gt;BuildConsFactor(plane_cons, out_linear_factor, out_angular_factor);</span>
+<span class="lineNum">     891 </span><span class="lineCov">         42 :         if (is_root)</span>
+<span class="lineNum">     892 </span>            :         {
+<span class="lineNum">     893 </span><span class="lineCov">          2 :                 tVector root_linear_factor;</span>
+<span class="lineNum">     894 </span><span class="lineCov">          2 :                 tVector root_angular_factor;</span>
+<span class="lineNum">     895 </span><span class="lineCov">          2 :                 BuildRootConsFactor(joint_type, root_linear_factor, root_angular_factor);</span>
+<span class="lineNum">     896 </span>            : 
+<span class="lineNum">     897 </span><span class="lineCov">          2 :                 out_linear_factor = out_linear_factor.cwiseProduct(root_linear_factor);</span>
+<span class="lineNum">     898 </span><span class="lineCov">          2 :                 out_angular_factor = out_angular_factor.cwiseProduct(root_angular_factor);</span>
+<span class="lineNum">     899 </span>            :         }
+<a name="900"><span class="lineNum">     900 </span><span class="lineCov">         42 : }</span></a>
+<span class="lineNum">     901 </span>            : 
+<span class="lineNum">     902 </span><span class="lineCov">          2 : void cSimCharacter::BuildRootConsFactor(cKinTree::eJointType joint_type, tVector&amp; out_linear_factor, tVector&amp; out_angular_factor) const</span>
+<span class="lineNum">     903 </span>            : {
+<span class="lineNum">     904 </span><span class="lineCov">          2 :         out_linear_factor = tVector::Ones();</span>
+<span class="lineNum">     905 </span><span class="lineCov">          2 :         out_angular_factor = tVector::Ones();</span>
+<span class="lineNum">     906 </span>            : 
+<span class="lineNum">     907 </span><span class="lineCov">          2 :         switch (joint_type)</span>
+<span class="lineNum">     908 </span>            :         {
+<span class="lineNum">     909 </span>            :         case cKinTree::eJointTypeRevolute:
+<span class="lineNum">     910 </span><span class="lineNoCov">          0 :                 out_linear_factor = tVector::Zero();</span>
+<span class="lineNum">     911 </span><span class="lineNoCov">          0 :                 out_angular_factor = tVector(0, 0, 1, 0);</span>
+<span class="lineNum">     912 </span><span class="lineNoCov">          0 :                 break;</span>
+<span class="lineNum">     913 </span>            :         case cKinTree::eJointTypePlanar:
+<span class="lineNum">     914 </span><span class="lineCov">          2 :                 out_linear_factor = tVector(1, 1, 0, 0);</span>
+<span class="lineNum">     915 </span><span class="lineCov">          2 :                 out_angular_factor = tVector(0, 0, 1, 0);</span>
+<span class="lineNum">     916 </span><span class="lineCov">          2 :                 break;</span>
+<span class="lineNum">     917 </span>            :         case cKinTree::eJointTypePrismatic:
+<span class="lineNum">     918 </span><span class="lineNoCov">          0 :                 out_linear_factor = tVector(1, 1, 0, 0);</span>
+<span class="lineNum">     919 </span><span class="lineNoCov">          0 :                 out_angular_factor = tVector(0, 0, 1, 0);</span>
+<span class="lineNum">     920 </span><span class="lineNoCov">          0 :                 break;</span>
+<span class="lineNum">     921 </span>            :         case cKinTree::eJointTypeFixed:
+<span class="lineNum">     922 </span><span class="lineNoCov">          0 :                 out_linear_factor = tVector::Zero();</span>
+<span class="lineNum">     923 </span><span class="lineNoCov">          0 :                 out_angular_factor = tVector::Zero();</span>
+<span class="lineNum">     924 </span><span class="lineNoCov">          0 :                 break;</span>
+<span class="lineNum">     925 </span>            :         default:
+<span class="lineNum">     926 </span><span class="lineNoCov">          0 :                 assert(false); // unsupported joint type</span>
+<span class="lineNum">     927 </span>            :                 break;
+<span class="lineNum">     928 </span>            :         }
+<a name="929"><span class="lineNum">     929 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">     930 </span>            : 
+<span class="lineNum">     931 </span><span class="lineCov">      56662 : bool cSimCharacter::IsValidBodyPart(int idx) const</span>
+<span class="lineNum">     932 </span>            : {
+<span class="lineNum">     933 </span><span class="lineCov">      56662 :         return mBodyParts[idx] != nullptr;</span>
+<a name="934"><span class="lineNum">     934 </span>            : }</a>
+<span class="lineNum">     935 </span>            : 
+<span class="lineNum">     936 </span><span class="lineCov">     130840 : void cSimCharacter::CalcJointRotation(int joint_id, tVector&amp; out_axis, double&amp; out_theta) const</span>
+<span class="lineNum">     937 </span>            : {
+<span class="lineNum">     938 </span><span class="lineCov">     130840 :         const cJoint&amp; joint = mJoints[joint_id];</span>
+<span class="lineNum">     939 </span><span class="lineCov">     130840 :         if (joint.IsValid())</span>
+<span class="lineNum">     940 </span>            :         {
+<span class="lineNum">     941 </span><span class="lineCov">     130840 :                 joint.CalcRotation(out_axis, out_theta);</span>
+<span class="lineNum">     942 </span>            :         }
+<span class="lineNum">     943 </span>            :         else
+<span class="lineNum">     944 </span>            :         {
+<span class="lineNum">     945 </span><span class="lineNoCov">          0 :                 out_axis = tVector(0, 0, 1, 0);</span>
+<span class="lineNum">     946 </span><span class="lineNoCov">          0 :                 out_theta = cKinTree::GetJointTheta(mJointMat, mPose, joint_id);</span>
+<span class="lineNum">     947 </span>            :         }
+<a name="948"><span class="lineNum">     948 </span><span class="lineCov">     130840 : }</span></a>
+<span class="lineNum">     949 </span>            : 
+<span class="lineNum">     950 </span><span class="lineCov">       2436 : tMatrix cSimCharacter::BuildJointWorldTrans(int joint_id) const</span>
+<span class="lineNum">     951 </span>            : {
+<span class="lineNum">     952 </span><span class="lineCov">       2436 :         const cJoint&amp; joint = mJoints[joint_id];</span>
+<span class="lineNum">     953 </span><span class="lineCov">       2436 :         if (joint.IsValid())</span>
+<span class="lineNum">     954 </span>            :         {
+<span class="lineNum">     955 </span><span class="lineCov">       2352 :                 return joint.BuildWorldTrans();</span>
+<span class="lineNum">     956 </span>            :         }
+<span class="lineNum">     957 </span>            :         else
+<span class="lineNum">     958 </span>            :         {
+<span class="lineNum">     959 </span><span class="lineCov">         84 :                 return cCharacter::BuildJointWorldTrans(joint_id);</span>
+<span class="lineNum">     960 </span>            :         }
+<a name="961"><span class="lineNum">     961 </span>            : }</a>
+<span class="lineNum">     962 </span>            : 
+<span class="lineNum">     963 </span><span class="lineCov">       2181 : void cSimCharacter::ClearJointTorques()</span>
+<span class="lineNum">     964 </span>            : {
+<span class="lineNum">     965 </span><span class="lineCov">       2181 :         int num_joints = GetNumJoints();</span>
+<span class="lineNum">     966 </span><span class="lineCov">      47982 :         for (int j = 0; j &lt; num_joints; ++j)</span>
+<span class="lineNum">     967 </span>            :         {
+<span class="lineNum">     968 </span><span class="lineCov">      45801 :                 cJoint&amp; joint = GetJoint(j);</span>
+<span class="lineNum">     969 </span><span class="lineCov">      45801 :                 if (joint.IsValid())</span>
+<span class="lineNum">     970 </span>            :                 {
+<span class="lineNum">     971 </span><span class="lineCov">      43620 :                         joint.ClearTorque();</span>
+<span class="lineNum">     972 </span>            :                 }
+<span class="lineNum">     973 </span>            :                 
+<span class="lineNum">     974 </span>            :         }
+<a name="975"><span class="lineNum">     975 </span><span class="lineCov">       2181 : }</span></a>
+<span class="lineNum">     976 </span>            : 
+<span class="lineNum">     977 </span><span class="lineCov">       2180 : void cSimCharacter::UpdateJoints()</span>
+<span class="lineNum">     978 </span>            : {
+<span class="lineNum">     979 </span><span class="lineCov">       2180 :         int num_joints = GetNumJoints();</span>
+<span class="lineNum">     980 </span><span class="lineCov">      47960 :         for (int j = 0; j &lt; num_joints; ++j)</span>
+<span class="lineNum">     981 </span>            :         {
+<span class="lineNum">     982 </span><span class="lineCov">      45780 :                 cJoint&amp; joint = GetJoint(j);</span>
+<span class="lineNum">     983 </span><span class="lineCov">      45780 :                 if (joint.IsValid())</span>
+<span class="lineNum">     984 </span>            :                 {
+<span class="lineNum">     985 </span>            :                         // if (joint.) would be nice to check joint type and apply force or troque here.
+<span class="lineNum">     986 </span><span class="lineCov">      43600 :                         joint.ApplyTorque();</span>
+<span class="lineNum">     987 </span>            :                 }
+<span class="lineNum">     988 </span>            :         }
+<a name="989"><span class="lineNum">     989 </span><span class="lineCov">       2180 : }</span></a>
+<span class="lineNum">     990 </span>            : 
+<span class="lineNum">     991 </span><span class="lineNoCov">          0 : short cSimCharacter::GetPartColGroup(int part_id) const</span>
+<span class="lineNum">     992 </span>            : {
+<span class="lineNum">     993 </span><span class="lineNoCov">          0 :         return cContactManager::gFlagAll;</span>
+<a name="994"><span class="lineNum">     994 </span>            : }</a>
+<span class="lineNum">     995 </span>            : 
+<span class="lineNum">     996 </span><span class="lineNoCov">          0 : short cSimCharacter::GetPartColMask(int part_id) const</span>
+<span class="lineNum">     997 </span>            : {
+<span class="lineNum">     998 </span><span class="lineNoCov">          0 :         return cContactManager::gFlagAll;</span>
+<a name="999"><span class="lineNum">     999 </span>            : }</a>
+<span class="lineNum">    1000 </span>            : 
+<span class="lineNum">    1001 </span><span class="lineNoCov">          0 : tVector cSimCharacter::GetPartColor(int part_id) const</span>
+<span class="lineNum">    1002 </span>            : {
+<span class="lineNum">    1003 </span><span class="lineNoCov">          0 :         return cKinTree::GetBodyColor(mBodyDefs, part_id);</span>
+<a name="1004"><span class="lineNum">    1004 </span>            : }</a>
+<span class="lineNum">    1005 </span>            : 
+<span class="lineNum">    1006 </span><span class="lineCov">        168 : bool cSimCharacter::HasDrawShapes() const</span>
+<span class="lineNum">    1007 </span>            : {
+<span class="lineNum">    1008 </span><span class="lineCov">        168 :         return mDrawShapeDefs.size() &gt; 0;</span>
+<a name="1009"><span class="lineNum">    1009 </span>            : }</a>
+<span class="lineNum">    1010 </span>            : 
+<span class="lineNum">    1011 </span><span class="lineNoCov">          0 : double cSimCharacter::GetPoseJointWeight(int joint_id) const</span>
+<span class="lineNum">    1012 </span>            : {
+<span class="lineNum">    1013 </span><span class="lineNoCov">          0 :         return 1;</span>
+<a name="1014"><span class="lineNum">    1014 </span>            : }</a>
+<span class="lineNum">    1015 </span>            : 
+<span class="lineNum">    1016 </span><span class="lineNoCov">          0 : const std::shared_ptr&lt;cWorld&gt;&amp; cSimCharacter::GetWorld() const</span>
+<span class="lineNum">    1017 </span>            : {
+<span class="lineNum">    1018 </span><span class="lineNoCov">          0 :         return mWorld;</span>
+<span class="lineNum">    1019 </span>            : }
+<span class="lineNum">    1020 </span>            : 
+<a name="1021"><span class="lineNum">    1021 </span>            : #if defined(ENABLE_TRAINING)</a>
+<span class="lineNum">    1022 </span>            : // effort measured as sum of squared torques
+<span class="lineNum">    1023 </span><span class="lineNoCov">          0 : double cSimCharacter::CalcEffort() const</span>
+<span class="lineNum">    1024 </span>            : {
+<span class="lineNum">    1025 </span><span class="lineNoCov">          0 :         double effort = 0;</span>
+<span class="lineNum">    1026 </span><span class="lineNoCov">          0 :         for (int j = 0; j &lt; GetNumJoints(); ++j)</span>
+<span class="lineNum">    1027 </span>            :         {
+<span class="lineNum">    1028 </span><span class="lineNoCov">          0 :                 const cJoint&amp; joint = mJoints[j];</span>
+<span class="lineNum">    1029 </span><span class="lineNoCov">          0 :                 if (joint.IsValid())</span>
+<span class="lineNum">    1030 </span>            :                 {
+<span class="lineNum">    1031 </span><span class="lineNoCov">          0 :                         effort += mEffortBuffer[j];</span>
+<span class="lineNum">    1032 </span>            :                 }
+<span class="lineNum">    1033 </span>            :         }
+<span class="lineNum">    1034 </span><span class="lineNoCov">          0 :         return effort;</span>
+<a name="1035"><span class="lineNum">    1035 </span>            : }</a>
+<span class="lineNum">    1036 </span>            : 
+<span class="lineNum">    1037 </span><span class="lineCov">        112 : void cSimCharacter::ClearEffortBuffer()</span>
+<span class="lineNum">    1038 </span>            : {
+<span class="lineNum">    1039 </span><span class="lineCov">       2464 :         for (int j = 0; j &lt; GetNumJoints(); ++j)</span>
+<span class="lineNum">    1040 </span>            :         {
+<span class="lineNum">    1041 </span><span class="lineCov">       2352 :                 mEffortBuffer[j] = 0;</span>
+<span class="lineNum">    1042 </span>            :         }
+<a name="1043"><span class="lineNum">    1043 </span><span class="lineCov">        112 : }</span></a>
+<span class="lineNum">    1044 </span>            : 
+<span class="lineNum">    1045 </span><span class="lineCov">       2180 : void cSimCharacter::UpdateEffortBuffer(double time_step)</span>
+<span class="lineNum">    1046 </span>            : {
+<span class="lineNum">    1047 </span><span class="lineCov">       2180 :         int num_joints = GetNumJoints();</span>
+<span class="lineNum">    1048 </span><span class="lineCov">      47960 :         for (int j = 0; j &lt; num_joints; ++j)</span>
+<span class="lineNum">    1049 </span>            :         {
+<span class="lineNum">    1050 </span><span class="lineCov">      45780 :                 const cJoint&amp; joint = GetJoint(j);</span>
+<span class="lineNum">    1051 </span><span class="lineCov">      45780 :                 if (joint.IsValid())</span>
+<span class="lineNum">    1052 </span>            :                 {
+<span class="lineNum">    1053 </span><span class="lineCov">      43600 :                         const tVector&amp; torque = joint.GetTorque();</span>
+<span class="lineNum">    1054 </span><span class="lineCov">      43600 :                         double effort = torque.squaredNorm();</span>
+<span class="lineNum">    1055 </span><span class="lineCov">      43600 :                         mEffortBuffer[j] += effort * time_step;</span>
+<a name="1056"><span class="lineNum">    1056 </span>            :                 }</a>
+<span class="lineNum">    1057 </span>            :         }
+<span class="lineNum">    1058 </span><span class="lineCov">       2183 : }</span>
+<span class="lineNum">    1059 </span>            : #endif // ENABLE_TRAINING
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

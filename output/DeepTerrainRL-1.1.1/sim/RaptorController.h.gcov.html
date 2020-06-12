@@ -1,0 +1,320 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/sim/RaptorController.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/sim</a> - RaptorController.h<span style="font-size: 80%;"> (source / <a href="RaptorController.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryLo">50.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryLo">50.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #pragma once</a>
+<span class="lineNum">       2 </span>            : 
+<span class="lineNum">       3 </span>            : #include &quot;sim/PDController.h&quot;
+<span class="lineNum">       4 </span>            : #include &quot;sim/ImpPDController.h&quot;
+<span class="lineNum">       5 </span>            : #include &quot;sim/SimRaptor.h&quot;
+<span class="lineNum">       6 </span>            : #include &quot;sim/RBDModel.h&quot;
+<span class="lineNum">       7 </span>            : #include &quot;sim/TerrainRLCharController.h&quot;
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : class cRaptorController : public virtual cTerrainRLCharController
+<a name="10"><span class="lineNum">      10 </span>            : {</a>
+<span class="lineNum">      11 </span>            : public:
+<span class="lineNum">      12 </span><span class="lineNoCov">          0 :         EIGEN_MAKE_ALIGNED_OPERATOR_NEW</span>
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span>            :         enum eStateParam
+<span class="lineNum">      15 </span>            :         {
+<span class="lineNum">      16 </span>            :                 eStateParamRootPitch,
+<span class="lineNum">      17 </span>            :                 eStateParamSpineCurve,
+<span class="lineNum">      18 </span>            :                 eStateParamStanceHip,
+<span class="lineNum">      19 </span>            :                 eStateParamStanceKnee,
+<span class="lineNum">      20 </span>            :                 eStateParamStanceAnkle,
+<span class="lineNum">      21 </span>            :                 eStateParamSwingHip,
+<span class="lineNum">      22 </span>            :                 eStateParamSwingKnee,
+<span class="lineNum">      23 </span>            :                 eStateParamSwingAnkle,
+<span class="lineNum">      24 </span>            :                 eStateParamMax
+<span class="lineNum">      25 </span>            :         };
+<span class="lineNum">      26 </span>            :         typedef Eigen::Matrix&lt;double, eStateParamMax, 1&gt; tStateParams;
+<span class="lineNum">      27 </span>            : 
+<span class="lineNum">      28 </span>            :         enum eMiscParam
+<span class="lineNum">      29 </span>            :         {
+<span class="lineNum">      30 </span>            :                 eMiscParamTransTime,
+<span class="lineNum">      31 </span>            :                 eMiscParamCv,
+<span class="lineNum">      32 </span>            :                 eMiscParamCd,
+<span class="lineNum">      33 </span>            :                 eMiscParamForceX,
+<span class="lineNum">      34 </span>            :                 eMiscParamForceY,
+<span class="lineNum">      35 </span>            :                 eMiscParamMax
+<span class="lineNum">      36 </span>            :         };
+<span class="lineNum">      37 </span>            :         typedef Eigen::Matrix&lt;double, eMiscParamMax, 1&gt; tMiscParams;
+<span class="lineNum">      38 </span>            : 
+<span class="lineNum">      39 </span>            :         enum eState
+<span class="lineNum">      40 </span>            :         {
+<span class="lineNum">      41 </span>            :                 eStateContact,
+<span class="lineNum">      42 </span>            :                 eStateDown,
+<span class="lineNum">      43 </span>            :                 eStatePassing,
+<span class="lineNum">      44 </span>            :                 eStateUp,
+<span class="lineNum">      45 </span>            :                 eStateMax,
+<span class="lineNum">      46 </span>            :                 eStateInvalid,
+<a name="47"><span class="lineNum">      47 </span>            :         };</a>
+<span class="lineNum">      48 </span>            :         
+<span class="lineNum">      49 </span><span class="lineCov">          4 :         struct tStateDef</span>
+<span class="lineNum">      50 </span>            :         {
+<span class="lineNum">      51 </span>            :                 std::string mName;
+<span class="lineNum">      52 </span>            :                 bool mTransTime;
+<span class="lineNum">      53 </span>            :                 bool mTransContact;
+<span class="lineNum">      54 </span>            :                 eState mNext;
+<span class="lineNum">      55 </span>            :         };
+<span class="lineNum">      56 </span>            : 
+<span class="lineNum">      57 </span>            :         enum eStance
+<span class="lineNum">      58 </span>            :         {
+<span class="lineNum">      59 </span>            :                 eStanceRight,
+<span class="lineNum">      60 </span>            :                 eStanceLeft,
+<span class="lineNum">      61 </span>            :                 eStanceMax
+<span class="lineNum">      62 </span>            :         };
+<span class="lineNum">      63 </span>            : 
+<span class="lineNum">      64 </span>            :         cRaptorController();
+<span class="lineNum">      65 </span>            :         virtual ~cRaptorController();
+<span class="lineNum">      66 </span>            : 
+<span class="lineNum">      67 </span>            :         virtual void Init(cSimCharacter* character, const tVector&amp; gravity, const std::string&amp; param_file);
+<span class="lineNum">      68 </span>            :         virtual void Reset();
+<span class="lineNum">      69 </span>            :         virtual void Clear();
+<span class="lineNum">      70 </span>            :         virtual void Update(double time_step);
+<span class="lineNum">      71 </span>            :         
+<span class="lineNum">      72 </span>            :         virtual void SeCtrlStateParams(eState state, const tStateParams&amp; params);
+<span class="lineNum">      73 </span>            : 
+<span class="lineNum">      74 </span>            :         virtual void TransitionState(int state);
+<span class="lineNum">      75 </span>            :         virtual void TransitionState(int state, double phase);
+<span class="lineNum">      76 </span>            :         virtual void SetTransTime(double time);
+<span class="lineNum">      77 </span>            :         virtual int GetNumStates() const;
+<span class="lineNum">      78 </span>            : 
+<span class="lineNum">      79 </span>            :         virtual void SetMode(eMode mode);
+<span class="lineNum">      80 </span>            :         virtual void CommandAction(int action_id);
+<span class="lineNum">      81 </span>            :         virtual void CommandRandAction();
+<span class="lineNum">      82 </span>            :         virtual int GetDefaultAction() const;
+<span class="lineNum">      83 </span>            :         virtual void SetDefaultAction(int action_id);
+<span class="lineNum">      84 </span>            :         virtual int GetNumActions() const;
+<span class="lineNum">      85 </span>            : 
+<span class="lineNum">      86 </span>            :         virtual void BuildCtrlOptParams(int ctrl_params_id, Eigen::VectorXd&amp; out_params) const;
+<span class="lineNum">      87 </span>            :         virtual void SetCtrlParams(int ctrl_params_id, const Eigen::VectorXd&amp; params);
+<span class="lineNum">      88 </span>            :         virtual void SetCtrlOptParams(int ctrl_params_id, const Eigen::VectorXd&amp; params);
+<span class="lineNum">      89 </span>            :         virtual void BuildActionOptParams(int action_id, Eigen::VectorXd&amp; out_params) const;
+<span class="lineNum">      90 </span>            :         virtual int GetNumParams() const;
+<span class="lineNum">      91 </span>            :         virtual int GetNumOptParams() const;
+<span class="lineNum">      92 </span>            :         virtual void FetchOptParamScale(Eigen::VectorXd&amp; out_scale) const;
+<span class="lineNum">      93 </span>            :         virtual void OutputOptParams(const std::string&amp; file, const Eigen::VectorXd&amp; params) const;
+<span class="lineNum">      94 </span>            :         virtual void OutputOptParams(FILE* f, const Eigen::VectorXd&amp; params) const;
+<span class="lineNum">      95 </span>            :         
+<span class="lineNum">      96 </span>            :         virtual void SetParams(const Eigen::VectorXd&amp; params);
+<span class="lineNum">      97 </span>            :         virtual void BuildOptParams(Eigen::VectorXd&amp; out_params) const;
+<span class="lineNum">      98 </span>            :         virtual void SetOptParams(const Eigen::VectorXd&amp; opt_params);
+<span class="lineNum">      99 </span>            :         virtual void SetOptParams(const Eigen::VectorXd&amp; opt_params, Eigen::VectorXd&amp; out_params) const;
+<span class="lineNum">     100 </span>            : 
+<span class="lineNum">     101 </span>            :         virtual void ReadParams(const std::string&amp; file);
+<span class="lineNum">     102 </span>            :         virtual void ReadParams(std::ifstream&amp; f_stream);
+<span class="lineNum">     103 </span>            :         
+<span class="lineNum">     104 </span>            :         virtual double CalcReward() const;
+<span class="lineNum">     105 </span>            :         virtual tVector GetTargetVel() const;
+<span class="lineNum">     106 </span>            :         virtual eStance GetStance() const;
+<span class="lineNum">     107 </span>            : 
+<span class="lineNum">     108 </span>            :         virtual void BuildFromMotion(int ctrl_params_id, const cMotion&amp; motion);
+<span class="lineNum">     109 </span>            : 
+<span class="lineNum">     110 </span>            :         virtual double GetPrevCycleTime() const;
+<span class="lineNum">     111 </span>            :         virtual const tVector&amp; GetPrevDistTraveled() const;
+<span class="lineNum">     112 </span>            : 
+<span class="lineNum">     113 </span>            :         virtual int GetNumJointsPerLeg() const;
+<span class="lineNum">     114 </span>            :         virtual int GetSwingHip() const;
+<span class="lineNum">     115 </span>            :         virtual int GetSwingKnee() const;
+<span class="lineNum">     116 </span>            :         virtual int GetSwingAnkle() const;
+<span class="lineNum">     117 </span>            :         virtual int GetSwingToe() const;
+<span class="lineNum">     118 </span>            :         virtual int GetStanceHip() const;
+<span class="lineNum">     119 </span>            :         virtual int GetStanceKnee() const;
+<span class="lineNum">     120 </span>            :         virtual int GetStanceAnkle() const;
+<span class="lineNum">     121 </span>            :         virtual int GetStanceToe() const;
+<span class="lineNum">     122 </span>            : 
+<span class="lineNum">     123 </span>            :         virtual void BuildNormPose(Eigen::VectorXd&amp; pose) const;
+<span class="lineNum">     124 </span>            :         
+<span class="lineNum">     125 </span>            : protected:
+<span class="lineNum">     126 </span>            :         struct tBlendAction
+<span class="lineNum">     127 </span>            :         {
+<span class="lineNum">     128 </span>            :                 int mID;
+<span class="lineNum">     129 </span>            :                 int mParamIdx0;
+<span class="lineNum">     130 </span>            :                 int mParamIdx1;
+<span class="lineNum">     131 </span>            :                 double mBlend;
+<span class="lineNum">     132 </span>            :                 bool mCyclic;
+<span class="lineNum">     133 </span>            :         };
+<span class="lineNum">     134 </span>            : 
+<span class="lineNum">     135 </span>            :         enum ePoliState
+<span class="lineNum">     136 </span>            :         {
+<span class="lineNum">     137 </span>            :                 ePoliStateGround,
+<span class="lineNum">     138 </span>            :                 ePoliStatePose,
+<span class="lineNum">     139 </span>            :                 ePoliStateVel,
+<span class="lineNum">     140 </span>            :                 ePoliStateMax
+<span class="lineNum">     141 </span>            :         };
+<span class="lineNum">     142 </span>            : 
+<span class="lineNum">     143 </span>            :         tVector mGravity;
+<span class="lineNum">     144 </span>            :         cImpPDController mImpPDCtrl;
+<span class="lineNum">     145 </span>            : 
+<span class="lineNum">     146 </span>            :         std::shared_ptr&lt;cRBDModel&gt; mRBDModel;
+<span class="lineNum">     147 </span>            :         Eigen::MatrixXd mJacobian;
+<span class="lineNum">     148 </span>            : 
+<span class="lineNum">     149 </span>            :         eStance mStance;
+<span class="lineNum">     150 </span>            :         std::vector&lt;Eigen::VectorXd&gt; mCtrlParams;
+<span class="lineNum">     151 </span>            :         int mDefaultAction;
+<span class="lineNum">     152 </span>            :         std::vector&lt;tBlendAction&gt; mActions;
+<span class="lineNum">     153 </span>            :         std::stack&lt;int&gt; mCommands;
+<span class="lineNum">     154 </span>            :         bool mEnableGravityCompensation;
+<span class="lineNum">     155 </span>            :         bool mEnableVirtualForces;
+<span class="lineNum">     156 </span>            : 
+<span class="lineNum">     157 </span>            :         double mPrevCycleTime;
+<span class="lineNum">     158 </span>            :         double mCurrCycleTime;
+<span class="lineNum">     159 </span>            :         tVector mPrevCOM;
+<span class="lineNum">     160 </span>            :         tVector mPrevDistTraveled;
+<span class="lineNum">     161 </span>            :         double mPrevStumbleCount;
+<span class="lineNum">     162 </span>            :         double mCurrStumbleCount;
+<span class="lineNum">     163 </span>            : 
+<span class="lineNum">     164 </span>            :         virtual void ResetParams();
+<span class="lineNum">     165 </span>            : 
+<span class="lineNum">     166 </span>            :         virtual bool LoadControllers(const std::string&amp; file);
+<span class="lineNum">     167 </span>            :         virtual bool ParseControllers(const Json::Value&amp; root);
+<span class="lineNum">     168 </span>            :         virtual bool ParseControllerFiles(const Json::Value&amp; root);
+<span class="lineNum">     169 </span>            :         virtual bool ParseActions(const Json::Value&amp; root);
+<span class="lineNum">     170 </span>            :         virtual bool ParseAction(const Json::Value&amp; root, tBlendAction&amp; out_action) const;
+<span class="lineNum">     171 </span>            : 
+<span class="lineNum">     172 </span>            :         virtual bool HasCtrlParams() const;
+<span class="lineNum">     173 </span>            :         virtual void UpdateState(double time_step);
+<span class="lineNum">     174 </span>            :         virtual void UpdateAction();
+<span class="lineNum">     175 </span>            :         virtual void UpdateRBDModel();
+<span class="lineNum">     176 </span>            :         virtual void UpdatePDCtrls(double time_step, Eigen::VectorXd&amp; out_tau);
+<span class="lineNum">     177 </span>            :         virtual void UpdateStumbleCounter(double time_step);
+<span class="lineNum">     178 </span>            : 
+<span class="lineNum">     179 </span>            :         virtual void UpdateStanceHip();
+<span class="lineNum">     180 </span>            :         virtual void ApplySwingFeedback(Eigen::VectorXd&amp; out_tau);
+<span class="lineNum">     181 </span>            :         virtual void ApplyStanceFeedback(Eigen::VectorXd&amp; out_tau);
+<span class="lineNum">     182 </span>            :         virtual void ApplyGravityCompensation(Eigen::VectorXd&amp; out_tau);
+<span class="lineNum">     183 </span>            :         virtual void ApplyVirtualForces(Eigen::VectorXd&amp; out_tau);
+<span class="lineNum">     184 </span>            : 
+<span class="lineNum">     185 </span>            :         virtual const tStateDef&amp; GetCurrStateDef() const;
+<span class="lineNum">     186 </span>            :         virtual tStateParams GetCurrParams() const;
+<span class="lineNum">     187 </span>            :         virtual double GetTargetRootPitch() const;
+<span class="lineNum">     188 </span>            :         virtual double GetRootPitch() const;
+<span class="lineNum">     189 </span>            : 
+<span class="lineNum">     190 </span>            :         virtual void SetStateParams(const tStateParams&amp; params);
+<span class="lineNum">     191 </span>            :         virtual void SetupPassiveMode();
+<span class="lineNum">     192 </span>            :         virtual double GetTransTime() const;
+<span class="lineNum">     193 </span>            :         virtual double GetCv() const;
+<span class="lineNum">     194 </span>            :         virtual double GetCd() const;
+<span class="lineNum">     195 </span>            : 
+<span class="lineNum">     196 </span>            :         virtual bool CheckContact(int joint_id) const;
+<span class="lineNum">     197 </span>            :         virtual bool IsActiveVFEffector(int joint_id) const;
+<span class="lineNum">     198 </span>            :         virtual tVector GetEffectorVF() const;
+<span class="lineNum">     199 </span>            :         virtual Eigen::MatrixXd BuildContactBasis(const Eigen::VectorXd&amp; pose, bool&amp; out_has_support) const;
+<span class="lineNum">     200 </span>            : 
+<span class="lineNum">     201 </span>            :         const std::string&amp; GetStateName(eState state) const;
+<span class="lineNum">     202 </span>            :         const std::string&amp; GetStateParamName(eStateParam param) const;
+<span class="lineNum">     203 </span>            : 
+<span class="lineNum">     204 </span>            :         virtual void GetOptParams(const Eigen::VectorXd&amp; ctrl_params, Eigen::VectorXd&amp; out_opt_params) const;
+<span class="lineNum">     205 </span>            :         std::string BuildOptParamsJson(const Eigen::VectorXd&amp; opt_params) const;
+<span class="lineNum">     206 </span>            :         virtual void BuildStateParamsFromPose(const Eigen::VectorXd&amp; pose, tStateParams&amp; out_params);
+<span class="lineNum">     207 </span>            :         virtual double CalcSpineCurve(const Eigen::VectorXd&amp; pose) const;
+<span class="lineNum">     208 </span>            : 
+<span class="lineNum">     209 </span>            :         virtual const Eigen::VectorXd&amp; GetCtrlParams(int ctrl_id) const;
+<span class="lineNum">     210 </span>            : 
+<span class="lineNum">     211 </span>            :         virtual bool IsCurrActionCyclic() const;
+<span class="lineNum">     212 </span>            :         virtual void ApplyAction(int action_id);
+<span class="lineNum">     213 </span>            :         virtual void ApplyAction(const tAction&amp; action);
+<span class="lineNum">     214 </span>            :         virtual void NewCycleUpdate();
+<span class="lineNum">     215 </span>            :         virtual void BlendCtrlParams(const tBlendAction&amp; action, Eigen::VectorXd&amp; out_params) const;
+<span class="lineNum">     216 </span>            :         virtual void PostProcessParams(Eigen::VectorXd&amp; out_params) const;
+<span class="lineNum">     217 </span>            :         virtual bool IsOptParam(int param_idx) const;
+<span class="lineNum">     218 </span>            :         
+<span class="lineNum">     219 </span>            :         virtual void BuildPoliStatePose(Eigen::VectorXd&amp; out_pose) const;
+<span class="lineNum">     220 </span>            :         virtual void BuildPoliStateVel(Eigen::VectorXd&amp; out_vel) const;
+<span class="lineNum">     221 </span>            : 
+<span class="lineNum">     222 </span>            :         virtual void FlipStance();
+<span class="lineNum">     223 </span>            :         virtual void SetStance(eStance stance);
+<span class="lineNum">     224 </span>            :         // TODO: refactor these so as to not need separate methods
+<span class="lineNum">     225 </span>            :         virtual void FlipPoseStance(Eigen::VectorXd&amp; out_pose) const;
+<span class="lineNum">     226 </span>            :         virtual void FlipPoliPoseStance(Eigen::VectorXd&amp; out_pose) const;
+<span class="lineNum">     227 </span>            :         virtual tVector GetEndEffectorContactPos(int joint_id) const;
+<span class="lineNum">     228 </span>            :         virtual void RecordDistTraveled();
+<span class="lineNum">     229 </span>            :         
+<span class="lineNum">     230 </span>            :         virtual int PopCommand();
+<span class="lineNum">     231 </span>            :         virtual bool HasCommands() const;
+<span class="lineNum">     232 </span>            :         virtual void ClearCommands();
+<span class="lineNum">     233 </span>            :         virtual void ProcessCommand(tAction&amp; out_action);
+<span class="lineNum">     234 </span>            : 
+<span class="lineNum">     235 </span>            :         virtual void BuildBaseAction(int action_id, tAction&amp; out_action) const;
+<span class="lineNum">     236 </span>            : };
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

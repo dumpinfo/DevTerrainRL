@@ -1,0 +1,497 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/sim/TerrainRLCharController.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/sim</a> - TerrainRLCharController.cpp<span style="font-size: 80%;"> (source / <a href="TerrainRLCharController.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">187</td>
+            <td class="headerCovTableEntry">217</td>
+            <td class="headerCovTableEntryMed">86.2 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">33</td>
+            <td class="headerCovTableEntry">42</td>
+            <td class="headerCovTableEntryMed">78.6 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;TerrainRLCharController.h&quot;</a>
+<span class="lineNum">       2 </span>            : #include &quot;sim/SimCharacter.h&quot;
+<span class="lineNum">       3 </span>            : #include &lt;iostream&gt;
+<span class="lineNum">       4 </span>            : #include &lt;ctime&gt;
+<span class="lineNum">       5 </span>            : #include &lt;json/json.h&gt;
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span>            : #define ENABLE_MAX_COORD_POSE
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : const int cTerrainRLCharController::gPosDim = 2; // 2D position coords
+<span class="lineNum">      10 </span>            : const int gNumGroundSamples = 200;
+<span class="lineNum">      11 </span>            : const double gViewMin = -0.5;
+<span class="lineNum">      12 </span>            : const double gDefaultViewDist = 10;
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span>            : #if defined(ENABLE_DEBUG_VISUALIZATION)
+<span class="lineNum">      15 </span>            : const int gPoliValLogSize = 50;
+<a name="16"><span class="lineNum">      16 </span>            : #endif // ENABLE_DEBUG_VISUALIZATION</a>
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span><span class="lineCov">          2 : cTerrainRLCharController::cTerrainRLCharController() : cNNController()</span>
+<span class="lineNum">      19 </span>            : {
+<span class="lineNum">      20 </span><span class="lineCov">          2 :         mCurrAction.mID = gInvalidIdx;</span>
+<span class="lineNum">      21 </span><span class="lineCov">          2 :         mCurrAction.mParams.resize(0);</span>
+<span class="lineNum">      22 </span><span class="lineCov">          2 :         SetViewDist(gDefaultViewDist);</span>
+<a name="23"><span class="lineNum">      23 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span><span class="lineCov">          2 : cTerrainRLCharController::~cTerrainRLCharController()</span>
+<span class="lineNum">      26 </span>            : {
+<a name="27"><span class="lineNum">      27 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span><span class="lineCov">          2 : void cTerrainRLCharController::Init(cSimCharacter* character)</span>
+<span class="lineNum">      30 </span>            : {
+<span class="lineNum">      31 </span>            :         // param_file should contain parameters for the pd controllers
+<span class="lineNum">      32 </span><span class="lineCov">          2 :         cNNController::Init(character);</span>
+<span class="lineNum">      33 </span><span class="lineCov">          2 :         mCurrAction.mParams.resize(GetNumParams());</span>
+<span class="lineNum">      34 </span><span class="lineCov">          2 :         ResetParams();</span>
+<span class="lineNum">      35 </span>            :         
+<span class="lineNum">      36 </span><span class="lineCov">          2 :         mGroundSamples = Eigen::VectorXd::Zero(gNumGroundSamples);</span>
+<span class="lineNum">      37 </span><span class="lineCov">          2 :         mPoliState = Eigen::VectorXd::Zero(GetPoliStateSize());</span>
+<span class="lineNum">      38 </span>            : 
+<span class="lineNum">      39 </span><span class="lineCov">          2 :         mValid = true;</span>
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span>            : #if defined(ENABLE_DEBUG_VISUALIZATION)
+<span class="lineNum">      42 </span><span class="lineCov">          2 :         mPoliValLog.Reserve(gPoliValLogSize);</span>
+<span class="lineNum">      43 </span><span class="lineCov">          2 :         mPoliValLog.Clear();</span>
+<span class="lineNum">      44 </span>            : #endif // ENABLE_DEBUG_VISUALIZATION
+<a name="45"><span class="lineNum">      45 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">      46 </span>            : 
+<span class="lineNum">      47 </span><span class="lineCov">          1 : void cTerrainRLCharController::Reset()</span>
+<span class="lineNum">      48 </span>            : {
+<span class="lineNum">      49 </span><span class="lineCov">          1 :         ApplyAction(GetDefaultAction());</span>
+<span class="lineNum">      50 </span><span class="lineCov">          1 :         cNNController::Reset();</span>
+<span class="lineNum">      51 </span><span class="lineCov">          1 :         ResetParams();</span>
+<span class="lineNum">      52 </span>            : 
+<span class="lineNum">      53 </span><span class="lineCov">          1 :         mGroundSamples = Eigen::VectorXd::Zero(gNumGroundSamples);</span>
+<span class="lineNum">      54 </span>            : 
+<span class="lineNum">      55 </span>            : #if defined(ENABLE_DEBUG_VISUALIZATION)
+<span class="lineNum">      56 </span><span class="lineCov">          1 :         mPoliValLog.Clear();</span>
+<span class="lineNum">      57 </span>            : #endif // ENABLE_DEBUG_VISUALIZATION
+<a name="58"><span class="lineNum">      58 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span><span class="lineCov">          2 : void cTerrainRLCharController::Clear()</span>
+<span class="lineNum">      61 </span>            : {
+<span class="lineNum">      62 </span><span class="lineCov">          2 :         cNNController::Clear();</span>
+<span class="lineNum">      63 </span><span class="lineCov">          2 :         ResetParams();</span>
+<span class="lineNum">      64 </span><span class="lineCov">          2 :         mCurrAction.mID = gInvalidIdx;</span>
+<a name="65"><span class="lineNum">      65 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">      66 </span>            : 
+<span class="lineNum">      67 </span><span class="lineCov">       2180 : void cTerrainRLCharController::Update(double time_step)</span>
+<span class="lineNum">      68 </span>            : {
+<span class="lineNum">      69 </span><span class="lineCov">       2180 :         cNNController::Update(time_step);</span>
+<a name="70"><span class="lineNum">      70 </span><span class="lineCov">       2180 : }</span></a>
+<span class="lineNum">      71 </span>            : 
+<span class="lineNum">      72 </span><span class="lineCov">          2 : void cTerrainRLCharController::SetGround(std::shared_ptr&lt;cGround&gt; ground)</span>
+<span class="lineNum">      73 </span>            : {
+<span class="lineNum">      74 </span><span class="lineCov">          2 :         mGround = ground;</span>
+<a name="75"><span class="lineNum">      75 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">      76 </span>            : 
+<span class="lineNum">      77 </span><span class="lineCov">         36 : int cTerrainRLCharController::GetCurrActionID() const</span>
+<span class="lineNum">      78 </span>            : {
+<span class="lineNum">      79 </span><span class="lineCov">         36 :         return mCurrAction.mID;</span>
+<a name="80"><span class="lineNum">      80 </span>            : }</a>
+<span class="lineNum">      81 </span>            : 
+<span class="lineNum">      82 </span><span class="lineCov">        189 : int cTerrainRLCharController::GetNumGroundSamples() const</span>
+<span class="lineNum">      83 </span>            : {
+<span class="lineNum">      84 </span><span class="lineCov">        189 :         return static_cast&lt;int&gt;(mGroundSamples.size());</span>
+<a name="85"><span class="lineNum">      85 </span>            : }</a>
+<span class="lineNum">      86 </span>            : 
+<span class="lineNum">      87 </span><span class="lineCov">       8600 : tVector cTerrainRLCharController::GetGroundSample(int s) const</span>
+<span class="lineNum">      88 </span>            : {
+<span class="lineNum">      89 </span><span class="lineCov">       8600 :         tVector pos = CalcGroundSamplePos(s);</span>
+<span class="lineNum">      90 </span><span class="lineCov">       8600 :         double h = mGroundSamples[s];</span>
+<span class="lineNum">      91 </span><span class="lineCov">       8600 :         pos[1] += h;</span>
+<span class="lineNum">      92 </span><span class="lineCov">       8600 :         return pos;</span>
+<a name="93"><span class="lineNum">      93 </span>            : }</a>
+<span class="lineNum">      94 </span>            : 
+<span class="lineNum">      95 </span><span class="lineNoCov">          0 : tVector cTerrainRLCharController::GetGroundSampleOrigin() const</span>
+<span class="lineNum">      96 </span>            : {
+<span class="lineNum">      97 </span><span class="lineNoCov">          0 :         return mGroundSampleOrigin;</span>
+<a name="98"><span class="lineNum">      98 </span>            : }</a>
+<span class="lineNum">      99 </span>            : 
+<span class="lineNum">     100 </span><span class="lineCov">         11 : int cTerrainRLCharController::GetPoliStateSize() const</span>
+<span class="lineNum">     101 </span>            : {
+<span class="lineNum">     102 </span><span class="lineCov">         11 :         int state_size = 0;</span>
+<span class="lineNum">     103 </span><span class="lineCov">         44 :         for (int i = 0; i &lt; ePoliStateMax; ++i)</span>
+<span class="lineNum">     104 </span>            :         {
+<span class="lineNum">     105 </span><span class="lineCov">         33 :                 state_size += GetPoliStateSize(static_cast&lt;ePoliState&gt;(i));</span>
+<span class="lineNum">     106 </span>            :         }
+<span class="lineNum">     107 </span><span class="lineCov">         11 :         return state_size;</span>
+<a name="108"><span class="lineNum">     108 </span>            : }</a>
+<span class="lineNum">     109 </span>            : 
+<span class="lineNum">     110 </span><span class="lineNoCov">          0 : bool cTerrainRLCharController::IsOffPolicy() const</span>
+<span class="lineNum">     111 </span>            : {
+<span class="lineNum">     112 </span><span class="lineNoCov">          0 :         return mIsOffPolicy;</span>
+<a name="113"><span class="lineNum">     113 </span>            : }</a>
+<span class="lineNum">     114 </span>            : 
+<span class="lineNum">     115 </span><span class="lineNoCov">          0 : int cTerrainRLCharController::GetPoliActionSize() const</span>
+<span class="lineNum">     116 </span>            : {
+<span class="lineNum">     117 </span><span class="lineNoCov">          0 :         return GetNumActions();</span>
+<a name="118"><span class="lineNum">     118 </span>            : }</a>
+<span class="lineNum">     119 </span>            : 
+<span class="lineNum">     120 </span><span class="lineCov">         72 : void cTerrainRLCharController::RecordPoliState(Eigen::VectorXd&amp; out_state) const</span>
+<span class="lineNum">     121 </span>            : {
+<span class="lineNum">     122 </span><span class="lineCov">         72 :         out_state = mPoliState;</span>
+<a name="123"><span class="lineNum">     123 </span><span class="lineCov">         72 : }</span></a>
+<span class="lineNum">     124 </span>            : 
+<span class="lineNum">     125 </span><span class="lineCov">          5 : void cTerrainRLCharController::ResetParams()</span>
+<span class="lineNum">     126 </span>            : {
+<span class="lineNum">     127 </span><span class="lineCov">          5 :         mPhase = 0;</span>
+<span class="lineNum">     128 </span><span class="lineCov">          5 :         mFirstCycle = true;</span>
+<span class="lineNum">     129 </span><span class="lineCov">          5 :         mIsOffPolicy = false;</span>
+<span class="lineNum">     130 </span><span class="lineCov">          5 :         mGroundSampleOrigin.setZero();</span>
+<a name="131"><span class="lineNum">     131 </span><span class="lineCov">          5 : }</span></a>
+<span class="lineNum">     132 </span>            : 
+<span class="lineNum">     133 </span><span class="lineCov">          3 : void cTerrainRLCharController::ApplyAction(int action_id)</span>
+<span class="lineNum">     134 </span>            : {
+<span class="lineNum">     135 </span><span class="lineCov">          3 :         BuildBaseAction(action_id, mCurrAction);</span>
+<span class="lineNum">     136 </span><span class="lineCov">          3 :         ApplyAction(mCurrAction);</span>
+<a name="137"><span class="lineNum">     137 </span><span class="lineCov">          3 : }</span></a>
+<span class="lineNum">     138 </span>            : 
+<span class="lineNum">     139 </span><span class="lineCov">         12 : void cTerrainRLCharController::ApplyAction(const tAction&amp; action)</span>
+<span class="lineNum">     140 </span>            : {
+<span class="lineNum">     141 </span><span class="lineCov">         12 :         mCurrAction = action;</span>
+<span class="lineNum">     142 </span><span class="lineCov">         12 :         PostProcessParams(mCurrAction.mParams);</span>
+<span class="lineNum">     143 </span>            : 
+<span class="lineNum">     144 </span><span class="lineCov">         12 :         NewCycleUpdate();</span>
+<span class="lineNum">     145 </span><span class="lineCov">         12 :         SetParams(mCurrAction.mParams);</span>
+<a name="146"><span class="lineNum">     146 </span><span class="lineCov">         12 : }</span></a>
+<span class="lineNum">     147 </span>            : 
+<span class="lineNum">     148 </span><span class="lineCov">         12 : void cTerrainRLCharController::NewCycleUpdate()</span>
+<span class="lineNum">     149 </span>            : {
+<a name="150"><span class="lineNum">     150 </span><span class="lineCov">         12 : }</span></a>
+<span class="lineNum">     151 </span>            : 
+<span class="lineNum">     152 </span><span class="lineNoCov">          0 : void cTerrainRLCharController::SetParams(const Eigen::VectorXd&amp; params)</span>
+<span class="lineNum">     153 </span>            : {
+<span class="lineNum">     154 </span><span class="lineNoCov">          0 :         assert(params.size() == GetNumParams());</span>
+<span class="lineNum">     155 </span><span class="lineNoCov">          0 :         mCurrAction.mParams = params;</span>
+<span class="lineNum">     156 </span><span class="lineNoCov">          0 :         PostProcessParams(mCurrAction.mParams);</span>
+<a name="157"><span class="lineNum">     157 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     158 </span>            : 
+<span class="lineNum">     159 </span><span class="lineNoCov">          0 : bool cTerrainRLCharController::IsOptParam(int param_idx) const</span>
+<span class="lineNum">     160 </span>            : {
+<span class="lineNum">     161 </span><span class="lineNoCov">          0 :         return true;</span>
+<a name="162"><span class="lineNum">     162 </span>            : }</a>
+<span class="lineNum">     163 </span>            : 
+<span class="lineNum">     164 </span><span class="lineNoCov">          0 : void cTerrainRLCharController::PostProcessParams(Eigen::VectorXd&amp; out_params) const</span>
+<span class="lineNum">     165 </span>            : {
+<a name="166"><span class="lineNum">     166 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     167 </span>            : 
+<span class="lineNum">     168 </span><span class="lineCov">          9 : void cTerrainRLCharController::UpdateGroundSampleOrigin()</span>
+<span class="lineNum">     169 </span>            : {
+<span class="lineNum">     170 </span><span class="lineCov">          9 :         mGroundSampleOrigin = mChar-&gt;GetRootPos();</span>
+<span class="lineNum">     171 </span><span class="lineCov">          9 :         double ground_h = 0;</span>
+<span class="lineNum">     172 </span><span class="lineCov">          9 :         if (mGround != nullptr)</span>
+<span class="lineNum">     173 </span>            :         {
+<span class="lineNum">     174 </span><span class="lineCov">          9 :                 ground_h = mGround-&gt;SampleHeight(mGroundSampleOrigin);</span>
+<span class="lineNum">     175 </span>            :         }
+<span class="lineNum">     176 </span><span class="lineCov">          9 :         mGroundSampleOrigin[1] = ground_h;</span>
+<a name="177"><span class="lineNum">     177 </span><span class="lineCov">          9 : }</span></a>
+<span class="lineNum">     178 </span>            : 
+<span class="lineNum">     179 </span><span class="lineCov">          9 : void cTerrainRLCharController::ParseGround()</span>
+<span class="lineNum">     180 </span>            : {
+<span class="lineNum">     181 </span><span class="lineCov">          9 :         UpdateGroundSampleOrigin();</span>
+<span class="lineNum">     182 </span><span class="lineCov">          9 :         if (HasGround())</span>
+<span class="lineNum">     183 </span>            :         {
+<span class="lineNum">     184 </span><span class="lineCov">          9 :                 SampleGround(mGroundSamples);</span>
+<span class="lineNum">     185 </span>            :         }
+<span class="lineNum">     186 </span>            :         else
+<span class="lineNum">     187 </span>            :         {
+<span class="lineNum">     188 </span><span class="lineNoCov">          0 :                 mGroundSamples.setZero();</span>
+<span class="lineNum">     189 </span>            :         }
+<a name="190"><span class="lineNum">     190 </span><span class="lineCov">          9 : }</span></a>
+<span class="lineNum">     191 </span>            : 
+<span class="lineNum">     192 </span><span class="lineCov">          9 : bool cTerrainRLCharController::HasGround() const</span>
+<span class="lineNum">     193 </span>            : {
+<span class="lineNum">     194 </span><span class="lineCov">          9 :         return mGround != nullptr;</span>
+<a name="195"><span class="lineNum">     195 </span>            : }</a>
+<span class="lineNum">     196 </span>            : 
+<span class="lineNum">     197 </span><span class="lineCov">          9 : void cTerrainRLCharController::SampleGround(Eigen::VectorXd&amp; out_samples) const</span>
+<span class="lineNum">     198 </span>            : {
+<span class="lineNum">     199 </span><span class="lineCov">       1809 :         for (int i = 0; i &lt; gNumGroundSamples; ++i)</span>
+<span class="lineNum">     200 </span>            :         {
+<span class="lineNum">     201 </span><span class="lineCov">       1800 :                 tVector sample_pos = CalcGroundSamplePos(i);</span>
+<span class="lineNum">     202 </span><span class="lineCov">       1800 :                 double h = mGround-&gt;SampleHeight(sample_pos);</span>
+<span class="lineNum">     203 </span><span class="lineCov">       1800 :                 h -= mGroundSampleOrigin[1];</span>
+<span class="lineNum">     204 </span><span class="lineCov">       1800 :                 out_samples[i] = h;</span>
+<span class="lineNum">     205 </span>            :         }
+<a name="206"><span class="lineNum">     206 </span><span class="lineCov">          9 : }</span></a>
+<span class="lineNum">     207 </span>            : 
+<span class="lineNum">     208 </span><span class="lineCov">      10400 : tVector cTerrainRLCharController::CalcGroundSamplePos(int s) const</span>
+<span class="lineNum">     209 </span>            : {
+<span class="lineNum">     210 </span><span class="lineCov">      10400 :         double view_dist = GetViewDist();</span>
+<span class="lineNum">     211 </span><span class="lineCov">      10400 :         double dist = ((view_dist - gViewMin) * s) / (gNumGroundSamples - 1) + gViewMin;</span>
+<span class="lineNum">     212 </span><span class="lineCov">      10400 :         return tVector(dist, 0, 0, 0) + mGroundSampleOrigin;</span>
+<a name="213"><span class="lineNum">     213 </span>            : }</a>
+<span class="lineNum">     214 </span>            : 
+<span class="lineNum">     215 </span><span class="lineCov">          9 : void cTerrainRLCharController::BuildPoliState(Eigen::VectorXd&amp; out_state) const</span>
+<span class="lineNum">     216 </span>            : {
+<span class="lineNum">     217 </span><span class="lineCov">          9 :         int state_size = GetPoliStateSize();</span>
+<span class="lineNum">     218 </span><span class="lineCov">          9 :         out_state.resize(state_size);</span>
+<span class="lineNum">     219 </span>            : 
+<span class="lineNum">     220 </span><span class="lineCov">         18 :         Eigen::VectorXd pose;</span>
+<span class="lineNum">     221 </span><span class="lineCov">         18 :         Eigen::VectorXd vel;</span>
+<span class="lineNum">     222 </span><span class="lineCov">          9 :         BuildPoliStatePose(pose);</span>
+<span class="lineNum">     223 </span><span class="lineCov">          9 :         BuildPoliStateVel(vel);</span>
+<span class="lineNum">     224 </span>            : 
+<span class="lineNum">     225 </span><span class="lineCov">          9 :         int ground_offset = GetPoliStateOffset(ePoliStateGround);</span>
+<span class="lineNum">     226 </span><span class="lineCov">          9 :         int ground_size = GetPoliStateSize(ePoliStateGround);</span>
+<span class="lineNum">     227 </span><span class="lineCov">          9 :         int pose_offset = GetPoliStateOffset(ePoliStatePose);</span>
+<span class="lineNum">     228 </span><span class="lineCov">          9 :         int pose_size = GetPoliStateSize(ePoliStatePose);</span>
+<span class="lineNum">     229 </span><span class="lineCov">          9 :         int vel_offset = GetPoliStateOffset(ePoliStateVel);</span>
+<span class="lineNum">     230 </span><span class="lineCov">          9 :         int vel_size = GetPoliStateSize(ePoliStateVel);</span>
+<span class="lineNum">     231 </span>            : 
+<span class="lineNum">     232 </span><span class="lineCov">          9 :         out_state.segment(ground_offset, ground_size) = mGroundSamples;</span>
+<span class="lineNum">     233 </span><span class="lineCov">          9 :         out_state.segment(pose_offset, pose_size) = pose;</span>
+<span class="lineNum">     234 </span><span class="lineCov">          9 :         out_state.segment(vel_offset, vel_size) = vel;</span>
+<a name="235"><span class="lineNum">     235 </span><span class="lineCov">          9 : }</span></a>
+<span class="lineNum">     236 </span>            : 
+<span class="lineNum">     237 </span><span class="lineCov">          9 : void cTerrainRLCharController::BuildPoliStatePose(Eigen::VectorXd&amp; out_pose) const</span>
+<span class="lineNum">     238 </span>            : {
+<span class="lineNum">     239 </span><span class="lineCov">          9 :         tVector root_pos = mChar-&gt;GetRootPos();</span>
+<span class="lineNum">     240 </span><span class="lineCov">          9 :         double ground_h = mGround-&gt;SampleHeight(root_pos);</span>
+<span class="lineNum">     241 </span><span class="lineCov">          9 :         tVector root_pos_rel = root_pos;</span>
+<span class="lineNum">     242 </span><span class="lineCov">          9 :         root_pos_rel[1] -= ground_h;</span>
+<span class="lineNum">     243 </span>            : 
+<span class="lineNum">     244 </span>            : #if defined(ENABLE_MAX_COORD_POSE)
+<span class="lineNum">     245 </span><span class="lineCov">          9 :         out_pose.resize(GetPoliStateSize(ePoliStatePose));</span>
+<span class="lineNum">     246 </span><span class="lineCov">          9 :         out_pose[0] = root_pos_rel[1];</span>
+<span class="lineNum">     247 </span><span class="lineCov">          9 :         int num_parts = mChar-&gt;GetNumBodyParts();</span>
+<span class="lineNum">     248 </span>            : 
+<span class="lineNum">     249 </span><span class="lineCov">          9 :         int idx = 1;</span>
+<span class="lineNum">     250 </span><span class="lineCov">        189 :         for (int i = 1; i &lt; num_parts; ++i)</span>
+<span class="lineNum">     251 </span>            :         {
+<span class="lineNum">     252 </span><span class="lineCov">        180 :                 const auto&amp; curr_part = mChar-&gt;GetBodyPart(i);</span>
+<span class="lineNum">     253 </span><span class="lineCov">        180 :                 tVector curr_pos = curr_part-&gt;GetPos();</span>
+<span class="lineNum">     254 </span><span class="lineCov">        180 :                 curr_pos -= root_pos;</span>
+<span class="lineNum">     255 </span>            : 
+<span class="lineNum">     256 </span><span class="lineCov">        180 :                 out_pose.segment(idx, gPosDim) = curr_pos.segment(0, gPosDim);</span>
+<span class="lineNum">     257 </span><span class="lineCov">        180 :                 idx += gPosDim;</span>
+<span class="lineNum">     258 </span>            :         }
+<span class="lineNum">     259 </span>            : #else
+<span class="lineNum">     260 </span>            :         Eigen::VectorXd pose;
+<span class="lineNum">     261 </span>            :         mChar-&gt;BuildPose(pose);
+<span class="lineNum">     262 </span>            :         cKinTree::SetRootPos(mChar-&gt;GetJointMat(), root_pos_rel, pose);
+<span class="lineNum">     263 </span>            :         out_pose = pose.segment(1, pose.size() - 1);
+<span class="lineNum">     264 </span>            : #endif
+<a name="265"><span class="lineNum">     265 </span><span class="lineCov">          9 : }</span></a>
+<span class="lineNum">     266 </span>            : 
+<span class="lineNum">     267 </span><span class="lineCov">          9 : void cTerrainRLCharController::BuildPoliStateVel(Eigen::VectorXd&amp; out_vel) const</span>
+<span class="lineNum">     268 </span>            : {
+<span class="lineNum">     269 </span>            : #if defined(ENABLE_MAX_COORD_POSE)
+<span class="lineNum">     270 </span><span class="lineCov">          9 :         out_vel.resize(GetPoliStateSize(ePoliStateVel));</span>
+<span class="lineNum">     271 </span><span class="lineCov">          9 :         int num_parts = mChar-&gt;GetNumBodyParts();</span>
+<span class="lineNum">     272 </span>            : 
+<span class="lineNum">     273 </span><span class="lineCov">          9 :         int idx = 0;</span>
+<span class="lineNum">     274 </span><span class="lineCov">        198 :         for (int i = 0; i &lt; num_parts; ++i)</span>
+<span class="lineNum">     275 </span>            :         {
+<span class="lineNum">     276 </span><span class="lineCov">        189 :                 const auto&amp; curr_part = mChar-&gt;GetBodyPart(i);</span>
+<span class="lineNum">     277 </span><span class="lineCov">        189 :                 tVector curr_vel = curr_part-&gt;GetLinearVelocity();</span>
+<span class="lineNum">     278 </span>            : 
+<span class="lineNum">     279 </span><span class="lineCov">        189 :                 out_vel.segment(idx, gPosDim) = curr_vel.segment(0, gPosDim);</span>
+<span class="lineNum">     280 </span><span class="lineCov">        189 :                 idx += gPosDim;</span>
+<span class="lineNum">     281 </span>            :         }
+<span class="lineNum">     282 </span>            : #else
+<span class="lineNum">     283 </span>            :         mChar-&gt;BuildVel(out_vel);
+<span class="lineNum">     284 </span>            : #endif
+<a name="285"><span class="lineNum">     285 </span><span class="lineCov">          9 : }</span></a>
+<span class="lineNum">     286 </span>            : 
+<span class="lineNum">     287 </span><span class="lineCov">        135 : int cTerrainRLCharController::GetPoliStateOffset(ePoliState params) const</span>
+<span class="lineNum">     288 </span>            : {
+<span class="lineNum">     289 </span><span class="lineCov">        135 :         int offset = 0;</span>
+<span class="lineNum">     290 </span><span class="lineCov">        135 :         switch (params)</span>
+<span class="lineNum">     291 </span>            :         {
+<span class="lineNum">     292 </span>            :         case ePoliStateGround:
+<span class="lineNum">     293 </span><span class="lineCov">         45 :                 offset = 0;</span>
+<span class="lineNum">     294 </span><span class="lineCov">         45 :                 break;</span>
+<span class="lineNum">     295 </span>            :         case ePoliStatePose:
+<span class="lineNum">     296 </span><span class="lineCov">         45 :                 offset = GetPoliStateSize(ePoliStateGround);</span>
+<span class="lineNum">     297 </span><span class="lineCov">         45 :                 break;</span>
+<span class="lineNum">     298 </span>            :         case ePoliStateVel:
+<span class="lineNum">     299 </span><span class="lineCov">         45 :                 offset = GetPoliStateSize(ePoliStateGround) + GetPoliStateSize(ePoliStatePose);</span>
+<span class="lineNum">     300 </span><span class="lineCov">         45 :                 break;</span>
+<span class="lineNum">     301 </span>            :         default:
+<span class="lineNum">     302 </span><span class="lineNoCov">          0 :                 assert(false); // unsupported poli state param</span>
+<span class="lineNum">     303 </span>            :                 break;
+<span class="lineNum">     304 </span>            :         }
+<span class="lineNum">     305 </span><span class="lineCov">        135 :         return offset;</span>
+<a name="306"><span class="lineNum">     306 </span>            : }</a>
+<span class="lineNum">     307 </span>            : 
+<span class="lineNum">     308 </span><span class="lineCov">        321 : int cTerrainRLCharController::GetPoliStateSize(ePoliState params) const</span>
+<span class="lineNum">     309 </span>            : {
+<span class="lineNum">     310 </span><span class="lineCov">        321 :         int size = 0;</span>
+<span class="lineNum">     311 </span><span class="lineCov">        321 :         switch (params)</span>
+<span class="lineNum">     312 </span>            :         {
+<span class="lineNum">     313 </span>            :         case ePoliStateGround:
+<span class="lineNum">     314 </span><span class="lineCov">        146 :                 size = GetNumGroundSamples();</span>
+<span class="lineNum">     315 </span><span class="lineCov">        146 :                 break;</span>
+<span class="lineNum">     316 </span>            : #if defined(ENABLE_MAX_COORD_POSE)
+<span class="lineNum">     317 </span>            :         case ePoliStatePose:
+<span class="lineNum">     318 </span><span class="lineCov">        110 :                 size = mChar-&gt;GetNumBodyParts() * gPosDim - 1; // -1 for root x</span>
+<span class="lineNum">     319 </span>            : #if defined(ENABLE_POLI_STATE_THETA)
+<span class="lineNum">     320 </span>            :                 size += mChar-&gt;GetNumBodyParts();
+<span class="lineNum">     321 </span>            : #endif
+<span class="lineNum">     322 </span><span class="lineCov">        110 :                 break;</span>
+<span class="lineNum">     323 </span>            :         case ePoliStateVel:
+<span class="lineNum">     324 </span><span class="lineCov">         65 :                 size = mChar-&gt;GetNumBodyParts() * gPosDim;</span>
+<span class="lineNum">     325 </span>            : #if defined(ENABLE_POLI_STATE_THETA)
+<span class="lineNum">     326 </span>            :                 size += mChar-&gt;GetNumBodyParts();
+<span class="lineNum">     327 </span>            : #endif
+<span class="lineNum">     328 </span><span class="lineCov">         65 :                 break;</span>
+<span class="lineNum">     329 </span>            : #else
+<span class="lineNum">     330 </span>            :         case ePoliStatePose:
+<span class="lineNum">     331 </span>            :                 size = mChar-&gt;GetNumDof() - 1; // -1 for root x
+<span class="lineNum">     332 </span>            :                 break;
+<span class="lineNum">     333 </span>            :         case ePoliStateVel:
+<span class="lineNum">     334 </span>            :                 size = mChar-&gt;GetNumDof();
+<span class="lineNum">     335 </span>            :                 break;
+<span class="lineNum">     336 </span>            : #endif
+<span class="lineNum">     337 </span>            :         default:
+<span class="lineNum">     338 </span><span class="lineNoCov">          0 :                 assert(false); // unsupported poli state param</span>
+<span class="lineNum">     339 </span>            :                 break;
+<span class="lineNum">     340 </span>            :         }
+<span class="lineNum">     341 </span><span class="lineCov">        321 :         return size;</span>
+<a name="342"><span class="lineNum">     342 </span>            : }</a>
+<span class="lineNum">     343 </span>            : 
+<span class="lineNum">     344 </span><span class="lineNoCov">          0 : void cTerrainRLCharController::BuildDefaultAction(tAction&amp; out_action) const</span>
+<span class="lineNum">     345 </span>            : {
+<span class="lineNum">     346 </span><span class="lineNoCov">          0 :         BuildBaseAction(GetDefaultAction(), out_action);</span>
+<a name="347"><span class="lineNum">     347 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     348 </span>            : 
+<span class="lineNum">     349 </span><span class="lineNoCov">          0 : void cTerrainRLCharController::BuildRandBaseAction(tAction&amp; out_action) const</span>
+<span class="lineNum">     350 </span>            : {
+<span class="lineNum">     351 </span><span class="lineNoCov">          0 :         int num_actions = GetNumActions();</span>
+<span class="lineNum">     352 </span><span class="lineNoCov">          0 :         int a = cMathUtil::RandInt(0, num_actions);</span>
+<span class="lineNum">     353 </span><span class="lineNoCov">          0 :         BuildBaseAction(a, out_action);</span>
+<span class="lineNum">     354 </span>            : 
+<span class="lineNum">     355 </span>            : #if defined (ENABLE_DEBUG_PRINT)
+<span class="lineNum">     356 </span><span class="lineNoCov">          0 :         printf(&quot;rand action: %i\n&quot;, a);</span>
+<span class="lineNum">     357 </span>            : #endif
+<span class="lineNum">     358 </span><span class="lineNoCov">          0 : }</span>
+<a name="359"><span class="lineNum">     359 </span>            : </a>
+<span class="lineNum">     360 </span>            : #if defined(ENABLE_DEBUG_VISUALIZATION)
+<span class="lineNum">     361 </span><span class="lineCov">         26 : const cCircularBuffer&lt;double&gt;&amp; cTerrainRLCharController::GetPoliValLog() const</span>
+<span class="lineNum">     362 </span>            : {
+<span class="lineNum">     363 </span><span class="lineCov">         26 :         return mPoliValLog;</span>
+<a name="364"><span class="lineNum">     364 </span>            : }</a>
+<span class="lineNum">     365 </span>            : 
+<span class="lineNum">     366 </span><span class="lineCov">         36 : void cTerrainRLCharController::GetVisCharacterFeatures(Eigen::VectorXd&amp; out_features) const</span>
+<span class="lineNum">     367 </span>            : {
+<span class="lineNum">     368 </span><span class="lineCov">         36 :         int pose_offset = GetPoliStateOffset(ePoliStatePose);</span>
+<span class="lineNum">     369 </span><span class="lineCov">         36 :         int pose_size = GetPoliStateSize(ePoliStatePose);</span>
+<span class="lineNum">     370 </span><span class="lineCov">         36 :         int vel_offset = GetPoliStateOffset(ePoliStateVel);</span>
+<span class="lineNum">     371 </span><span class="lineCov">         36 :         int vel_size = GetPoliStateSize(ePoliStateVel);</span>
+<span class="lineNum">     372 </span>            : 
+<span class="lineNum">     373 </span><span class="lineCov">         72 :         Eigen::VectorXd norm_features;</span>
+<span class="lineNum">     374 </span><span class="lineCov">         36 :         RecordPoliState(norm_features);</span>
+<span class="lineNum">     375 </span><span class="lineCov">         36 :         if (HasNet())</span>
+<span class="lineNum">     376 </span>            :         {
+<span class="lineNum">     377 </span><span class="lineNoCov">          0 :                 mNet.NormalizeInput(norm_features);</span>
+<span class="lineNum">     378 </span>            :         }
+<span class="lineNum">     379 </span>            : 
+<span class="lineNum">     380 </span><span class="lineCov">         36 :         out_features.resize(pose_size + vel_size);</span>
+<span class="lineNum">     381 </span><span class="lineCov">         36 :         out_features.segment(0, pose_size) = norm_features.segment(pose_offset, pose_size);</span>
+<span class="lineNum">     382 </span><span class="lineCov">         36 :         out_features.segment(pose_size, vel_size) = norm_features.segment(vel_offset, vel_size);</span>
+<a name="383"><span class="lineNum">     383 </span><span class="lineCov">         36 : }</span></a>
+<span class="lineNum">     384 </span>            : 
+<span class="lineNum">     385 </span><span class="lineCov">         36 : void cTerrainRLCharController::GetVisTerrainFeatures(Eigen::VectorXd&amp; out_features) const</span>
+<span class="lineNum">     386 </span>            : {
+<span class="lineNum">     387 </span><span class="lineCov">         36 :         int ground_offset = GetPoliStateOffset(ePoliStateGround);</span>
+<span class="lineNum">     388 </span><span class="lineCov">         36 :         int ground_size = GetPoliStateSize(ePoliStateGround);</span>
+<span class="lineNum">     389 </span>            : 
+<span class="lineNum">     390 </span><span class="lineCov">         72 :         Eigen::VectorXd norm_features;</span>
+<span class="lineNum">     391 </span><span class="lineCov">         36 :         RecordPoliState(norm_features);</span>
+<span class="lineNum">     392 </span><span class="lineCov">         36 :         if (HasNet())</span>
+<span class="lineNum">     393 </span>            :         {
+<span class="lineNum">     394 </span><span class="lineNoCov">          0 :                 mNet.NormalizeInput(norm_features);</span>
+<span class="lineNum">     395 </span>            :         }
+<span class="lineNum">     396 </span>            : 
+<span class="lineNum">     397 </span><span class="lineCov">         36 :         out_features = norm_features.segment(ground_offset, ground_size);</span>
+<a name="398"><span class="lineNum">     398 </span><span class="lineCov">         36 : }</span></a>
+<span class="lineNum">     399 </span>            : 
+<span class="lineNum">     400 </span><span class="lineCov">         36 : void cTerrainRLCharController::GetVisActionFeatures(Eigen::VectorXd&amp; out_features) const</span>
+<span class="lineNum">     401 </span>            : {
+<span class="lineNum">     402 </span><span class="lineCov">         36 :         RecordPoliAction(out_features);</span>
+<span class="lineNum">     403 </span><span class="lineCov">         36 :         if (HasNet())</span>
+<span class="lineNum">     404 </span>            :         {
+<span class="lineNum">     405 </span><span class="lineNoCov">          0 :                 mNet.NormalizeOutput(out_features);</span>
+<span class="lineNum">     406 </span>            :         }
+<a name="407"><span class="lineNum">     407 </span><span class="lineCov">         36 : }</span></a>
+<span class="lineNum">     408 </span>            : 
+<span class="lineNum">     409 </span><span class="lineCov">         36 : void cTerrainRLCharController::GetVisActionValues(Eigen::VectorXd&amp; out_features) const</span>
+<a name="410"><span class="lineNum">     410 </span>            : {</a>
+<span class="lineNum">     411 </span><span class="lineCov">         36 :         out_features = mVisNNOutput;</span>
+<span class="lineNum">     412 </span><span class="lineCov">         39 : }</span>
+<span class="lineNum">     413 </span>            : #endif // ENABLE_DEBUG_VISUALIZATION
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

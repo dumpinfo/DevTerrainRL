@@ -1,0 +1,519 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/external/Eigen/src/Core/util/Macros.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/external/Eigen/src/Core/util</a> - Macros.h<span style="font-size: 80%;"> (source / <a href="Macros.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : // This file is part of Eigen, a lightweight C++ template library</a>
+<span class="lineNum">       2 </span>            : // for linear algebra.
+<span class="lineNum">       3 </span>            : //
+<span class="lineNum">       4 </span>            : // Copyright (C) 2008-2010 Gael Guennebaud &lt;gael.guennebaud@inria.fr&gt;
+<span class="lineNum">       5 </span>            : // Copyright (C) 2006-2008 Benoit Jacob &lt;jacob.benoit.1@gmail.com&gt;
+<span class="lineNum">       6 </span>            : //
+<span class="lineNum">       7 </span>            : // This Source Code Form is subject to the terms of the Mozilla
+<span class="lineNum">       8 </span>            : // Public License v. 2.0. If a copy of the MPL was not distributed
+<span class="lineNum">       9 </span>            : // with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : #ifndef EIGEN_MACROS_H
+<span class="lineNum">      12 </span>            : #define EIGEN_MACROS_H
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span>            : #define EIGEN_WORLD_VERSION 3
+<span class="lineNum">      15 </span>            : #define EIGEN_MAJOR_VERSION 2
+<span class="lineNum">      16 </span>            : #define EIGEN_MINOR_VERSION 5
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span>            : #define EIGEN_VERSION_AT_LEAST(x,y,z) (EIGEN_WORLD_VERSION&gt;x || (EIGEN_WORLD_VERSION&gt;=x &amp;&amp; \
+<span class="lineNum">      19 </span>            :                                       (EIGEN_MAJOR_VERSION&gt;y || (EIGEN_MAJOR_VERSION&gt;=y &amp;&amp; \
+<span class="lineNum">      20 </span>            :                                                                  EIGEN_MINOR_VERSION&gt;=z))))
+<span class="lineNum">      21 </span>            : #ifdef __GNUC__
+<span class="lineNum">      22 </span>            :   #define EIGEN_GNUC_AT_LEAST(x,y) ((__GNUC__==x &amp;&amp; __GNUC_MINOR__&gt;=y) || __GNUC__&gt;x)
+<span class="lineNum">      23 </span>            : #else
+<span class="lineNum">      24 </span>            :   #define EIGEN_GNUC_AT_LEAST(x,y) 0
+<span class="lineNum">      25 </span>            : #endif
+<span class="lineNum">      26 </span>            :  
+<span class="lineNum">      27 </span>            : #ifdef __GNUC__
+<span class="lineNum">      28 </span>            :   #define EIGEN_GNUC_AT_MOST(x,y) ((__GNUC__==x &amp;&amp; __GNUC_MINOR__&lt;=y) || __GNUC__&lt;x)
+<span class="lineNum">      29 </span>            : #else
+<span class="lineNum">      30 </span>            :   #define EIGEN_GNUC_AT_MOST(x,y) 0
+<span class="lineNum">      31 </span>            : #endif
+<span class="lineNum">      32 </span>            : 
+<span class="lineNum">      33 </span>            : #if EIGEN_GNUC_AT_MOST(4,3) &amp;&amp; !defined(__clang__)
+<span class="lineNum">      34 </span>            :   // see bug 89
+<span class="lineNum">      35 </span>            :   #define EIGEN_SAFE_TO_USE_STANDARD_ASSERT_MACRO 0
+<span class="lineNum">      36 </span>            : #else
+<span class="lineNum">      37 </span>            :   #define EIGEN_SAFE_TO_USE_STANDARD_ASSERT_MACRO 1
+<span class="lineNum">      38 </span>            : #endif
+<span class="lineNum">      39 </span>            : 
+<span class="lineNum">      40 </span>            : #if defined(__GNUC__) &amp;&amp; (__GNUC__ &lt;= 3)
+<span class="lineNum">      41 </span>            : #define EIGEN_GCC3_OR_OLDER 1
+<span class="lineNum">      42 </span>            : #else
+<span class="lineNum">      43 </span>            : #define EIGEN_GCC3_OR_OLDER 0
+<span class="lineNum">      44 </span>            : #endif
+<span class="lineNum">      45 </span>            : 
+<span class="lineNum">      46 </span>            : // 16 byte alignment is only useful for vectorization. Since it affects the ABI, we need to enable
+<span class="lineNum">      47 </span>            : // 16 byte alignment on all platforms where vectorization might be enabled. In theory we could always
+<span class="lineNum">      48 </span>            : // enable alignment, but it can be a cause of problems on some platforms, so we just disable it in
+<span class="lineNum">      49 </span>            : // certain common platform (compiler+architecture combinations) to avoid these problems.
+<span class="lineNum">      50 </span>            : // Only static alignment is really problematic (relies on nonstandard compiler extensions that don't
+<span class="lineNum">      51 </span>            : // work everywhere, for example don't work on GCC/ARM), try to keep heap alignment even
+<span class="lineNum">      52 </span>            : // when we have to disable static alignment.
+<span class="lineNum">      53 </span>            : #if defined(__GNUC__) &amp;&amp; !(defined(__i386__) || defined(__x86_64__) || defined(__powerpc__) || defined(__ppc__) || defined(__ia64__))
+<span class="lineNum">      54 </span>            : #define EIGEN_GCC_AND_ARCH_DOESNT_WANT_STACK_ALIGNMENT 1
+<span class="lineNum">      55 </span>            : #else
+<span class="lineNum">      56 </span>            : #define EIGEN_GCC_AND_ARCH_DOESNT_WANT_STACK_ALIGNMENT 0
+<span class="lineNum">      57 </span>            : #endif
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span>            : // static alignment is completely disabled with GCC 3, Sun Studio, and QCC/QNX
+<span class="lineNum">      60 </span>            : #if !EIGEN_GCC_AND_ARCH_DOESNT_WANT_STACK_ALIGNMENT \
+<span class="lineNum">      61 </span>            :  &amp;&amp; !EIGEN_GCC3_OR_OLDER \
+<span class="lineNum">      62 </span>            :  &amp;&amp; !defined(__SUNPRO_CC) \
+<span class="lineNum">      63 </span>            :  &amp;&amp; !defined(__QNXNTO__)
+<span class="lineNum">      64 </span>            :   #define EIGEN_ARCH_WANTS_STACK_ALIGNMENT 1
+<span class="lineNum">      65 </span>            : #else
+<span class="lineNum">      66 </span>            :   #define EIGEN_ARCH_WANTS_STACK_ALIGNMENT 0
+<span class="lineNum">      67 </span>            : #endif
+<span class="lineNum">      68 </span>            : 
+<span class="lineNum">      69 </span>            : #ifdef EIGEN_DONT_ALIGN
+<span class="lineNum">      70 </span>            :   #ifndef EIGEN_DONT_ALIGN_STATICALLY
+<span class="lineNum">      71 </span>            :     #define EIGEN_DONT_ALIGN_STATICALLY
+<span class="lineNum">      72 </span>            :   #endif
+<span class="lineNum">      73 </span>            :   #define EIGEN_ALIGN 0
+<span class="lineNum">      74 </span>            : #else
+<span class="lineNum">      75 </span>            :   #define EIGEN_ALIGN 1
+<span class="lineNum">      76 </span>            : #endif
+<span class="lineNum">      77 </span>            : 
+<span class="lineNum">      78 </span>            : // EIGEN_ALIGN_STATICALLY is the true test whether we want to align arrays on the stack or not. It takes into account both the user choice to explicitly disable
+<span class="lineNum">      79 </span>            : // alignment (EIGEN_DONT_ALIGN_STATICALLY) and the architecture config (EIGEN_ARCH_WANTS_STACK_ALIGNMENT). Henceforth, only EIGEN_ALIGN_STATICALLY should be used.
+<span class="lineNum">      80 </span>            : #if EIGEN_ARCH_WANTS_STACK_ALIGNMENT &amp;&amp; !defined(EIGEN_DONT_ALIGN_STATICALLY)
+<span class="lineNum">      81 </span>            :   #define EIGEN_ALIGN_STATICALLY 1
+<span class="lineNum">      82 </span>            : #else
+<span class="lineNum">      83 </span>            :   #define EIGEN_ALIGN_STATICALLY 0
+<span class="lineNum">      84 </span>            :   #ifndef EIGEN_DISABLE_UNALIGNED_ARRAY_ASSERT
+<span class="lineNum">      85 </span>            :     #define EIGEN_DISABLE_UNALIGNED_ARRAY_ASSERT
+<span class="lineNum">      86 </span>            :   #endif
+<span class="lineNum">      87 </span>            : #endif
+<span class="lineNum">      88 </span>            : 
+<span class="lineNum">      89 </span>            : #ifdef EIGEN_DEFAULT_TO_ROW_MAJOR
+<span class="lineNum">      90 </span>            : #define EIGEN_DEFAULT_MATRIX_STORAGE_ORDER_OPTION RowMajor
+<span class="lineNum">      91 </span>            : #else
+<span class="lineNum">      92 </span>            : #define EIGEN_DEFAULT_MATRIX_STORAGE_ORDER_OPTION ColMajor
+<span class="lineNum">      93 </span>            : #endif
+<span class="lineNum">      94 </span>            : 
+<span class="lineNum">      95 </span>            : #ifndef EIGEN_DEFAULT_DENSE_INDEX_TYPE
+<span class="lineNum">      96 </span>            : #define EIGEN_DEFAULT_DENSE_INDEX_TYPE std::ptrdiff_t
+<span class="lineNum">      97 </span>            : #endif
+<span class="lineNum">      98 </span>            : 
+<span class="lineNum">      99 </span>            : // Cross compiler wrapper around LLVM's __has_builtin
+<span class="lineNum">     100 </span>            : #ifdef __has_builtin
+<span class="lineNum">     101 </span>            : #  define EIGEN_HAS_BUILTIN(x) __has_builtin(x)
+<span class="lineNum">     102 </span>            : #else
+<span class="lineNum">     103 </span>            : #  define EIGEN_HAS_BUILTIN(x) 0
+<span class="lineNum">     104 </span>            : #endif
+<span class="lineNum">     105 </span>            : 
+<span class="lineNum">     106 </span>            : /** Allows to disable some optimizations which might affect the accuracy of the result.
+<span class="lineNum">     107 </span>            :   * Such optimization are enabled by default, and set EIGEN_FAST_MATH to 0 to disable them.
+<span class="lineNum">     108 </span>            :   * They currently include:
+<span class="lineNum">     109 </span>            :   *   - single precision Cwise::sin() and Cwise::cos() when SSE vectorization is enabled.
+<span class="lineNum">     110 </span>            :   */
+<span class="lineNum">     111 </span>            : #ifndef EIGEN_FAST_MATH
+<span class="lineNum">     112 </span>            : #define EIGEN_FAST_MATH 1
+<span class="lineNum">     113 </span>            : #endif
+<span class="lineNum">     114 </span>            : 
+<span class="lineNum">     115 </span>            : #define EIGEN_DEBUG_VAR(x) std::cerr &lt;&lt; #x &lt;&lt; &quot; = &quot; &lt;&lt; x &lt;&lt; std::endl;
+<span class="lineNum">     116 </span>            : 
+<span class="lineNum">     117 </span>            : // concatenate two tokens
+<span class="lineNum">     118 </span>            : #define EIGEN_CAT2(a,b) a ## b
+<span class="lineNum">     119 </span>            : #define EIGEN_CAT(a,b) EIGEN_CAT2(a,b)
+<span class="lineNum">     120 </span>            : 
+<span class="lineNum">     121 </span>            : // convert a token to a string
+<span class="lineNum">     122 </span>            : #define EIGEN_MAKESTRING2(a) #a
+<span class="lineNum">     123 </span>            : #define EIGEN_MAKESTRING(a) EIGEN_MAKESTRING2(a)
+<span class="lineNum">     124 </span>            : 
+<span class="lineNum">     125 </span>            : // EIGEN_STRONG_INLINE is a stronger version of the inline, using __forceinline on MSVC,
+<span class="lineNum">     126 </span>            : // but it still doesn't use GCC's always_inline. This is useful in (common) situations where MSVC needs forceinline
+<span class="lineNum">     127 </span>            : // but GCC is still doing fine with just inline.
+<span class="lineNum">     128 </span>            : #if (defined _MSC_VER) || (defined __INTEL_COMPILER)
+<span class="lineNum">     129 </span>            : #define EIGEN_STRONG_INLINE __forceinline
+<span class="lineNum">     130 </span>            : #else
+<span class="lineNum">     131 </span>            : #define EIGEN_STRONG_INLINE inline
+<span class="lineNum">     132 </span>            : #endif
+<span class="lineNum">     133 </span>            : 
+<span class="lineNum">     134 </span>            : // EIGEN_ALWAYS_INLINE is the stronget, it has the effect of making the function inline and adding every possible
+<span class="lineNum">     135 </span>            : // attribute to maximize inlining. This should only be used when really necessary: in particular,
+<span class="lineNum">     136 </span>            : // it uses __attribute__((always_inline)) on GCC, which most of the time is useless and can severely harm compile times.
+<span class="lineNum">     137 </span>            : // FIXME with the always_inline attribute,
+<span class="lineNum">     138 </span>            : // gcc 3.4.x reports the following compilation error:
+<span class="lineNum">     139 </span>            : //   Eval.h:91: sorry, unimplemented: inlining failed in call to 'const Eigen::Eval&lt;Derived&gt; Eigen::MatrixBase&lt;Scalar, Derived&gt;::eval() const'
+<span class="lineNum">     140 </span>            : //    : function body not available
+<span class="lineNum">     141 </span>            : #if EIGEN_GNUC_AT_LEAST(4,0)
+<span class="lineNum">     142 </span>            : #define EIGEN_ALWAYS_INLINE __attribute__((always_inline)) inline
+<span class="lineNum">     143 </span>            : #else
+<span class="lineNum">     144 </span>            : #define EIGEN_ALWAYS_INLINE EIGEN_STRONG_INLINE
+<span class="lineNum">     145 </span>            : #endif
+<span class="lineNum">     146 </span>            : 
+<span class="lineNum">     147 </span>            : #if (defined __GNUC__)
+<span class="lineNum">     148 </span>            : #define EIGEN_DONT_INLINE __attribute__((noinline))
+<span class="lineNum">     149 </span>            : #elif (defined _MSC_VER)
+<span class="lineNum">     150 </span>            : #define EIGEN_DONT_INLINE __declspec(noinline)
+<span class="lineNum">     151 </span>            : #else
+<span class="lineNum">     152 </span>            : #define EIGEN_DONT_INLINE
+<span class="lineNum">     153 </span>            : #endif
+<span class="lineNum">     154 </span>            : 
+<span class="lineNum">     155 </span>            : #if (defined __GNUC__)
+<span class="lineNum">     156 </span>            : #define EIGEN_PERMISSIVE_EXPR __extension__
+<span class="lineNum">     157 </span>            : #else
+<span class="lineNum">     158 </span>            : #define EIGEN_PERMISSIVE_EXPR
+<span class="lineNum">     159 </span>            : #endif
+<span class="lineNum">     160 </span>            : 
+<span class="lineNum">     161 </span>            : // this macro allows to get rid of linking errors about multiply defined functions.
+<span class="lineNum">     162 </span>            : //  - static is not very good because it prevents definitions from different object files to be merged.
+<span class="lineNum">     163 </span>            : //           So static causes the resulting linked executable to be bloated with multiple copies of the same function.
+<span class="lineNum">     164 </span>            : //  - inline is not perfect either as it unwantedly hints the compiler toward inlining the function.
+<span class="lineNum">     165 </span>            : #define EIGEN_DECLARE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
+<span class="lineNum">     166 </span>            : #define EIGEN_DEFINE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS inline
+<span class="lineNum">     167 </span>            : 
+<span class="lineNum">     168 </span>            : #ifdef NDEBUG
+<span class="lineNum">     169 </span>            : # ifndef EIGEN_NO_DEBUG
+<span class="lineNum">     170 </span>            : #  define EIGEN_NO_DEBUG
+<span class="lineNum">     171 </span>            : # endif
+<span class="lineNum">     172 </span>            : #endif
+<span class="lineNum">     173 </span>            : 
+<span class="lineNum">     174 </span>            : // eigen_plain_assert is where we implement the workaround for the assert() bug in GCC &lt;= 4.3, see bug 89
+<span class="lineNum">     175 </span>            : #ifdef EIGEN_NO_DEBUG
+<span class="lineNum">     176 </span>            :   #define eigen_plain_assert(x)
+<span class="lineNum">     177 </span>            : #else
+<span class="lineNum">     178 </span>            :   #if EIGEN_SAFE_TO_USE_STANDARD_ASSERT_MACRO
+<span class="lineNum">     179 </span>            :     namespace Eigen {
+<span class="lineNum">     180 </span>            :     namespace internal {
+<span class="lineNum">     181 </span>            :     inline bool copy_bool(bool b) { return b; }
+<span class="lineNum">     182 </span>            :     }
+<span class="lineNum">     183 </span>            :     }
+<span class="lineNum">     184 </span>            :     #define eigen_plain_assert(x) assert(x)
+<span class="lineNum">     185 </span>            :   #else
+<span class="lineNum">     186 </span>            :     // work around bug 89
+<span class="lineNum">     187 </span>            :     #include &lt;cstdlib&gt;   // for abort
+<span class="lineNum">     188 </span>            :     #include &lt;iostream&gt;  // for std::cerr
+<span class="lineNum">     189 </span>            : 
+<span class="lineNum">     190 </span>            :     namespace Eigen {
+<span class="lineNum">     191 </span>            :     namespace internal {
+<span class="lineNum">     192 </span>            :     // trivial function copying a bool. Must be EIGEN_DONT_INLINE, so we implement it after including Eigen headers.
+<span class="lineNum">     193 </span>            :     // see bug 89.
+<span class="lineNum">     194 </span>            :     namespace {
+<span class="lineNum">     195 </span>            :     EIGEN_DONT_INLINE bool copy_bool(bool b) { return b; }
+<span class="lineNum">     196 </span>            :     }
+<span class="lineNum">     197 </span>            :     inline void assert_fail(const char *condition, const char *function, const char *file, int line)
+<span class="lineNum">     198 </span>            :     {
+<span class="lineNum">     199 </span>            :       std::cerr &lt;&lt; &quot;assertion failed: &quot; &lt;&lt; condition &lt;&lt; &quot; in function &quot; &lt;&lt; function &lt;&lt; &quot; at &quot; &lt;&lt; file &lt;&lt; &quot;:&quot; &lt;&lt; line &lt;&lt; std::endl;
+<span class="lineNum">     200 </span>            :       abort();
+<span class="lineNum">     201 </span>            :     }
+<span class="lineNum">     202 </span>            :     }
+<span class="lineNum">     203 </span>            :     }
+<span class="lineNum">     204 </span>            :     #define eigen_plain_assert(x) \
+<span class="lineNum">     205 </span>            :       do { \
+<span class="lineNum">     206 </span>            :         if(!Eigen::internal::copy_bool(x)) \
+<span class="lineNum">     207 </span>            :           Eigen::internal::assert_fail(EIGEN_MAKESTRING(x), __PRETTY_FUNCTION__, __FILE__, __LINE__); \
+<span class="lineNum">     208 </span>            :       } while(false)
+<span class="lineNum">     209 </span>            :   #endif
+<span class="lineNum">     210 </span>            : #endif
+<span class="lineNum">     211 </span>            : 
+<span class="lineNum">     212 </span>            : // eigen_assert can be overridden
+<span class="lineNum">     213 </span>            : #ifndef eigen_assert
+<span class="lineNum">     214 </span>            : #define eigen_assert(x) eigen_plain_assert(x)
+<span class="lineNum">     215 </span>            : #endif
+<span class="lineNum">     216 </span>            : 
+<span class="lineNum">     217 </span>            : #ifdef EIGEN_INTERNAL_DEBUGGING
+<span class="lineNum">     218 </span>            : #define eigen_internal_assert(x) eigen_assert(x)
+<span class="lineNum">     219 </span>            : #else
+<span class="lineNum">     220 </span>            : #define eigen_internal_assert(x)
+<span class="lineNum">     221 </span>            : #endif
+<span class="lineNum">     222 </span>            : 
+<span class="lineNum">     223 </span>            : #ifdef EIGEN_NO_DEBUG
+<span class="lineNum">     224 </span>            : #define EIGEN_ONLY_USED_FOR_DEBUG(x) (void)x
+<span class="lineNum">     225 </span>            : #else
+<span class="lineNum">     226 </span>            : #define EIGEN_ONLY_USED_FOR_DEBUG(x)
+<span class="lineNum">     227 </span>            : #endif
+<span class="lineNum">     228 </span>            : 
+<span class="lineNum">     229 </span>            : #ifndef EIGEN_NO_DEPRECATED_WARNING
+<span class="lineNum">     230 </span>            :   #if (defined __GNUC__)
+<span class="lineNum">     231 </span>            :     #define EIGEN_DEPRECATED __attribute__((deprecated))
+<span class="lineNum">     232 </span>            :   #elif (defined _MSC_VER)
+<span class="lineNum">     233 </span>            :     #define EIGEN_DEPRECATED __declspec(deprecated)
+<span class="lineNum">     234 </span>            :   #else
+<span class="lineNum">     235 </span>            :     #define EIGEN_DEPRECATED
+<span class="lineNum">     236 </span>            :   #endif
+<span class="lineNum">     237 </span>            : #else
+<span class="lineNum">     238 </span>            :   #define EIGEN_DEPRECATED
+<span class="lineNum">     239 </span>            : #endif
+<span class="lineNum">     240 </span>            : 
+<span class="lineNum">     241 </span>            : #if (defined __GNUC__)
+<span class="lineNum">     242 </span>            : #define EIGEN_UNUSED __attribute__((unused))
+<span class="lineNum">     243 </span>            : #else
+<span class="lineNum">     244 </span>            : #define EIGEN_UNUSED
+<span class="lineNum">     245 </span>            : #endif
+<span class="lineNum">     246 </span>            : 
+<span class="lineNum">     247 </span>            : // Suppresses 'unused variable' warnings.
+<a name="248"><span class="lineNum">     248 </span>            : namespace Eigen {</a>
+<span class="lineNum">     249 </span>            :   namespace internal {
+<span class="lineNum">     250 </span><span class="lineCov">    3779541 :     template&lt;typename T&gt; void ignore_unused_variable(const T&amp;) {}</span>
+<span class="lineNum">     251 </span>            :   }
+<span class="lineNum">     252 </span>            : }
+<span class="lineNum">     253 </span>            : #define EIGEN_UNUSED_VARIABLE(var) Eigen::internal::ignore_unused_variable(var);
+<span class="lineNum">     254 </span>            : 
+<span class="lineNum">     255 </span>            : #if !defined(EIGEN_ASM_COMMENT)
+<span class="lineNum">     256 </span>            :   #if (defined __GNUC__) &amp;&amp; ( defined(__i386__) || defined(__x86_64__) )
+<span class="lineNum">     257 </span>            :     #define EIGEN_ASM_COMMENT(X)  __asm__(&quot;#&quot; X)
+<span class="lineNum">     258 </span>            :   #else
+<span class="lineNum">     259 </span>            :     #define EIGEN_ASM_COMMENT(X)
+<span class="lineNum">     260 </span>            :   #endif
+<span class="lineNum">     261 </span>            : #endif
+<span class="lineNum">     262 </span>            : 
+<span class="lineNum">     263 </span>            : /* EIGEN_ALIGN_TO_BOUNDARY(n) forces data to be n-byte aligned. This is used to satisfy SIMD requirements.
+<span class="lineNum">     264 </span>            :  * However, we do that EVEN if vectorization (EIGEN_VECTORIZE) is disabled,
+<span class="lineNum">     265 </span>            :  * so that vectorization doesn't affect binary compatibility.
+<span class="lineNum">     266 </span>            :  *
+<span class="lineNum">     267 </span>            :  * If we made alignment depend on whether or not EIGEN_VECTORIZE is defined, it would be impossible to link
+<span class="lineNum">     268 </span>            :  * vectorized and non-vectorized code.
+<span class="lineNum">     269 </span>            :  */
+<span class="lineNum">     270 </span>            : #if (defined __GNUC__) || (defined __PGI) || (defined __IBMCPP__) || (defined __ARMCC_VERSION)
+<span class="lineNum">     271 </span>            :   #define EIGEN_ALIGN_TO_BOUNDARY(n) __attribute__((aligned(n)))
+<span class="lineNum">     272 </span>            : #elif (defined _MSC_VER)
+<span class="lineNum">     273 </span>            :   #define EIGEN_ALIGN_TO_BOUNDARY(n) __declspec(align(n))
+<span class="lineNum">     274 </span>            : #elif (defined __SUNPRO_CC)
+<span class="lineNum">     275 </span>            :   // FIXME not sure about this one:
+<span class="lineNum">     276 </span>            :   #define EIGEN_ALIGN_TO_BOUNDARY(n) __attribute__((aligned(n)))
+<span class="lineNum">     277 </span>            : #else
+<span class="lineNum">     278 </span>            :   #error Please tell me what is the equivalent of __attribute__((aligned(n))) for your compiler
+<span class="lineNum">     279 </span>            : #endif
+<span class="lineNum">     280 </span>            : 
+<span class="lineNum">     281 </span>            : #define EIGEN_ALIGN8  EIGEN_ALIGN_TO_BOUNDARY(8)
+<span class="lineNum">     282 </span>            : #define EIGEN_ALIGN16 EIGEN_ALIGN_TO_BOUNDARY(16)
+<span class="lineNum">     283 </span>            : 
+<span class="lineNum">     284 </span>            : #if EIGEN_ALIGN_STATICALLY
+<span class="lineNum">     285 </span>            : #define EIGEN_USER_ALIGN_TO_BOUNDARY(n) EIGEN_ALIGN_TO_BOUNDARY(n)
+<span class="lineNum">     286 </span>            : #define EIGEN_USER_ALIGN16 EIGEN_ALIGN16
+<span class="lineNum">     287 </span>            : #else
+<span class="lineNum">     288 </span>            : #define EIGEN_USER_ALIGN_TO_BOUNDARY(n)
+<span class="lineNum">     289 </span>            : #define EIGEN_USER_ALIGN16
+<span class="lineNum">     290 </span>            : #endif
+<span class="lineNum">     291 </span>            : 
+<span class="lineNum">     292 </span>            : #ifdef EIGEN_DONT_USE_RESTRICT_KEYWORD
+<span class="lineNum">     293 </span>            :   #define EIGEN_RESTRICT
+<span class="lineNum">     294 </span>            : #endif
+<span class="lineNum">     295 </span>            : #ifndef EIGEN_RESTRICT
+<span class="lineNum">     296 </span>            :   #define EIGEN_RESTRICT __restrict
+<span class="lineNum">     297 </span>            : #endif
+<span class="lineNum">     298 </span>            : 
+<span class="lineNum">     299 </span>            : #ifndef EIGEN_STACK_ALLOCATION_LIMIT
+<span class="lineNum">     300 </span>            : // 131072 == 128 KB
+<span class="lineNum">     301 </span>            : #define EIGEN_STACK_ALLOCATION_LIMIT 131072
+<span class="lineNum">     302 </span>            : #endif
+<span class="lineNum">     303 </span>            : 
+<span class="lineNum">     304 </span>            : #ifndef EIGEN_DEFAULT_IO_FORMAT
+<span class="lineNum">     305 </span>            : #ifdef EIGEN_MAKING_DOCS
+<span class="lineNum">     306 </span>            : // format used in Eigen's documentation
+<span class="lineNum">     307 </span>            : // needed to define it here as escaping characters in CMake add_definition's argument seems very problematic.
+<span class="lineNum">     308 </span>            : #define EIGEN_DEFAULT_IO_FORMAT Eigen::IOFormat(3, 0, &quot; &quot;, &quot;\n&quot;, &quot;&quot;, &quot;&quot;)
+<span class="lineNum">     309 </span>            : #else
+<span class="lineNum">     310 </span>            : #define EIGEN_DEFAULT_IO_FORMAT Eigen::IOFormat()
+<span class="lineNum">     311 </span>            : #endif
+<span class="lineNum">     312 </span>            : #endif
+<span class="lineNum">     313 </span>            : 
+<span class="lineNum">     314 </span>            : // just an empty macro !
+<span class="lineNum">     315 </span>            : #define EIGEN_EMPTY
+<span class="lineNum">     316 </span>            : 
+<span class="lineNum">     317 </span>            : #if defined(_MSC_VER) &amp;&amp; (_MSC_VER &lt; 1800) &amp;&amp; (!defined(__INTEL_COMPILER))
+<span class="lineNum">     318 </span>            : #define EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Derived) \
+<span class="lineNum">     319 </span>            :   using Base::operator =;
+<span class="lineNum">     320 </span>            : #elif defined(__clang__) // workaround clang bug (see http://forum.kde.org/viewtopic.php?f=74&amp;t=102653)
+<span class="lineNum">     321 </span>            : #define EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Derived) \
+<span class="lineNum">     322 </span>            :   using Base::operator =; \
+<span class="lineNum">     323 </span>            :   EIGEN_STRONG_INLINE Derived&amp; operator=(const Derived&amp; other) { Base::operator=(other); return *this; } \
+<span class="lineNum">     324 </span>            :   template &lt;typename OtherDerived&gt; \
+<span class="lineNum">     325 </span>            :   EIGEN_STRONG_INLINE Derived&amp; operator=(const DenseBase&lt;OtherDerived&gt;&amp; other) { Base::operator=(other.derived()); return *this; }
+<span class="lineNum">     326 </span>            : #else
+<span class="lineNum">     327 </span>            : #define EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Derived) \
+<span class="lineNum">     328 </span>            :   using Base::operator =; \
+<span class="lineNum">     329 </span>            :   EIGEN_STRONG_INLINE Derived&amp; operator=(const Derived&amp; other) \
+<span class="lineNum">     330 </span>            :   { \
+<span class="lineNum">     331 </span>            :     Base::operator=(other); \
+<span class="lineNum">     332 </span>            :     return *this; \
+<span class="lineNum">     333 </span>            :   }
+<span class="lineNum">     334 </span>            : #endif
+<span class="lineNum">     335 </span>            : 
+<span class="lineNum">     336 </span>            : /** \internal
+<span class="lineNum">     337 </span>            :  * \brief Macro to manually inherit assignment operators.
+<span class="lineNum">     338 </span>            :  * This is necessary, because the implicitly defined assignment operator gets deleted when a custom operator= is defined.
+<span class="lineNum">     339 </span>            :  */
+<span class="lineNum">     340 </span>            : #define EIGEN_INHERIT_ASSIGNMENT_OPERATORS(Derived) EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Derived)
+<span class="lineNum">     341 </span>            : 
+<span class="lineNum">     342 </span>            : /**
+<span class="lineNum">     343 </span>            : * Just a side note. Commenting within defines works only by documenting
+<span class="lineNum">     344 </span>            : * behind the object (via '!&lt;'). Comments cannot be multi-line and thus
+<span class="lineNum">     345 </span>            : * we have these extra long lines. What is confusing doxygen over here is
+<span class="lineNum">     346 </span>            : * that we use '\' and basically have a bunch of typedefs with their
+<span class="lineNum">     347 </span>            : * documentation in a single line.
+<span class="lineNum">     348 </span>            : **/
+<span class="lineNum">     349 </span>            : 
+<span class="lineNum">     350 </span>            : #define EIGEN_GENERIC_PUBLIC_INTERFACE(Derived) \
+<span class="lineNum">     351 </span>            :   typedef typename Eigen::internal::traits&lt;Derived&gt;::Scalar Scalar; /*!&lt; \brief Numeric type, e.g. float, double, int or std::complex&lt;float&gt;. */ \
+<span class="lineNum">     352 </span>            :   typedef typename Eigen::NumTraits&lt;Scalar&gt;::Real RealScalar; /*!&lt; \brief The underlying numeric type for composed scalar types. \details In cases where Scalar is e.g. std::complex&lt;T&gt;, T were corresponding to RealScalar. */ \
+<span class="lineNum">     353 </span>            :   typedef typename Base::CoeffReturnType CoeffReturnType; /*!&lt; \brief The return type for coefficient access. \details Depending on whether the object allows direct coefficient access (e.g. for a MatrixXd), this type is either 'const Scalar&amp;' or simply 'Scalar' for objects that do not allow direct coefficient access. */ \
+<span class="lineNum">     354 </span>            :   typedef typename Eigen::internal::nested&lt;Derived&gt;::type Nested; \
+<span class="lineNum">     355 </span>            :   typedef typename Eigen::internal::traits&lt;Derived&gt;::StorageKind StorageKind; \
+<span class="lineNum">     356 </span>            :   typedef typename Eigen::internal::traits&lt;Derived&gt;::Index Index; \
+<span class="lineNum">     357 </span>            :   enum { RowsAtCompileTime = Eigen::internal::traits&lt;Derived&gt;::RowsAtCompileTime, \
+<span class="lineNum">     358 </span>            :         ColsAtCompileTime = Eigen::internal::traits&lt;Derived&gt;::ColsAtCompileTime, \
+<span class="lineNum">     359 </span>            :         Flags = Eigen::internal::traits&lt;Derived&gt;::Flags, \
+<span class="lineNum">     360 </span>            :         CoeffReadCost = Eigen::internal::traits&lt;Derived&gt;::CoeffReadCost, \
+<span class="lineNum">     361 </span>            :         SizeAtCompileTime = Base::SizeAtCompileTime, \
+<span class="lineNum">     362 </span>            :         MaxSizeAtCompileTime = Base::MaxSizeAtCompileTime, \
+<span class="lineNum">     363 </span>            :         IsVectorAtCompileTime = Base::IsVectorAtCompileTime };
+<span class="lineNum">     364 </span>            : 
+<span class="lineNum">     365 </span>            : 
+<span class="lineNum">     366 </span>            : #define EIGEN_DENSE_PUBLIC_INTERFACE(Derived) \
+<span class="lineNum">     367 </span>            :   typedef typename Eigen::internal::traits&lt;Derived&gt;::Scalar Scalar; /*!&lt; \brief Numeric type, e.g. float, double, int or std::complex&lt;float&gt;. */ \
+<span class="lineNum">     368 </span>            :   typedef typename Eigen::NumTraits&lt;Scalar&gt;::Real RealScalar; /*!&lt; \brief The underlying numeric type for composed scalar types. \details In cases where Scalar is e.g. std::complex&lt;T&gt;, T were corresponding to RealScalar. */ \
+<span class="lineNum">     369 </span>            :   typedef typename Base::PacketScalar PacketScalar; \
+<span class="lineNum">     370 </span>            :   typedef typename Base::CoeffReturnType CoeffReturnType; /*!&lt; \brief The return type for coefficient access. \details Depending on whether the object allows direct coefficient access (e.g. for a MatrixXd), this type is either 'const Scalar&amp;' or simply 'Scalar' for objects that do not allow direct coefficient access. */ \
+<span class="lineNum">     371 </span>            :   typedef typename Eigen::internal::nested&lt;Derived&gt;::type Nested; \
+<span class="lineNum">     372 </span>            :   typedef typename Eigen::internal::traits&lt;Derived&gt;::StorageKind StorageKind; \
+<span class="lineNum">     373 </span>            :   typedef typename Eigen::internal::traits&lt;Derived&gt;::Index Index; \
+<span class="lineNum">     374 </span>            :   enum { RowsAtCompileTime = Eigen::internal::traits&lt;Derived&gt;::RowsAtCompileTime, \
+<span class="lineNum">     375 </span>            :         ColsAtCompileTime = Eigen::internal::traits&lt;Derived&gt;::ColsAtCompileTime, \
+<span class="lineNum">     376 </span>            :         MaxRowsAtCompileTime = Eigen::internal::traits&lt;Derived&gt;::MaxRowsAtCompileTime, \
+<span class="lineNum">     377 </span>            :         MaxColsAtCompileTime = Eigen::internal::traits&lt;Derived&gt;::MaxColsAtCompileTime, \
+<span class="lineNum">     378 </span>            :         Flags = Eigen::internal::traits&lt;Derived&gt;::Flags, \
+<span class="lineNum">     379 </span>            :         CoeffReadCost = Eigen::internal::traits&lt;Derived&gt;::CoeffReadCost, \
+<span class="lineNum">     380 </span>            :         SizeAtCompileTime = Base::SizeAtCompileTime, \
+<span class="lineNum">     381 </span>            :         MaxSizeAtCompileTime = Base::MaxSizeAtCompileTime, \
+<span class="lineNum">     382 </span>            :         IsVectorAtCompileTime = Base::IsVectorAtCompileTime }; \
+<span class="lineNum">     383 </span>            :   using Base::derived; \
+<span class="lineNum">     384 </span>            :   using Base::const_cast_derived;
+<span class="lineNum">     385 </span>            : 
+<span class="lineNum">     386 </span>            : 
+<span class="lineNum">     387 </span>            : #define EIGEN_PLAIN_ENUM_MIN(a,b) (((int)a &lt;= (int)b) ? (int)a : (int)b)
+<span class="lineNum">     388 </span>            : #define EIGEN_PLAIN_ENUM_MAX(a,b) (((int)a &gt;= (int)b) ? (int)a : (int)b)
+<span class="lineNum">     389 </span>            : 
+<span class="lineNum">     390 </span>            : // EIGEN_SIZE_MIN_PREFER_DYNAMIC gives the min between compile-time sizes. 0 has absolute priority, followed by 1,
+<span class="lineNum">     391 </span>            : // followed by Dynamic, followed by other finite values. The reason for giving Dynamic the priority over
+<span class="lineNum">     392 </span>            : // finite values is that min(3, Dynamic) should be Dynamic, since that could be anything between 0 and 3.
+<span class="lineNum">     393 </span>            : #define EIGEN_SIZE_MIN_PREFER_DYNAMIC(a,b) (((int)a == 0 || (int)b == 0) ? 0 \
+<span class="lineNum">     394 </span>            :                            : ((int)a == 1 || (int)b == 1) ? 1 \
+<span class="lineNum">     395 </span>            :                            : ((int)a == Dynamic || (int)b == Dynamic) ? Dynamic \
+<span class="lineNum">     396 </span>            :                            : ((int)a &lt;= (int)b) ? (int)a : (int)b)
+<span class="lineNum">     397 </span>            : 
+<span class="lineNum">     398 </span>            : // EIGEN_SIZE_MIN_PREFER_FIXED is a variant of EIGEN_SIZE_MIN_PREFER_DYNAMIC comparing MaxSizes. The difference is that finite values
+<span class="lineNum">     399 </span>            : // now have priority over Dynamic, so that min(3, Dynamic) gives 3. Indeed, whatever the actual value is
+<span class="lineNum">     400 </span>            : // (between 0 and 3), it is not more than 3.
+<span class="lineNum">     401 </span>            : #define EIGEN_SIZE_MIN_PREFER_FIXED(a,b)  (((int)a == 0 || (int)b == 0) ? 0 \
+<span class="lineNum">     402 </span>            :                            : ((int)a == 1 || (int)b == 1) ? 1 \
+<span class="lineNum">     403 </span>            :                            : ((int)a == Dynamic &amp;&amp; (int)b == Dynamic) ? Dynamic \
+<span class="lineNum">     404 </span>            :                            : ((int)a == Dynamic) ? (int)b \
+<span class="lineNum">     405 </span>            :                            : ((int)b == Dynamic) ? (int)a \
+<span class="lineNum">     406 </span>            :                            : ((int)a &lt;= (int)b) ? (int)a : (int)b)
+<span class="lineNum">     407 </span>            : 
+<span class="lineNum">     408 </span>            : // see EIGEN_SIZE_MIN_PREFER_DYNAMIC. No need for a separate variant for MaxSizes here.
+<span class="lineNum">     409 </span>            : #define EIGEN_SIZE_MAX(a,b) (((int)a == Dynamic || (int)b == Dynamic) ? Dynamic \
+<span class="lineNum">     410 </span>            :                            : ((int)a &gt;= (int)b) ? (int)a : (int)b)
+<span class="lineNum">     411 </span>            : 
+<span class="lineNum">     412 </span>            : #define EIGEN_LOGICAL_XOR(a,b) (((a) || (b)) &amp;&amp; !((a) &amp;&amp; (b)))
+<span class="lineNum">     413 </span>            : 
+<span class="lineNum">     414 </span>            : #define EIGEN_IMPLIES(a,b) (!(a) || (b))
+<span class="lineNum">     415 </span>            : 
+<span class="lineNum">     416 </span>            : #define EIGEN_MAKE_CWISE_BINARY_OP(METHOD,FUNCTOR) \
+<span class="lineNum">     417 </span>            :   template&lt;typename OtherDerived&gt; \
+<span class="lineNum">     418 </span>            :   EIGEN_STRONG_INLINE const CwiseBinaryOp&lt;FUNCTOR&lt;Scalar&gt;, const Derived, const OtherDerived&gt; \
+<span class="lineNum">     419 </span>            :   (METHOD)(const EIGEN_CURRENT_STORAGE_BASE_CLASS&lt;OtherDerived&gt; &amp;other) const \
+<span class="lineNum">     420 </span>            :   { \
+<span class="lineNum">     421 </span>            :     return CwiseBinaryOp&lt;FUNCTOR&lt;Scalar&gt;, const Derived, const OtherDerived&gt;(derived(), other.derived()); \
+<span class="lineNum">     422 </span>            :   }
+<span class="lineNum">     423 </span>            : 
+<span class="lineNum">     424 </span>            : // the expression type of a cwise product
+<span class="lineNum">     425 </span>            : #define EIGEN_CWISE_PRODUCT_RETURN_TYPE(LHS,RHS) \
+<span class="lineNum">     426 </span>            :     CwiseBinaryOp&lt; \
+<span class="lineNum">     427 </span>            :       internal::scalar_product_op&lt; \
+<span class="lineNum">     428 </span>            :           typename internal::traits&lt;LHS&gt;::Scalar, \
+<span class="lineNum">     429 </span>            :           typename internal::traits&lt;RHS&gt;::Scalar \
+<span class="lineNum">     430 </span>            :       &gt;, \
+<span class="lineNum">     431 </span>            :       const LHS, \
+<span class="lineNum">     432 </span>            :       const RHS \
+<span class="lineNum">     433 </span>            :     &gt;
+<span class="lineNum">     434 </span>            : 
+<span class="lineNum">     435 </span>            : #endif // EIGEN_MACROS_H
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

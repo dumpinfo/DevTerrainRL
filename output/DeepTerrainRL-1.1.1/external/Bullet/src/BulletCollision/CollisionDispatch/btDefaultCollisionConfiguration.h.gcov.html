@@ -1,0 +1,204 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/external/Bullet/src/BulletCollision/CollisionDispatch/btDefaultCollisionConfiguration.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/external/Bullet/src/BulletCollision/CollisionDispatch</a> - btDefaultCollisionConfiguration.h<span style="font-size: 80%;"> (source / <a href="btDefaultCollisionConfiguration.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            : Bullet Continuous Collision Detection and Physics Library
+<span class="lineNum">       3 </span>            : Copyright (c) 2003-2006 Erwin Coumans  http://continuousphysics.com/Bullet/
+<span class="lineNum">       4 </span>            : 
+<span class="lineNum">       5 </span>            : This software is provided 'as-is', without any express or implied warranty.
+<span class="lineNum">       6 </span>            : In no event will the authors be held liable for any damages arising from the use of this software.
+<span class="lineNum">       7 </span>            : Permission is granted to anyone to use this software for any purpose, 
+<span class="lineNum">       8 </span>            : including commercial applications, and to alter it and redistribute it freely, 
+<span class="lineNum">       9 </span>            : subject to the following restrictions:
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
+<span class="lineNum">      12 </span>            : 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
+<span class="lineNum">      13 </span>            : 3. This notice may not be removed or altered from any source distribution.
+<span class="lineNum">      14 </span>            : */
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : #ifndef BT_DEFAULT_COLLISION_CONFIGURATION
+<span class="lineNum">      17 </span>            : #define BT_DEFAULT_COLLISION_CONFIGURATION
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            : #include &quot;btCollisionConfiguration.h&quot;
+<span class="lineNum">      20 </span>            : class btVoronoiSimplexSolver;
+<span class="lineNum">      21 </span>            : class btConvexPenetrationDepthSolver;
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            : struct  btDefaultCollisionConstructionInfo
+<span class="lineNum">      24 </span>            : {
+<span class="lineNum">      25 </span>            :         btPoolAllocator*        m_persistentManifoldPool;
+<span class="lineNum">      26 </span>            :         btPoolAllocator*        m_collisionAlgorithmPool;
+<span class="lineNum">      27 </span>            :         int                                     m_defaultMaxPersistentManifoldPoolSize;
+<span class="lineNum">      28 </span>            :         int                                     m_defaultMaxCollisionAlgorithmPoolSize;
+<span class="lineNum">      29 </span>            :         int                                     m_customCollisionAlgorithmMaxElementSize;
+<a name="30"><span class="lineNum">      30 </span>            :         int                                     m_useEpaPenetrationAlgorithm;</a>
+<span class="lineNum">      31 </span>            : 
+<span class="lineNum">      32 </span><span class="lineCov">          2 :         btDefaultCollisionConstructionInfo()</span>
+<span class="lineNum">      33 </span>            :                 :m_persistentManifoldPool(0),
+<span class="lineNum">      34 </span>            :                 m_collisionAlgorithmPool(0),
+<span class="lineNum">      35 </span>            :                 m_defaultMaxPersistentManifoldPoolSize(4096),
+<span class="lineNum">      36 </span>            :                 m_defaultMaxCollisionAlgorithmPoolSize(4096),
+<span class="lineNum">      37 </span>            :                 m_customCollisionAlgorithmMaxElementSize(0),
+<span class="lineNum">      38 </span><span class="lineCov">          2 :                 m_useEpaPenetrationAlgorithm(true)</span>
+<span class="lineNum">      39 </span>            :         {
+<span class="lineNum">      40 </span><span class="lineCov">          2 :         }</span>
+<span class="lineNum">      41 </span>            : };
+<span class="lineNum">      42 </span>            : 
+<span class="lineNum">      43 </span>            : 
+<span class="lineNum">      44 </span>            : 
+<span class="lineNum">      45 </span>            : ///btCollisionConfiguration allows to configure Bullet collision detection
+<span class="lineNum">      46 </span>            : ///stack allocator, pool memory allocators
+<span class="lineNum">      47 </span>            : ///@todo: describe the meaning
+<span class="lineNum">      48 </span>            : class   btDefaultCollisionConfiguration : public btCollisionConfiguration
+<span class="lineNum">      49 </span>            : {
+<span class="lineNum">      50 </span>            : 
+<span class="lineNum">      51 </span>            : protected:
+<span class="lineNum">      52 </span>            : 
+<span class="lineNum">      53 </span>            :         int     m_persistentManifoldPoolSize;
+<span class="lineNum">      54 </span>            :         
+<span class="lineNum">      55 </span>            : 
+<span class="lineNum">      56 </span>            :         btPoolAllocator*        m_persistentManifoldPool;
+<span class="lineNum">      57 </span>            :         bool    m_ownsPersistentManifoldPool;
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span>            :         btPoolAllocator*        m_collisionAlgorithmPool;
+<span class="lineNum">      61 </span>            :         bool    m_ownsCollisionAlgorithmPool;
+<span class="lineNum">      62 </span>            : 
+<span class="lineNum">      63 </span>            :         //default penetration depth solver
+<span class="lineNum">      64 </span>            :         btConvexPenetrationDepthSolver* m_pdSolver;
+<span class="lineNum">      65 </span>            :         
+<span class="lineNum">      66 </span>            :         //default CreationFunctions, filling the m_doubleDispatch table
+<span class="lineNum">      67 </span>            :         btCollisionAlgorithmCreateFunc* m_convexConvexCreateFunc;
+<span class="lineNum">      68 </span>            :         btCollisionAlgorithmCreateFunc* m_convexConcaveCreateFunc;
+<span class="lineNum">      69 </span>            :         btCollisionAlgorithmCreateFunc* m_swappedConvexConcaveCreateFunc;
+<span class="lineNum">      70 </span>            :         btCollisionAlgorithmCreateFunc* m_compoundCreateFunc;
+<span class="lineNum">      71 </span>            :         btCollisionAlgorithmCreateFunc* m_compoundCompoundCreateFunc;
+<span class="lineNum">      72 </span>            :         
+<span class="lineNum">      73 </span>            :         btCollisionAlgorithmCreateFunc* m_swappedCompoundCreateFunc;
+<span class="lineNum">      74 </span>            :         btCollisionAlgorithmCreateFunc* m_emptyCreateFunc;
+<span class="lineNum">      75 </span>            :         btCollisionAlgorithmCreateFunc* m_sphereSphereCF;
+<span class="lineNum">      76 </span>            :         btCollisionAlgorithmCreateFunc* m_sphereBoxCF;
+<span class="lineNum">      77 </span>            :         btCollisionAlgorithmCreateFunc* m_boxSphereCF;
+<span class="lineNum">      78 </span>            : 
+<span class="lineNum">      79 </span>            :         btCollisionAlgorithmCreateFunc* m_boxBoxCF;
+<span class="lineNum">      80 </span>            :         btCollisionAlgorithmCreateFunc* m_sphereTriangleCF;
+<span class="lineNum">      81 </span>            :         btCollisionAlgorithmCreateFunc* m_triangleSphereCF;
+<span class="lineNum">      82 </span>            :         btCollisionAlgorithmCreateFunc* m_planeConvexCF;
+<span class="lineNum">      83 </span>            :         btCollisionAlgorithmCreateFunc* m_convexPlaneCF;
+<span class="lineNum">      84 </span>            :         
+<span class="lineNum">      85 </span>            : public:
+<span class="lineNum">      86 </span>            : 
+<span class="lineNum">      87 </span>            : 
+<span class="lineNum">      88 </span>            :         btDefaultCollisionConfiguration(const btDefaultCollisionConstructionInfo&amp; constructionInfo = btDefaultCollisionConstructionInfo());
+<span class="lineNum">      89 </span>            : 
+<span class="lineNum">      90 </span>            :         virtual ~btDefaultCollisionConfiguration();
+<span class="lineNum">      91 </span>            : 
+<span class="lineNum">      92 </span>            :                 ///memory pools
+<span class="lineNum">      93 </span>            :         virtual btPoolAllocator* getPersistentManifoldPool()
+<span class="lineNum">      94 </span>            :         {
+<span class="lineNum">      95 </span>            :                 return m_persistentManifoldPool;
+<span class="lineNum">      96 </span>            :         }
+<span class="lineNum">      97 </span>            : 
+<span class="lineNum">      98 </span>            :         virtual btPoolAllocator* getCollisionAlgorithmPool()
+<span class="lineNum">      99 </span>            :         {
+<span class="lineNum">     100 </span>            :                 return m_collisionAlgorithmPool;
+<span class="lineNum">     101 </span>            :         }
+<span class="lineNum">     102 </span>            : 
+<span class="lineNum">     103 </span>            : 
+<span class="lineNum">     104 </span>            :         virtual btCollisionAlgorithmCreateFunc* getCollisionAlgorithmCreateFunc(int proxyType0,int proxyType1);
+<span class="lineNum">     105 </span>            : 
+<span class="lineNum">     106 </span>            :         ///Use this method to allow to generate multiple contact points between at once, between two objects using the generic convex-convex algorithm.
+<span class="lineNum">     107 </span>            :         ///By default, this feature is disabled for best performance.
+<span class="lineNum">     108 </span>            :         ///@param numPerturbationIterations controls the number of collision queries. Set it to zero to disable the feature.
+<span class="lineNum">     109 </span>            :         ///@param minimumPointsPerturbationThreshold is the minimum number of points in the contact cache, above which the feature is disabled
+<span class="lineNum">     110 </span>            :         ///3 is a good value for both params, if you want to enable the feature. This is because the default contact cache contains a maximum of 4 points, and one collision query at the unperturbed orientation is performed first.
+<span class="lineNum">     111 </span>            :         ///See Bullet/Demos/CollisionDemo for an example how this feature gathers multiple points.
+<span class="lineNum">     112 </span>            :         ///@todo we could add a per-object setting of those parameters, for level-of-detail collision detection.
+<span class="lineNum">     113 </span>            :         void    setConvexConvexMultipointIterations(int numPerturbationIterations=3, int minimumPointsPerturbationThreshold = 3);
+<span class="lineNum">     114 </span>            : 
+<span class="lineNum">     115 </span>            :         void    setPlaneConvexMultipointIterations(int numPerturbationIterations=3, int minimumPointsPerturbationThreshold = 3);
+<span class="lineNum">     116 </span>            : 
+<span class="lineNum">     117 </span>            : };
+<span class="lineNum">     118 </span>            : 
+<span class="lineNum">     119 </span>            : #endif //BT_DEFAULT_COLLISION_CONFIGURATION
+<span class="lineNum">     120 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

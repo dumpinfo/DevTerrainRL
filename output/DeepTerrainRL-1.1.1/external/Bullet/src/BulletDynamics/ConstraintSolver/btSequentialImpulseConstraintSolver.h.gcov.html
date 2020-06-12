@@ -1,0 +1,260 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/external/Bullet/src/BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolver.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/external/Bullet/src/BulletDynamics/ConstraintSolver</a> - btSequentialImpulseConstraintSolver.h<span style="font-size: 80%;"> (source / <a href="btSequentialImpulseConstraintSolver.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            : Bullet Continuous Collision Detection and Physics Library
+<span class="lineNum">       3 </span>            : Copyright (c) 2003-2006 Erwin Coumans  http://continuousphysics.com/Bullet/
+<span class="lineNum">       4 </span>            : 
+<span class="lineNum">       5 </span>            : This software is provided 'as-is', without any express or implied warranty.
+<span class="lineNum">       6 </span>            : In no event will the authors be held liable for any damages arising from the use of this software.
+<span class="lineNum">       7 </span>            : Permission is granted to anyone to use this software for any purpose, 
+<span class="lineNum">       8 </span>            : including commercial applications, and to alter it and redistribute it freely, 
+<span class="lineNum">       9 </span>            : subject to the following restrictions:
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
+<span class="lineNum">      12 </span>            : 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
+<span class="lineNum">      13 </span>            : 3. This notice may not be removed or altered from any source distribution.
+<span class="lineNum">      14 </span>            : */
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : #ifndef BT_SEQUENTIAL_IMPULSE_CONSTRAINT_SOLVER_H
+<span class="lineNum">      17 </span>            : #define BT_SEQUENTIAL_IMPULSE_CONSTRAINT_SOLVER_H
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            : class btIDebugDraw;
+<span class="lineNum">      20 </span>            : class btPersistentManifold;
+<span class="lineNum">      21 </span>            : class btDispatcher;
+<span class="lineNum">      22 </span>            : class btCollisionObject;
+<span class="lineNum">      23 </span>            : #include &quot;BulletDynamics/ConstraintSolver/btTypedConstraint.h&quot;
+<span class="lineNum">      24 </span>            : #include &quot;BulletDynamics/ConstraintSolver/btContactSolverInfo.h&quot;
+<span class="lineNum">      25 </span>            : #include &quot;BulletDynamics/ConstraintSolver/btSolverBody.h&quot;
+<span class="lineNum">      26 </span>            : #include &quot;BulletDynamics/ConstraintSolver/btSolverConstraint.h&quot;
+<span class="lineNum">      27 </span>            : #include &quot;BulletCollision/NarrowPhaseCollision/btManifoldPoint.h&quot;
+<span class="lineNum">      28 </span>            : #include &quot;BulletDynamics/ConstraintSolver/btConstraintSolver.h&quot;
+<span class="lineNum">      29 </span>            : 
+<span class="lineNum">      30 </span>            : typedef btSimdScalar(*btSingleConstraintRowSolver)(btSolverBody&amp;, btSolverBody&amp;, const btSolverConstraint&amp;);
+<span class="lineNum">      31 </span>            : 
+<span class="lineNum">      32 </span>            : ///The btSequentialImpulseConstraintSolver is a fast SIMD implementation of the Projected Gauss Seidel (iterative LCP) method.
+<span class="lineNum">      33 </span>            : ATTRIBUTE_ALIGNED16(class) btSequentialImpulseConstraintSolver : public btConstraintSolver
+<span class="lineNum">      34 </span>            : {
+<span class="lineNum">      35 </span>            : protected:
+<span class="lineNum">      36 </span>            :         btAlignedObjectArray&lt;btSolverBody&gt;      m_tmpSolverBodyPool;
+<span class="lineNum">      37 </span>            :         btConstraintArray                       m_tmpSolverContactConstraintPool;
+<span class="lineNum">      38 </span>            :         btConstraintArray                       m_tmpSolverNonContactConstraintPool;
+<span class="lineNum">      39 </span>            :         btConstraintArray                       m_tmpSolverContactFrictionConstraintPool;
+<span class="lineNum">      40 </span>            :         btConstraintArray                       m_tmpSolverContactRollingFrictionConstraintPool;
+<span class="lineNum">      41 </span>            : 
+<span class="lineNum">      42 </span>            :         btAlignedObjectArray&lt;int&gt; m_orderTmpConstraintPool;
+<span class="lineNum">      43 </span>            :         btAlignedObjectArray&lt;int&gt; m_orderNonContactConstraintPool;
+<span class="lineNum">      44 </span>            :         btAlignedObjectArray&lt;int&gt; m_orderFrictionConstraintPool;
+<span class="lineNum">      45 </span>            :         btAlignedObjectArray&lt;btTypedConstraint::btConstraintInfo1&gt; m_tmpConstraintSizesPool;
+<span class="lineNum">      46 </span>            :         int                                                     m_maxOverrideNumSolverIterations;
+<span class="lineNum">      47 </span>            :         int m_fixedBodyId;
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span>            :         btSingleConstraintRowSolver m_resolveSingleConstraintRowGeneric;
+<span class="lineNum">      50 </span>            :         btSingleConstraintRowSolver m_resolveSingleConstraintRowLowerLimit;
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span>            :         void setupFrictionConstraint(   btSolverConstraint&amp; solverConstraint, const btVector3&amp; normalAxis,int solverBodyIdA,int  solverBodyIdB,
+<span class="lineNum">      53 </span>            :                                                                         btManifoldPoint&amp; cp,const btVector3&amp; rel_pos1,const btVector3&amp; rel_pos2,
+<span class="lineNum">      54 </span>            :                                                                         btCollisionObject* colObj0,btCollisionObject* colObj1, btScalar relaxation, 
+<span class="lineNum">      55 </span>            :                                                                         btScalar desiredVelocity=0., btScalar cfmSlip=0.);
+<span class="lineNum">      56 </span>            : 
+<span class="lineNum">      57 </span>            :         void setupRollingFrictionConstraint(    btSolverConstraint&amp; solverConstraint, const btVector3&amp; normalAxis,int solverBodyIdA,int  solverBodyIdB,
+<span class="lineNum">      58 </span>            :                                                                         btManifoldPoint&amp; cp,const btVector3&amp; rel_pos1,const btVector3&amp; rel_pos2,
+<span class="lineNum">      59 </span>            :                                                                         btCollisionObject* colObj0,btCollisionObject* colObj1, btScalar relaxation, 
+<span class="lineNum">      60 </span>            :                                                                         btScalar desiredVelocity=0., btScalar cfmSlip=0.);
+<span class="lineNum">      61 </span>            : 
+<span class="lineNum">      62 </span>            :         btSolverConstraint&amp; addFrictionConstraint(const btVector3&amp; normalAxis,int solverBodyIdA,int solverBodyIdB,int frictionIndex,btManifoldPoint&amp; cp,const btVector3&amp; rel_pos1,const btVector3&amp; rel_pos2,btCollisionObject* colObj0,btCollisionObject* colObj1, btScalar relaxation, btScalar desiredVelocity=0., btScalar cfmSlip=0.);
+<span class="lineNum">      63 </span>            :         btSolverConstraint&amp; addRollingFrictionConstraint(const btVector3&amp; normalAxis,int solverBodyIdA,int solverBodyIdB,int frictionIndex,btManifoldPoint&amp; cp,const btVector3&amp; rel_pos1,const btVector3&amp; rel_pos2,btCollisionObject* colObj0,btCollisionObject* colObj1, btScalar relaxation, btScalar desiredVelocity=0, btScalar cfmSlip=0.f);
+<span class="lineNum">      64 </span>            : 
+<span class="lineNum">      65 </span>            :         
+<span class="lineNum">      66 </span>            :         void setupContactConstraint(btSolverConstraint&amp; solverConstraint, int solverBodyIdA, int solverBodyIdB, btManifoldPoint&amp; cp, 
+<span class="lineNum">      67 </span>            :                                                                 const btContactSolverInfo&amp; infoGlobal,btScalar&amp; relaxation, const btVector3&amp; rel_pos1, const btVector3&amp; rel_pos2);
+<span class="lineNum">      68 </span>            : 
+<span class="lineNum">      69 </span>            :         static void     applyAnisotropicFriction(btCollisionObject* colObj,btVector3&amp; frictionDirection, int frictionMode);
+<span class="lineNum">      70 </span>            : 
+<span class="lineNum">      71 </span>            :         void setFrictionConstraintImpulse( btSolverConstraint&amp; solverConstraint, int solverBodyIdA,int solverBodyIdB, 
+<span class="lineNum">      72 </span>            :                                                                                  btManifoldPoint&amp; cp, const btContactSolverInfo&amp; infoGlobal);
+<span class="lineNum">      73 </span>            : 
+<span class="lineNum">      74 </span>            :         ///m_btSeed2 is used for re-arranging the constraint rows. improves convergence/quality of friction
+<span class="lineNum">      75 </span>            :         unsigned long   m_btSeed2;
+<span class="lineNum">      76 </span>            : 
+<span class="lineNum">      77 </span>            :         
+<span class="lineNum">      78 </span>            :         btScalar restitutionCurve(btScalar rel_vel, btScalar restitution);
+<span class="lineNum">      79 </span>            : 
+<span class="lineNum">      80 </span>            :         virtual void convertContacts(btPersistentManifold** manifoldPtr, int numManifolds, const btContactSolverInfo&amp; infoGlobal);
+<span class="lineNum">      81 </span>            : 
+<span class="lineNum">      82 </span>            :         void    convertContact(btPersistentManifold* manifold,const btContactSolverInfo&amp; infoGlobal);
+<span class="lineNum">      83 </span>            : 
+<span class="lineNum">      84 </span>            : 
+<span class="lineNum">      85 </span>            :         void    resolveSplitPenetrationSIMD(
+<span class="lineNum">      86 </span>            :      btSolverBody&amp; bodyA,btSolverBody&amp; bodyB,
+<span class="lineNum">      87 </span>            :         const btSolverConstraint&amp; contactConstraint);
+<span class="lineNum">      88 </span>            : 
+<span class="lineNum">      89 </span>            :         void    resolveSplitPenetrationImpulseCacheFriendly(
+<span class="lineNum">      90 </span>            :        btSolverBody&amp; bodyA,btSolverBody&amp; bodyB,
+<span class="lineNum">      91 </span>            :         const btSolverConstraint&amp; contactConstraint);
+<span class="lineNum">      92 </span>            : 
+<span class="lineNum">      93 </span>            :         //internal method
+<span class="lineNum">      94 </span>            :         int             getOrInitSolverBody(btCollisionObject&amp; body,btScalar timeStep);
+<span class="lineNum">      95 </span>            :         void    initSolverBody(btSolverBody* solverBody, btCollisionObject* collisionObject, btScalar timeStep);
+<span class="lineNum">      96 </span>            : 
+<span class="lineNum">      97 </span>            :         btSimdScalar    resolveSingleConstraintRowGeneric(btSolverBody&amp; bodyA,btSolverBody&amp; bodyB,const btSolverConstraint&amp; contactConstraint);
+<span class="lineNum">      98 </span>            :         btSimdScalar    resolveSingleConstraintRowGenericSIMD(btSolverBody&amp; bodyA,btSolverBody&amp; bodyB,const btSolverConstraint&amp; contactConstraint);
+<span class="lineNum">      99 </span>            :         btSimdScalar    resolveSingleConstraintRowLowerLimit(btSolverBody&amp; bodyA,btSolverBody&amp; bodyB,const btSolverConstraint&amp; contactConstraint);
+<span class="lineNum">     100 </span>            :         btSimdScalar    resolveSingleConstraintRowLowerLimitSIMD(btSolverBody&amp; bodyA,btSolverBody&amp; bodyB,const btSolverConstraint&amp; contactConstraint);
+<span class="lineNum">     101 </span>            :                 
+<span class="lineNum">     102 </span>            : protected:
+<span class="lineNum">     103 </span>            :         
+<span class="lineNum">     104 </span>            :         
+<span class="lineNum">     105 </span>            :         virtual void solveGroupCacheFriendlySplitImpulseIterations(btCollisionObject** bodies,int numBodies,btPersistentManifold** manifoldPtr, int numManifolds,btTypedConstraint** constraints,int numConstraints,const btContactSolverInfo&amp; infoGlobal,btIDebugDraw* debugDrawer);
+<span class="lineNum">     106 </span>            :         virtual btScalar solveGroupCacheFriendlyFinish(btCollisionObject** bodies,int numBodies,const btContactSolverInfo&amp; infoGlobal);
+<span class="lineNum">     107 </span>            :         virtual btScalar solveSingleIteration(int iteration, btCollisionObject** bodies ,int numBodies,btPersistentManifold** manifoldPtr, int numManifolds,btTypedConstraint** constraints,int numConstraints,const btContactSolverInfo&amp; infoGlobal,btIDebugDraw* debugDrawer);
+<span class="lineNum">     108 </span>            : 
+<span class="lineNum">     109 </span>            :         virtual btScalar solveGroupCacheFriendlySetup(btCollisionObject** bodies,int numBodies,btPersistentManifold** manifoldPtr, int numManifolds,btTypedConstraint** constraints,int numConstraints,const btContactSolverInfo&amp; infoGlobal,btIDebugDraw* debugDrawer);
+<span class="lineNum">     110 </span>            :         virtual btScalar solveGroupCacheFriendlyIterations(btCollisionObject** bodies,int numBodies,btPersistentManifold** manifoldPtr, int numManifolds,btTypedConstraint** constraints,int numConstraints,const btContactSolverInfo&amp; infoGlobal,btIDebugDraw* debugDrawer);
+<span class="lineNum">     111 </span>            : 
+<span class="lineNum">     112 </span>            : 
+<a name="113"><span class="lineNum">     113 </span>            : public:</a>
+<span class="lineNum">     114 </span>            : 
+<span class="lineNum">     115 </span><span class="lineCov">          4 :         BT_DECLARE_ALIGNED_ALLOCATOR();</span>
+<span class="lineNum">     116 </span>            :         
+<span class="lineNum">     117 </span>            :         btSequentialImpulseConstraintSolver();
+<span class="lineNum">     118 </span>            :         virtual ~btSequentialImpulseConstraintSolver();
+<span class="lineNum">     119 </span>            : 
+<span class="lineNum">     120 </span>            :         virtual btScalar solveGroup(btCollisionObject** bodies,int numBodies,btPersistentManifold** manifold,int numManifolds,btTypedConstraint** constraints,int numConstraints,const btContactSolverInfo&amp; info, btIDebugDraw* debugDrawer,btDispatcher* dispatcher);
+<span class="lineNum">     121 </span>            :                 
+<span class="lineNum">     122 </span>            :         ///clear internal cached data and reset random seed
+<span class="lineNum">     123 </span>            :         virtual void    reset();
+<span class="lineNum">     124 </span>            :         
+<span class="lineNum">     125 </span>            :         unsigned long btRand2();
+<span class="lineNum">     126 </span>            : 
+<span class="lineNum">     127 </span>            :         int btRandInt2 (int n);
+<span class="lineNum">     128 </span>            : 
+<span class="lineNum">     129 </span>            :         void    setRandSeed(unsigned long seed)
+<span class="lineNum">     130 </span>            :         {
+<span class="lineNum">     131 </span>            :                 m_btSeed2 = seed;
+<span class="lineNum">     132 </span>            :         }
+<span class="lineNum">     133 </span>            :         unsigned long   getRandSeed() const
+<span class="lineNum">     134 </span>            :         {
+<span class="lineNum">     135 </span>            :                 return m_btSeed2;
+<span class="lineNum">     136 </span>            :         }
+<span class="lineNum">     137 </span>            : 
+<span class="lineNum">     138 </span>            :         
+<span class="lineNum">     139 </span>            :         virtual btConstraintSolverType  getSolverType() const
+<span class="lineNum">     140 </span>            :         {
+<span class="lineNum">     141 </span>            :                 return BT_SEQUENTIAL_IMPULSE_SOLVER;
+<span class="lineNum">     142 </span>            :         }
+<span class="lineNum">     143 </span>            : 
+<span class="lineNum">     144 </span>            :         btSingleConstraintRowSolver     getActiveConstraintRowSolverGeneric()
+<span class="lineNum">     145 </span>            :         {
+<span class="lineNum">     146 </span>            :                 return m_resolveSingleConstraintRowGeneric;
+<span class="lineNum">     147 </span>            :         }
+<span class="lineNum">     148 </span>            :         void setConstraintRowSolverGeneric(btSingleConstraintRowSolver rowSolver)
+<span class="lineNum">     149 </span>            :         {
+<span class="lineNum">     150 </span>            :                 m_resolveSingleConstraintRowGeneric = rowSolver;
+<span class="lineNum">     151 </span>            :         }
+<span class="lineNum">     152 </span>            :         btSingleConstraintRowSolver     getActiveConstraintRowSolverLowerLimit()
+<span class="lineNum">     153 </span>            :         {
+<span class="lineNum">     154 </span>            :                 return m_resolveSingleConstraintRowLowerLimit;
+<span class="lineNum">     155 </span>            :         }
+<span class="lineNum">     156 </span>            :         void setConstraintRowSolverLowerLimit(btSingleConstraintRowSolver rowSolver)
+<span class="lineNum">     157 </span>            :         {
+<span class="lineNum">     158 </span>            :                 m_resolveSingleConstraintRowLowerLimit = rowSolver;
+<span class="lineNum">     159 </span>            :         }
+<span class="lineNum">     160 </span>            : 
+<span class="lineNum">     161 </span>            :         ///Various implementations of solving a single constraint row using a generic equality constraint, using scalar reference, SSE2 or SSE4
+<span class="lineNum">     162 </span>            :         btSingleConstraintRowSolver     getScalarConstraintRowSolverGeneric();
+<span class="lineNum">     163 </span>            :         btSingleConstraintRowSolver     getSSE2ConstraintRowSolverGeneric();
+<span class="lineNum">     164 </span>            :         btSingleConstraintRowSolver     getSSE4_1ConstraintRowSolverGeneric();
+<span class="lineNum">     165 </span>            : 
+<span class="lineNum">     166 </span>            :         ///Various implementations of solving a single constraint row using an inequality (lower limit) constraint, using scalar reference, SSE2 or SSE4
+<span class="lineNum">     167 </span>            :         btSingleConstraintRowSolver     getScalarConstraintRowSolverLowerLimit();
+<span class="lineNum">     168 </span>            :         btSingleConstraintRowSolver     getSSE2ConstraintRowSolverLowerLimit();
+<span class="lineNum">     169 </span>            :         btSingleConstraintRowSolver     getSSE4_1ConstraintRowSolverLowerLimit();
+<span class="lineNum">     170 </span>            : };
+<span class="lineNum">     171 </span>            : 
+<span class="lineNum">     172 </span>            : 
+<span class="lineNum">     173 </span>            : 
+<span class="lineNum">     174 </span>            : 
+<span class="lineNum">     175 </span>            : #endif //BT_SEQUENTIAL_IMPULSE_CONSTRAINT_SOLVER_H
+<span class="lineNum">     176 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

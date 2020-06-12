@@ -1,0 +1,322 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - code analysis - DeepTerrainRL-1.1.1/external/Bullet/src/BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../../../index.html">top level</a> - <a href="index.html">DeepTerrainRL-1.1.1/external/Bullet/src/BulletDynamics/Dynamics</a> - btDiscreteDynamicsWorld.h<span style="font-size: 80%;"> (source / <a href="btDiscreteDynamicsWorld.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">code analysis</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-06-13 04:47:02</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            : Bullet Continuous Collision Detection and Physics Library
+<span class="lineNum">       3 </span>            : Copyright (c) 2003-2009 Erwin Coumans  http://bulletphysics.org
+<span class="lineNum">       4 </span>            : 
+<span class="lineNum">       5 </span>            : This software is provided 'as-is', without any express or implied warranty.
+<span class="lineNum">       6 </span>            : In no event will the authors be held liable for any damages arising from the use of this software.
+<span class="lineNum">       7 </span>            : Permission is granted to anyone to use this software for any purpose, 
+<span class="lineNum">       8 </span>            : including commercial applications, and to alter it and redistribute it freely, 
+<span class="lineNum">       9 </span>            : subject to the following restrictions:
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
+<span class="lineNum">      12 </span>            : 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
+<span class="lineNum">      13 </span>            : 3. This notice may not be removed or altered from any source distribution.
+<span class="lineNum">      14 </span>            : */
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span>            : #ifndef BT_DISCRETE_DYNAMICS_WORLD_H
+<span class="lineNum">      18 </span>            : #define BT_DISCRETE_DYNAMICS_WORLD_H
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            : #include &quot;btDynamicsWorld.h&quot;
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            : class btDispatcher;
+<span class="lineNum">      23 </span>            : class btOverlappingPairCache;
+<span class="lineNum">      24 </span>            : class btConstraintSolver;
+<span class="lineNum">      25 </span>            : class btSimulationIslandManager;
+<span class="lineNum">      26 </span>            : class btTypedConstraint;
+<span class="lineNum">      27 </span>            : class btActionInterface;
+<span class="lineNum">      28 </span>            : class btPersistentManifold;
+<span class="lineNum">      29 </span>            : class btIDebugDraw;
+<span class="lineNum">      30 </span>            : struct InplaceSolverIslandCallback;
+<span class="lineNum">      31 </span>            : 
+<span class="lineNum">      32 </span>            : #include &quot;LinearMath/btAlignedObjectArray.h&quot;
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span>            : 
+<span class="lineNum">      35 </span>            : ///btDiscreteDynamicsWorld provides discrete rigid body simulation
+<span class="lineNum">      36 </span>            : ///those classes replace the obsolete CcdPhysicsEnvironment/CcdPhysicsController
+<span class="lineNum">      37 </span>            : ATTRIBUTE_ALIGNED16(class) btDiscreteDynamicsWorld : public btDynamicsWorld
+<span class="lineNum">      38 </span>            : {
+<span class="lineNum">      39 </span>            : protected:
+<span class="lineNum">      40 </span>            :         
+<span class="lineNum">      41 </span>            :     btAlignedObjectArray&lt;btTypedConstraint*&gt;      m_sortedConstraints;
+<span class="lineNum">      42 </span>            :         InplaceSolverIslandCallback*    m_solverIslandCallback;
+<span class="lineNum">      43 </span>            : 
+<span class="lineNum">      44 </span>            :         btConstraintSolver*     m_constraintSolver;
+<span class="lineNum">      45 </span>            : 
+<span class="lineNum">      46 </span>            :         btSimulationIslandManager*      m_islandManager;
+<span class="lineNum">      47 </span>            : 
+<span class="lineNum">      48 </span>            :         btAlignedObjectArray&lt;btTypedConstraint*&gt; m_constraints;
+<span class="lineNum">      49 </span>            : 
+<span class="lineNum">      50 </span>            :         btAlignedObjectArray&lt;btRigidBody*&gt; m_nonStaticRigidBodies;
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span>            :         btVector3       m_gravity;
+<span class="lineNum">      53 </span>            : 
+<span class="lineNum">      54 </span>            :         //for variable timesteps
+<span class="lineNum">      55 </span>            :         btScalar        m_localTime;
+<span class="lineNum">      56 </span>            :         btScalar        m_fixedTimeStep;
+<span class="lineNum">      57 </span>            :         //for variable timesteps
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span>            :         bool    m_ownsIslandManager;
+<span class="lineNum">      60 </span>            :         bool    m_ownsConstraintSolver;
+<span class="lineNum">      61 </span>            :         bool    m_synchronizeAllMotionStates;
+<span class="lineNum">      62 </span>            :         bool    m_applySpeculativeContactRestitution;
+<span class="lineNum">      63 </span>            : 
+<span class="lineNum">      64 </span>            :         btAlignedObjectArray&lt;btActionInterface*&gt;  m_actions;
+<span class="lineNum">      65 </span>            :         
+<span class="lineNum">      66 </span>            :         int     m_profileTimings;
+<span class="lineNum">      67 </span>            : 
+<span class="lineNum">      68 </span>            :         bool    m_latencyMotionStateInterpolation;
+<span class="lineNum">      69 </span>            : 
+<span class="lineNum">      70 </span>            :         btAlignedObjectArray&lt;btPersistentManifold*&gt;       m_predictiveManifolds;
+<span class="lineNum">      71 </span>            :     btMutex m_predictiveManifoldsMutex;
+<span class="lineNum">      72 </span>            : 
+<span class="lineNum">      73 </span>            :         virtual void    predictUnconstraintMotion(btScalar timeStep);
+<span class="lineNum">      74 </span>            : 
+<span class="lineNum">      75 </span>            :     void integrateTransformsInternal( btRigidBody** bodies, int numBodies, btScalar timeStep ) const;  // can be called in parallel
+<span class="lineNum">      76 </span>            :         virtual void    integrateTransforms(btScalar timeStep);
+<span class="lineNum">      77 </span>            :                 
+<span class="lineNum">      78 </span>            :         virtual void    calculateSimulationIslands();
+<span class="lineNum">      79 </span>            : 
+<span class="lineNum">      80 </span>            :         virtual void    solveConstraints(btContactSolverInfo&amp; solverInfo);
+<span class="lineNum">      81 </span>            :         
+<span class="lineNum">      82 </span>            :         virtual void    updateActivationState(btScalar timeStep);
+<span class="lineNum">      83 </span>            : 
+<span class="lineNum">      84 </span>            :         void    updateActions(btScalar timeStep);
+<span class="lineNum">      85 </span>            : 
+<span class="lineNum">      86 </span>            :         void    startProfiling(btScalar timeStep);
+<span class="lineNum">      87 </span>            : 
+<span class="lineNum">      88 </span>            :         virtual void    internalSingleStepSimulation( btScalar timeStep);
+<span class="lineNum">      89 </span>            : 
+<span class="lineNum">      90 </span>            :     void releasePredictiveContacts();
+<span class="lineNum">      91 </span>            :     void createPredictiveContactsInternal( btRigidBody** bodies, int numBodies, btScalar timeStep );  // can be called in parallel
+<span class="lineNum">      92 </span>            :     virtual void        createPredictiveContacts( btScalar timeStep );
+<span class="lineNum">      93 </span>            : 
+<span class="lineNum">      94 </span>            :         virtual void    saveKinematicState(btScalar timeStep);
+<span class="lineNum">      95 </span>            : 
+<span class="lineNum">      96 </span>            :         void    serializeRigidBodies(btSerializer* serializer);
+<span class="lineNum">      97 </span>            : 
+<span class="lineNum">      98 </span>            :         void    serializeDynamicsWorldInfo(btSerializer* serializer);
+<span class="lineNum">      99 </span>            : 
+<span class="lineNum">     100 </span>            : public:
+<a name="101"><span class="lineNum">     101 </span>            : </a>
+<span class="lineNum">     102 </span>            : 
+<span class="lineNum">     103 </span><span class="lineCov">          4 :         BT_DECLARE_ALIGNED_ALLOCATOR();</span>
+<span class="lineNum">     104 </span>            : 
+<span class="lineNum">     105 </span>            :         ///this btDiscreteDynamicsWorld constructor gets created objects from the user, and will not delete those
+<span class="lineNum">     106 </span>            :         btDiscreteDynamicsWorld(btDispatcher* dispatcher,btBroadphaseInterface* pairCache,btConstraintSolver* constraintSolver,btCollisionConfiguration* collisionConfiguration);
+<span class="lineNum">     107 </span>            : 
+<span class="lineNum">     108 </span>            :         virtual ~btDiscreteDynamicsWorld();
+<span class="lineNum">     109 </span>            : 
+<span class="lineNum">     110 </span>            :         ///if maxSubSteps &gt; 0, it will interpolate motion between fixedTimeStep's
+<span class="lineNum">     111 </span>            :         virtual int     stepSimulation( btScalar timeStep,int maxSubSteps=1, btScalar fixedTimeStep=btScalar(1.)/btScalar(60.));
+<span class="lineNum">     112 </span>            : 
+<span class="lineNum">     113 </span>            : 
+<span class="lineNum">     114 </span>            :         virtual void    synchronizeMotionStates();
+<span class="lineNum">     115 </span>            : 
+<span class="lineNum">     116 </span>            :         ///this can be useful to synchronize a single rigid body -&gt; graphics object
+<span class="lineNum">     117 </span>            :         void    synchronizeSingleMotionState(btRigidBody* body);
+<span class="lineNum">     118 </span>            : 
+<span class="lineNum">     119 </span>            :         virtual void    addConstraint(btTypedConstraint* constraint, bool disableCollisionsBetweenLinkedBodies=false);
+<span class="lineNum">     120 </span>            : 
+<span class="lineNum">     121 </span>            :         virtual void    removeConstraint(btTypedConstraint* constraint);
+<span class="lineNum">     122 </span>            : 
+<span class="lineNum">     123 </span>            :         virtual void    addAction(btActionInterface*);
+<span class="lineNum">     124 </span>            : 
+<span class="lineNum">     125 </span>            :         virtual void    removeAction(btActionInterface*);
+<span class="lineNum">     126 </span>            :         
+<span class="lineNum">     127 </span>            :         btSimulationIslandManager*      getSimulationIslandManager()
+<span class="lineNum">     128 </span>            :         {
+<span class="lineNum">     129 </span>            :                 return m_islandManager;
+<span class="lineNum">     130 </span>            :         }
+<span class="lineNum">     131 </span>            : 
+<span class="lineNum">     132 </span>            :         const btSimulationIslandManager*        getSimulationIslandManager() const 
+<span class="lineNum">     133 </span>            :         {
+<span class="lineNum">     134 </span>            :                 return m_islandManager;
+<span class="lineNum">     135 </span>            :         }
+<span class="lineNum">     136 </span>            : 
+<span class="lineNum">     137 </span>            :         btCollisionWorld*       getCollisionWorld()
+<span class="lineNum">     138 </span>            :         {
+<span class="lineNum">     139 </span>            :                 return this;
+<span class="lineNum">     140 </span>            :         }
+<span class="lineNum">     141 </span>            : 
+<span class="lineNum">     142 </span>            :         virtual void    setGravity(const btVector3&amp; gravity);
+<span class="lineNum">     143 </span>            : 
+<span class="lineNum">     144 </span>            :         virtual btVector3 getGravity () const;
+<span class="lineNum">     145 </span>            : 
+<span class="lineNum">     146 </span>            :         virtual void    addCollisionObject(btCollisionObject* collisionObject,short int collisionFilterGroup=btBroadphaseProxy::StaticFilter,short int collisionFilterMask=btBroadphaseProxy::AllFilter ^ btBroadphaseProxy::StaticFilter);
+<span class="lineNum">     147 </span>            : 
+<span class="lineNum">     148 </span>            :         virtual void    addRigidBody(btRigidBody* body);
+<span class="lineNum">     149 </span>            : 
+<span class="lineNum">     150 </span>            :         virtual void    addRigidBody(btRigidBody* body, short group, short mask);
+<span class="lineNum">     151 </span>            : 
+<span class="lineNum">     152 </span>            :         virtual void    removeRigidBody(btRigidBody* body);
+<span class="lineNum">     153 </span>            : 
+<span class="lineNum">     154 </span>            :         ///removeCollisionObject will first check if it is a rigid body, if so call removeRigidBody otherwise call btCollisionWorld::removeCollisionObject
+<span class="lineNum">     155 </span>            :         virtual void    removeCollisionObject(btCollisionObject* collisionObject);
+<span class="lineNum">     156 </span>            : 
+<span class="lineNum">     157 </span>            : 
+<span class="lineNum">     158 </span>            :         virtual void    debugDrawConstraint(btTypedConstraint* constraint);
+<span class="lineNum">     159 </span>            : 
+<span class="lineNum">     160 </span>            :         virtual void    debugDrawWorld();
+<span class="lineNum">     161 </span>            : 
+<span class="lineNum">     162 </span>            :         virtual void    setConstraintSolver(btConstraintSolver* solver);
+<span class="lineNum">     163 </span>            : 
+<span class="lineNum">     164 </span>            :         virtual btConstraintSolver* getConstraintSolver();
+<span class="lineNum">     165 </span>            :         
+<span class="lineNum">     166 </span>            :         virtual int             getNumConstraints() const;
+<span class="lineNum">     167 </span>            : 
+<span class="lineNum">     168 </span>            :         virtual btTypedConstraint* getConstraint(int index)     ;
+<span class="lineNum">     169 </span>            : 
+<span class="lineNum">     170 </span>            :         virtual const btTypedConstraint* getConstraint(int index) const;
+<span class="lineNum">     171 </span>            : 
+<span class="lineNum">     172 </span>            :         
+<span class="lineNum">     173 </span>            :         virtual btDynamicsWorldType     getWorldType() const
+<span class="lineNum">     174 </span>            :         {
+<span class="lineNum">     175 </span>            :                 return BT_DISCRETE_DYNAMICS_WORLD;
+<span class="lineNum">     176 </span>            :         }
+<span class="lineNum">     177 </span>            :         
+<span class="lineNum">     178 </span>            :         ///the forces on each rigidbody is accumulating together with gravity. clear this after each timestep.
+<span class="lineNum">     179 </span>            :         virtual void    clearForces();
+<span class="lineNum">     180 </span>            : 
+<span class="lineNum">     181 </span>            :         ///apply gravity, call this once per timestep
+<span class="lineNum">     182 </span>            :         virtual void    applyGravity();
+<span class="lineNum">     183 </span>            : 
+<span class="lineNum">     184 </span>            :         virtual void    setNumTasks(int numTasks)
+<span class="lineNum">     185 </span>            :         {
+<span class="lineNum">     186 </span>            :         (void) numTasks;
+<span class="lineNum">     187 </span>            :         }
+<span class="lineNum">     188 </span>            : 
+<span class="lineNum">     189 </span>            :         ///obsolete, use updateActions instead
+<span class="lineNum">     190 </span>            :         virtual void updateVehicles(btScalar timeStep)
+<span class="lineNum">     191 </span>            :         {
+<span class="lineNum">     192 </span>            :                 updateActions(timeStep);
+<span class="lineNum">     193 </span>            :         }
+<span class="lineNum">     194 </span>            : 
+<span class="lineNum">     195 </span>            :         ///obsolete, use addAction instead
+<span class="lineNum">     196 </span>            :         virtual void    addVehicle(btActionInterface* vehicle);
+<span class="lineNum">     197 </span>            :         ///obsolete, use removeAction instead
+<span class="lineNum">     198 </span>            :         virtual void    removeVehicle(btActionInterface* vehicle);
+<span class="lineNum">     199 </span>            :         ///obsolete, use addAction instead
+<span class="lineNum">     200 </span>            :         virtual void    addCharacter(btActionInterface* character);
+<span class="lineNum">     201 </span>            :         ///obsolete, use removeAction instead
+<span class="lineNum">     202 </span>            :         virtual void    removeCharacter(btActionInterface* character);
+<span class="lineNum">     203 </span>            : 
+<span class="lineNum">     204 </span>            :         void    setSynchronizeAllMotionStates(bool synchronizeAll)
+<span class="lineNum">     205 </span>            :         {
+<span class="lineNum">     206 </span>            :                 m_synchronizeAllMotionStates = synchronizeAll;
+<span class="lineNum">     207 </span>            :         }
+<span class="lineNum">     208 </span>            :         bool getSynchronizeAllMotionStates() const
+<span class="lineNum">     209 </span>            :         {
+<span class="lineNum">     210 </span>            :                 return m_synchronizeAllMotionStates;
+<span class="lineNum">     211 </span>            :         }
+<span class="lineNum">     212 </span>            : 
+<span class="lineNum">     213 </span>            :         void setApplySpeculativeContactRestitution(bool enable)
+<span class="lineNum">     214 </span>            :         {
+<span class="lineNum">     215 </span>            :                 m_applySpeculativeContactRestitution = enable;
+<span class="lineNum">     216 </span>            :         }
+<span class="lineNum">     217 </span>            :         
+<span class="lineNum">     218 </span>            :         bool getApplySpeculativeContactRestitution() const
+<span class="lineNum">     219 </span>            :         {
+<span class="lineNum">     220 </span>            :                 return m_applySpeculativeContactRestitution;
+<span class="lineNum">     221 </span>            :         }
+<span class="lineNum">     222 </span>            : 
+<span class="lineNum">     223 </span>            :         ///Preliminary serialization test for Bullet 2.76. Loading those files requires a separate parser (see Bullet/Demos/SerializeDemo)
+<span class="lineNum">     224 </span>            :         virtual void    serialize(btSerializer* serializer);
+<span class="lineNum">     225 </span>            : 
+<span class="lineNum">     226 </span>            :         ///Interpolate motion state between previous and current transform, instead of current and next transform.
+<span class="lineNum">     227 </span>            :         ///This can relieve discontinuities in the rendering, due to penetrations
+<span class="lineNum">     228 </span>            :         void setLatencyMotionStateInterpolation(bool latencyInterpolation )
+<span class="lineNum">     229 </span>            :         {
+<span class="lineNum">     230 </span>            :                 m_latencyMotionStateInterpolation = latencyInterpolation;
+<span class="lineNum">     231 </span>            :         }
+<span class="lineNum">     232 </span>            :         bool getLatencyMotionStateInterpolation() const
+<span class="lineNum">     233 </span>            :         {
+<span class="lineNum">     234 </span>            :                 return m_latencyMotionStateInterpolation;
+<span class="lineNum">     235 </span>            :         }
+<span class="lineNum">     236 </span>            : };
+<span class="lineNum">     237 </span>            : 
+<span class="lineNum">     238 </span>            : #endif //BT_DISCRETE_DYNAMICS_WORLD_H
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.12</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>
